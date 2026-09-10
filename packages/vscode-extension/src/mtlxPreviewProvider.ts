@@ -1,16 +1,42 @@
 import * as path from 'node:path';
-import { summarizeMaterialX, type MaterialXSummary, type MaterialXValidationIssue } from 'mtlx-core';
-import { checkMaterialX, loadMaterialXDocument } from 'mtlx-core/node';
+import {
+  checkMaterialXText,
+  checkMaterialXZipArchive,
+  checkMaterialZArchive,
+  detectFormat,
+  inspectMaterialXZipArchive,
+  inspectMaterialZArchive,
+  parseMaterialX,
+  summarizeMaterialX,
+  type MaterialXSummary,
+  type MaterialXValidationIssue,
+} from 'mtlx-core';
 import * as vscode from 'vscode';
 import { MtlxPreviewDocument, type MtlxPreviewTexture } from './mtlxPreviewDocument.js';
 
-async function analyze(
+const textDecoder = new TextDecoder();
+
+// Analyzes the bytes already read via vscode.workspace.fs (not the on-disk file) so this works
+// for virtual URIs too — e.g. a `git:` revision from the Source Control changes list, which can
+// differ from what's currently on disk at the same fsPath.
+function analyze(
   fsPath: string,
-): Promise<{ issues: MaterialXValidationIssue[]; summary?: MaterialXSummary; parseError?: string }> {
+  raw: Uint8Array,
+): { issues: MaterialXValidationIssue[]; summary?: MaterialXSummary; parseError?: string } {
   try {
-    const check = await checkMaterialX(fsPath);
-    const { document } = await loadMaterialXDocument(fsPath);
-    return { issues: check.issues, summary: summarizeMaterialX(fsPath, document) };
+    const format = detectFormat(fsPath);
+    if (format === 'mtlx') {
+      const text = textDecoder.decode(raw);
+      const document = parseMaterialX(text);
+      return { issues: checkMaterialXText(text, fsPath), summary: summarizeMaterialX(fsPath, document) };
+    }
+    const archive = format === 'mtlz' ? inspectMaterialZArchive(raw) : inspectMaterialXZipArchive(raw);
+    const issues = format === 'mtlz' ? checkMaterialZArchive(raw) : checkMaterialXZipArchive(raw);
+    if (!archive.rootEntry) {
+      throw new Error(`No root .mtlx entry found in ${fsPath}`);
+    }
+    const document = parseMaterialX(textDecoder.decode(archive.rootEntry.data));
+    return { issues, summary: summarizeMaterialX(archive.rootEntry.path, document) };
   } catch (error) {
     return { issues: [], parseError: error instanceof Error ? error.message : String(error) };
   }
@@ -24,7 +50,7 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
   async openCustomDocument(uri: vscode.Uri): Promise<MtlxPreviewDocument> {
     const raw = await vscode.workspace.fs.readFile(uri);
     const fileName = path.basename(uri.fsPath);
-    const { issues, summary, parseError } = await analyze(uri.fsPath);
+    const { issues, summary, parseError } = analyze(uri.fsPath, raw);
     const textures = await this._readReferencedTextures(uri, summary);
     return new MtlxPreviewDocument(uri, raw.length, fileName, raw, issues, summary, parseError, textures);
   }
