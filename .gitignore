@@ -1,0 +1,12 @@
+node_modules
+dist
+publish
+.output
+.nitro
+.tanstack
+routeTree.gen.ts
+.DS_Store
+*.tsbuildinfo
+coverage
+.vscode/*
+!.vscode/extensions.json
