@@ -5,7 +5,7 @@
   "scripts": {
     "build": "pnpm -w run docs && vite build",
     "tsc": "tsc --noEmit",
-    "dev": "vite dev --port 3000 --strictPort",
+    "dev": "vite dev --port 3000",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
     "test": "vitest run",
@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.544.0",
     "mtlx-core": "workspace:*",
+    "mtlx-viewer": "workspace:*",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.4.2",
     "react": "^19.3.0",

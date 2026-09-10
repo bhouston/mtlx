@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
+import { parseStudioEnvironment } from 'mtlx-viewer';
+import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
 
 export type MaterialSource =
   | { kind: 'buffer'; data: ArrayBuffer; name: string }
@@ -22,8 +24,8 @@ interface MaterialXLoaderWithParseBuffer {
 // the zip magic bytes / filename) and resolves textures embedded in the archive itself, so this
 // component doesn't need any zip handling of its own.
 //
-// Sphere + procedural room-environment lighting instead of a hosted shaderball .glb + HDRI.
-// ponytail: sphere preview / RoomEnvironment lighting, swap for a shaderball glb + real HDRI later if wanted.
+// Sphere + baked studio-room IBL (packages/viewer) instead of a hosted shaderball .glb + HDRI.
+// ponytail: sphere preview / baked studio lighting, swap for a shaderball glb + real HDRI later if wanted.
 export function MaterialViewer({ source, onError }: MaterialViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
@@ -43,7 +45,6 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
       const THREE: typeof ThreeNS = await import('three/webgpu');
       const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
       const { MaterialXLoader } = await import('three/addons/loaders/MaterialXLoader.js');
-      const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
       if (disposed) return;
 
       const width = container.clientWidth || 512;
@@ -65,8 +66,21 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
       const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
       camera.position.set(0, 0, 3.2);
 
-      const pmremGenerator = new THREE.PMREMGenerator(renderer);
-      const environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+      // Shared studio IBL (packages/viewer), baked once from RoomEnvironment, so the website and
+      // VS Code preview render the same lighting.
+      const envBytes = await (await fetch(studioEnvironmentUrl)).arrayBuffer();
+      const studioTexture = await parseStudioEnvironment(envBytes);
+      if (disposed) {
+        renderer.dispose();
+        return;
+      }
+      // @types/three lags three's addon source: fromEquirectangular() isn't in its
+      // PMREMGenerator typings yet.
+      const pmremGenerator = new THREE.PMREMGenerator(renderer) as unknown as {
+        fromEquirectangular: (texture: ThreeNS.Texture) => { texture: ThreeNS.Texture };
+      };
+      const environment = pmremGenerator.fromEquirectangular(studioTexture).texture;
+      studioTexture.dispose();
       scene.environment = environment;
       scene.background = environment;
 

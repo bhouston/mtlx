@@ -25,6 +25,9 @@ await esbuild.build({
   target: 'es2020',
   minify: true,
   sourcemap: false,
+  // Inline the shared studio IBL PNG (from mtlx-viewer) as a data URL, same as three.js itself
+  // is bundled into this file — no separate asset file for the webview to fetch under CSP.
+  loader: { '.png': 'dataurl' },
   define: {
     'process.env.NODE_ENV': '"production"',
   },

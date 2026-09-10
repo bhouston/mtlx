@@ -1,0 +1,39 @@
+{
+  "name": "mtlx-viewer",
+  "version": "0.1.0",
+  "description": "Shared three.js IBL environment assets and loader for the MaterialX website and VS Code viewers.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhouston/mtlx.git",
+    "directory": "packages/viewer"
+  },
+  "files": [
+    "dist",
+    "assets"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/environment.js",
+  "types": "./dist/environment.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/environment.d.ts",
+      "default": "./dist/environment.js"
+    },
+    "./assets/*": "./assets/*"
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "bake:studio-environment": "node scripts/bake-studio-environment.mjs"
+  },
+  "devDependencies": {
+    "@types/three": "^0.180.0",
+    "esbuild": "^0.27.3",
+    "playwright": "^1.63.0",
+    "three": "^0.186.0"
+  },
+  "peerDependencies": {
+    "three": "^0.186.0"
+  }
+}

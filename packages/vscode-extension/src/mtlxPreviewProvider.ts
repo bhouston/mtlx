@@ -17,6 +17,8 @@ async function analyze(
 }
 
 export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<MtlxPreviewDocument> {
+  private readonly _output = vscode.window.createOutputChannel('Mtlx Viewer');
+
   constructor(private readonly _context: vscode.ExtensionContext) {}
 
   async openCustomDocument(uri: vscode.Uri): Promise<MtlxPreviewDocument> {
@@ -36,6 +38,12 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       vscode.Uri.joinPath(this._context.extensionUri, 'media', 'preview.js'),
     );
     webviewPanel.webview.html = getPreviewHtml(webviewPanel.webview, scriptUri);
+
+    webviewPanel.webview.onDidReceiveMessage((message: { type?: string; message?: string }) => {
+      if (message.type === 'log' && message.message) {
+        this._output.appendLine(message.message);
+      }
+    });
 
     // Send document data to webview (VS Code Webview.postMessage has no targetOrigin)
     /* oxlint-disable unicorn/require-post-message-target-origin */
@@ -96,9 +104,20 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
     .invalid { color: var(--vscode-errorForeground); font-weight: 600; }
     .issue-error { color: var(--vscode-errorForeground); }
     .issue-warning { color: var(--vscode-editorWarning-foreground, #cca700); }
-    .error { color: var(--vscode-errorForeground); padding: 16px; }
+    .error { color: var(--vscode-errorForeground); padding: 8px 16px; white-space: pre-wrap; }
     h2 { font-size: 13px; margin: 12px 0 4px; }
     ul { margin: 4px 0; padding-left: 18px; }
+    #log {
+      flex: none;
+      height: 90px;
+      overflow: auto;
+      font-family: var(--vscode-editor-font-family, monospace);
+      font-size: 11px;
+      color: var(--vscode-descriptionForeground);
+      background: var(--vscode-textCodeBlock-background, rgba(128, 128, 128, 0.1));
+      padding: 4px 8px;
+      border-top: 1px solid var(--vscode-panel-border, transparent);
+    }
   </style>
 </head>
 <body>
@@ -107,6 +126,7 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
     <div class="stats" id="stats"></div>
   </div>
   <div class="error" id="error" style="display:none"></div>
+  <div id="log"></div>
   <script src="${scriptUri}"></script>
 </body>
 </html>`;
