@@ -1,7 +1,7 @@
-# mtlx
+# mtlx-cli
 
-[![npm version](https://img.shields.io/npm/v/mtlx.svg)](https://www.npmjs.com/package/mtlx)
-[![npm downloads](https://img.shields.io/npm/dm/mtlx.svg)](https://www.npmjs.com/package/mtlx)
+[![npm version](https://img.shields.io/npm/v/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
+[![npm downloads](https://img.shields.io/npm/dm/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 [![Live demo](https://img.shields.io/badge/demo-mtlx.ben3d.ca-blue)](https://mtlx.ben3d.ca)
 
@@ -10,7 +10,7 @@ The `mtlx` command-line tool for validating, inspecting, converting, and transfo
 [`mtlx-core`](https://www.npmjs.com/package/mtlx-core).
 
 ```sh
-npm install -g mtlx
+npm install -g mtlx-cli
 ```
 
 ```sh

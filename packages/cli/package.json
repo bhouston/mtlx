@@ -1,5 +1,5 @@
 {
-  "name": "mtlx",
+  "name": "mtlx-cli",
   "version": "0.1.0",
   "description": "mtlx: validate, inspect, and pack/unpack MaterialX (.mtlx, .mtlz, .mtlx.zip) files.",
   "license": "MIT",
