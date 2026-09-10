@@ -1,7 +1,17 @@
 {
   "name": "mtlx-core",
   "version": "0.1.0",
-  "description": "Parse, validate, and serialize MaterialX (.mtlx) documents; pack/unpack .mtlz and .mtlx.zip containers.",
+  "description": "Parse, validate, package, and transform MaterialX (.mtlx, .mtlz, .mtlx.zip) documents in Node and the browser.",
+  "keywords": [
+    "3d",
+    "material",
+    "materialx",
+    "mtlx",
+    "mtlz",
+    "shader",
+    "usd"
+  ],
+  "homepage": "https://mtlx.ben3d.ca/docs/",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -14,11 +24,19 @@
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.js",
+  "browser": {
+    "fs": false,
+    "path": false
+  },
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
     },
     "./textures": {
       "types": "./dist/textures.d.ts",

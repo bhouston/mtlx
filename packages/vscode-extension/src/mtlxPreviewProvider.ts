@@ -1,13 +1,6 @@
 import * as path from 'node:path';
-import {
-  checkMaterialXPackage,
-  checkMaterialXZipPackage,
-  detectFormat,
-  loadMaterialXDocument,
-  summarizeMaterialX,
-  type MaterialXSummary,
-  type MaterialXValidationIssue,
-} from 'mtlx-core';
+import { summarizeMaterialX, type MaterialXSummary, type MaterialXValidationIssue } from 'mtlx-core';
+import { checkMaterialX, loadMaterialXDocument } from 'mtlx-core/node';
 import * as vscode from 'vscode';
 import { MtlxPreviewDocument } from './mtlxPreviewDocument.js';
 
@@ -15,10 +8,7 @@ async function analyze(
   fsPath: string,
 ): Promise<{ issues: MaterialXValidationIssue[]; summary?: MaterialXSummary; parseError?: string }> {
   try {
-    const check =
-      detectFormat(fsPath) === 'mtlx.zip'
-        ? await checkMaterialXZipPackage(fsPath)
-        : await checkMaterialXPackage(fsPath);
+    const check = await checkMaterialX(fsPath);
     const { document } = await loadMaterialXDocument(fsPath);
     return { issues: check.issues, summary: summarizeMaterialX(fsPath, document) };
   } catch (error) {

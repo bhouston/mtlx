@@ -23,5 +23,7 @@ export const main = async () => {
     .command(await fileCommands({ commandDirs: [commandsDir] }))
     .demandCommand(1, 'No command specified - use --help for available commands')
     .showHelpOnFail(true)
+    .epilogue('Documentation: https://mtlx.ben3d.ca/docs/')
+    .wrap(100)
     .help().argv;
 };

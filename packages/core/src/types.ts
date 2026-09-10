@@ -42,6 +42,14 @@ export interface MaterialXNodeGraph {
   nodes: MaterialXNode[];
 }
 
+/**
+ * *The in-memory form of a `.mtlx` file, mirroring its XML structure.*
+ *
+ * `nodes` and `nodeGraphs` are typed views; `elements` is the lossless raw tree that
+ * {@link serializeMaterialX} writes back out.
+ *
+ * @category Parsing
+ */
 export interface MaterialXDocument {
   attributes: Record<string, string>;
   nodes: MaterialXNode[];
@@ -54,6 +62,11 @@ export interface MaterialXNodePortSpec {
   type?: string;
 }
 
+/**
+ * *A node definition entry in the {@link materialXNodeRegistry}.*
+ *
+ * @category Validation
+ */
 export interface MaterialXNodeSpec {
   category: string;
   nodeDefName?: string;
@@ -63,6 +76,11 @@ export interface MaterialXNodeSpec {
   parameters: MaterialXNodePortSpec[];
 }
 
+/**
+ * *One finding from validation.* Errors make a file unusable; warnings are advisory.
+ *
+ * @category Validation
+ */
 export interface MaterialXValidationIssue {
   level: 'error' | 'warning';
   message: string;

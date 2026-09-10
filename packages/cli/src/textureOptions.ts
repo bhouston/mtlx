@@ -1,9 +1,9 @@
-import { transformImage, type ImageFormat } from 'mtlx-core/textures';
-import type { TransformResourceHook } from 'mtlx-core';
+import type { Transform } from 'mtlx-core';
+import { resizeTextures, type ImageFormat } from 'mtlx-core/textures';
 
 export const IMAGE_FORMATS = ['webp', 'png', 'jpg', 'avif'] as const;
 
-/** Shared by `pack` (transform-on-the-way-into-the-archive) and `transform` (standalone). */
+/** Shared by `pack` and `transform`; pair with `.group(TEXTURE_OPTION_KEYS, TEXTURE_OPTION_GROUP)`. */
 export const textureTransformOptions = {
   'max-image-size': {
     describe: 'Resize any texture whose longest edge exceeds this many pixels',
@@ -20,23 +20,23 @@ export const textureTransformOptions = {
   },
 } as const;
 
+export const TEXTURE_OPTION_KEYS = Object.keys(textureTransformOptions);
+export const TEXTURE_OPTION_GROUP = 'Texture options:';
+
 export interface TextureTransformArgv {
   maxImageSize?: number;
   imageFormat?: ImageFormat;
   imageQuality: number;
 }
 
-export const hasTextureTransformOptions = (argv: TextureTransformArgv): boolean =>
-  Boolean(argv.maxImageSize) || Boolean(argv.imageFormat);
-
-/** Builds the `transformResource` hook `resolveMaterialXResources`/`packMaterialX` accept. */
-export const buildTransformResourceHook = (argv: TextureTransformArgv): TransformResourceHook => {
-  return async (data, _sourcePath, sourceExtension) => {
-    const result = await transformImage(data, sourceExtension, {
-      maxImageSize: argv.maxImageSize,
-      imageFormat: argv.imageFormat,
-      imageQuality: argv.imageQuality,
-    });
-    return { data: result.data, extension: result.extension };
-  };
-};
+/** The transforms implied by the texture flags; empty when none were given. */
+export const textureTransforms = (argv: TextureTransformArgv): Transform[] =>
+  argv.maxImageSize || argv.imageFormat
+    ? [
+        resizeTextures({
+          maxImageSize: argv.maxImageSize,
+          imageFormat: argv.imageFormat,
+          imageQuality: argv.imageQuality,
+        }),
+      ]
+    : [];

@@ -1,5 +1,5 @@
-import { checkMaterialXPackage, checkMaterialXZipPackage, detectFormat } from 'mtlx-core';
 import type { MaterialXValidationIssue } from 'mtlx-core';
+import { checkMaterialX } from 'mtlx-core/node';
 import { defineCommand } from 'yargs-file-commands';
 import { formatOption, printOutput } from '../output.js';
 
@@ -11,14 +11,8 @@ interface CheckResult {
 }
 
 export const runCheck = async (inputPath: string): Promise<CheckResult> => {
-  const result =
-    detectFormat(inputPath) === 'mtlx.zip'
-      ? await checkMaterialXZipPackage(inputPath)
-      : await checkMaterialXPackage(inputPath);
-  return {
-    ...result,
-    ok: !result.issues.some((issue) => issue.level === 'error'),
-  };
+  const result = await checkMaterialX(inputPath);
+  return { ...result, ok: !result.issues.some((issue) => issue.level === 'error') };
 };
 
 const renderText = (result: CheckResult): string => {

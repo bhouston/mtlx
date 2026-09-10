@@ -1,17 +1,11 @@
-import { unzipSync } from 'fflate';
+import { inspectMaterialXZipArchive } from 'mtlx-core';
 
 // three.js's MaterialXLoader handles .mtlz/.mtlx.zip natively for 3D preview (see
-// MaterialViewer.tsx), so this is only used to pull the raw .mtlx text back out for
-// mtlx-core's validator, which needs the XML text rather than a rendered material.
+// MaterialViewer.tsx), so this only pulls the raw .mtlx text back out for the validator.
 export const extractMaterialXText = (bytes: ArrayBuffer): string => {
-  const unzipped = unzipSync(new Uint8Array(bytes));
-  const entries = Object.entries(unzipped).filter(([entryPath]) => !entryPath.endsWith('/'));
-  const mtlxEntries = entries.filter(([entryPath]) => entryPath.toLowerCase().endsWith('.mtlx'));
-  const root = mtlxEntries.find(([entryPath]) => !entryPath.includes('/')) ?? mtlxEntries[0];
-
-  if (!root) {
-    throw new Error('Archive does not contain a .mtlx file');
+  const archive = inspectMaterialXZipArchive(new Uint8Array(bytes));
+  if (!archive.rootEntry) {
+    throw new Error(archive.issues[0]?.message ?? 'Archive does not contain a .mtlx file');
   }
-
-  return new TextDecoder().decode(root[1]);
+  return new TextDecoder().decode(archive.rootEntry.data);
 };

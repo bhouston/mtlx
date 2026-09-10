@@ -10,9 +10,12 @@
     "tsc": "tsc -b",
     "dev": "pnpm --parallel --filter mtlx --filter website dev",
     "test": "pnpm tsc && vitest run",
+    "test:e2e": "pnpm --filter website test:e2e",
     "format": "oxfmt .",
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
+    "docs": "typedoc",
+    "docs:cli": "node scripts/docs-cli.mjs",
     "make-release:core": "node scripts/make-release.mjs packages/core",
     "make-release:cli": "node scripts/make-release.mjs packages/cli",
     "gcloud": "gcloud auth application-default login && gcloud config set account \"neuralsoft@gmail.com\" && gcloud config set project bhouston-general-hosting && gcloud config set run/region us-central1"
@@ -24,6 +27,8 @@
     "lint-staged": "^17.3.0",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.73.0",
+    "playwright": "^1.63.0",
+    "typedoc": "^0.28.20",
     "typescript": "^5.7.0",
     "vite": "^8.1.3",
     "vitest": "^4.1.10"

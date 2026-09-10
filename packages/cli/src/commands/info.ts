@@ -1,4 +1,5 @@
-import { loadMaterialXDocument, summarizeMaterialX, type MaterialXSummary } from 'mtlx-core';
+import { summarizeMaterialX, type MaterialXSummary } from 'mtlx-core';
+import { loadMaterialXDocument } from 'mtlx-core/node';
 import { defineCommand } from 'yargs-file-commands';
 import { formatOption, printOutput } from '../output.js';
 

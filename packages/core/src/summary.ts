@@ -1,10 +1,20 @@
 import type { MaterialXDocument, MaterialXNode } from './types.js';
 
+/**
+ * *A node's name and category.*
+ *
+ * @category Parsing
+ */
 export interface MaterialInfo {
   name?: string;
   category: string;
 }
 
+/**
+ * *The result of {@link summarizeMaterialX}.*
+ *
+ * @category Parsing
+ */
 export interface MaterialXSummary {
   path: string;
   version?: string;
@@ -22,8 +32,19 @@ const allNodes = (document: MaterialXDocument): MaterialXNode[] => [
   ...document.nodeGraphs.flatMap((graph) => graph.nodes),
 ];
 
-/** Version/colorspace/materials(surfaces+volumes)/referenced-textures/node-list summary of a
- * parsed document — shared by the CLI's `info` command and the VS Code extension's stats panel. */
+/**
+ * *Summarizes a parsed document: version, colorspace, materials, referenced textures, and nodes.*
+ * Powers the CLI's `info` command and the VS Code extension's stats panel.
+ *
+ * Example:
+ *
+ * ```ts
+ * const summary = summarizeMaterialX('material.mtlx', document);
+ * console.log(summary.materials.map((material) => material.name));
+ * ```
+ *
+ * @category Parsing
+ */
 export const summarizeMaterialX = (path: string, document: MaterialXDocument): MaterialXSummary => {
   const nodes = allNodes(document);
 

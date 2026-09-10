@@ -63,3 +63,34 @@ describe('transformImage', () => {
     expect(low.data.byteLength).toBeLessThan(high.data.byteLength);
   });
 });
+
+describe('resizeTextures', () => {
+  it('transforms image resources in a package and rewrites the document references', async () => {
+    const { parseMaterialX, serializeMaterialX } = await import('./xml.js');
+    const { transform } = await import('./package.js');
+    const { resizeTextures } = await import('./textures.js');
+    const document = parseMaterialX(`<?xml version="1.0"?>
+<materialx version="1.39">
+  <image name="albedo" type="color3"><input name="file" type="filename" value="textures/albedo.png" /></image>
+</materialx>`);
+    const pkg = {
+      rootPath: 'material.mtlx',
+      document,
+      resources: [
+        { archivePath: 'textures/albedo.png', sourcePath: 'textures/albedo.png', data: await makePng(128, 64) },
+        { archivePath: 'resources/notes.txt', sourcePath: 'resources/notes.txt', data: new Uint8Array([1]) },
+      ],
+    };
+
+    await transform(pkg, resizeTextures({ maxImageSize: 32, imageFormat: 'webp' }));
+
+    expect(pkg.resources.map((resource) => resource.archivePath)).toEqual([
+      'textures/albedo.webp',
+      'resources/notes.txt',
+    ]);
+    expect(serializeMaterialX(pkg.document)).toContain('textures/albedo.webp');
+    const metadata = await sharp(pkg.resources[0]!.data).metadata();
+    expect(metadata.format).toBe('webp');
+    expect(metadata.width).toBe(32);
+  });
+});

@@ -52,7 +52,16 @@ function HomePage() {
     <main className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
       <header>
         <h1 className="text-2xl font-semibold">mtlx viewer</h1>
-        <p className="text-white/60">Drag and drop a MaterialX file, or pick a preset below.</p>
+        <p className="text-white/60">
+          Drag and drop a MaterialX file, or pick a preset below.{' '}
+          <a className="underline" href="/docs/">
+            Library docs
+          </a>
+          {' · '}
+          <a className="underline" href="https://github.com/bhouston/mtlx">
+            GitHub
+          </a>
+        </p>
       </header>
 
       <div

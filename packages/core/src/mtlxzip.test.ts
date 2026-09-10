@@ -3,12 +3,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { zipSync } from 'fflate';
-import {
-  checkMaterialXZipPackage,
-  inspectMaterialXZipArchive,
-  packMaterialXZip,
-  unpackMaterialXZip,
-} from './mtlxzip.js';
+import { checkMaterialXZipArchive, inspectMaterialXZipArchive } from './mtlxzip.js';
+import { checkMaterialX, packMaterialX, unpackMaterialX } from './node.js';
 
 const SAMPLE_MTLX = `<?xml version="1.0"?>
 <materialx version="1.39">
@@ -37,12 +33,12 @@ describe('.mtlx.zip (relaxed reader)', () => {
     expect(archive.issues).toHaveLength(0);
     expect(archive.rootEntry?.path).toBe('test.mtlx');
     expect(archive.entries.map((entry) => entry.path).toSorted()).toEqual(['test.mtlx', 'textures/albedo.png']);
+    expect(checkMaterialXZipArchive(zipped).filter((issue) => issue.level === 'error')).toHaveLength(0);
   });
 
   it('flags an archive with no .mtlx file', () => {
     const zipped = zipSync({ 'readme.txt': new TextEncoder().encode('hi') });
-    const archive = inspectMaterialXZipArchive(zipped);
-    expect(archive.issues).toContainEqual(expect.objectContaining({ level: 'error' }));
+    expect(checkMaterialXZipArchive(zipped)).toContainEqual(expect.objectContaining({ level: 'error' }));
   });
 
   it('checks and unpacks a .mtlx.zip file on disk', async () => {
@@ -50,25 +46,26 @@ describe('.mtlx.zip (relaxed reader)', () => {
     const inputPath = path.join(dir, 'test.mtlx.zip');
     await writeFile(inputPath, zipped);
 
-    const check = await checkMaterialXZipPackage(inputPath);
+    const check = await checkMaterialX(inputPath);
     expect(check.format).toBe('mtlx.zip');
     expect(check.issues.filter((issue) => issue.level === 'error')).toHaveLength(0);
 
-    const unpacked = await unpackMaterialXZip(inputPath, { outputDir: path.join(dir, 'out') });
+    const unpacked = await unpackMaterialX(inputPath, { outputDir: path.join(dir, 'out') });
     expect(unpacked.entries).toEqual(['test.mtlx']);
   });
 
-  it('packMaterialXZip round-trips a loose .mtlx + texture through pack -> unpack, unlike .mtlz it tolerates DEFLATE', async () => {
+  it('packMaterialX writes a .mtlx.zip when the output path says so', async () => {
     await writeFile(path.join(dir, 'material.mtlx'), SAMPLE_MTLX);
 
-    const packed = await packMaterialXZip(path.join(dir, 'material.mtlx'));
-    expect(packed.outputPath).toBe(path.join(dir, 'material.mtlx.zip'));
+    const outputPath = path.join(dir, 'material.mtlx.zip');
+    const packed = await packMaterialX(path.join(dir, 'material.mtlx'), { outputPath });
+    expect(packed.format).toBe('mtlx.zip');
     expect(packed.entries).toEqual(['material.mtlx']);
 
-    const check = await checkMaterialXZipPackage(packed.outputPath);
+    const check = await checkMaterialX(outputPath);
     expect(check.issues.filter((issue) => issue.level === 'error')).toHaveLength(0);
 
-    const unpacked = await unpackMaterialXZip(packed.outputPath, { outputDir: path.join(dir, 'out') });
+    const unpacked = await unpackMaterialX(outputPath, { outputDir: path.join(dir, 'out') });
     expect(unpacked.entries).toEqual(['material.mtlx']);
   });
 });

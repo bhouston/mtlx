@@ -1,43 +1,30 @@
-export { readMaterialX, writeMaterialX } from './io.js';
-export { detectFormat, loadMaterialXDocument } from './load.js';
-export type { MaterialXInputFormat } from './load.js';
+/**
+ * Parse, validate, package, and transform MaterialX documents. Pure: runs in Node, browsers, and
+ * workers alike. Filesystem helpers live in `mtlx-core/node`; texture processing (which needs
+ * sharp) lives in `mtlx-core/textures`.
+ *
+ * @module mtlx-core
+ */
+export { checkMaterialXZipArchive, createMaterialXZipArchive, inspectMaterialXZipArchive } from './mtlxzip.js';
+export type { MaterialXZipArchive, MaterialXZipEntry } from './mtlxzip.js';
+export { checkMaterialZArchive, createMaterialZArchive, inspectMaterialZArchive } from './mtlz.js';
+export type { MaterialZArchive, MaterialZArchiveEntry } from './mtlz.js';
 export {
-  checkMaterialXPackage,
-  createMaterialZArchive,
-  inspectMaterialZArchive,
-  packMaterialX,
-  readMaterialZArchive,
+  detectFormat,
+  packageFromArchive,
+  packageToEntries,
   resolveMaterialXResources,
-  unpackMaterialZ,
-} from './mtlz.js';
+  rewriteResourcePath,
+  transform,
+} from './package.js';
 export type {
-  CheckMaterialXPackageResult,
+  MaterialXFormat,
+  MaterialXPackage,
+  MaterialXPackageEntry,
   MaterialXResource,
-  MaterialZArchive,
-  MaterialZArchiveEntry,
-  MaterialZArchiveInputEntry,
-  PackMaterialXOptions,
-  PackMaterialXResult,
-  TransformResourceHook,
-  UnpackMaterialZOptions,
-  UnpackMaterialZResult,
-} from './mtlz.js';
-export {
-  checkMaterialXZipPackage,
-  inspectMaterialXZipArchive,
-  packMaterialXZip,
-  readMaterialXZipArchive,
-  unpackMaterialXZip,
-} from './mtlxzip.js';
-export type {
-  CheckMaterialXZipResult,
-  MaterialXZipArchive,
-  MaterialXZipEntry,
-  PackMaterialXZipOptions,
-  PackMaterialXZipResult,
-  UnpackMaterialXZipOptions,
-  UnpackMaterialXZipResult,
-} from './mtlxzip.js';
+  ResourceReader,
+  Transform,
+} from './package.js';
 export { materialXNodeRegistry } from './registry.js';
 export { summarizeMaterialX } from './summary.js';
 export type { MaterialInfo, MaterialXSummary } from './summary.js';
@@ -54,5 +41,5 @@ export type {
   MaterialXValidationIssue,
   MaterialXValueType,
 } from './types.js';
-export { validateDocument } from './validate.js';
+export { checkMaterialXText, validateDocument } from './validate.js';
 export { parseMaterialX, serializeMaterialX } from './xml.js';

@@ -3,23 +3,28 @@
 [![npm version](https://img.shields.io/npm/v/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
 [![npm downloads](https://img.shields.io/npm/dm/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
-[![Live demo](https://img.shields.io/badge/demo-mtlx.ben3d.ca-blue)](https://mtlx.ben3d.ca)
 
-Parse, validate, and serialize [MaterialX](https://materialx.org) (`.mtlx`) documents into an
-in-memory representation that mirrors the on-disk XML structure, plus pack/unpack support for
-`.mtlz` (spec-compliant) and `.mtlx.zip` (relaxed) single-file containers, and texture
-resize/reformat via `mtlx-core/textures`.
+Part of the [mtlx](https://github.com/bhouston/mtlx) project: a MaterialX SDK for JavaScript and
+TypeScript, on Web and Node.js.
+
+- Documentation: [mtlx.ben3d.ca/docs](https://mtlx.ben3d.ca/docs/)
+- Viewer: [mtlx.ben3d.ca](https://mtlx.ben3d.ca)
+- Source: [github.com/bhouston/mtlx](https://github.com/bhouston/mtlx)
 
 ```sh
 npm install mtlx-core
 ```
 
 ```ts
-import { parseMaterialX, validateDocument } from 'mtlx-core';
+import { transform } from 'mtlx-core';
+import { loadMaterialXPackage, writeMaterialXPackage } from 'mtlx-core/node';
+import { resizeTextures } from 'mtlx-core/textures';
 
-const document = parseMaterialX(xmlText);
-const issues = validateDocument(document);
+const pkg = await loadMaterialXPackage('material.mtlx');
+await transform(pkg, resizeTextures({ maxImageSize: 2048, imageFormat: 'webp' }));
+await writeMaterialXPackage(pkg, 'material.mtlz');
 ```
 
-See the [mtlx monorepo](https://github.com/bhouston/mtlx) for the `mtlx` CLI, the
-[mtlx.ben3d.ca](https://mtlx.ben3d.ca) viewer, and the VS Code extension built on this package.
+## License
+
+MIT

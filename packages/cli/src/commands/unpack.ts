@@ -1,4 +1,4 @@
-import { detectFormat, unpackMaterialXZip, unpackMaterialZ } from 'mtlx-core';
+import { unpackMaterialX } from 'mtlx-core/node';
 import { defineCommand } from 'yargs-file-commands';
 import { formatOption, printOutput } from '../output.js';
 
@@ -28,11 +28,7 @@ export const command = defineCommand({
       .options(formatOption),
   handler: async (argv) => {
     try {
-      const options = { outputDir: argv.outputDir, force: argv.force };
-      const result =
-        detectFormat(argv.input) === 'mtlx.zip'
-          ? await unpackMaterialXZip(argv.input, options)
-          : await unpackMaterialZ(argv.input, options);
+      const result = await unpackMaterialX(argv.input, { outputDir: argv.outputDir, force: argv.force });
       printOutput(result, argv.format, () => renderText(result));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

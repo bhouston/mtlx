@@ -1,9 +1,10 @@
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
-import path from 'node:path';
-import { materialXNodeRegistry } from './registry.js';
-import type { MaterialXDocument, MaterialXElement, MaterialXValidationIssue } from './types.js';
-import { validateDocument } from './validate.js';
-import { parseMaterialX, serializeMaterialX } from './xml.js';
+import { validateArchivePath, type MaterialXPackageEntry } from './package.js';
+import type { MaterialXValidationIssue } from './types.js';
+import { checkMaterialXText } from './validate.js';
+
+// Hand-rolled ZIP32 writer/reader for the spec-strict ".mtlz" container: STORE-only, root
+// .mtlx first, resources in subdirectories, 64-byte aligned data. Pure (no node:fs, no Buffer)
+// so it runs in browsers as well as Node.
 
 const LOCAL_FILE_HEADER_SIGNATURE = 0x04034b50;
 const CENTRAL_DIRECTORY_SIGNATURE = 0x02014b50;
@@ -18,11 +19,11 @@ const EXTRA_FIELD_PADDING_ID = 0xffff;
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
 
-export interface MaterialZArchiveInputEntry {
-  path: string;
-  data: string | Uint8Array;
-}
-
+/**
+ * *One entry read back from a `.mtlz` archive, with the raw ZIP header fields the spec checks.*
+ *
+ * @category Packaging
+ */
 export interface MaterialZArchiveEntry {
   path: string;
   data: Uint8Array;
@@ -34,34 +35,12 @@ export interface MaterialZArchiveEntry {
   isDirectory: boolean;
 }
 
-export interface PackMaterialXOptions {
-  outputPath?: string;
-  transformResource?: TransformResourceHook;
-}
-
-export interface PackMaterialXResult {
-  outputPath: string;
-  rootPath: string;
-  entries: string[];
-}
-
-export interface UnpackMaterialZOptions {
-  outputDir?: string;
-  force?: boolean;
-}
-
-export interface UnpackMaterialZResult {
-  outputDir: string;
-  rootPath: string;
-  entries: string[];
-}
-
-export interface CheckMaterialXPackageResult {
-  path: string;
-  format: 'mtlx' | 'mtlz';
-  issues: MaterialXValidationIssue[];
-}
-
+/**
+ * *The result of {@link inspectMaterialZArchive}: entries, the root document, and any spec
+ * violations found.*
+ *
+ * @category Packaging
+ */
 export interface MaterialZArchive {
   entries: MaterialZArchiveEntry[];
   rootEntry?: MaterialZArchiveEntry;
@@ -73,27 +52,7 @@ interface PendingZipEntry {
   data: Uint8Array;
   crc: number;
   localHeaderOffset: number;
-  dataOffset: number;
 }
-
-const imageExtensions = new Set([
-  '.avif',
-  '.bmp',
-  '.exr',
-  '.gif',
-  '.hdr',
-  '.jpeg',
-  '.jpg',
-  '.png',
-  '.svg',
-  '.tga',
-  '.tif',
-  '.tiff',
-  '.tx',
-  '.webp',
-]);
-
-const resourceExtensions = new Set([...imageExtensions, '.mtlx', '.json', '.bin', '.txt']);
 
 const crcTable = new Uint32Array(256);
 for (let index = 0; index < 256; index += 1) {
@@ -112,119 +71,139 @@ const crc32 = (data: Uint8Array): number => {
   return (crc ^ 0xffffffff) >>> 0;
 };
 
-const encodePath = (entryPath: string): Uint8Array => textEncoder.encode(entryPath);
-
-const toUint8Array = (data: string | Uint8Array): Uint8Array =>
-  typeof data === 'string' ? textEncoder.encode(data) : data;
-
-const toBuffer = (data: Uint8Array): Buffer =>
-  Buffer.isBuffer(data) ? data : Buffer.from(data.buffer, data.byteOffset, data.byteLength);
-
 const makeIssue = (
   level: MaterialXValidationIssue['level'],
   location: string,
   message: string,
-): MaterialXValidationIssue => ({
-  level,
-  location,
-  message,
-});
+): MaterialXValidationIssue => ({ level, location, message });
 
 const hasErrors = (issues: MaterialXValidationIssue[]) => issues.some((issue) => issue.level === 'error');
 
 const isRootMaterialXPath = (entryPath: string): boolean =>
   !entryPath.includes('/') && entryPath.toLowerCase().endsWith('.mtlx');
 
-const isExternalReference = (value: string): boolean => /^[a-z][a-z0-9+.-]*:/i.test(value);
-
-const isPathInside = (rootDir: string, candidatePath: string): boolean => {
-  const relative = path.relative(rootDir, candidatePath);
-  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+/** A little-endian struct writer: `w.u16(x).u32(y).bytes(z)`. */
+const struct = (size: number) => {
+  const bytes = new Uint8Array(size);
+  const view = new DataView(bytes.buffer);
+  let offset = 0;
+  const writer = {
+    bytes,
+    u16(value: number) {
+      view.setUint16(offset, value, true);
+      offset += 2;
+      return writer;
+    },
+    u32(value: number) {
+      view.setUint32(offset, value, true);
+      offset += 4;
+      return writer;
+    },
+    raw(value: Uint8Array) {
+      bytes.set(value, offset);
+      offset += value.byteLength;
+      return writer;
+    },
+  };
+  return writer;
 };
 
-const validateArchivePath = (entryPath: string): string | undefined => {
-  if (!entryPath || entryPath.startsWith('/') || entryPath.includes('\\') || /^[a-z]:/i.test(entryPath)) {
-    return 'Archive entry paths must be relative POSIX paths';
+const concat = (parts: Uint8Array[]): Uint8Array => {
+  const out = new Uint8Array(parts.reduce((size, part) => size + part.byteLength, 0));
+  let offset = 0;
+  for (const part of parts) {
+    out.set(part, offset);
+    offset += part.byteLength;
   }
-  const segments = entryPath.split('/');
-  if (segments.some((segment) => segment === '' || segment === '.' || segment === '..')) {
-    return 'Archive entry paths must not contain empty, current, or parent segments';
-  }
-  return undefined;
+  return out;
 };
 
-const createPaddingExtra = (offsetBeforeHeader: number, encodedNameLength: number): Buffer => {
+const createPaddingExtra = (offsetBeforeHeader: number, encodedNameLength: number): Uint8Array => {
   const baseDataOffset = offsetBeforeHeader + 30 + encodedNameLength;
   let extraLength = (ALIGNMENT_BYTES - (baseDataOffset % ALIGNMENT_BYTES)) % ALIGNMENT_BYTES;
   if (extraLength > 0 && extraLength < 4) {
     extraLength += ALIGNMENT_BYTES;
   }
-  const extra = Buffer.alloc(extraLength);
-  if (extraLength > 0) {
-    extra.writeUInt16LE(EXTRA_FIELD_PADDING_ID, 0);
-    extra.writeUInt16LE(extraLength - 4, 2);
+  if (extraLength === 0) {
+    return new Uint8Array();
   }
-  return extra;
+  return struct(extraLength)
+    .u16(EXTRA_FIELD_PADDING_ID)
+    .u16(extraLength - 4).bytes;
 };
 
-const createLocalHeader = (entryPath: string, data: Uint8Array, crc: number, extra: Buffer): Buffer => {
-  const name = encodePath(entryPath);
-  const header = Buffer.alloc(30);
-  header.writeUInt32LE(LOCAL_FILE_HEADER_SIGNATURE, 0);
-  header.writeUInt16LE(VERSION_NEEDED_ZIP32, 4);
-  header.writeUInt16LE(0, 6);
-  header.writeUInt16LE(STORE_COMPRESSION_METHOD, 8);
-  header.writeUInt16LE(0, 10);
-  header.writeUInt16LE(0, 12);
-  header.writeUInt32LE(crc, 14);
-  header.writeUInt32LE(data.byteLength, 18);
-  header.writeUInt32LE(data.byteLength, 22);
-  header.writeUInt16LE(name.byteLength, 26);
-  header.writeUInt16LE(extra.byteLength, 28);
-  return Buffer.concat([header, toBuffer(name), extra]);
+const createLocalHeader = (name: Uint8Array, data: Uint8Array, crc: number, extra: Uint8Array): Uint8Array =>
+  struct(30 + name.byteLength + extra.byteLength)
+    .u32(LOCAL_FILE_HEADER_SIGNATURE)
+    .u16(VERSION_NEEDED_ZIP32)
+    .u16(0)
+    .u16(STORE_COMPRESSION_METHOD)
+    .u16(0)
+    .u16(0)
+    .u32(crc)
+    .u32(data.byteLength)
+    .u32(data.byteLength)
+    .u16(name.byteLength)
+    .u16(extra.byteLength)
+    .raw(name)
+    .raw(extra).bytes;
+
+const createCentralDirectoryHeader = (entry: PendingZipEntry): Uint8Array => {
+  const name = textEncoder.encode(entry.path);
+  return struct(46 + name.byteLength)
+    .u32(CENTRAL_DIRECTORY_SIGNATURE)
+    .u16(VERSION_NEEDED_ZIP32)
+    .u16(VERSION_NEEDED_ZIP32)
+    .u16(0)
+    .u16(STORE_COMPRESSION_METHOD)
+    .u16(0)
+    .u16(0)
+    .u32(entry.crc)
+    .u32(entry.data.byteLength)
+    .u32(entry.data.byteLength)
+    .u16(name.byteLength)
+    .u16(0)
+    .u16(0)
+    .u16(0)
+    .u16(0)
+    .u32(0)
+    .u32(entry.localHeaderOffset)
+    .raw(name).bytes;
 };
 
-const createCentralDirectoryHeader = (entry: PendingZipEntry): Buffer => {
-  const name = encodePath(entry.path);
-  const header = Buffer.alloc(46);
-  header.writeUInt32LE(CENTRAL_DIRECTORY_SIGNATURE, 0);
-  header.writeUInt16LE(VERSION_NEEDED_ZIP32, 4);
-  header.writeUInt16LE(VERSION_NEEDED_ZIP32, 6);
-  header.writeUInt16LE(0, 8);
-  header.writeUInt16LE(STORE_COMPRESSION_METHOD, 10);
-  header.writeUInt16LE(0, 12);
-  header.writeUInt16LE(0, 14);
-  header.writeUInt32LE(entry.crc, 16);
-  header.writeUInt32LE(entry.data.byteLength, 20);
-  header.writeUInt32LE(entry.data.byteLength, 24);
-  header.writeUInt16LE(name.byteLength, 28);
-  header.writeUInt16LE(0, 30);
-  header.writeUInt16LE(0, 32);
-  header.writeUInt16LE(0, 34);
-  header.writeUInt16LE(0, 36);
-  header.writeUInt32LE(0, 38);
-  header.writeUInt32LE(entry.localHeaderOffset, 42);
-  return Buffer.concat([header, toBuffer(name)]);
-};
+const createEndOfCentralDirectory = (entryCount: number, size: number, offset: number): Uint8Array =>
+  struct(22)
+    .u32(END_OF_CENTRAL_DIRECTORY_SIGNATURE)
+    .u16(0)
+    .u16(0)
+    .u16(entryCount)
+    .u16(entryCount)
+    .u32(size)
+    .u32(offset)
+    .u16(0).bytes;
 
-const createEndOfCentralDirectory = (
-  entryCount: number,
-  centralDirectorySize: number,
-  centralDirectoryOffset: number,
-): Buffer => {
-  const eocd = Buffer.alloc(22);
-  eocd.writeUInt32LE(END_OF_CENTRAL_DIRECTORY_SIGNATURE, 0);
-  eocd.writeUInt16LE(0, 4);
-  eocd.writeUInt16LE(0, 6);
-  eocd.writeUInt16LE(entryCount, 8);
-  eocd.writeUInt16LE(entryCount, 10);
-  eocd.writeUInt32LE(centralDirectorySize, 12);
-  eocd.writeUInt32LE(centralDirectoryOffset, 16);
-  eocd.writeUInt16LE(0, 20);
-  return eocd;
-};
-
-export const createMaterialZArchive = (inputEntries: MaterialZArchiveInputEntry[]): Uint8Array => {
+/**
+ * *Builds a spec-compliant `.mtlz` archive in memory.*
+ *
+ * Exactly one root-level `.mtlx` entry is required and is always written first; every other
+ * entry must live in a subdirectory. Entries are stored uncompressed with their data aligned to
+ * 64 bytes, and the archive must fit ZIP32 limits.
+ *
+ * Example:
+ *
+ * ```ts
+ * const bytes = createMaterialZArchive([
+ *   { path: 'material.mtlx', data: new TextEncoder().encode(xml) },
+ *   { path: 'textures/albedo.png', data: albedoBytes },
+ * ]);
+ * ```
+ *
+ * Reference:
+ * - [MaterialX Container Format (.mtlz)](https://github.com/AcademySoftwareFoundation/MaterialX/blob/main/documents/Specification/MaterialX.Specification.md)
+ *
+ * @category Packaging
+ */
+export const createMaterialZArchive = (inputEntries: MaterialXPackageEntry[]): Uint8Array => {
   const rootEntries = inputEntries.filter((entry) => isRootMaterialXPath(entry.path));
   if (rootEntries.length !== 1) {
     throw new Error('A .mtlz archive must contain exactly one root-level .mtlx file');
@@ -232,7 +211,7 @@ export const createMaterialZArchive = (inputEntries: MaterialZArchiveInputEntry[
 
   const entries = [rootEntries[0]!, ...inputEntries.filter((entry) => entry !== rootEntries[0])];
   const seen = new Set<string>();
-  const fileParts: Buffer[] = [];
+  const fileParts: Uint8Array[] = [];
   const pendingEntries: PendingZipEntry[] = [];
   let offset = 0;
 
@@ -249,25 +228,16 @@ export const createMaterialZArchive = (inputEntries: MaterialZArchiveInputEntry[
       throw new Error(`Resource entries must be stored in subdirectories: ${entry.path}`);
     }
 
-    const data = toUint8Array(entry.data);
-    const name = encodePath(entry.path);
-    const extra = createPaddingExtra(offset, name.byteLength);
-    const localHeaderOffset = offset;
-    const localHeader = createLocalHeader(entry.path, data, crc32(data), extra);
-    const dataOffset = localHeaderOffset + localHeader.byteLength;
-    fileParts.push(localHeader, toBuffer(data));
-    pendingEntries.push({
-      path: entry.path,
-      data,
-      crc: crc32(data),
-      localHeaderOffset,
-      dataOffset,
-    });
-    offset += localHeader.byteLength + data.byteLength;
+    const name = textEncoder.encode(entry.path);
+    const crc = crc32(entry.data);
+    const localHeader = createLocalHeader(name, entry.data, crc, createPaddingExtra(offset, name.byteLength));
+    fileParts.push(localHeader, entry.data);
+    pendingEntries.push({ path: entry.path, data: entry.data, crc, localHeaderOffset: offset });
+    offset += localHeader.byteLength + entry.data.byteLength;
   }
 
   const centralDirectoryOffset = offset;
-  const centralDirectoryParts = pendingEntries.map((entry) => createCentralDirectoryHeader(entry));
+  const centralDirectoryParts = pendingEntries.map(createCentralDirectoryHeader);
   const centralDirectorySize = centralDirectoryParts.reduce((size, part) => size + part.byteLength, 0);
   const archiveSize = centralDirectoryOffset + centralDirectorySize + 22;
   if (
@@ -279,20 +249,20 @@ export const createMaterialZArchive = (inputEntries: MaterialZArchiveInputEntry[
     throw new Error('.mtlz archives must use ZIP32 and cannot exceed ZIP32 limits');
   }
 
-  return Buffer.concat([
+  return concat([
     ...fileParts,
     ...centralDirectoryParts,
     createEndOfCentralDirectory(pendingEntries.length, centralDirectorySize, centralDirectoryOffset),
   ]);
 };
 
-const findLastSignature = (buffer: Uint8Array, signature: number): number => {
-  for (let offset = buffer.byteLength - 4; offset >= 0; offset -= 1) {
+const findLastSignature = (data: Uint8Array, signature: number): number => {
+  for (let offset = data.byteLength - 4; offset >= 0; offset -= 1) {
     if (
-      buffer[offset] === (signature & 0xff) &&
-      buffer[offset + 1] === ((signature >>> 8) & 0xff) &&
-      buffer[offset + 2] === ((signature >>> 16) & 0xff) &&
-      buffer[offset + 3] === ((signature >>> 24) & 0xff)
+      data[offset] === (signature & 0xff) &&
+      data[offset + 1] === ((signature >>> 8) & 0xff) &&
+      data[offset + 2] === ((signature >>> 16) & 0xff) &&
+      data[offset + 3] === ((signature >>> 24) & 0xff)
     ) {
       return offset;
     }
@@ -301,41 +271,50 @@ const findLastSignature = (buffer: Uint8Array, signature: number): number => {
 };
 
 const sliceEntryData = (
-  buffer: Uint8Array,
+  data: Uint8Array,
+  view: DataView,
   entryPath: string,
   compressedSize: number,
   localHeaderOffset: number,
   issues: MaterialXValidationIssue[],
 ): { data: Uint8Array; dataOffset: number } => {
   if (
-    localHeaderOffset + 30 > buffer.byteLength ||
-    Buffer.from(buffer).readUInt32LE(localHeaderOffset) !== LOCAL_FILE_HEADER_SIGNATURE
+    localHeaderOffset + 30 > data.byteLength ||
+    view.getUint32(localHeaderOffset, true) !== LOCAL_FILE_HEADER_SIGNATURE
   ) {
     issues.push(makeIssue('error', entryPath, 'Central directory points to an invalid local file header'));
     return { data: new Uint8Array(), dataOffset: localHeaderOffset };
   }
 
-  const nameLength = Buffer.from(buffer).readUInt16LE(localHeaderOffset + 26);
-  const extraLength = Buffer.from(buffer).readUInt16LE(localHeaderOffset + 28);
+  const nameLength = view.getUint16(localHeaderOffset + 26, true);
+  const extraLength = view.getUint16(localHeaderOffset + 28, true);
   const dataOffset = localHeaderOffset + 30 + nameLength + extraLength;
   const dataEnd = dataOffset + compressedSize;
-  if (dataEnd > buffer.byteLength) {
+  if (dataEnd > data.byteLength) {
     issues.push(makeIssue('error', entryPath, 'Archive entry data extends past the end of the file'));
     return { data: new Uint8Array(), dataOffset };
   }
-  return { data: buffer.slice(dataOffset, dataEnd), dataOffset };
+  return { data: data.slice(dataOffset, dataEnd), dataOffset };
 };
 
+/**
+ * *Parses `.mtlz` bytes and reports every spec violation as an issue instead of throwing.*
+ *
+ * Checks ZIP32-only, no encryption or data descriptors, STORE compression, root `.mtlx` first,
+ * resources in subdirectories, and 64-byte data alignment. Works in Node and the browser.
+ *
+ * @category Packaging
+ */
 export const inspectMaterialZArchive = (data: Uint8Array): MaterialZArchive => {
-  const buffer = Buffer.from(data.buffer, data.byteOffset, data.byteLength);
+  const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
   const issues: MaterialXValidationIssue[] = [];
-  const zip64Eocd = findLastSignature(buffer, ZIP64_END_OF_CENTRAL_DIRECTORY_SIGNATURE);
-  const zip64Locator = findLastSignature(buffer, ZIP64_END_OF_CENTRAL_DIRECTORY_LOCATOR_SIGNATURE);
+  const zip64Eocd = findLastSignature(data, ZIP64_END_OF_CENTRAL_DIRECTORY_SIGNATURE);
+  const zip64Locator = findLastSignature(data, ZIP64_END_OF_CENTRAL_DIRECTORY_LOCATOR_SIGNATURE);
   if (zip64Eocd !== -1 || zip64Locator !== -1) {
     issues.push(makeIssue('error', 'archive', '.mtlz archives must use ZIP32, not ZIP64'));
   }
 
-  const eocdOffset = findLastSignature(buffer, END_OF_CENTRAL_DIRECTORY_SIGNATURE);
+  const eocdOffset = findLastSignature(data, END_OF_CENTRAL_DIRECTORY_SIGNATURE);
   if (eocdOffset === -1) {
     return {
       entries: [],
@@ -343,9 +322,9 @@ export const inspectMaterialZArchive = (data: Uint8Array): MaterialZArchive => {
     };
   }
 
-  const entryCount = buffer.readUInt16LE(eocdOffset + 10);
-  const centralDirectorySize = buffer.readUInt32LE(eocdOffset + 12);
-  const centralDirectoryOffset = buffer.readUInt32LE(eocdOffset + 16);
+  const entryCount = view.getUint16(eocdOffset + 10, true);
+  const centralDirectorySize = view.getUint32(eocdOffset + 12, true);
+  const centralDirectoryOffset = view.getUint32(eocdOffset + 16, true);
   if (entryCount === 0xffff || centralDirectorySize === 0xffffffff || centralDirectoryOffset === 0xffffffff) {
     issues.push(makeIssue('error', 'archive', '.mtlz archives must use ZIP32 fields, not ZIP64 sentinel values'));
   }
@@ -357,22 +336,22 @@ export const inspectMaterialZArchive = (data: Uint8Array): MaterialZArchive => {
   const seen = new Set<string>();
   let cursor = centralDirectoryOffset;
   for (let index = 0; index < entryCount; index += 1) {
-    if (cursor + 46 > buffer.byteLength || buffer.readUInt32LE(cursor) !== CENTRAL_DIRECTORY_SIGNATURE) {
+    if (cursor + 46 > data.byteLength || view.getUint32(cursor, true) !== CENTRAL_DIRECTORY_SIGNATURE) {
       issues.push(makeIssue('error', 'archive', 'Invalid central directory file header'));
       break;
     }
 
-    const flags = buffer.readUInt16LE(cursor + 8);
-    const compressionMethod = buffer.readUInt16LE(cursor + 10);
-    const compressedSize = buffer.readUInt32LE(cursor + 20);
-    const uncompressedSize = buffer.readUInt32LE(cursor + 24);
-    const nameLength = buffer.readUInt16LE(cursor + 28);
-    const extraLength = buffer.readUInt16LE(cursor + 30);
-    const commentLength = buffer.readUInt16LE(cursor + 32);
-    const localHeaderOffset = buffer.readUInt32LE(cursor + 42);
+    const flags = view.getUint16(cursor + 8, true);
+    const compressionMethod = view.getUint16(cursor + 10, true);
+    const compressedSize = view.getUint32(cursor + 20, true);
+    const uncompressedSize = view.getUint32(cursor + 24, true);
+    const nameLength = view.getUint16(cursor + 28, true);
+    const extraLength = view.getUint16(cursor + 30, true);
+    const commentLength = view.getUint16(cursor + 32, true);
+    const localHeaderOffset = view.getUint32(cursor + 42, true);
     const nameStart = cursor + 46;
     const nameEnd = nameStart + nameLength;
-    const entryPath = textDecoder.decode(buffer.slice(nameStart, nameEnd));
+    const entryPath = textDecoder.decode(data.slice(nameStart, nameEnd));
     cursor = nameEnd + extraLength + commentLength;
 
     const pathIssue = validateArchivePath(entryPath);
@@ -394,7 +373,8 @@ export const inspectMaterialZArchive = (data: Uint8Array): MaterialZArchive => {
     }
 
     const { data: entryData, dataOffset } = sliceEntryData(
-      buffer,
+      data,
+      view,
       entryPath,
       compressedSize,
       localHeaderOffset,
@@ -446,257 +426,16 @@ export const inspectMaterialZArchive = (data: Uint8Array): MaterialZArchive => {
   return { entries, rootEntry, issues };
 };
 
-export const readMaterialZArchive = async (inputPath: string): Promise<MaterialZArchive> => {
-  const data = await readFile(inputPath);
-  return inspectMaterialZArchive(data);
-};
-
-const shouldConsiderReference = (element: MaterialXElement, attributeName: string, value: string): boolean => {
-  const name = attributeName.toLowerCase();
-  if (element.attributes.type === 'filename' && name === 'value') {
-    return true;
+/**
+ * *Inspects `.mtlz` bytes and, when the container itself is sound, also parses and validates
+ * the root document.* The pure counterpart of `checkMaterialX` in `mtlx-core/node`.
+ *
+ * @category Validation
+ */
+export const checkMaterialZArchive = (data: Uint8Array): MaterialXValidationIssue[] => {
+  const archive = inspectMaterialZArchive(data);
+  if (!archive.rootEntry || hasErrors(archive.issues)) {
+    return archive.issues;
   }
-  if (['file', 'filename', 'href', 'uri', 'source'].includes(name)) {
-    return true;
-  }
-  if (name === 'value') {
-    const extension = path.posix.extname(value).toLowerCase();
-    return value.includes('/') || resourceExtensions.has(extension);
-  }
-  return false;
-};
-
-const resourceDirectoryForPath = (sourcePath: string): string => {
-  const extension = path.extname(sourcePath).toLowerCase();
-  if (imageExtensions.has(extension)) {
-    return 'textures';
-  }
-  if (extension === '.mtlx') {
-    return 'libraries';
-  }
-  return 'resources';
-};
-
-const safeBasename = (sourcePath: string): string =>
-  path.basename(sourcePath).replace(/[^a-zA-Z0-9._-]/g, '_') || 'resource';
-
-/** basename with its extension swapped, when `extension` differs from the current one. */
-const withExtension = (basename: string, extension: string): string => {
-  const current = path.extname(basename);
-  if (current.toLowerCase() === extension.toLowerCase()) {
-    return basename;
-  }
-  const stem = current ? basename.slice(0, -current.length) : basename;
-  return `${stem}${extension}`;
-};
-
-const archivePathFor = (directory: string, basename: string, usedArchivePaths: Set<string>): string => {
-  const extension = path.extname(basename);
-  const stem = extension ? basename.slice(0, -extension.length) : basename;
-  let archivePath = `${directory}/${basename}`;
-  let suffix = 2;
-  while (usedArchivePaths.has(archivePath)) {
-    archivePath = `${directory}/${stem}-${suffix}${extension}`;
-    suffix += 1;
-  }
-  usedArchivePaths.add(archivePath);
-  return archivePath;
-};
-
-/** Applied to each unique referenced resource's bytes before it's archived; may change the
- * extension (e.g. resizing/reformatting a texture), which is reflected in both the archived
- * filename and the rewritten document reference. */
-export type TransformResourceHook = (
-  data: Uint8Array,
-  sourcePath: string,
-  sourceExtension: string,
-) => Promise<{ data: Uint8Array; extension: string }>;
-
-export interface MaterialXResource {
-  archivePath: string;
-  sourcePath: string;
-  data: Uint8Array;
-}
-
-/** Walks a document's file/filename/href/uri/source-style references, resolves each to an
- * absolute path relative to `rootDir`, reads its bytes (optionally transforming them), assigns
- * an archive-relative path (`textures/`, `libraries/`, or `resources/`), rewrites the document's
- * attribute values in place to those archive-relative paths, and returns the resolved resources.
- * Shared by `packMaterialX`, `packMaterialXZip` (mtlxzip.ts), and the CLI's `transform` command —
- * the one place this logic lives. */
-export const resolveMaterialXResources = async (
-  document: MaterialXDocument,
-  rootDir: string,
-  transformResource?: TransformResourceHook,
-): Promise<MaterialXResource[]> => {
-  const refs: Array<{ element: MaterialXElement; attributeName: string; sourcePath: string }> = [];
-  const sourcePaths: string[] = [];
-  const seenSourcePaths = new Set<string>();
-
-  const collectElement = (element: MaterialXElement) => {
-    for (const [attributeName, rawValue] of Object.entries(element.attributes)) {
-      const value = rawValue.trim();
-      if (!value || !shouldConsiderReference(element, attributeName, value)) {
-        continue;
-      }
-      if (isExternalReference(value)) {
-        throw new Error(`External references cannot be packed into .mtlz archives: ${value}`);
-      }
-      if (path.isAbsolute(value)) {
-        throw new Error(`Absolute references cannot be packed into .mtlz archives: ${value}`);
-      }
-
-      const sourcePath = path.resolve(rootDir, value);
-      if (!isPathInside(rootDir, sourcePath)) {
-        throw new Error(`Referenced file is outside the MaterialX root directory: ${value}`);
-      }
-      refs.push({ element, attributeName, sourcePath });
-      if (!seenSourcePaths.has(sourcePath)) {
-        seenSourcePaths.add(sourcePath);
-        sourcePaths.push(sourcePath);
-      }
-    }
-
-    for (const child of element.children) {
-      collectElement(child);
-    }
-  };
-
-  for (const element of document.elements) {
-    collectElement(element);
-  }
-
-  const usedArchivePaths = new Set<string>();
-  const resourcesBySourcePath = new Map<string, MaterialXResource>();
-  for (const sourcePath of sourcePaths) {
-    let data: Uint8Array;
-    try {
-      data = await readFile(sourcePath);
-    } catch {
-      throw new Error(`Referenced file does not exist: ${sourcePath}`);
-    }
-
-    let extension = path.extname(sourcePath);
-    if (transformResource) {
-      const transformed = await transformResource(data, sourcePath, extension);
-      data = transformed.data;
-      extension = transformed.extension;
-    }
-
-    const directory = resourceDirectoryForPath(sourcePath);
-    const basename = withExtension(safeBasename(sourcePath), extension);
-    const archivePath = archivePathFor(directory, basename, usedArchivePaths);
-    resourcesBySourcePath.set(sourcePath, { archivePath, sourcePath, data });
-  }
-
-  for (const ref of refs) {
-    const resource = resourcesBySourcePath.get(ref.sourcePath);
-    if (resource) {
-      ref.element.attributes[ref.attributeName] = resource.archivePath;
-    }
-  }
-
-  return [...resourcesBySourcePath.values()].toSorted((left, right) =>
-    left.archivePath.localeCompare(right.archivePath),
-  );
-};
-
-export const packMaterialX = async (
-  inputPath: string,
-  options: PackMaterialXOptions = {},
-): Promise<PackMaterialXResult> => {
-  const rootDir = path.dirname(inputPath);
-  const rootPath = path.basename(inputPath);
-  if (!rootPath.toLowerCase().endsWith('.mtlx')) {
-    throw new Error('pack requires a root .mtlx input file');
-  }
-
-  const xml = await readFile(inputPath, 'utf8');
-  const document = parseMaterialX(xml);
-  const resources = await resolveMaterialXResources(document, rootDir, options.transformResource);
-  const archive = createMaterialZArchive([
-    { path: rootPath, data: serializeMaterialX(document) },
-    ...resources.map((resource) => ({ path: resource.archivePath, data: resource.data })),
-  ]);
-  const outputPath =
-    options.outputPath ?? path.join(rootDir, `${path.basename(rootPath, path.extname(rootPath))}.mtlz`);
-  await writeFile(outputPath, archive);
-  return {
-    outputPath,
-    rootPath,
-    entries: [rootPath, ...resources.map((resource) => resource.archivePath)],
-  };
-};
-
-export const unpackMaterialZ = async (
-  inputPath: string,
-  options: UnpackMaterialZOptions = {},
-): Promise<UnpackMaterialZResult> => {
-  const archive = await readMaterialZArchive(inputPath);
-  if (hasErrors(archive.issues)) {
-    throw new Error(archive.issues.map((issue) => `${issue.location}: ${issue.message}`).join('\n'));
-  }
-  if (!archive.rootEntry) {
-    throw new Error('.mtlz archive is missing a root .mtlx entry');
-  }
-
-  const outputDir =
-    options.outputDir ?? path.join(path.dirname(inputPath), path.basename(inputPath, path.extname(inputPath)));
-  if (options.force) {
-    await rm(outputDir, { recursive: true, force: true });
-  }
-  await mkdir(outputDir, { recursive: true });
-
-  for (const entry of archive.entries) {
-    if (entry.isDirectory) {
-      continue;
-    }
-    const outputPath = path.join(outputDir, ...entry.path.split('/'));
-    if (!isPathInside(outputDir, outputPath)) {
-      throw new Error(`Archive entry would extract outside the output directory: ${entry.path}`);
-    }
-    await mkdir(path.dirname(outputPath), { recursive: true });
-    await writeFile(outputPath, entry.data);
-  }
-
-  return {
-    outputDir,
-    rootPath: path.join(outputDir, archive.rootEntry.path),
-    entries: archive.entries.filter((entry) => !entry.isDirectory).map((entry) => entry.path),
-  };
-};
-
-export const checkMaterialXPackage = async (inputPath: string): Promise<CheckMaterialXPackageResult> => {
-  const lowerPath = inputPath.toLowerCase();
-  if (lowerPath.endsWith('.mtlz')) {
-    const archive = await readMaterialZArchive(inputPath);
-    const issues = [...archive.issues];
-    if (archive.rootEntry && !hasErrors(archive.issues)) {
-      try {
-        const document = parseMaterialX(textDecoder.decode(archive.rootEntry.data));
-        issues.push(...validateDocument(document, materialXNodeRegistry));
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        issues.push(makeIssue('error', archive.rootEntry.path, message));
-      }
-    }
-    return { path: inputPath, format: 'mtlz', issues };
-  }
-
-  try {
-    const xml = await readFile(inputPath, 'utf8');
-    const document = parseMaterialX(xml);
-    return {
-      path: inputPath,
-      format: 'mtlx',
-      issues: validateDocument(document, materialXNodeRegistry),
-    };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return {
-      path: inputPath,
-      format: 'mtlx',
-      issues: [makeIssue('error', inputPath, message)],
-    };
-  }
+  return [...archive.issues, ...checkMaterialXText(textDecoder.decode(archive.rootEntry.data), archive.rootEntry.path)];
 };

@@ -194,6 +194,25 @@ const nodeGraphToXml = (nodeGraph: MaterialXNodeGraph): XmlRecord => {
   return output;
 };
 
+/**
+ * *Parses MaterialX XML text into a {@link MaterialXDocument}.*
+ *
+ * The result mirrors the on-disk structure losslessly: top-level nodes, node graphs, and a raw
+ * element tree with every attribute preserved. Throws with line and column on malformed XML
+ * or a missing `<materialx>` root.
+ *
+ * Example:
+ *
+ * ```ts
+ * const document = parseMaterialX(await readFile('material.mtlx', 'utf8'));
+ * console.log(document.attributes.version, document.nodeGraphs.length);
+ * ```
+ *
+ * Reference:
+ * - [MaterialX Specification](https://github.com/AcademySoftwareFoundation/MaterialX/blob/main/documents/Specification/MaterialX.Specification.md)
+ *
+ * @category Parsing
+ */
 export const parseMaterialX = (xml: string): MaterialXDocument => {
   const xmlValidation = XMLValidator.validate(xml);
   if (xmlValidation !== true) {
@@ -239,6 +258,12 @@ export const parseMaterialX = (xml: string): MaterialXDocument => {
   };
 };
 
+/**
+ * *Serializes a {@link MaterialXDocument} back to XML text.* The inverse of
+ * {@link parseMaterialX}; a parse → serialize → parse round trip yields the same document.
+ *
+ * @category Parsing
+ */
 export const serializeMaterialX = (document: MaterialXDocument): string => {
   const root: XmlRecord = { ...document.attributes };
   if (!root.version) {

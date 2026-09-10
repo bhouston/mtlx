@@ -1,5 +1,6 @@
 import { materialXNodeRegistry } from './registry.js';
 import type { MaterialXDocument, MaterialXNode, MaterialXNodeSpec, MaterialXValidationIssue } from './types.js';
+import { parseMaterialX } from './xml.js';
 
 const buildRegistrySet = (registry: MaterialXNodeSpec[]): Set<string> =>
   new Set(registry.map((entry) => entry.category.toLowerCase()));
@@ -39,6 +40,21 @@ const validateNode = (
   }
 };
 
+/**
+ * *Checks a parsed document against the node registry and returns issues rather than throwing.*
+ *
+ * Unknown node categories are warnings; unnamed inputs or outputs are errors. Pass a custom
+ * `registry` to validate against your own node definitions.
+ *
+ * Example:
+ *
+ * ```ts
+ * const issues = validateDocument(parseMaterialX(xml));
+ * const ok = !issues.some((issue) => issue.level === 'error');
+ * ```
+ *
+ * @category Validation
+ */
 export const validateDocument = (
   document: MaterialXDocument,
   registry: MaterialXNodeSpec[] = materialXNodeRegistry,
@@ -62,4 +78,18 @@ export const validateDocument = (
   }
 
   return issues;
+};
+
+/**
+ * *Parses and validates MaterialX XML text, reporting a parse failure as an error issue instead
+ * of throwing.* The building block behind every `check*` function.
+ *
+ * @category Validation
+ */
+export const checkMaterialXText = (xml: string, location = ''): MaterialXValidationIssue[] => {
+  try {
+    return validateDocument(parseMaterialX(xml));
+  } catch (error) {
+    return [{ level: 'error', location, message: error instanceof Error ? error.message : String(error) }];
+  }
 };

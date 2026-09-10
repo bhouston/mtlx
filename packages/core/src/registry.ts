@@ -14,4 +14,10 @@ const builtInNodeSpecs: MaterialXNodeSpec[] = [
   { category: 'convert', inputs: [], outputs: [], parameters: [] },
 ];
 
+/**
+ * *Every node category {@link validateDocument} recognizes: the standard library generated from
+ * the MaterialX node definitions plus a few built-in structural elements.*
+ *
+ * @category Validation
+ */
 export const materialXNodeRegistry: MaterialXNodeSpec[] = [...builtInNodeSpecs, ...generatedNodeRegistry];

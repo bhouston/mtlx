@@ -1,0 +1,23 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "mtlx",
+  "entryPoints": ["packages/core/src/index.ts", "packages/core/src/node.ts", "packages/core/src/textures.ts"],
+  "tsconfig": "packages/core/tsconfig.json",
+  "out": "packages/website/public/docs",
+  "readme": "README.md",
+  "projectDocuments": ["docs/*.md"],
+  "categorizeByGroup": false,
+  "categoryOrder": ["Parsing", "Validation", "Packaging", "Transforms", "Textures", "*"],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": false
+  },
+  "navigationLinks": {
+    "Viewer": "https://mtlx.ben3d.ca",
+    "GitHub": "https://github.com/bhouston/mtlx",
+    "npm": "https://www.npmjs.com/package/mtlx-core"
+  },
+  "sourceLinkTemplate": "https://github.com/bhouston/mtlx/blob/{gitRevision}/{path}#L{line}",
+  "excludeInternal": true,
+  "treatWarningsAsErrors": false
+}

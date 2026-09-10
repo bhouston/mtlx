@@ -55,7 +55,7 @@ describe('convertMaterialXFile', () => {
     expect(existsSync(zipPath)).toBe(true);
   });
 
-  it('mtlz -> mtlx.zip round-trips through a temp dir without leaving it behind', async () => {
+  it('mtlz -> mtlx.zip converts without leaving a temp dir behind', async () => {
     cpSync(path.join(fixturesDir, 'wood_grain'), dir, { recursive: true });
     const mtlzPath = await convertMaterialXFile(path.join(dir, 'wood_grain.mtlx'), 'mtlz');
 

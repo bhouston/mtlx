@@ -1,29 +1,88 @@
 # mtlx
 
+[![npm version](https://img.shields.io/npm/v/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
-[![Live demo](https://img.shields.io/badge/demo-mtlx.ben3d.ca-blue)](https://mtlx.ben3d.ca)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bhouston/mtlx/blob/main/LICENSE)
+[![Live demo](https://img.shields.io/badge/viewer-mtlx.ben3d.ca-blue)](https://mtlx.ben3d.ca)
 
-TypeScript tools for [MaterialX](https://materialx.org) file manipulation.
+_[MaterialX](https://materialx.org) SDK for JavaScript and TypeScript, on Web and Node.js._
 
-Try the viewer live at **[mtlx.ben3d.ca](https://mtlx.ben3d.ca)**.
+mtlx parses, validates, packages, and transforms MaterialX materials: loose `.mtlx` documents, the
+spec-compliant `.mtlz` container, and relaxed `.mtlx.zip` archives. It is the library behind the
+[mtlx.ben3d.ca](https://mtlx.ben3d.ca) viewer and the "Mtlx Viewer" VS Code extension.
 
-- [`mtlx-core`](packages/core) — parse, validate, and serialize `.mtlx` documents; pack/unpack `.mtlz` and `.mtlx.zip` single-file containers; resize/reformat referenced textures.
-- [`mtlx`](packages/cli) — the `mtlx` command: `check`, `info`, `pack`, `unpack`, and `transform` for `.mtlx`, `.mtlz`, and `.mtlx.zip` files.
-- [`website`](packages/website) — a drag-and-drop MaterialX viewer built on TanStack Start and three.js.
-- [`mtlx-vscode-extension`](packages/vscode-extension) ("Mtlx Viewer") — previews and converts `.mtlx`/`.mtlz`/`.mtlx.zip` files directly in VS Code.
+<!-- NOTICE: This README is rendered as the documentation homepage at https://mtlx.ben3d.ca/docs/ -->
 
-## Development
+## Packages
+
+| Package                                                                                         | Description                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`mtlx-core`](https://github.com/bhouston/mtlx/tree/main/packages/core)                         | Parse, validate, package, and transform MaterialX. Pure and browser-safe; Node helpers under `mtlx-core/node`, texture processing under `mtlx-core/textures`. |
+| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command: `check`, `info`, `pack`, `unpack`, `transform`.                                                                                           |
+| [`website`](https://github.com/bhouston/mtlx/tree/main/packages/website)                        | Drag-and-drop viewer and validator at [mtlx.ben3d.ca](https://mtlx.ben3d.ca), plus these docs.                                                                |
+| [`mtlx-vscode-extension`](https://github.com/bhouston/mtlx/tree/main/packages/vscode-extension) | "Mtlx Viewer": preview, inspect, and convert MaterialX files inside VS Code.                                                                                  |
+
+## Scripting
 
 ```sh
-pnpm install
-pnpm build
-pnpm test
-pnpm lint
+npm install mtlx-core
 ```
 
-## Release
+```ts
+import { transform } from 'mtlx-core';
+import { loadMaterialXPackage, writeMaterialXPackage } from 'mtlx-core/node';
+import { resizeTextures } from 'mtlx-core/textures';
+
+// Load a .mtlx (with its textures), .mtlz, or .mtlx.zip into memory.
+const pkg = await loadMaterialXPackage('material.mtlx');
+
+// Apply transforms in order.
+await transform(pkg, resizeTextures({ maxImageSize: 2048, imageFormat: 'webp' }));
+
+// Write back out as any format.
+await writeMaterialXPackage(pkg, 'material.mtlz');
+```
+
+In the browser, the root entry works on bytes and text with no filesystem:
+
+```ts
+import { checkMaterialXZipArchive, parseMaterialX, validateDocument } from 'mtlx-core';
+
+const issues = validateDocument(parseMaterialX(xmlText));
+const archiveIssues = checkMaterialXZipArchive(new Uint8Array(await file.arrayBuffer()));
+```
+
+See [Concepts](https://mtlx.ben3d.ca/docs/documents/Concepts.html) and the
+[API reference](https://mtlx.ben3d.ca/docs/modules.html).
+
+## Command line
 
 ```sh
-pnpm make-release:core
-pnpm make-release:cli
+npm install --global mtlx-cli
 ```
+
+```sh
+mtlx check material.mtlx
+mtlx info material.mtlz --format json
+mtlx pack material.mtlx --max-image-size 2048 --image-format webp
+mtlx transform material.mtlx material.mtlz --image-format webp --image-quality 90
+mtlx unpack material.mtlz --output-dir material/
+```
+
+See the [command line guide](https://mtlx.ben3d.ca/docs/documents/Command_line.html).
+
+## Contributing
+
+See [CONTRIBUTING.md](https://github.com/bhouston/mtlx/blob/main/CONTRIBUTING.md) for setup,
+testing, and release steps, and [CHANGELOG.md](https://github.com/bhouston/mtlx/blob/main/CHANGELOG.md)
+for what has changed.
+
+## Credits
+
+Created by [Ben Houston](https://ben3d.ca). The library design follows patterns from Don McCurdy's
+[glTF Transform](https://gltf-transform.dev). Sample materials come from
+[material-samples.com](https://material-samples.com).
+
+## License
+
+MIT

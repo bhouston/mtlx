@@ -11,3 +11,4 @@ packages/vscode-extension/media
 coverage
 .vscode/*
 !.vscode/extensions.json
+packages/website/public/docs
