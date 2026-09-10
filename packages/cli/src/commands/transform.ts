@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { transform } from 'mtlx-core';
 import { loadMaterialXPackage, writeMaterialXPackage } from 'mtlx-core/node';
 import { defineCommand } from 'yargs-file-commands';
@@ -10,18 +9,12 @@ import {
   textureTransforms,
 } from '../textureOptions.js';
 
-const renderText = (result: { outputPath: string; entries: string[] }): string =>
-  [`Transformed ${result.outputPath}`, `Entries ${result.entries.length}`].join('\n');
-
-/** `<dir>/<name>-transformed/<name>.mtlx` beside the input. */
-const defaultOutputPath = (inputPath: string): string => {
-  const base = path.basename(inputPath).replace(/\.(mtlx\.zip|mtlz|mtlx)$/i, '');
-  return path.join(path.dirname(inputPath), `${base}-transformed`, `${base}.mtlx`);
-};
+const renderText = (result: { outputPath: string; rootPath: string; entries: string[] }): string =>
+  [`Wrote ${result.outputPath}`, `Root ${result.rootPath}`, `Entries ${result.entries.length}`].join('\n');
 
 export const command = defineCommand({
-  command: 'transform <input> [output]',
-  describe: 'Resize and/or reformat textures, writing to any of .mtlx, .mtlz, or .mtlx.zip',
+  command: 'transform <input> <output>',
+  describe: 'Convert between .mtlx, .mtlz, and .mtlx.zip (pack/unpack), optionally resizing or reformatting textures',
   builder: (yargs) =>
     yargs
       .positional('input', {
@@ -30,21 +23,18 @@ export const command = defineCommand({
         demandOption: true,
       })
       .positional('output', {
-        describe: 'Output path; format follows the extension (default: <name>-transformed/<name>.mtlx)',
+        describe: 'Output path; the extension picks the format (a .mtlx path unpacks resources beside it)',
         type: 'string',
+        demandOption: true,
       })
       .options(textureTransformOptions)
       .group(TEXTURE_OPTION_KEYS, TEXTURE_OPTION_GROUP)
       .options(formatOption),
   handler: async (argv) => {
     try {
-      const transforms = textureTransforms(argv);
-      if (transforms.length === 0) {
-        throw new Error('Specify --max-image-size and/or --image-format');
-      }
       const pkg = await loadMaterialXPackage(argv.input);
-      await transform(pkg, ...transforms);
-      const result = await writeMaterialXPackage(pkg, argv.output ?? defaultOutputPath(argv.input));
+      await transform(pkg, ...textureTransforms(argv));
+      const result = await writeMaterialXPackage(pkg, argv.output);
       printOutput(result, argv.format, () => renderText(result));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

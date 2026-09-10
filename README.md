@@ -18,7 +18,7 @@ spec-compliant `.mtlz` container, and relaxed `.mtlx.zip` archives. It is the li
 | Package                                                                                         | Description                                                                                                                                                   |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`mtlx-core`](https://github.com/bhouston/mtlx/tree/main/packages/core)                         | Parse, validate, package, and transform MaterialX. Pure and browser-safe; Node helpers under `mtlx-core/node`, texture processing under `mtlx-core/textures`. |
-| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command: `check`, `info`, `pack`, `unpack`, `transform`.                                                                                           |
+| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command: `check`, `info`, and `transform` (convert, pack, unpack, resize textures).                                                                |
 | [`website`](https://github.com/bhouston/mtlx/tree/main/packages/website)                        | Drag-and-drop viewer and validator at [mtlx.ben3d.ca](https://mtlx.ben3d.ca), plus these docs.                                                                |
 | [`mtlx-vscode-extension`](https://github.com/bhouston/mtlx/tree/main/packages/vscode-extension) | "Mtlx Viewer": preview, inspect, and convert MaterialX files inside VS Code.                                                                                  |
 
@@ -64,9 +64,9 @@ npm install --global mtlx-cli
 ```sh
 mtlx check material.mtlx
 mtlx info material.mtlz --format json
-mtlx pack material.mtlx --max-image-size 2048 --image-format webp
-mtlx transform material.mtlx material.mtlz --image-format webp --image-quality 90
-mtlx unpack material.mtlz --output-dir material/
+mtlx transform material.mtlx material.mtlz                    # pack
+mtlx transform material.mtlz out/material.mtlx                # unpack
+mtlx transform material.mtlx material.mtlz --max-image-size 2048 --image-format webp
 ```
 
 See the [command line guide](https://mtlx.ben3d.ca/docs/documents/Command_line.html).

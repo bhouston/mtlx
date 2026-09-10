@@ -6,7 +6,7 @@
  *
  * @module mtlx-core/node
  */
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { checkMaterialXZipArchive, createMaterialXZipArchive, inspectMaterialXZipArchive } from './mtlxzip.js';
 import { checkMaterialZArchive, createMaterialZArchive, inspectMaterialZArchive } from './mtlz.js';
@@ -145,98 +145,6 @@ export const writeMaterialXPackage = async (
 
   await writeFile(outputPath, format === 'mtlz' ? createMaterialZArchive(entries) : createMaterialXZipArchive(entries));
   return { outputPath, rootPath: pkg.rootPath, format, entries: entries.map((entry) => entry.path) };
-};
-
-/**
- * *Options for {@link packMaterialX}.*
- *
- * @category Packaging
- */
-export interface PackMaterialXOptions {
-  /** Defaults to the input path with a `.mtlz` extension. Use `.mtlx.zip` for the relaxed container. */
-  outputPath?: string;
-}
-
-/**
- * *Packs a loose `.mtlx` file and everything it references into a single archive.*
- *
- * Example:
- *
- * ```ts
- * await packMaterialX('material.mtlx'); // writes material.mtlz
- * await packMaterialX('material.mtlx', { outputPath: 'out/material.mtlx.zip' });
- * ```
- *
- * @category Packaging
- */
-export const packMaterialX = async (
-  inputPath: string,
-  options: PackMaterialXOptions = {},
-): Promise<WriteMaterialXPackageResult> => {
-  if (detectFormat(inputPath) !== 'mtlx') {
-    throw new Error('pack requires a root .mtlx input file');
-  }
-  const outputPath = options.outputPath ?? inputPath.replace(/\.mtlx$/i, '.mtlz');
-  if (detectFormat(outputPath) === 'mtlx') {
-    throw new Error('pack output must end in .mtlz or .mtlx.zip');
-  }
-  return writeMaterialXPackage(await loadMaterialXPackage(inputPath), outputPath);
-};
-
-/**
- * *Options for {@link unpackMaterialX}.*
- *
- * @category Packaging
- */
-export interface UnpackMaterialXOptions {
-  /** Defaults to a directory named after the archive, beside it. */
-  outputDir?: string;
-  /** Delete `outputDir` first. */
-  force?: boolean;
-}
-
-/**
- * *Defaults for {@link UnpackMaterialXOptions}.*
- *
- * @category Packaging
- */
-export const UNPACK_MATERIALX_DEFAULTS = { force: false } as const satisfies UnpackMaterialXOptions;
-
-/**
- * *The result of {@link unpackMaterialX}.*
- *
- * @category Packaging
- */
-export interface UnpackMaterialXResult {
-  outputDir: string;
-  /** Path of the extracted root `.mtlx` on disk. */
-  rootPath: string;
-  entries: string[];
-}
-
-/**
- * *Extracts a `.mtlz` or `.mtlx.zip` archive into a directory of loose files.*
- *
- * @category Packaging
- */
-export const unpackMaterialX = async (
-  inputPath: string,
-  options: UnpackMaterialXOptions = {},
-): Promise<UnpackMaterialXResult> => {
-  const format = detectFormat(inputPath);
-  if (format === 'mtlx') {
-    throw new Error('unpack requires a .mtlz or .mtlx.zip archive');
-  }
-  const { force, outputDir = inputPath.replace(/\.(mtlz|mtlx\.zip)$/i, '') } = {
-    ...UNPACK_MATERIALX_DEFAULTS,
-    ...options,
-  };
-  const pkg = await loadMaterialXPackage(inputPath);
-  if (force) {
-    await rm(outputDir, { recursive: true, force: true });
-  }
-  const result = await writeMaterialXPackage(pkg, path.join(outputDir, ...pkg.rootPath.split('/')));
-  return { outputDir, rootPath: result.rootPath, entries: result.entries };
 };
 
 /**

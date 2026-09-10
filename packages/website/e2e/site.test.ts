@@ -22,7 +22,7 @@ afterEach(() => page.close());
 test('home page server-renders and hydrates', async () => {
   const response = await page.goto(`http://localhost:${PORT}/`);
   expect(response?.status()).toBe(200);
-  await expect.poll(() => page.locator('h1').textContent()).toBe('mtlx viewer');
+  await expect.poll(() => page.locator('h1').textContent()).toBe('MaterialX viewer');
   // Hydration wires up the preset buttons; a react/react-dom mismatch leaves them inert.
   await expect.poll(() => page.locator('button').count()).toBeGreaterThan(0);
   expect(pageErrors).toEqual([]);

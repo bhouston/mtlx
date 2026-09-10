@@ -1,0 +1,3 @@
+# Short links: "<source> <target>" per line. Targets must be /paths or https:// URLs.
+gh https://github.com/bhouston/mtlx
+npm https://www.npmjs.com/package/mtlx-core

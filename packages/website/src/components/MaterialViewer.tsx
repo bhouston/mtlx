@@ -136,13 +136,13 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
   }, [source]);
 
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-black/40">
+    <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-border bg-black">
       <div ref={containerRef} className="h-full w-full" />
       {loading ? (
-        <div className="absolute inset-0 flex items-center justify-center text-sm text-white/60">Loading…</div>
+        <div className="absolute inset-0 flex items-center justify-center text-sm text-white/70">Loading…</div>
       ) : null}
       {!source ? (
-        <div className="absolute inset-0 flex items-center justify-center text-sm text-white/40">
+        <div className="absolute inset-0 flex items-center justify-center text-sm text-white/50">
           Drop a .mtlx, .mtlz, or .mtlx.zip file, or pick a preset
         </div>
       ) : null}

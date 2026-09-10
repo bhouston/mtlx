@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createMaterialZArchive, inspectMaterialZArchive } from './mtlz.js';
-import { checkMaterialX, loadMaterialXPackage, packMaterialX, unpackMaterialX, writeMaterialXPackage } from './node.js';
+import { checkMaterialX, loadMaterialXPackage, writeMaterialXPackage } from './node.js';
 import { rewriteResourcePath, transform, type Transform } from './package.js';
 
 const SAMPLE_MTLX = `<?xml version="1.0"?>
@@ -61,18 +61,19 @@ describe('createMaterialZArchive / inspectMaterialZArchive (pure)', () => {
   });
 });
 
-describe('pack / unpack .mtlz', () => {
+describe('load / write .mtlz', () => {
   it('round-trips a .mtlx file through pack -> unpack', async () => {
     const inputPath = path.join(dir, 'test.mtlx');
     await writeFile(inputPath, SAMPLE_MTLX);
 
-    const packed = await packMaterialX(inputPath);
-    expect(packed.outputPath).toBe(path.join(dir, 'test.mtlz'));
+    const packed = await writeMaterialXPackage(await loadMaterialXPackage(inputPath), path.join(dir, 'test.mtlz'));
+    expect(packed.format).toBe('mtlz');
     expect(packed.entries).toEqual(['test.mtlx']);
 
-    const unpacked = await unpackMaterialX(packed.outputPath, { outputDir: path.join(dir, 'out') });
+    const unpackedPath = path.join(dir, 'out', 'test.mtlx');
+    const unpacked = await writeMaterialXPackage(await loadMaterialXPackage(packed.outputPath), unpackedPath);
     expect(unpacked.entries).toEqual(['test.mtlx']);
-    expect(unpacked.rootPath).toBe(path.join(dir, 'out', 'test.mtlx'));
+    expect(unpacked.rootPath).toBe(unpackedPath);
 
     const check = await checkMaterialX(packed.outputPath);
     expect(check.format).toBe('mtlz');

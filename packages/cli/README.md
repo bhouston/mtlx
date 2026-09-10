@@ -5,7 +5,7 @@
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 
 Part of the [mtlx](https://github.com/bhouston/mtlx) project. Installs the `mtlx` command for
-validating, inspecting, packing, unpacking, and transforming MaterialX files (`.mtlx`, `.mtlz`,
+validating, inspecting, converting, and transforming MaterialX files (`.mtlx`, `.mtlz`,
 `.mtlx.zip`).
 
 - Documentation: [mtlx.ben3d.ca/docs](https://mtlx.ben3d.ca/docs/documents/Command_line.html)
@@ -18,9 +18,9 @@ npm install --global mtlx-cli
 ```sh
 mtlx check material.mtlx
 mtlx info material.mtlz --format json
-mtlx pack material.mtlx --max-image-size 2048 --image-format webp
-mtlx transform material.mtlx material.mtlz --image-format webp --image-quality 90
-mtlx unpack material.mtlz --output-dir material/
+mtlx transform material.mtlx material.mtlz                    # pack
+mtlx transform material.mtlz out/material.mtlx                # unpack
+mtlx transform material.mtlx material.mtlz --max-image-size 2048 --image-format webp
 ```
 
 Every command supports `--format text|json|yaml`.

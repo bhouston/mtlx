@@ -74,8 +74,7 @@ describe('mtlx', () => {
     expect(result).toSucceed();
     expect(result).toHaveStdout(/info/);
     expect(result).toHaveStdout(/check/);
-    expect(result).toHaveStdout(/pack/);
-    expect(result).toHaveStdout(/unpack/);
+    expect(result).toHaveStdout(/transform/);
   });
 
   it('info --format json reports materials and referenced textures', async () => {
@@ -125,20 +124,18 @@ describe('mtlx', () => {
     }
   });
 
-  it('packs, checks, and unpacks a .mtlz archive', async () => {
+  it('transform packs to .mtlz, check passes, and transform unpacks back to loose files', async () => {
     const fixture = await makePackFixture();
     const outputDir = path.join(fixture.tempDir, 'out');
     try {
-      const packResult = await cli.run(['pack', fixture.materialPath, '--output', fixture.archivePath], {
-        timeout: 8_000,
-      });
+      const packResult = await cli.run(['transform', fixture.materialPath, fixture.archivePath], { timeout: 8_000 });
       expect(packResult).toSucceed();
       expect(existsSync(fixture.archivePath)).toBe(true);
 
       const checkResult = await cli.run(['check', fixture.archivePath], { timeout: 8_000 });
       expect(checkResult).toSucceed();
 
-      const unpackResult = await cli.run(['unpack', fixture.archivePath, '--output-dir', outputDir], {
+      const unpackResult = await cli.run(['transform', fixture.archivePath, path.join(outputDir, 'material.mtlx')], {
         timeout: 8_000,
       });
       expect(unpackResult).toSucceed();
@@ -149,7 +146,7 @@ describe('mtlx', () => {
     }
   });
 
-  it('checks and unpacks an ordinary DEFLATE-compressed .mtlx.zip', async () => {
+  it('checks and unpacks an ordinary DEFLATE-compressed .mtlx.zip via transform', async () => {
     const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-zip-'));
     const zipPath = path.join(tempDir, 'material.mtlx.zip');
     const outputDir = path.join(tempDir, 'out');
@@ -160,7 +157,9 @@ describe('mtlx', () => {
       const checkResult = await cli.run(['check', zipPath], { timeout: 8_000 });
       expect(checkResult).toSucceed();
 
-      const unpackResult = await cli.run(['unpack', zipPath, '--output-dir', outputDir], { timeout: 8_000 });
+      const unpackResult = await cli.run(['transform', zipPath, path.join(outputDir, 'material.mtlx')], {
+        timeout: 8_000,
+      });
       expect(unpackResult).toSucceed();
       expect(existsSync(path.join(outputDir, 'material.mtlx'))).toBe(true);
     } finally {
@@ -197,12 +196,21 @@ describe('mtlx', () => {
       const tempDir = await copyFixture('wood_grain');
       try {
         const materialPath = path.join(tempDir, 'wood_grain.mtlx');
-        const result = await cli.run(['transform', materialPath, '--max-image-size', '32', '--image-format', 'webp'], {
-          timeout: 15_000,
-        });
+        const outputDir = path.join(tempDir, 'wood_grain-transformed');
+        const result = await cli.run(
+          [
+            'transform',
+            materialPath,
+            path.join(outputDir, 'wood_grain.mtlx'),
+            '--max-image-size',
+            '32',
+            '--image-format',
+            'webp',
+          ],
+          { timeout: 15_000 },
+        );
         expect(result).toSucceed();
 
-        const outputDir = path.join(tempDir, 'wood_grain-transformed');
         const colorPath = path.join(outputDir, 'textures/wood_color.webp');
         const roughnessPath = path.join(outputDir, 'textures/wood_roughness.webp');
         expect(existsSync(colorPath)).toBe(true);
@@ -220,19 +228,19 @@ describe('mtlx', () => {
       }
     });
 
-    it('pack --max-image-size --image-format transforms textures into the .mtlz archive', async () => {
+    it('transform to .mtlz with texture flags resizes textures inside the archive', async () => {
       const tempDir = await copyFixture('wood_grain');
       try {
         const materialPath = path.join(tempDir, 'wood_grain.mtlx');
         const archivePath = path.join(tempDir, 'wood_grain.mtlz');
         const packResult = await cli.run(
-          ['pack', materialPath, '--output', archivePath, '--max-image-size', '32', '--image-format', 'webp'],
+          ['transform', materialPath, archivePath, '--max-image-size', '32', '--image-format', 'webp'],
           { timeout: 15_000 },
         );
         expect(packResult).toSucceed();
 
         const unpackResult = await cli.run(
-          ['unpack', archivePath, '--output-dir', path.join(tempDir, 'out'), '--format', 'json'],
+          ['transform', archivePath, path.join(tempDir, 'out', 'wood_grain.mtlx'), '--format', 'json'],
           { timeout: 8_000 },
         );
         expect(unpackResult).toSucceed();

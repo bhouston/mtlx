@@ -1,11 +1,12 @@
 import type { MaterialXValidationIssue } from 'mtlx-core';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
-import { MaterialViewer, type MaterialSource } from '../components/MaterialViewer';
-import { ValidationPanel } from '../components/ValidationPanel';
-import { extractMaterialXText } from '../lib/materialx-zip';
-import { PRESET_MATERIALS, presetFileName, presetFolderUrl } from '../lib/presets';
-import { validateMaterialXText } from '../lib/validate';
+import { MaterialViewer, type MaterialSource } from '@/components/MaterialViewer';
+import { ValidationPanel } from '@/components/ValidationPanel';
+import { Button } from '@/components/ui/button';
+import { extractMaterialXText } from '@/lib/materialx-zip';
+import { PRESET_MATERIALS, presetFileName, presetFolderUrl } from '@/lib/presets';
+import { validateMaterialXText } from '@/lib/validate';
 
 export const Route = createFileRoute('/')({
   ssr: false,
@@ -50,22 +51,13 @@ function HomePage() {
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold">mtlx viewer</h1>
-        <p className="text-white/60">
-          Drag and drop a MaterialX file, or pick a preset below.{' '}
-          <a className="underline" href="/docs/">
-            Library docs
-          </a>
-          {' · '}
-          <a className="underline" href="https://github.com/bhouston/mtlx">
-            GitHub
-          </a>
-        </p>
-      </header>
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-semibold">MaterialX viewer</h1>
+        <p className="text-sm text-muted-foreground">Drag and drop a MaterialX file, or pick a preset below.</p>
+      </div>
 
       <div
-        className="rounded-lg border border-dashed border-white/20 p-8 text-center"
+        className="rounded-lg border border-dashed border-border p-8 text-center"
         onDragOver={(event) => event.preventDefault()}
         onDrop={(event) => {
           event.preventDefault();
@@ -77,25 +69,25 @@ function HomePage() {
         <input
           type="file"
           accept=".mtlx,.mtlz,.zip"
-          className="mt-2"
+          className="mt-2 text-sm text-muted-foreground"
           onChange={(event) => {
             const file = event.target.files?.[0];
             if (file) void loadFromFile(file);
           }}
         />
-        {fileError ? <p className="mt-2 text-red-400">{fileError}</p> : null}
+        {fileError ? <p className="mt-2 text-sm text-destructive">{fileError}</p> : null}
       </div>
 
       <div className="flex flex-wrap gap-2">
         {PRESET_MATERIALS.map((preset) => (
-          <button
+          <Button
             key={`${preset.category}/${preset.name}`}
-            type="button"
-            className="rounded border border-white/20 px-3 py-1 text-sm hover:bg-white/10"
+            variant="outline"
+            size="sm"
             onClick={() => void loadPreset(preset)}
           >
             {preset.name}
-          </button>
+          </Button>
         ))}
       </div>
 

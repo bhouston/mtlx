@@ -11,13 +11,18 @@ export function ValidationPanel({ issues, loadError }: ValidationPanelProps) {
   }
 
   return (
-    <div className="w-full rounded-lg bg-black/30 p-4 text-sm">
-      {loadError ? <p className="text-red-400">3D preview error: {loadError}</p> : null}
-      {issues && issues.length === 0 ? <p className="text-green-400">Check passed — no issues found.</p> : null}
+    <div className="w-full rounded-lg border border-border bg-card p-4 text-sm">
+      {loadError ? <p className="text-destructive">3D preview error: {loadError}</p> : null}
+      {issues && issues.length === 0 ? (
+        <p className="text-green-600 dark:text-green-400">Check passed — no issues found.</p>
+      ) : null}
       {issues && issues.length > 0 ? (
         <ul className="space-y-1">
           {issues.map((issue, index) => (
-            <li key={index} className={issue.level === 'error' ? 'text-red-400' : 'text-yellow-400'}>
+            <li
+              key={index}
+              className={issue.level === 'error' ? 'text-destructive' : 'text-yellow-600 dark:text-yellow-400'}
+            >
               {issue.level.toUpperCase()} {issue.location}: {issue.message}
             </li>
           ))}

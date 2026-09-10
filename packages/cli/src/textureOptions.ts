@@ -3,7 +3,7 @@ import { resizeTextures, type ImageFormat } from 'mtlx-core/textures';
 
 export const IMAGE_FORMATS = ['webp', 'png', 'jpg', 'avif'] as const;
 
-/** Shared by `pack` and `transform`; pair with `.group(TEXTURE_OPTION_KEYS, TEXTURE_OPTION_GROUP)`. */
+/** Texture flags for `transform`; pair with `.group(TEXTURE_OPTION_KEYS, TEXTURE_OPTION_GROUP)`. */
 export const textureTransformOptions = {
   'max-image-size': {
     describe: 'Resize any texture whose longest edge exceeds this many pixels',

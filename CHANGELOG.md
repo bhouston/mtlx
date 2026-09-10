@@ -7,15 +7,15 @@
 **Features:**
 
 - feat(core): Add `MaterialXPackage` and the `transform(pkg, ...transforms)` pipeline; `resizeTextures()` is the first transform
-- feat(core): Add `mtlx-core/node` entry with `loadMaterialXPackage`, `writeMaterialXPackage`, `packMaterialX`, `unpackMaterialX`, and `checkMaterialX`
+- feat(core): Add `mtlx-core/node` entry with `loadMaterialXPackage`, `writeMaterialXPackage`, and `checkMaterialX`
 - feat(core): Root entry is now pure (no `node:fs`, no `Buffer`); `.mtlz` and `.mtlx.zip` archives can be created and checked in the browser
-- feat(cli): `transform` accepts an output path in any format; texture flags are grouped in `--help`
+- feat(cli): `transform <input> <output>` converts between formats and applies texture transforms; it replaces `pack` and `unpack`
 - feat(docs): API reference and guides generated with TypeDoc at `/docs`
 
 **Breaking:**
 
 - `readMaterialX`, `writeMaterialX`, and `loadMaterialXDocument` moved from `mtlx-core` to `mtlx-core/node`
-- `packMaterialXZip`, `unpackMaterialZ`, `unpackMaterialXZip`, `checkMaterialXPackage`, and `checkMaterialXZipPackage` are replaced by `packMaterialX` (output extension picks the format), `unpackMaterialX`, and `checkMaterialX`
+- `packMaterialX`, `packMaterialXZip`, `unpackMaterialZ`, and `unpackMaterialXZip` are replaced by `loadMaterialXPackage` + `writeMaterialXPackage` (the output extension picks the format); `checkMaterialXPackage` and `checkMaterialXZipPackage` by `checkMaterialX`
 - `TransformResourceHook` is removed; use `transform(pkg, resizeTextures(options))`
 - `resolveMaterialXResources` takes a `ResourceReader` callback instead of a root directory
 

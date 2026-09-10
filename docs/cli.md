@@ -5,8 +5,9 @@ group: Guides
 
 # Command line
 
-The `mtlx` command wraps the library for validating, inspecting, packing, unpacking, and
-transforming MaterialX files.
+The `mtlx` command wraps the library for validating, inspecting, converting, and transforming
+MaterialX files. `transform` reads any format and writes any format, so packing and unpacking are
+just a conversion with no options.
 
 ```sh
 npm install --global mtlx-cli
@@ -27,9 +28,9 @@ other tools:
 ```sh
 mtlx check material.mtlx
 mtlx info material.mtlz --format json
-mtlx pack material.mtlx --max-image-size 2048 --image-format webp
-mtlx transform material.mtlx material.mtlz --image-format webp --image-quality 90
-mtlx unpack material.mtlz --output-dir material/
+mtlx transform material.mtlx material.mtlz                    # pack
+mtlx transform material.mtlz out/material.mtlx                # unpack
+mtlx transform material.mtlx material.mtlz --max-image-size 2048 --image-format webp
 ```
 
 `check` exits non-zero when any error-level issue is found, so it works as a CI gate.
@@ -46,11 +47,8 @@ mtlx <command>
 Commands:
   mtlx check <input>               Validate a .mtlx, .mtlz, or .mtlx.zip file
   mtlx info <input>                Print information about a .mtlx, .mtlz, or .mtlx.zip file
-  mtlx pack <input>                Pack a root .mtlx file and its resources into a .mtlz (or
-                                   .mtlx.zip) archive
-  mtlx transform <input> [output]  Resize and/or reformat textures, writing to any of .mtlx, .mtlz,
-                                   or .mtlx.zip
-  mtlx unpack <input>              Unpack a .mtlz or .mtlx.zip archive into a directory
+  mtlx transform <input> <output>  Convert between .mtlx, .mtlz, and .mtlx.zip (pack/unpack),
+                                   optionally resizing or reformatting textures
 
 Options:
   --version  Show version number                                                           [boolean]
@@ -88,34 +86,15 @@ Options:
 ```
 
 ```text
-mtlx pack <input>
+mtlx transform <input> <output>
 
-Pack a root .mtlx file and its resources into a .mtlz (or .mtlx.zip) archive
-
-Positionals:
-  input  Path to root .mtlx file                                                 [string] [required]
-
-Texture options:
-      --max-image-size  Resize any texture whose longest edge exceeds this many pixels      [number]
-      --image-format    Convert textures to this image format[choices: "webp", "png", "jpg", "avif"]
-      --image-quality   Quality for lossy image formats (webp/jpg/avif)       [number] [default: 95]
-
-Options:
-      --version  Show version number                                                       [boolean]
-      --help     Show help                                                                 [boolean]
-  -o, --output   Output path; .mtlx.zip writes the relaxed container (default: <input>.mtlz)[string]
-      --format   Output format                   [choices: "text", "json", "yaml"] [default: "text"]
-```
-
-```text
-mtlx transform <input> [output]
-
-Resize and/or reformat textures, writing to any of .mtlx, .mtlz, or .mtlx.zip
+Convert between .mtlx, .mtlz, and .mtlx.zip (pack/unpack), optionally resizing or reformatting
+textures
 
 Positionals:
   input   Path to .mtlx, .mtlz, or .mtlx.zip file                                [string] [required]
-  output  Output path; format follows the extension (default: <name>-transformed/<name>.mtlx)
-                                                                                            [string]
+  output  Output path; the extension picks the format (a .mtlx path unpacks resources beside it)
+                                                                                 [string] [required]
 
 Texture options:
   --max-image-size  Resize any texture whose longest edge exceeds this many pixels          [number]
@@ -126,22 +105,6 @@ Options:
   --version  Show version number                                                           [boolean]
   --help     Show help                                                                     [boolean]
   --format   Output format                       [choices: "text", "json", "yaml"] [default: "text"]
-```
-
-```text
-mtlx unpack <input>
-
-Unpack a .mtlz or .mtlx.zip archive into a directory
-
-Positionals:
-  input  Path to .mtlz or .mtlx.zip archive                                      [string] [required]
-
-Options:
-      --version     Show version number                                                    [boolean]
-      --help        Show help                                                              [boolean]
-  -d, --output-dir  Output directory                                                        [string]
-      --force       Delete the output directory before extracting         [boolean] [default: false]
-      --format      Output format                [choices: "text", "json", "yaml"] [default: "text"]
 ```
 
 <!-- end:cli_help -->

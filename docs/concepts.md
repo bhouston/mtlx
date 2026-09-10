@@ -84,6 +84,7 @@ resources are passed in by the caller, never created by the library; `resolveMat
 takes a `ResourceReader` callback rather than reading files itself.
 
 - `mtlx-core/node` adds the filesystem helpers: `loadMaterialXPackage`, `writeMaterialXPackage`,
-  `packMaterialX`, `unpackMaterialX`, `checkMaterialX`.
+  and `checkMaterialX`. Packing and unpacking are just a load followed by a write to a path with
+  the other extension.
 - `mtlx-core/textures` adds `resizeTextures` and `transformImage`, backed by
   [sharp](https://sharp.pixelplumbing.com/). It is Node-only.
