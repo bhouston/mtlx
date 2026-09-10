@@ -25,7 +25,7 @@ await esbuild.build({
   entryPoints: [join(root, 'src', 'extension.ts')],
   bundle: true,
   outfile: outFile,
-  format: 'cjs',
+  format: 'esm',
   platform: 'node',
   target: 'node18',
   external: ['vscode', 'sharp'],
@@ -36,4 +36,4 @@ await esbuild.build({
   },
 });
 
-console.log('Built extension.js (bundled with mtlx-core)');
+console.log('Built extension.js (ESM, bundled with mtlx-core)');

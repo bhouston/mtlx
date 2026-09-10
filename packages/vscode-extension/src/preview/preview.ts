@@ -35,6 +35,11 @@ interface ValidationIssue {
   message: string;
 }
 
+interface PreviewTexture {
+  path: string;
+  data: ArrayBuffer;
+}
+
 interface PreviewPayload {
   fileName: string;
   fileSize: number;
@@ -43,6 +48,7 @@ interface PreviewPayload {
   summary?: MaterialXSummary;
   parseError?: string;
   data?: ArrayBuffer;
+  textures: PreviewTexture[];
 }
 
 const canvasEl = document.getElementById('viewport') as HTMLCanvasElement;
@@ -133,7 +139,7 @@ function renderStats(payload: PreviewPayload): void {
   statsEl.innerHTML = validityHtml + summaryHtml + issuesHtml;
 }
 
-async function renderScene(data: ArrayBuffer, fileName: string): Promise<void> {
+async function renderScene(data: ArrayBuffer, fileName: string, textures: PreviewTexture[]): Promise<void> {
   // Scaffolding: a plain gray sphere goes up immediately so the viewport never sits fully black
   // while the renderer/loader are still starting up — replaced once (if) the real material loads.
   const width = canvasEl.clientWidth || 512;
@@ -193,6 +199,20 @@ async function renderScene(data: ArrayBuffer, fileName: string): Promise<void> {
     manager.onProgress = (url, loaded, total) => log(`Loading ${url}: ${loaded}/${total}`);
     manager.onError = (url) => log(`Failed to load resource: ${url}`);
 
+    // A loose .mtlx references sibling texture files by relative path (e.g.
+    // "textures/wood_color.jpg") that don't exist as fetchable URLs inside the webview — the
+    // extension host already read their bytes from disk (see mtlxPreviewProvider), so rewrite
+    // those exact paths to in-memory blob: URLs before the loader ever requests them. three's
+    // ImageLoader/ImageBitmapLoader both route every texture URL through
+    // `manager.resolveURL()`, which is what setURLModifier hooks into — no three.js patch needed.
+    // A zip-packaged .mtlz/.mtlx.zip resolves its textures from inside the archive on its own and
+    // never reaches this map, so it's a no-op there.
+    if (textures.length) {
+      const textureUrls = new Map(textures.map((t) => [t.path, URL.createObjectURL(new Blob([t.data]))]));
+      manager.setURLModifier((url) => textureUrls.get(url) ?? url);
+      log(`Embedded ${textureUrls.size} referenced texture(s) from disk.`);
+    }
+
     // @types/three lags three's addon source: parseBuffer (native .mtlz/.mtlx.zip support)
     // isn't in its MaterialXLoader typings yet.
     const loader = new MaterialXLoader(manager) as unknown as {
@@ -220,7 +240,7 @@ function onMessage(event: MessageEvent<PreviewPayload>): void {
   renderStats(payload);
 
   if (payload.data) {
-    renderScene(payload.data, payload.fileName).catch((error: unknown) => {
+    renderScene(payload.data, payload.fileName, payload.textures).catch((error: unknown) => {
       showError(`3D preview error: ${error instanceof Error ? error.message : String(error)}`);
     });
   }

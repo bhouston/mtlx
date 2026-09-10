@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import { summarizeMaterialX, type MaterialXSummary, type MaterialXValidationIssue } from 'mtlx-core';
 import { checkMaterialX, loadMaterialXDocument } from 'mtlx-core/node';
 import * as vscode from 'vscode';
-import { MtlxPreviewDocument } from './mtlxPreviewDocument.js';
+import { MtlxPreviewDocument, type MtlxPreviewTexture } from './mtlxPreviewDocument.js';
 
 async function analyze(
   fsPath: string,
@@ -25,7 +25,30 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
     const raw = await vscode.workspace.fs.readFile(uri);
     const fileName = path.basename(uri.fsPath);
     const { issues, summary, parseError } = await analyze(uri.fsPath);
-    return new MtlxPreviewDocument(uri, raw.length, fileName, raw, issues, summary, parseError);
+    const textures = await this._readReferencedTextures(uri, summary);
+    return new MtlxPreviewDocument(uri, raw.length, fileName, raw, issues, summary, parseError, textures);
+  }
+
+  // For a loose .mtlx, the document's `file` attributes point at sibling texture files on disk
+  // that the webview (no real filesystem/network access) can't fetch itself — read them here and
+  // ship their bytes over. A no-op for self-contained .mtlz/.mtlx.zip archives, since those paths
+  // won't exist next to the archive; three.js's MaterialXLoader resolves textures from inside the
+  // archive on its own, so a miss here is expected and harmless.
+  private async _readReferencedTextures(
+    uri: vscode.Uri,
+    summary: MaterialXSummary | undefined,
+  ): Promise<MtlxPreviewTexture[]> {
+    const dir = path.dirname(uri.fsPath);
+    const textures: MtlxPreviewTexture[] = [];
+    for (const texturePath of summary?.referencedTextures ?? []) {
+      try {
+        const data = await vscode.workspace.fs.readFile(vscode.Uri.joinPath(vscode.Uri.file(dir), texturePath));
+        textures.push({ path: texturePath, data });
+      } catch {
+        // Missing here is expected for zip-packaged documents (see doc comment above).
+      }
+    }
+    return textures;
   }
 
   async resolveCustomEditor(document: MtlxPreviewDocument, webviewPanel: vscode.WebviewPanel): Promise<void> {
@@ -58,6 +81,12 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       // plain .mtlx, .mtlz, AND .mtlx.zip (it sniffs the zip magic bytes), so the webview needs
       // no zip-handling code of its own.
       data: document.raw.buffer,
+      // Sibling texture files for a loose .mtlx (see _readReferencedTextures) — the webview turns
+      // these into blob: URLs and rewrites the loader's texture requests to them.
+      // VS Code's webview message channel only special-cases top-level ArrayBuffers for binary
+      // transfer; a Uint8Array nested inside a plain object (unlike `data` above) silently arrives
+      // empty/corrupt, so send `.buffer` explicitly here too.
+      textures: document.textures.map((t) => ({ path: t.path, data: t.data.buffer })),
     });
     /* oxlint-enable unicorn/require-post-message-target-origin */
   }
@@ -70,6 +99,9 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
     `style-src ${webview.cspSource} 'unsafe-inline'`,
     'worker-src blob:',
     'img-src data: blob:',
+    // ImageBitmapLoader (three.js) fetches texture blob: URLs via fetch(), governed by
+    // connect-src rather than img-src.
+    'connect-src blob:',
   ].join('; ');
 
   return `<!DOCTYPE html>
