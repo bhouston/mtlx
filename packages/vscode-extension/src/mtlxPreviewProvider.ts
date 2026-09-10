@@ -133,7 +133,7 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
       overflow: hidden;
     }
     .layout { display: flex; gap: 16px; flex: 1; min-height: 0; }
-    .viewport-wrap { flex: 2; min-width: 0; position: relative; display: flex; flex-direction: column; }
+    .viewport-wrap { flex: 3; min-width: 0; position: relative; display: flex; flex-direction: column; }
     .toolbar { display: flex; gap: 8px; padding-bottom: 8px; flex: none; }
     .toolbar select {
       background: var(--vscode-dropdown-background);
@@ -164,6 +164,13 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
       background: var(--vscode-textCodeBlock-background, rgba(128, 128, 128, 0.1));
       padding: 4px 8px;
       border-top: 1px solid var(--vscode-panel-border, transparent);
+    }
+    /* Narrow editor pane (e.g. side-by-side split): stack the info panel under the viewport
+       instead of squeezing both into a too-thin row. */
+    @media (max-width: 600px) {
+      .layout { flex-direction: column; }
+      .viewport-wrap { flex: none; height: 60vh; }
+      .stats { flex: 1; min-width: 0; }
     }
   </style>
 </head>

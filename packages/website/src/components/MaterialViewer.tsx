@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
-import { createMtlxScene, parseStudioEnvironment, type GeometryKind, type MtlxScene } from 'mtlx-viewer';
+import type { GeometryKind, MtlxScene } from 'mtlx-viewer';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
 import shaderBallUrl from 'mtlx-viewer/assets/shaderball.glb?url';
 
@@ -11,6 +11,8 @@ export type MaterialSource =
 export interface MaterialViewerProps {
   source: MaterialSource | null;
   onError: (message: string | null) => void;
+  /** Diagnostics for the log panel — mirrors the VS Code extension's webview log. */
+  onLog?: (message: string) => void;
 }
 
 const GEOMETRY_OPTIONS: { value: GeometryKind; label: string }[] = [
@@ -35,7 +37,7 @@ async function resolveSourceBytes(source: MaterialSource): Promise<{ data: Array
 // three.js 0.186's MaterialXLoader (via mtlx-viewer's createMtlxScene) natively understands
 // .mtlx, .mtlz, and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
 // embedded in the archive itself, so this component doesn't need any zip handling of its own.
-export function MaterialViewer({ source, onError }: MaterialViewerProps) {
+export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mtlxSceneRef = useRef<MtlxScene | null>(null);
   const [loading, setLoading] = useState(false);
@@ -60,13 +62,19 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
     (async () => {
       const THREE: typeof ThreeNS = await import('three/webgpu');
       const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+      const { createMtlxScene, parseStudioEnvironment } = await import('mtlx-viewer');
       if (disposed) return;
 
       const width = container.clientWidth || 512;
       const height = container.clientHeight || 512;
 
+      onLog?.('Creating WebGPURenderer...');
       const renderer = new THREE.WebGPURenderer({ antialias: true });
-      renderer.setSize(width, height, false);
+      // Leave updateStyle at its default (true) — this also sets the canvas's CSS size to
+      // width/height, not just its pixel buffer. With `false` the canvas kept its devicePixelRatio-
+      // scaled buffer size as its CSS size too, rendering ~2x too big and getting cropped by the
+      // container's overflow-hidden to just the top-left corner.
+      renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -75,6 +83,8 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
         renderer.dispose();
         return;
       }
+      const backend = (renderer as unknown as { backend?: { isWebGPUBackend?: boolean } }).backend;
+      onLog?.(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);
       container.replaceChildren(renderer.domElement);
 
       const scene = new THREE.Scene();
@@ -82,6 +92,7 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
 
       // Shared studio IBL (packages/viewer), baked once from RoomEnvironment, so the website and
       // VS Code preview render the same lighting.
+      onLog?.('Loading studio environment...');
       const envBytes = await (await fetch(studioEnvironmentUrl)).arrayBuffer();
       const studioTexture = await parseStudioEnvironment(envBytes);
       if (disposed) {
@@ -97,26 +108,35 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
       studioTexture.dispose();
       scene.environment = environment;
       scene.background = environment;
+      onLog?.('Environment ready.');
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
       try {
+        onLog?.('Parsing MaterialX document...');
+        const manager = new THREE.LoadingManager();
+        manager.onProgress = (url, loaded, total) => onLog?.(`Loading ${url}: ${loaded}/${total}`);
+        manager.onError = (url) => onLog?.(`Failed to load resource: ${url}`);
+
         const [{ data, fileName }, shaderBall] = await Promise.all([
           resolveSourceBytes(source),
           (async () => (await fetch(shaderBallUrl)).arrayBuffer())(),
         ]);
         if (disposed) return;
 
-        const mtlxScene = await createMtlxScene(camera, controls, { data, fileName, shaderBall });
+        const mtlxScene = await createMtlxScene(camera, controls, { data, fileName, shaderBall, manager });
         if (disposed) return;
         scene.add(mtlxScene.root);
         mtlxSceneRef.current = mtlxScene;
         setMaterialNames(mtlxScene.materialNames);
         setActiveMaterial(mtlxScene.activeMaterial);
         setGeometry(mtlxScene.geometry);
+        onLog?.(`Material applied (${mtlxScene.materialNames.length} available).`);
       } catch (error) {
-        onError(error instanceof Error ? error.message : String(error));
+        const message = error instanceof Error ? error.message : String(error);
+        onLog?.(`ERROR: ${message}`);
+        onError(message);
       }
 
       let frameId = 0;
@@ -150,7 +170,9 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
       };
     })().catch((error: unknown) => {
       setLoading(false);
-      onError(error instanceof Error ? error.message : String(error));
+      const message = error instanceof Error ? error.message : String(error);
+      onLog?.(`ERROR: ${message}`);
+      onError(message);
     });
 
     return () => {
@@ -200,8 +222,8 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
         <div className="absolute inset-0 flex items-center justify-center text-sm text-white/70">Loading…</div>
       ) : null}
       {!source ? (
-        <div className="absolute inset-0 flex items-center justify-center text-sm text-white/50">
-          Drop a .mtlx, .mtlz, or .mtlx.zip file, or pick a preset
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/50">
+          Drag & drop a .mtlx, .mtlz, or .mtlx.zip file anywhere here, or pick a sample above
         </div>
       ) : null}
     </div>

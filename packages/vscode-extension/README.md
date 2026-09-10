@@ -1,5 +1,9 @@
 # Mtlx Viewer
 
+Part of the [mtlx](https://github.com/bhouston/mtlx) suite: a pure TypeScript/JavaScript
+MaterialX toolkit with no binary dependencies, working out of the box on Node, browsers, Windows,
+macOS, and Linux.
+
 Preview, inspect, and convert [MaterialX](https://materialx.org) files directly in VS Code.
 
 - Opens `.mtlx`, `.mtlz`, and `.mtlx.zip` files in a 3D preview (three.js, on a sphere), plus a

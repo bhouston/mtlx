@@ -1,7 +1,7 @@
 import { zipSync } from 'fflate';
 import { describe, expect, it } from 'vitest';
 import { extractMaterialXText } from './materialx-zip.js';
-import { PRESET_MATERIALS, presetFileName, presetFolderUrl } from './presets.js';
+import { PRESET_MATERIALS, presetFileName, presetFolderUrl, presetId, resolveMaterialParam } from './presets.js';
 
 describe('presets', () => {
   it('has no duplicate material names across categories', () => {
@@ -15,6 +15,25 @@ describe('presets', () => {
       `https://raw.githubusercontent.com/bhouston/material-samples/main/materials/showcase/${preset.category}/${preset.name}/`,
     );
     expect(presetFileName(preset)).toBe(`${preset.name}.mtlx`);
+  });
+
+  it('resolves a preset id from the material query param', () => {
+    const preset = PRESET_MATERIALS[0]!;
+    expect(resolveMaterialParam(presetId(preset))).toEqual({
+      folderUrl: presetFolderUrl(preset),
+      fileName: presetFileName(preset),
+    });
+  });
+
+  it('resolves an externally-hosted .mtlx URL from the material query param', () => {
+    expect(resolveMaterialParam('https://example.com/materials/foo.mtlx')).toEqual({
+      folderUrl: 'https://example.com/materials/',
+      fileName: 'foo.mtlx',
+    });
+  });
+
+  it('returns undefined for an unknown, non-URL material param', () => {
+    expect(resolveMaterialParam('not-a-preset')).toBeUndefined();
   });
 });
 

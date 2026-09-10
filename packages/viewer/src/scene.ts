@@ -10,8 +10,18 @@ import * as THREE from 'three/webgpu';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MaterialXLoader } from 'three/addons/loaders/MaterialXLoader.js';
 
+/**
+ * *Which preview geometry to render the active material onto.*
+ *
+ * @category Viewer
+ */
 export type GeometryKind = 'totem' | 'sphere' | 'plane';
 
+/**
+ * *Options for {@link createMtlxScene}.*
+ *
+ * @category Viewer
+ */
 export interface MtlxSceneOptions {
   /** Raw .mtlx / .mtlz / .mtlx.zip bytes. */
   data: ArrayBuffer;
@@ -29,6 +39,11 @@ export interface MtlxSceneOptions {
   manager?: THREE.LoadingManager;
 }
 
+/**
+ * *A live MaterialX preview scene, returned by {@link createMtlxScene}.*
+ *
+ * @category Viewer
+ */
 export interface MtlxScene {
   /** Add this to your THREE.Scene. */
   root: THREE.Group;
@@ -58,21 +73,35 @@ function parseMaterialX(manager: THREE.LoadingManager, data: ArrayBuffer, fileNa
   return loader.parseBuffer(data, fileName);
 }
 
+// MaterialX documents that build their normal via a <normalmap> node graph (procedural bump ->
+// normalmap, e.g. brick/road_aggregate) compile to TSL nodes wired to the real per-vertex
+// `tangent` attribute (not a screen-space-derivative fallback). Geometry without that attribute
+// reads garbage there and the surface goes flat black — not a MaterialX bug, just missing
+// tangents. computeTangents() (approximate, not MikkTSpace) is enough to fix that; it needs an
+// index + uv + normal, which all three preview geometries already have.
+function computeTangentsIfPossible(geometry: THREE.BufferGeometry): void {
+  if (geometry.index && geometry.attributes.uv && geometry.attributes.normal) geometry.computeTangents();
+}
+
 async function loadShaderBall(manager: THREE.LoadingManager, shaderBall: ArrayBuffer): Promise<THREE.Group> {
-  // ponytail: no MikkTSpace tangent precompute (unlike three.js's own webgpu_loader_materialx.html
-  // example) — normal maps fall back to derivative-based tangents, a little lower quality but no
-  // extra ~100KB of bundled tangent-space-generation code for a preview viewer. Add
-  // computeMikkTSpaceTangents() here if that visibly matters.
   const gltf = await new GLTFLoader(manager).parseAsync(shaderBall, '');
-  return gltf.scene as unknown as THREE.Group;
+  const scene = gltf.scene as unknown as THREE.Group;
+  scene.traverse((node) => {
+    if ((node as THREE.Mesh).isMesh) computeTangentsIfPossible((node as THREE.Mesh).geometry);
+  });
+  return scene;
 }
 
 function buildSphere(): THREE.Mesh {
-  return new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), new THREE.MeshStandardMaterial());
+  const geometry = new THREE.SphereGeometry(1, 64, 64);
+  computeTangentsIfPossible(geometry);
+  return new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
 }
 
 function buildPlane(): THREE.Mesh {
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshStandardMaterial());
+  const geometry = new THREE.PlaneGeometry(2, 2);
+  computeTangentsIfPossible(geometry);
+  const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
   mesh.material.side = THREE.DoubleSide;
   return mesh;
 }
@@ -106,6 +135,18 @@ function frameObject(
   controls.update();
 }
 
+/**
+ * *Parses a MaterialX document and builds a swappable preview scene for it.* Add the returned
+ * scene's `.root` to your `THREE.Scene` and call `.update(deltaSeconds)` each frame.
+ *
+ * @example
+ * ```ts
+ * const scene = await createMtlxScene(camera, controls, { data, fileName, shaderBall });
+ * threeScene.add(scene.root);
+ * ```
+ *
+ * @category Viewer
+ */
 export async function createMtlxScene(
   camera: THREE.PerspectiveCamera,
   controls: { target: THREE.Vector3; update: () => void },

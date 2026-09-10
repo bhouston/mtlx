@@ -15,14 +15,28 @@
 import { EquirectangularReflectionMapping, Texture } from 'three';
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 
+/**
+ * *Which shared IBL environment to load: `'studio'` or `'default'`.*
+ *
+ * @category Viewer
+ */
 export type EnvironmentKind = 'studio' | 'default';
 
+/**
+ * *Asset file name (under `mtlx-viewer/assets`) for each {@link EnvironmentKind}.*
+ *
+ * @category Viewer
+ */
 export const ENVIRONMENT_ASSET_FILES: Record<EnvironmentKind, string> = {
   studio: 'studio-environment.png',
   default: 'default-environment.hdr',
 };
 
-/** Parses the baked studio-room equirectangular PNG. */
+/**
+ * *Parses the baked studio-room equirectangular PNG.*
+ *
+ * @category Viewer
+ */
 export async function parseStudioEnvironment(data: ArrayBuffer): Promise<Texture> {
   const bitmap = await createImageBitmap(new Blob([data], { type: 'image/png' }));
   const texture = new Texture(bitmap);
@@ -31,7 +45,11 @@ export async function parseStudioEnvironment(data: ArrayBuffer): Promise<Texture
   return texture;
 }
 
-/** Parses the real-world HDR equirectangular environment. */
+/**
+ * *Parses the real-world HDR equirectangular environment.*
+ *
+ * @category Viewer
+ */
 export function parseDefaultEnvironment(data: ArrayBuffer): Texture {
   // @types/three lags three's addon source: createDataTexture() (in-memory parse, no fetch)
   // isn't in its DataTextureLoader typings yet.
@@ -41,6 +59,12 @@ export function parseDefaultEnvironment(data: ArrayBuffer): Texture {
   return texture;
 }
 
+/**
+ * *Parses either environment kind from raw bytes.* Dispatches to {@link parseStudioEnvironment} or
+ * {@link parseDefaultEnvironment} based on `kind`.
+ *
+ * @category Viewer
+ */
 export async function parseEnvironment(kind: EnvironmentKind, data: ArrayBuffer): Promise<Texture> {
   return kind === 'studio' ? parseStudioEnvironment(data) : parseDefaultEnvironment(data);
 }

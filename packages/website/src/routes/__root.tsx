@@ -1,4 +1,4 @@
-import { createRootRoute, HeadContent, Link, Outlet, Scripts } from '@tanstack/react-router';
+import { createRootRoute, HeadContent, Link, Outlet, Scripts, useLocation } from '@tanstack/react-router';
 import { GithubIcon, HeartIcon } from 'lucide-react';
 import { ThemeProvider } from 'next-themes';
 import { GoogleAnalytics } from 'tanstack-router-ga4';
@@ -24,7 +24,11 @@ export const Route = createRootRoute({
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { title: 'mtlx: MaterialX tools for the web' },
-      { name: 'description', content: 'Drag and drop a MaterialX file to view and validate it.' },
+      {
+        name: 'description',
+        content:
+          'Pure TypeScript/JavaScript MaterialX tools — no binary dependencies, runs on Node, browsers, Windows, macOS, and Linux. Drag and drop a MaterialX file to view and validate it.',
+      },
     ],
     links: [{ rel: 'stylesheet', href: appCss }],
   }),
@@ -33,6 +37,16 @@ export const Route = createRootRoute({
 });
 
 function RootLayout() {
+  // Embed mode is chromeless (for iframe embedding), so skip the site header/footer for it.
+  const isEmbed = useLocation({ select: (location) => location.pathname === '/embed' });
+  if (isEmbed) {
+    return (
+      <div className="flex min-h-svh flex-col">
+        <Outlet />
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-svh flex-col">
       <header className="flex items-center justify-between gap-4 border-b border-border px-6 py-3">

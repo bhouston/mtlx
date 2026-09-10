@@ -5,11 +5,15 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bhouston/mtlx/blob/main/LICENSE)
 [![Live demo](https://img.shields.io/badge/viewer-mtlx.ben3d.ca-blue)](https://mtlx.ben3d.ca)
 
-_[MaterialX](https://materialx.org) SDK for JavaScript and TypeScript, on Web and Node.js._
+_A pure TypeScript/JavaScript [MaterialX](https://materialx.org) SDK and viewer — no binary
+dependencies, runs the same on Node.js and in the browser, on Windows, macOS, and Linux._
 
 mtlx parses, validates, packages, and transforms MaterialX materials: loose `.mtlx` documents, the
 spec-compliant `.mtlz` container, and relaxed `.mtlx.zip` archives. It is the library behind the
-[mtlx.ben3d.ca](https://mtlx.ben3d.ca) viewer and the "Mtlx Viewer" VS Code extension.
+[mtlx.ben3d.ca](https://mtlx.ben3d.ca) viewer and the "Mtlx Viewer" VS Code extension. Because it's
+pure TS/JS with zero native/binary dependencies, it installs and runs anywhere Node or a browser
+does — no native builds, no platform-specific binaries — making MaterialX easier to reach for
+everyday artists and developers.
 
 <!-- NOTICE: This README is rendered as the documentation homepage at https://mtlx.ben3d.ca/docs/ -->
 

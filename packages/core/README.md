@@ -4,8 +4,9 @@
 [![npm downloads](https://img.shields.io/npm/dm/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 
-Part of the [mtlx](https://github.com/bhouston/mtlx) project: a MaterialX SDK for JavaScript and
-TypeScript, on Web and Node.js.
+Part of the [mtlx](https://github.com/bhouston/mtlx) suite: a pure TypeScript/JavaScript
+MaterialX toolkit with no binary dependencies, working out of the box on Node, browsers, Windows,
+macOS, and Linux.
 
 - Documentation: [mtlx.ben3d.ca/docs](https://mtlx.ben3d.ca/docs/)
 - Viewer: [mtlx.ben3d.ca](https://mtlx.ben3d.ca)

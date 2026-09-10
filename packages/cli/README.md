@@ -4,9 +4,10 @@
 [![npm downloads](https://img.shields.io/npm/dm/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 
-Part of the [mtlx](https://github.com/bhouston/mtlx) project. Installs the `mtlx` command for
-validating, inspecting, converting, and transforming MaterialX files (`.mtlx`, `.mtlz`,
-`.mtlx.zip`).
+Part of the [mtlx](https://github.com/bhouston/mtlx) suite: a pure TypeScript/JavaScript
+MaterialX toolkit with no binary dependencies, working out of the box on Node, browsers, Windows,
+macOS, and Linux. Installs the `mtlx` command for validating, inspecting, converting, and
+transforming MaterialX files (`.mtlx`, `.mtlz`, `.mtlx.zip`).
 
 - Documentation: [mtlx.ben3d.ca/docs](https://mtlx.ben3d.ca/docs/documents/Command_line.html)
 - Source: [github.com/bhouston/mtlx](https://github.com/bhouston/mtlx)

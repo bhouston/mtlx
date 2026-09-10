@@ -1,13 +1,18 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "name": "mtlx",
-  "entryPoints": ["packages/core/src/index.ts", "packages/core/src/node.ts", "packages/core/src/textures.ts"],
-  "tsconfig": "packages/core/tsconfig.json",
+  "entryPoints": [
+    "packages/core/src/index.ts",
+    "packages/core/src/node.ts",
+    "packages/core/src/textures.ts",
+    "packages/viewer/src/index.ts"
+  ],
+  "tsconfig": "tsconfig.docs.json",
   "out": "packages/website/public/docs",
   "readme": "README.md",
   "projectDocuments": ["docs/*.md"],
   "categorizeByGroup": false,
-  "categoryOrder": ["Parsing", "Validation", "Packaging", "Transforms", "Textures", "*"],
+  "categoryOrder": ["Parsing", "Validation", "Packaging", "Transforms", "Textures", "Viewer", "*"],
   "navigation": {
     "includeCategories": true,
     "includeGroups": false

@@ -25,3 +25,24 @@ const RAW_BASE = 'https://raw.githubusercontent.com/bhouston/material-samples/ma
 export const presetFolderUrl = (preset: PresetMaterial): string => `${RAW_BASE}/${preset.category}/${preset.name}/`;
 
 export const presetFileName = (preset: PresetMaterial): string => `${preset.name}.mtlx`;
+
+/** Stable id used in the `material` URL query param and the dropdown value. */
+export const presetId = (preset: PresetMaterial): string => `${preset.category}/${preset.name}`;
+
+export const findPresetById = (id: string): PresetMaterial | undefined =>
+  PRESET_MATERIALS.find((preset) => presetId(preset) === id);
+
+/**
+ * Resolves a `material` query param value to a folder/file URL pair.
+ * Accepts either a known preset id (`category/name`) or an externally-hosted
+ * `.mtlx` file URL (http/https), so a shared link can point at any material.
+ */
+export const resolveMaterialParam = (value: string): { folderUrl: string; fileName: string } | undefined => {
+  const preset = findPresetById(value);
+  if (preset) return { folderUrl: presetFolderUrl(preset), fileName: presetFileName(preset) };
+  if (/^https?:\/\//.test(value)) {
+    const lastSlash = value.lastIndexOf('/');
+    return { folderUrl: value.slice(0, lastSlash + 1), fileName: value.slice(lastSlash + 1) };
+  }
+  return undefined;
+};
