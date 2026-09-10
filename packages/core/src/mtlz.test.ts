@@ -1,8 +1,8 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { checkMaterialXPackage, packMaterialX, unpackMaterialZ } from './mtlz.js';
+import { checkMaterialXPackage, packMaterialX, readMaterialZArchive, unpackMaterialZ } from './mtlz.js';
 
 const SAMPLE_MTLX = `<?xml version="1.0"?>
 <materialx version="1.39">
@@ -12,6 +12,16 @@ const SAMPLE_MTLX = `<?xml version="1.0"?>
   <surfacematerial name="M_test" type="material">
     <input name="surfaceshader" type="surfaceshader" nodename="SR_test" />
   </surfacematerial>
+</materialx>
+`;
+
+const SAMPLE_MTLX_WITH_TEXTURE = `<?xml version="1.0"?>
+<materialx version="1.39">
+  <nodegraph name="NG_test">
+    <image name="albedo" type="color3">
+      <input name="file" type="filename" value="textures/albedo.png" />
+    </image>
+  </nodegraph>
 </materialx>
 `;
 
@@ -48,5 +58,26 @@ describe('pack / unpack .mtlz', () => {
 
     const check = await checkMaterialXPackage(inputPath);
     expect(check.issues).toContainEqual(expect.objectContaining({ level: 'error' }));
+  });
+
+  it('applies a transformResource hook to referenced textures and rewrites their extension', async () => {
+    await mkdir(path.join(dir, 'textures'), { recursive: true });
+    const inputPath = path.join(dir, 'material.mtlx');
+    await writeFile(inputPath, SAMPLE_MTLX_WITH_TEXTURE);
+    await writeFile(path.join(dir, 'textures/albedo.png'), new Uint8Array([137, 80, 78, 71]));
+
+    const packed = await packMaterialX(inputPath, {
+      transformResource: async (data) => ({ data: new Uint8Array([...data, 0xff]), extension: '.webp' }),
+    });
+
+    expect(packed.entries).toEqual(['material.mtlx', 'textures/albedo.webp']);
+
+    const archive = await readMaterialZArchive(packed.outputPath);
+    const rootText = new TextDecoder().decode(archive.rootEntry!.data);
+    expect(rootText).toContain('textures/albedo.webp');
+    expect(rootText).not.toContain('albedo.png');
+
+    const textureEntry = archive.entries.find((entry) => entry.path === 'textures/albedo.webp');
+    expect(Array.from(textureEntry?.data ?? [])).toEqual([137, 80, 78, 71, 0xff]);
   });
 });

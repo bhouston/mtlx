@@ -8,7 +8,7 @@
     "prepare": "husky",
     "build": "pnpm -r build",
     "tsc": "tsc -b",
-    "dev": "pnpm --parallel --filter @mtlx/cli --filter website dev",
+    "dev": "pnpm --parallel --filter mtlx --filter website dev",
     "test": "pnpm tsc && vitest run",
     "format": "oxfmt .",
     "lint": "oxlint .",

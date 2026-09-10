@@ -1,6 +1,7 @@
-import { packMaterialX } from '@mtlx/core';
+import { packMaterialX } from 'mtlx-core';
 import { defineCommand } from 'yargs-file-commands';
 import { formatOption, printOutput } from '../output.js';
+import { buildTransformResourceHook, hasTextureTransformOptions, textureTransformOptions } from '../textureOptions.js';
 
 const renderText = (result: { outputPath: string; rootPath: string; entries: string[] }): string =>
   [`Packed ${result.outputPath}`, `Root ${result.rootPath}`, `Entries ${result.entries.length}`].join('\n');
@@ -20,10 +21,12 @@ export const command = defineCommand({
         describe: 'Output .mtlz path',
         type: 'string',
       })
+      .options(textureTransformOptions)
       .options(formatOption),
   handler: async (argv) => {
     try {
-      const result = await packMaterialX(argv.input, { outputPath: argv.output });
+      const transformResource = hasTextureTransformOptions(argv) ? buildTransformResourceHook(argv) : undefined;
+      const result = await packMaterialX(argv.input, { outputPath: argv.output, transformResource });
       printOutput(result, argv.format, () => renderText(result));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

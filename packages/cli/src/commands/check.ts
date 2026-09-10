@@ -1,7 +1,6 @@
-import { checkMaterialXPackage, checkMaterialXZipPackage } from '@mtlx/core';
-import type { MaterialXValidationIssue } from '@mtlx/core';
+import { checkMaterialXPackage, checkMaterialXZipPackage, detectFormat } from 'mtlx-core';
+import type { MaterialXValidationIssue } from 'mtlx-core';
 import { defineCommand } from 'yargs-file-commands';
-import { detectFormat } from '../input.js';
 import { formatOption, printOutput } from '../output.js';
 
 interface CheckResult {

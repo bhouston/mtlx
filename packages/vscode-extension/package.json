@@ -1,0 +1,125 @@
+{
+  "name": "mtlx-vscode-extension",
+  "displayName": "Mtlx Viewer",
+  "version": "0.1.0",
+  "description": "Preview, inspect, and convert MaterialX files (.mtlx, .mtlz, .mtlx.zip) with a 3D viewer built on three.js",
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "3d",
+    "material",
+    "materialx",
+    "mtlx",
+    "mtlz",
+    "preview",
+    "shader"
+  ],
+  "homepage": "https://github.com/bhouston/mtlx#readme",
+  "bugs": {
+    "url": "https://github.com/bhouston/mtlx/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ben Houston",
+    "url": "https://ben3d.ca"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bhouston/mtlx.git",
+    "directory": "packages/vscode-extension"
+  },
+  "publisher": "benhouston3d",
+  "type": "module",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "compile": "tsc -p .",
+    "build:preview": "node scripts/build-preview.js",
+    "build:extension": "node scripts/build-extension.js",
+    "build": "pnpm run build:preview && pnpm run build:extension",
+    "watch": "tsc -watch -p .",
+    "package": "pnpm run build && vsce package --no-dependencies"
+  },
+  "dependencies": {
+    "mtlx-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/three": "^0.180.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "^0.27.3",
+    "three": "^0.186.0"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "mtlx.convertToMtlx",
+        "title": "Convert to .mtlx"
+      },
+      {
+        "command": "mtlx.convertToMtlz",
+        "title": "Convert to .mtlz"
+      },
+      {
+        "command": "mtlx.convertToMtlxZip",
+        "title": "Convert to .mtlx.zip"
+      },
+      {
+        "command": "mtlx.openPreview",
+        "title": "Open with Mtlx Viewer"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "mtlx.convertMaterialX",
+        "label": "Convert MaterialX File"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "submenu": "mtlx.convertMaterialX",
+          "when": "resourceFilename =~ /\\.(mtlx|mtlz|mtlx\\.zip)$/i",
+          "group": "7_modification"
+        }
+      ],
+      "mtlx.convertMaterialX": [
+        {
+          "command": "mtlx.convertToMtlx",
+          "when": "(resourceFilename =~ /\\.(mtlz|mtlx\\.zip)$/i) || (listMultiSelection && resourceFilename =~ /\\.(mtlx|mtlz|mtlx\\.zip)$/i)"
+        },
+        {
+          "command": "mtlx.convertToMtlz",
+          "when": "(resourceFilename =~ /\\.(mtlx|mtlx\\.zip)$/i && resourceExtname != '.mtlz') || (listMultiSelection && resourceFilename =~ /\\.(mtlx|mtlz|mtlx\\.zip)$/i)"
+        },
+        {
+          "command": "mtlx.convertToMtlxZip",
+          "when": "(resourceFilename =~ /\\.(mtlx|mtlz)$/i) || (listMultiSelection && resourceFilename =~ /\\.(mtlx|mtlz|mtlx\\.zip)$/i)"
+        }
+      ]
+    },
+    "customEditors": [
+      {
+        "viewType": "mtlx.mtlxPreview",
+        "displayName": "Mtlx Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.mtlx"
+          },
+          {
+            "filenamePattern": "*.mtlz"
+          },
+          {
+            "filenamePattern": "*.mtlx.zip"
+          }
+        ],
+        "priority": "default"
+      }
+    ]
+  },
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  }
+}

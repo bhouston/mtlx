@@ -1,6 +1,5 @@
-import { unpackMaterialXZip, unpackMaterialZ } from '@mtlx/core';
+import { detectFormat, unpackMaterialXZip, unpackMaterialZ } from 'mtlx-core';
 import { defineCommand } from 'yargs-file-commands';
-import { detectFormat } from '../input.js';
 import { formatOption, printOutput } from '../output.js';
 
 const renderText = (result: { outputDir: string; rootPath: string; entries: string[] }): string =>

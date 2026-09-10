@@ -1,6 +1,11 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "ignorePatterns": ["**/routeTree.gen.ts", "packages/core/src/generated/node-registry.generated.ts"],
+  "ignorePatterns": [
+    "**/routeTree.gen.ts",
+    "packages/core/src/generated/node-registry.generated.ts",
+    "packages/vscode-extension/dist/**",
+    "packages/vscode-extension/media/**"
+  ],
   "categories": {
     "correctness": "error",
     "suspicious": "warn"

@@ -1,4 +1,4 @@
-import type { MaterialXValidationIssue } from '@mtlx/core';
+import type { MaterialXValidationIssue } from 'mtlx-core';
 
 export interface ValidationPanelProps {
   issues: MaterialXValidationIssue[] | null;

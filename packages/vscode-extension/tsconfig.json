@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.node.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/preview"],
+  "references": [{ "path": "../core" }]
+}

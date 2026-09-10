@@ -5,6 +5,7 @@ publish
 .nitro
 .tanstack
 routeTree.gen.ts
+packages/vscode-extension/media
 .DS_Store
 *.tsbuildinfo
 coverage

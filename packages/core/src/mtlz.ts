@@ -36,6 +36,7 @@ export interface MaterialZArchiveEntry {
 
 export interface PackMaterialXOptions {
   outputPath?: string;
+  transformResource?: TransformResourceHook;
 }
 
 export interface PackMaterialXResult {
@@ -479,18 +480,17 @@ const resourceDirectoryForPath = (sourcePath: string): string => {
 const safeBasename = (sourcePath: string): string =>
   path.basename(sourcePath).replace(/[^a-zA-Z0-9._-]/g, '_') || 'resource';
 
-const archivePathForResource = (
-  sourcePath: string,
-  assignedPaths: Map<string, string>,
-  usedArchivePaths: Set<string>,
-): string => {
-  const existing = assignedPaths.get(sourcePath);
-  if (existing) {
-    return existing;
+/** basename with its extension swapped, when `extension` differs from the current one. */
+const withExtension = (basename: string, extension: string): string => {
+  const current = path.extname(basename);
+  if (current.toLowerCase() === extension.toLowerCase()) {
+    return basename;
   }
+  const stem = current ? basename.slice(0, -current.length) : basename;
+  return `${stem}${extension}`;
+};
 
-  const directory = resourceDirectoryForPath(sourcePath);
-  const basename = safeBasename(sourcePath);
+const archivePathFor = (directory: string, basename: string, usedArchivePaths: Set<string>): string => {
   const extension = path.extname(basename);
   const stem = extension ? basename.slice(0, -extension.length) : basename;
   let archivePath = `${directory}/${basename}`;
@@ -499,20 +499,41 @@ const archivePathForResource = (
     archivePath = `${directory}/${stem}-${suffix}${extension}`;
     suffix += 1;
   }
-
-  assignedPaths.set(sourcePath, archivePath);
   usedArchivePaths.add(archivePath);
   return archivePath;
 };
 
-const rewriteResourceReferences = async (
+/** Applied to each unique referenced resource's bytes before it's archived; may change the
+ * extension (e.g. resizing/reformatting a texture), which is reflected in both the archived
+ * filename and the rewritten document reference. */
+export type TransformResourceHook = (
+  data: Uint8Array,
+  sourcePath: string,
+  sourceExtension: string,
+) => Promise<{ data: Uint8Array; extension: string }>;
+
+export interface MaterialXResource {
+  archivePath: string;
+  sourcePath: string;
+  data: Uint8Array;
+}
+
+/** Walks a document's file/filename/href/uri/source-style references, resolves each to an
+ * absolute path relative to `rootDir`, reads its bytes (optionally transforming them), assigns
+ * an archive-relative path (`textures/`, `libraries/`, or `resources/`), rewrites the document's
+ * attribute values in place to those archive-relative paths, and returns the resolved resources.
+ * Shared by `packMaterialX`, `packMaterialXZip` (mtlxzip.ts), and the CLI's `transform` command —
+ * the one place this logic lives. */
+export const resolveMaterialXResources = async (
   document: MaterialXDocument,
   rootDir: string,
-): Promise<Array<{ archivePath: string; sourcePath: string }>> => {
-  const assignedPaths = new Map<string, string>();
-  const usedArchivePaths = new Set<string>();
+  transformResource?: TransformResourceHook,
+): Promise<MaterialXResource[]> => {
+  const refs: Array<{ element: MaterialXElement; attributeName: string; sourcePath: string }> = [];
+  const sourcePaths: string[] = [];
+  const seenSourcePaths = new Set<string>();
 
-  const rewriteElement = (element: MaterialXElement) => {
+  const collectElement = (element: MaterialXElement) => {
     for (const [attributeName, rawValue] of Object.entries(element.attributes)) {
       const value = rawValue.trim();
       if (!value || !shouldConsiderReference(element, attributeName, value)) {
@@ -529,29 +550,55 @@ const rewriteResourceReferences = async (
       if (!isPathInside(rootDir, sourcePath)) {
         throw new Error(`Referenced file is outside the MaterialX root directory: ${value}`);
       }
-      const archivePath = archivePathForResource(sourcePath, assignedPaths, usedArchivePaths);
-      element.attributes[attributeName] = archivePath;
+      refs.push({ element, attributeName, sourcePath });
+      if (!seenSourcePaths.has(sourcePath)) {
+        seenSourcePaths.add(sourcePath);
+        sourcePaths.push(sourcePath);
+      }
     }
 
     for (const child of element.children) {
-      rewriteElement(child);
+      collectElement(child);
     }
   };
 
   for (const element of document.elements) {
-    rewriteElement(element);
+    collectElement(element);
   }
 
-  const resources: Array<{ archivePath: string; sourcePath: string }> = [];
-  for (const [sourcePath, archivePath] of assignedPaths) {
+  const usedArchivePaths = new Set<string>();
+  const resourcesBySourcePath = new Map<string, MaterialXResource>();
+  for (const sourcePath of sourcePaths) {
+    let data: Uint8Array;
     try {
-      await readFile(sourcePath);
+      data = await readFile(sourcePath);
     } catch {
       throw new Error(`Referenced file does not exist: ${sourcePath}`);
     }
-    resources.push({ archivePath, sourcePath });
+
+    let extension = path.extname(sourcePath);
+    if (transformResource) {
+      const transformed = await transformResource(data, sourcePath, extension);
+      data = transformed.data;
+      extension = transformed.extension;
+    }
+
+    const directory = resourceDirectoryForPath(sourcePath);
+    const basename = withExtension(safeBasename(sourcePath), extension);
+    const archivePath = archivePathFor(directory, basename, usedArchivePaths);
+    resourcesBySourcePath.set(sourcePath, { archivePath, sourcePath, data });
   }
-  return resources.toSorted((left, right) => left.archivePath.localeCompare(right.archivePath));
+
+  for (const ref of refs) {
+    const resource = resourcesBySourcePath.get(ref.sourcePath);
+    if (resource) {
+      ref.element.attributes[ref.attributeName] = resource.archivePath;
+    }
+  }
+
+  return [...resourcesBySourcePath.values()].toSorted((left, right) =>
+    left.archivePath.localeCompare(right.archivePath),
+  );
 };
 
 export const packMaterialX = async (
@@ -566,14 +613,11 @@ export const packMaterialX = async (
 
   const xml = await readFile(inputPath, 'utf8');
   const document = parseMaterialX(xml);
-  const resources = await rewriteResourceReferences(document, rootDir);
-  const resourceEntries = await Promise.all(
-    resources.map(async (resource) => ({
-      path: resource.archivePath,
-      data: await readFile(resource.sourcePath),
-    })),
-  );
-  const archive = createMaterialZArchive([{ path: rootPath, data: serializeMaterialX(document) }, ...resourceEntries]);
+  const resources = await resolveMaterialXResources(document, rootDir, options.transformResource);
+  const archive = createMaterialZArchive([
+    { path: rootPath, data: serializeMaterialX(document) },
+    ...resources.map((resource) => ({ path: resource.archivePath, data: resource.data })),
+  ]);
   const outputPath =
     options.outputPath ?? path.join(rootDir, `${path.basename(rootPath, path.extname(rootPath))}.mtlz`);
   await writeFile(outputPath, archive);

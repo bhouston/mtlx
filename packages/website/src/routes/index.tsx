@@ -1,17 +1,16 @@
-import { parseMaterialX, validateDocument, type MaterialXValidationIssue } from '@mtlx/core';
+import type { MaterialXValidationIssue } from 'mtlx-core';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { MaterialViewer, type MaterialSource } from '../components/MaterialViewer';
 import { ValidationPanel } from '../components/ValidationPanel';
 import { extractMaterialXText } from '../lib/materialx-zip';
 import { PRESET_MATERIALS, presetFileName, presetFolderUrl } from '../lib/presets';
+import { validateMaterialXText } from '../lib/validate';
 
 export const Route = createFileRoute('/')({
   ssr: false,
   component: HomePage,
 });
-
-const validate = (text: string): MaterialXValidationIssue[] => validateDocument(parseMaterialX(text));
 
 function HomePage() {
   const [source, setSource] = useState<MaterialSource | null>(null);
@@ -30,7 +29,7 @@ function HomePage() {
       const data = await file.arrayBuffer();
       setSource({ kind: 'buffer', data, name: file.name });
       const text = lowerName.endsWith('.mtlx') ? new TextDecoder().decode(data) : extractMaterialXText(data);
-      setIssues(validate(text));
+      setIssues(validateMaterialXText(text));
     } catch (error) {
       setFileError(error instanceof Error ? error.message : String(error));
     }
@@ -43,7 +42,7 @@ function HomePage() {
     setSource({ kind: 'url', folderUrl, fileName });
     try {
       const text = await fetch(`${folderUrl}${fileName}`).then((response) => response.text());
-      setIssues(validate(text));
+      setIssues(validateMaterialXText(text));
     } catch (error) {
       setFileError(error instanceof Error ? error.message : String(error));
     }

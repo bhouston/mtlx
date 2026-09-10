@@ -24,6 +24,15 @@ export default defineConfig({
           environment: 'jsdom',
         },
       },
+      {
+        test: {
+          // Only files that don't import 'vscode' (unresolvable outside a running extension
+          // host) belong here — see mtlxConvert.ts vs. mtlxOperations.ts.
+          name: 'vscode-extension',
+          include: ['packages/vscode-extension/src/**/*.test.ts'],
+          environment: 'node',
+        },
+      },
     ],
   },
 });

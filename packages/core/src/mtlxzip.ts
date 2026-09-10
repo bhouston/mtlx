@@ -1,10 +1,11 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { unzipSync } from 'fflate';
+import { unzipSync, zipSync } from 'fflate';
+import { resolveMaterialXResources, type TransformResourceHook } from './mtlz.js';
 import { materialXNodeRegistry } from './registry.js';
 import type { MaterialXValidationIssue } from './types.js';
 import { validateDocument } from './validate.js';
-import { parseMaterialX } from './xml.js';
+import { parseMaterialX, serializeMaterialX } from './xml.js';
 
 // Relaxed reader for ".mtlx.zip": an ordinary zip (any tool, any compression, root .mtlx
 // anywhere) containing a MaterialX document plus resources. Unlike ".mtlz" (see mtlz.ts),
@@ -87,6 +88,49 @@ export const checkMaterialXZipPackage = async (inputPath: string): Promise<Check
     }
   }
   return { path: inputPath, format: 'mtlx.zip', issues };
+};
+
+export interface PackMaterialXZipOptions {
+  outputPath?: string;
+  transformResource?: TransformResourceHook;
+}
+
+export interface PackMaterialXZipResult {
+  outputPath: string;
+  rootPath: string;
+  entries: string[];
+}
+
+/** The .mtlx.zip counterpart to packMaterialX (mtlz.ts): same resource-resolution logic
+ * (resolveMaterialXResources), but written as an ordinary zip via fflate — no STORE/root-first
+ * constraints, since .mtlx.zip is deliberately the less-restrictive container. */
+export const packMaterialXZip = async (
+  inputPath: string,
+  options: PackMaterialXZipOptions = {},
+): Promise<PackMaterialXZipResult> => {
+  const rootDir = path.dirname(inputPath);
+  const rootPath = path.basename(inputPath);
+  if (!rootPath.toLowerCase().endsWith('.mtlx')) {
+    throw new Error('pack requires a root .mtlx input file');
+  }
+
+  const xml = await readFile(inputPath, 'utf8');
+  const document = parseMaterialX(xml);
+  const resources = await resolveMaterialXResources(document, rootDir, options.transformResource);
+
+  const files: Record<string, Uint8Array> = { [rootPath]: new TextEncoder().encode(serializeMaterialX(document)) };
+  for (const resource of resources) {
+    files[resource.archivePath] = resource.data;
+  }
+
+  const outputPath =
+    options.outputPath ?? path.join(rootDir, `${path.basename(rootPath, path.extname(rootPath))}.mtlx.zip`);
+  await writeFile(outputPath, zipSync(files));
+  return {
+    outputPath,
+    rootPath,
+    entries: [rootPath, ...resources.map((resource) => resource.archivePath)],
+  };
 };
 
 export interface UnpackMaterialXZipOptions {

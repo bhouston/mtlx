@@ -3,7 +3,12 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { zipSync } from 'fflate';
-import { checkMaterialXZipPackage, inspectMaterialXZipArchive, unpackMaterialXZip } from './mtlxzip.js';
+import {
+  checkMaterialXZipPackage,
+  inspectMaterialXZipArchive,
+  packMaterialXZip,
+  unpackMaterialXZip,
+} from './mtlxzip.js';
 
 const SAMPLE_MTLX = `<?xml version="1.0"?>
 <materialx version="1.39">
@@ -51,5 +56,19 @@ describe('.mtlx.zip (relaxed reader)', () => {
 
     const unpacked = await unpackMaterialXZip(inputPath, { outputDir: path.join(dir, 'out') });
     expect(unpacked.entries).toEqual(['test.mtlx']);
+  });
+
+  it('packMaterialXZip round-trips a loose .mtlx + texture through pack -> unpack, unlike .mtlz it tolerates DEFLATE', async () => {
+    await writeFile(path.join(dir, 'material.mtlx'), SAMPLE_MTLX);
+
+    const packed = await packMaterialXZip(path.join(dir, 'material.mtlx'));
+    expect(packed.outputPath).toBe(path.join(dir, 'material.mtlx.zip'));
+    expect(packed.entries).toEqual(['material.mtlx']);
+
+    const check = await checkMaterialXZipPackage(packed.outputPath);
+    expect(check.issues.filter((issue) => issue.level === 'error')).toHaveLength(0);
+
+    const unpacked = await unpackMaterialXZip(packed.outputPath, { outputDir: path.join(dir, 'out') });
+    expect(unpacked.entries).toEqual(['material.mtlx']);
   });
 });

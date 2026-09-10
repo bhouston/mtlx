@@ -5,5 +5,10 @@
   },
   "files": [],
   "include": [],
-  "references": [{ "path": "./packages/core" }, { "path": "./packages/cli" }, { "path": "./packages/website" }]
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/cli" },
+    { "path": "./packages/website" },
+    { "path": "./packages/vscode-extension" }
+  ]
 }

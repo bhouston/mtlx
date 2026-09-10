@@ -1,5 +1,8 @@
-import { parseMaterialX, readMaterialX, readMaterialXZipArchive, readMaterialZArchive } from '@mtlx/core';
-import type { MaterialXDocument } from '@mtlx/core';
+import { parseMaterialX } from './xml.js';
+import { readMaterialX } from './io.js';
+import { readMaterialXZipArchive } from './mtlxzip.js';
+import { readMaterialZArchive } from './mtlz.js';
+import type { MaterialXDocument } from './types.js';
 
 export type MaterialXInputFormat = 'mtlx' | 'mtlz' | 'mtlx.zip';
 
@@ -16,14 +19,16 @@ export const detectFormat = (inputPath: string): MaterialXInputFormat => {
   return 'mtlx';
 };
 
-/** Loads the MaterialX document out of a .mtlx, .mtlz, or .mtlx.zip path. */
+/** Loads the MaterialX document out of a .mtlx, .mtlz, or .mtlx.zip path — the single place
+ * every consumer (CLI, VS Code extension) should go through rather than re-implementing the
+ * per-format dispatch. */
 export const loadMaterialXDocument = async (
   inputPath: string,
-): Promise<{ document: MaterialXDocument; rootPath: string }> => {
+): Promise<{ document: MaterialXDocument; rootPath: string; format: MaterialXInputFormat }> => {
   const format = detectFormat(inputPath);
 
   if (format === 'mtlx') {
-    return { document: await readMaterialX(inputPath), rootPath: inputPath };
+    return { document: await readMaterialX(inputPath), rootPath: inputPath, format };
   }
 
   const archive = format === 'mtlz' ? await readMaterialZArchive(inputPath) : await readMaterialXZipArchive(inputPath);
@@ -33,5 +38,6 @@ export const loadMaterialXDocument = async (
   return {
     document: parseMaterialX(textDecoder.decode(archive.rootEntry.data)),
     rootPath: archive.rootEntry.path,
+    format,
   };
 };
