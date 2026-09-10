@@ -62,6 +62,12 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
     );
     webviewPanel.webview.html = getPreviewHtml(webviewPanel.webview, scriptUri);
 
+    // Static asset (not per-document) — same bytes-over-postMessage approach as the document and
+    // its textures, so the webview never needs its own fetch/CSP allowance for it.
+    const shaderBall = await vscode.workspace.fs.readFile(
+      vscode.Uri.joinPath(this._context.extensionUri, 'media', 'shaderball.glb'),
+    );
+
     webviewPanel.webview.onDidReceiveMessage((message: { type?: string; message?: string }) => {
       if (message.type === 'log' && message.message) {
         this._output.appendLine(message.message);
@@ -87,6 +93,7 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       // transfer; a Uint8Array nested inside a plain object (unlike `data` above) silently arrives
       // empty/corrupt, so send `.buffer` explicitly here too.
       textures: document.textures.map((t) => ({ path: t.path, data: t.data.buffer })),
+      shaderBall: shaderBall.buffer,
     });
     /* oxlint-enable unicorn/require-post-message-target-origin */
   }
@@ -126,8 +133,16 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
       overflow: hidden;
     }
     .layout { display: flex; gap: 16px; flex: 1; min-height: 0; }
-    .viewport-wrap { flex: 2; min-width: 0; position: relative; }
-    #viewport { width: 100%; height: 100%; }
+    .viewport-wrap { flex: 2; min-width: 0; position: relative; display: flex; flex-direction: column; }
+    .toolbar { display: flex; gap: 8px; padding-bottom: 8px; flex: none; }
+    .toolbar select {
+      background: var(--vscode-dropdown-background);
+      color: var(--vscode-dropdown-foreground);
+      border: 1px solid var(--vscode-dropdown-border);
+      font-size: 12px;
+      padding: 2px 4px;
+    }
+    #viewport { width: 100%; flex: 1; min-height: 0; }
     .stats { flex: 1; min-width: 220px; overflow: auto; font-size: 12px; }
     .stats dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
     .stats dt { font-weight: 600; color: var(--vscode-foreground); }
@@ -154,7 +169,17 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
 </head>
 <body>
   <div class="layout">
-    <div class="viewport-wrap"><canvas id="viewport"></canvas></div>
+    <div class="viewport-wrap">
+      <div class="toolbar">
+        <select id="material-select" title="Material"></select>
+        <select id="geometry-select" title="Geometry">
+          <option value="totem">Totem</option>
+          <option value="sphere">Sphere</option>
+          <option value="plane">Plane</option>
+        </select>
+      </div>
+      <canvas id="viewport"></canvas>
+    </div>
     <div class="stats" id="stats"></div>
   </div>
   <div class="error" id="error" style="display:none"></div>

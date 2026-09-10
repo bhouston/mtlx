@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { existsSync, mkdirSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 /**
  * Bundle the webview preview script with esbuild.
- * Includes three.js (WebGPURenderer, MaterialXLoader, OrbitControls, RoomEnvironment).
+ * Includes three.js (WebGPURenderer, MaterialXLoader, GLTFLoader, OrbitControls).
  */
 import * as esbuild from 'esbuild';
 
@@ -32,5 +32,10 @@ await esbuild.build({
     'process.env.NODE_ENV': '"production"',
   },
 });
+
+// The shaderball ("totem" geometry, ~1.4MB) is too big to inline as a data URL like the studio
+// PNG — copied alongside preview.js instead, read as bytes by the extension host (same as the
+// document itself) and sent over postMessage, no separate webview fetch/CSP needed.
+copyFileSync(fileURLToPath(import.meta.resolve('mtlx-viewer/assets/shaderball.glb')), join(outDir, 'shaderball.glb'));
 
 console.log('Built preview.js');

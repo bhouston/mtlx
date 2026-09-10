@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
-import { parseStudioEnvironment } from 'mtlx-viewer';
+import { createMtlxScene, parseStudioEnvironment, type GeometryKind, type MtlxScene } from 'mtlx-viewer';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
+import shaderBallUrl from 'mtlx-viewer/assets/shaderball.glb?url';
 
 export type MaterialSource =
   | { kind: 'buffer'; data: ArrayBuffer; name: string }
@@ -12,26 +13,41 @@ export interface MaterialViewerProps {
   onError: (message: string | null) => void;
 }
 
-// @types/three@0.180 predates parseBuffer (three's native .mtlz/.mtlx.zip support), so we widen
-// the loader's type locally rather than fighting a lagging community typings package.
-interface MaterialXLoaderWithParseBuffer {
-  setPath: (path: string) => MaterialXLoaderWithParseBuffer;
-  loadAsync: (url: string) => Promise<{ materials: Record<string, ThreeNS.Material> }>;
-  parseBuffer: (data: ArrayBuffer, url?: string) => { materials: Record<string, ThreeNS.Material> };
+const GEOMETRY_OPTIONS: { value: GeometryKind; label: string }[] = [
+  { value: 'totem', label: 'Totem' },
+  { value: 'sphere', label: 'Sphere' },
+  { value: 'plane', label: 'Plane' },
+];
+
+async function resolveSourceBytes(source: MaterialSource): Promise<{ data: ArrayBuffer; fileName: string }> {
+  if (source.kind === 'buffer') {
+    return { data: source.data, fileName: source.name };
+  }
+  // Pass the full URL (not just the bare filename) as MaterialXLoader's resource path — it
+  // derives the texture base folder from everything before the last "/", the same way
+  // `.setPath(folderUrl).loadAsync(fileName)` used to; the browser can then fetch a preset's
+  // sibling textures (e.g. wood_grain's) directly from raw.githubusercontent.com by relative URL.
+  const url = `${source.folderUrl}${source.fileName}`;
+  const data = await (await fetch(url)).arrayBuffer();
+  return { data, fileName: url };
 }
 
-// three.js 0.186's MaterialXLoader natively understands .mtlx, .mtlz, and .mtlx.zip (it sniffs
-// the zip magic bytes / filename) and resolves textures embedded in the archive itself, so this
-// component doesn't need any zip handling of its own.
-//
-// Sphere + baked studio-room IBL (packages/viewer) instead of a hosted shaderball .glb + HDRI.
-// ponytail: sphere preview / baked studio lighting, swap for a shaderball glb + real HDRI later if wanted.
+// three.js 0.186's MaterialXLoader (via mtlx-viewer's createMtlxScene) natively understands
+// .mtlx, .mtlz, and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
+// embedded in the archive itself, so this component doesn't need any zip handling of its own.
 export function MaterialViewer({ source, onError }: MaterialViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const mtlxSceneRef = useRef<MtlxScene | null>(null);
   const [loading, setLoading] = useState(false);
+  const [materialNames, setMaterialNames] = useState<string[]>([]);
+  const [activeMaterial, setActiveMaterial] = useState('');
+  const [geometry, setGeometry] = useState<GeometryKind>('totem');
 
   useEffect(() => {
     const container = containerRef.current;
+    mtlxSceneRef.current = null;
+    setMaterialNames([]);
+    setActiveMaterial('');
     if (!container || !source) {
       return;
     }
@@ -44,7 +60,6 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
     (async () => {
       const THREE: typeof ThreeNS = await import('three/webgpu');
       const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
-      const { MaterialXLoader } = await import('three/addons/loaders/MaterialXLoader.js');
       if (disposed) return;
 
       const width = container.clientWidth || 512;
@@ -64,7 +79,6 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
-      camera.position.set(0, 0, 3.2);
 
       // Shared studio IBL (packages/viewer), baked once from RoomEnvironment, so the website and
       // VS Code preview render the same lighting.
@@ -87,27 +101,20 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      const sphere = new THREE.Mesh<ThreeNS.SphereGeometry, ThreeNS.Material>(
-        new THREE.SphereGeometry(1, 64, 64),
-        new THREE.MeshStandardMaterial(),
-      );
-      scene.add(sphere);
-
       try {
-        // @types/three lags three's addon source: parseBuffer (native .mtlz/.mtlx.zip support)
-        // isn't in its MaterialXLoader typings yet.
-        const loader = new MaterialXLoader() as unknown as MaterialXLoaderWithParseBuffer;
-        const result =
-          source.kind === 'url'
-            ? await loader.setPath(source.folderUrl).loadAsync(source.fileName)
-            : loader.parseBuffer(source.data, source.name);
+        const [{ data, fileName }, shaderBall] = await Promise.all([
+          resolveSourceBytes(source),
+          (async () => (await fetch(shaderBallUrl)).arrayBuffer())(),
+        ]);
+        if (disposed) return;
 
-        const materials = Object.values(result.materials);
-        const material = materials.at(-1);
-        if (!material) {
-          throw new Error('No materials found in this MaterialX document');
-        }
-        sphere.material = material;
+        const mtlxScene = await createMtlxScene(camera, controls, { data, fileName, shaderBall });
+        if (disposed) return;
+        scene.add(mtlxScene.root);
+        mtlxSceneRef.current = mtlxScene;
+        setMaterialNames(mtlxScene.materialNames);
+        setActiveMaterial(mtlxScene.activeMaterial);
+        setGeometry(mtlxScene.geometry);
       } catch (error) {
         onError(error instanceof Error ? error.message : String(error));
       }
@@ -123,7 +130,11 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
       const resizeObserver = new ResizeObserver(resize);
       resizeObserver.observe(container);
 
+      let clock = performance.now();
       const animate = () => {
+        const now = performance.now();
+        mtlxSceneRef.current?.update((now - clock) / 1000);
+        clock = now;
         controls.update();
         void renderer.renderAsync(scene, camera);
         frameId = requestAnimationFrame(animate);
@@ -151,6 +162,39 @@ export function MaterialViewer({ source, onError }: MaterialViewerProps) {
 
   return (
     <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-border bg-black">
+      {materialNames.length > 0 ? (
+        <div className="absolute top-2 left-2 z-10 flex gap-2">
+          <select
+            className="rounded border border-white/20 bg-black/60 px-2 py-1 text-xs text-white"
+            value={activeMaterial}
+            onChange={(event) => {
+              setActiveMaterial(event.target.value);
+              mtlxSceneRef.current?.setMaterial(event.target.value);
+            }}
+          >
+            {materialNames.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="rounded border border-white/20 bg-black/60 px-2 py-1 text-xs text-white"
+            value={geometry}
+            onChange={(event) => {
+              const kind = event.target.value as GeometryKind;
+              setGeometry(kind);
+              mtlxSceneRef.current?.setGeometry(kind);
+            }}
+          >
+            {GEOMETRY_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
       <div ref={containerRef} className="h-full w-full" />
       {loading ? (
         <div className="absolute inset-0 flex items-center justify-center text-sm text-white/70">Loading…</div>

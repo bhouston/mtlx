@@ -11,3 +11,7 @@ Preview, inspect, and convert [MaterialX](https://materialx.org) files directly 
 Built on [`mtlx-core`](https://www.npmjs.com/package/mtlx-core) — see the
 [mtlx monorepo](https://github.com/bhouston/mtlx) for the CLI and library this extension shares
 its file-format logic with.
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com)

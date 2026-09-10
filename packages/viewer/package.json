@@ -14,17 +14,17 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "main": "./dist/environment.js",
-  "types": "./dist/environment.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/environment.d.ts",
-      "default": "./dist/environment.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./assets/*": "./assets/*"
   },
   "scripts": {
-    "compile": "tsc -p .",
+    "build": "tsc -p .",
     "bake:studio-environment": "node scripts/bake-studio-environment.mjs"
   },
   "devDependencies": {

@@ -5,8 +5,7 @@
  */
 import * as THREE from 'three/webgpu';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { MaterialXLoader } from 'three/addons/loaders/MaterialXLoader.js';
-import { parseStudioEnvironment } from 'mtlx-viewer';
+import { createMtlxScene, parseStudioEnvironment, type GeometryKind, type MtlxScene } from 'mtlx-viewer';
 // esbuild's dataurl loader (see build-preview.js) inlines this as a base64 data: URL string.
 import studioEnvironmentDataUrl from 'mtlx-viewer/assets/studio-environment.png';
 
@@ -49,12 +48,15 @@ interface PreviewPayload {
   parseError?: string;
   data?: ArrayBuffer;
   textures: PreviewTexture[];
+  shaderBall?: ArrayBuffer;
 }
 
 const canvasEl = document.getElementById('viewport') as HTMLCanvasElement;
 const statsEl = document.getElementById('stats') as HTMLDivElement;
 const errorEl = document.getElementById('error') as HTMLDivElement;
 const logEl = document.getElementById('log') as HTMLDivElement;
+const materialSelectEl = document.getElementById('material-select') as HTMLSelectElement;
+const geometrySelectEl = document.getElementById('geometry-select') as HTMLSelectElement;
 
 // Diagnostics console: every step of renderer/loader setup is logged here (visible in the
 // webview itself, no devtools needed) and mirrored to the extension host's Output channel via
@@ -139,21 +141,25 @@ function renderStats(payload: PreviewPayload): void {
   statsEl.innerHTML = validityHtml + summaryHtml + issuesHtml;
 }
 
-async function renderScene(data: ArrayBuffer, fileName: string, textures: PreviewTexture[]): Promise<void> {
-  // Scaffolding: a plain gray sphere goes up immediately so the viewport never sits fully black
-  // while the renderer/loader are still starting up — replaced once (if) the real material loads.
+function populateMaterialSelect(scene: MtlxScene): void {
+  materialSelectEl.innerHTML = scene.materialNames
+    .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+    .join('');
+  materialSelectEl.value = scene.activeMaterial;
+  materialSelectEl.disabled = scene.materialNames.length <= 1;
+}
+
+async function renderScene(
+  data: ArrayBuffer,
+  fileName: string,
+  textures: PreviewTexture[],
+  shaderBall: ArrayBuffer,
+): Promise<void> {
   const width = canvasEl.clientWidth || 512;
   const height = canvasEl.clientHeight || 512;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
-  camera.position.set(0, 0, 3.2);
-
-  const sphere = new THREE.Mesh<THREE.SphereGeometry, THREE.Material>(
-    new THREE.SphereGeometry(1, 64, 64),
-    new THREE.MeshStandardMaterial({ color: 0x888888, wireframe: true }),
-  );
-  scene.add(sphere);
 
   log('Creating WebGPURenderer...');
   const renderer = new THREE.WebGPURenderer({ canvas: canvasEl, antialias: true });
@@ -166,7 +172,11 @@ async function renderScene(data: ArrayBuffer, fileName: string, textures: Previe
   log(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);
 
   log('Loading studio environment...');
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  // @types/three lags three's addon source: fromEquirectangular() isn't in its PMREMGenerator
+  // typings yet.
+  const pmremGenerator = new THREE.PMREMGenerator(renderer) as unknown as {
+    fromEquirectangular: (texture: THREE.Texture) => { texture: THREE.Texture };
+  };
   const envTexture = await parseStudioEnvironment(dataUrlToArrayBuffer(studioEnvironmentDataUrl));
   const environment = pmremGenerator.fromEquirectangular(envTexture).texture;
   envTexture.dispose();
@@ -186,9 +196,13 @@ async function renderScene(data: ArrayBuffer, fileName: string, textures: Previe
   };
   new ResizeObserver(resize).observe(canvasEl);
 
-  // Start the animation loop right away so the scaffold sphere is visibly spinning/orbitable
-  // even if material loading below fails.
+  let clock = performance.now();
+  let mtlxScene: MtlxScene | undefined;
   renderer.setAnimationLoop(() => {
+    const now = performance.now();
+    const deltaSeconds = (now - clock) / 1000;
+    clock = now;
+    mtlxScene?.update(deltaSeconds);
     controls.update();
     void renderer.renderAsync(scene, camera);
   });
@@ -213,21 +227,17 @@ async function renderScene(data: ArrayBuffer, fileName: string, textures: Previe
       log(`Embedded ${textureUrls.size} referenced texture(s) from disk.`);
     }
 
-    // @types/three lags three's addon source: parseBuffer (native .mtlz/.mtlx.zip support)
-    // isn't in its MaterialXLoader typings yet.
-    const loader = new MaterialXLoader(manager) as unknown as {
-      parseBuffer: (data: ArrayBuffer, url?: string) => { materials: Record<string, THREE.Material> };
-    };
-    const result = loader.parseBuffer(data, fileName);
-    const material = Object.values(result.materials).at(-1);
-    if (!material) {
-      throw new Error('No materials found in this MaterialX document');
-    }
-    sphere.material = material;
-    log('Material applied.');
+    mtlxScene = await createMtlxScene(camera, controls, { data, fileName, shaderBall, manager });
+    scene.add(mtlxScene.root);
+    populateMaterialSelect(mtlxScene);
+    log(`Material applied (${mtlxScene.materialNames.length} available).`);
   } catch (error) {
     showError(`MaterialX parse error: ${error instanceof Error ? error.message : String(error)}`);
+    return;
   }
+
+  materialSelectEl.addEventListener('change', () => mtlxScene?.setMaterial(materialSelectEl.value));
+  geometrySelectEl.addEventListener('change', () => mtlxScene?.setGeometry(geometrySelectEl.value as GeometryKind));
 }
 
 function onMessage(event: MessageEvent<PreviewPayload>): void {
@@ -239,8 +249,8 @@ function onMessage(event: MessageEvent<PreviewPayload>): void {
   }
   renderStats(payload);
 
-  if (payload.data) {
-    renderScene(payload.data, payload.fileName, payload.textures).catch((error: unknown) => {
+  if (payload.data && payload.shaderBall) {
+    renderScene(payload.data, payload.fileName, payload.textures, payload.shaderBall).catch((error: unknown) => {
       showError(`3D preview error: ${error instanceof Error ? error.message : String(error)}`);
     });
   }

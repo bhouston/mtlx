@@ -79,9 +79,9 @@ for what has changed.
 
 ## Credits
 
-Created by [Ben Houston](https://ben3d.ca). The library design follows patterns from Don McCurdy's
-[glTF Transform](https://gltf-transform.dev). Sample materials come from
-[material-samples.com](https://material-samples.com).
+Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
+The library design follows patterns from Don McCurdy's [glTF Transform](https://gltf-transform.dev).
+Sample materials come from [material-samples.com](https://material-samples.com).
 
 ## License
 
