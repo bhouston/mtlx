@@ -46,7 +46,7 @@ export const textureTransformOptions = {
     alias: 'tl',
     describe:
       'Loose .mtlx output only: copy textures into this directory (relative to --output) instead of ./textures. ' +
-      'Ignored for .mtlx.zip output, which always uses ./textures.',
+      'Ignored for .mtlx.zip output, whose resources remain inside the archive.',
     type: 'string',
   },
 } as const;

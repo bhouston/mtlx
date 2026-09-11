@@ -199,7 +199,7 @@ Texture options:
       --image-quality          Quality for lossy image formats (webp/jpg/avif)[number] [default: 95]
       --texture-library, --tl  Loose .mtlx output only: copy textures into this directory (relative
                                to --output) instead of ./textures. Ignored for .mtlx.zip output,
-                               which always uses ./textures.                                [string]
+                               whose resources remain inside the archive.                   [string]
 
 Options:
       --version  Show version number                                                       [boolean]

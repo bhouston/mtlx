@@ -112,7 +112,7 @@ export const command = defineCommand({
       const warnIfZip = (outputPath: string) => {
         if (textureLibrary && !warnedTextureLibraryIgnored && outputPath.toLowerCase().endsWith('.mtlx.zip')) {
           warnedTextureLibraryIgnored = true;
-          console.error('NOTE --texture-library is ignored for .mtlx.zip output (always uses ./textures)');
+          console.error('NOTE --texture-library is ignored for .mtlx.zip output (resources remain inside the archive)');
         }
       };
 
