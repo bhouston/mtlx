@@ -1,5 +1,11 @@
+import {
+  applyResourceDestinations,
+  cloneMaterialXPackage,
+  documentResourceReferences,
+  planResourceDestinations,
+} from './resource-graph.js';
 import type { MaterialXDocument, MaterialXElement } from './types.js';
-import { cloneMaterialXDocument, parseMaterialX, serializeMaterialX } from './xml.js';
+import { parseMaterialX, serializeMaterialX } from './xml.js';
 
 /**
  * *A MaterialX file format, detected from its file extension.*
@@ -318,16 +324,12 @@ export const resolveMaterialXResources = async (
  */
 export const rewriteResourcePath = (document: MaterialXDocument, from: string, to: string): number => {
   let count = 0;
-  const visit = (element: MaterialXElement) => {
-    for (const [name, value] of Object.entries(element.attributes)) {
-      if (value === from) {
-        element.attributes[name] = to;
-        count += 1;
-      }
+  for (const ref of documentResourceReferences(document)) {
+    if (ref.value === from) {
+      ref.element.attributes[ref.attribute] = to;
+      count++;
     }
-    element.children.forEach(visit);
-  };
-  document.elements.forEach(visit);
+  }
   return count;
 };
 
@@ -406,15 +408,12 @@ export const mergeMaterialXPackages = (packages: MaterialXPackage[]): MaterialXP
   const usedNames = new Set(
     first.document.elements.map((element) => element.attributes.name).filter((name): name is string => !!name),
   );
-  const usedArchivePaths = new Set(first.resources.map((resource) => resource.archivePath));
+  const usedArchivePaths = new Set([first.rootPath, ...first.resources.map((resource) => resource.archivePath)]);
 
-  const merged: MaterialXPackage = {
-    rootPath: first.rootPath,
-    document: cloneMaterialXDocument(first.document),
-    resources: [...first.resources],
-  };
+  const merged = cloneMaterialXPackage(first);
 
-  for (const pkg of rest) {
+  for (const input of rest) {
+    const pkg = cloneMaterialXPackage(input);
     for (const element of pkg.document.elements) {
       const name = element.attributes.name;
       if (name && usedNames.has(name)) {
@@ -424,19 +423,12 @@ export const mergeMaterialXPackages = (packages: MaterialXPackage[]): MaterialXP
         usedNames.add(name);
       }
     }
+    const destinations = planResourceDestinations(pkg, (resource) => resource.archivePath, usedArchivePaths);
+    applyResourceDestinations(pkg, destinations, merged.rootPath);
     for (const resource of pkg.resources) {
-      let { archivePath } = resource;
-      if (usedArchivePaths.has(archivePath)) {
-        const slash = archivePath.lastIndexOf('/');
-        const directory = archivePath.slice(0, slash);
-        const basename = archivePath.slice(slash + 1);
-        const renamed = uniqueArchivePath(directory, basename, usedArchivePaths);
-        rewriteResourcePath(pkg.document, archivePath, renamed);
-        archivePath = renamed;
-      } else {
-        usedArchivePaths.add(archivePath);
-      }
-      merged.resources.push({ ...resource, archivePath });
+      usedArchivePaths.add(resource.archivePath);
+      resource.id = `merged:${merged.resources.length}:${resource.id ?? resource.sourcePath}`;
+      merged.resources.push(resource);
     }
     merged.document.elements.push(...pkg.document.elements);
   }

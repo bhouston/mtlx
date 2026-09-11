@@ -36,7 +36,8 @@ const parseOrdered = (records: XmlRecord[]): MaterialXElement[] =>
   records.flatMap((record) => {
     const name = Object.keys(record).find((key) => key !== ':@');
     if (!name || name.startsWith('?')) return [];
-    if (name === '#text') return [{ name, attributes: {}, text: String(record[name]), children: [] }];
+    if (name === '#text')
+      return String(record[name]).trim() ? [{ name, attributes: {}, text: String(record[name]), children: [] }] : [];
     const children = parseOrdered(record[name] as XmlRecord[]);
     return [{ name, attributes: asStringRecord(record[':@']), children }];
   });

@@ -37,6 +37,32 @@ describe('resolveMaterialXResources', () => {
 });
 
 describe('mergeMaterialXPackages', () => {
+  it('preserves chained resource identities without mutating either input', () => {
+    const resource = (archivePath: string, value: number) => ({
+      archivePath,
+      sourcePath: archivePath,
+      data: new Uint8Array([value]),
+    });
+    const a = makePackage('a', nodegraphWithTexture('A'), [resource('textures/albedo.png', 1)]);
+    const b = makePackage(
+      'b',
+      '<materialx><image name="B"><input name="file" type="filename" value="textures/albedo.png"/><input name="other" type="filename" value="textures/albedo-2.png"/></image></materialx>',
+      [resource('textures/albedo.png', 2), resource('textures/albedo-2.png', 3)],
+    );
+    const before = serializeMaterialX(b.document);
+    const merged = mergeMaterialXPackages([a, b]);
+    expect(merged.document.nodes[0]?.inputs.map((input) => input.value)).toEqual([
+      'textures/albedo-3.png',
+      'textures/albedo-2.png',
+    ]);
+    expect(serializeMaterialX(b.document)).toBe(before);
+    expect(merged.resources.map((r) => [r.archivePath, r.data[0]])).toEqual([
+      ['textures/albedo.png', 1],
+      ['textures/albedo-3.png', 2],
+      ['textures/albedo-2.png', 3],
+    ]);
+  });
+
   it('returns a single input package as-is', () => {
     const pkg = makePackage(
       'a',
