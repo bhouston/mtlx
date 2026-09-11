@@ -20,11 +20,21 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function Section({ title, items, expanded = false }: { title: string; items: string[]; expanded?: boolean }) {
+function Section({
+  title,
+  items,
+  expanded = false,
+  count = items.length,
+}: {
+  title: string;
+  items: string[];
+  expanded?: boolean;
+  count?: number;
+}) {
   return (
     <details open={expanded}>
       <summary className="cursor-pointer select-none font-semibold">
-        {title} ({items.length})
+        {title} ({count})
       </summary>
       <ul className="mt-1 list-disc space-y-0.5 pl-4">
         {items.length ? (
@@ -54,6 +64,14 @@ export function InfoPanel({
         Load a material to see its details here.
       </div>
     );
+  const materialTypes = new Set(summary?.materials.map((material) => material.category));
+  const nodeTypes = new Map<string, number>();
+  for (const node of summary?.nodes ?? []) {
+    if (materialTypes.has(node.category) || ['surfacematerial', 'volumematerial'].includes(node.category.toLowerCase()))
+      continue;
+    nodeTypes.set(node.category, (nodeTypes.get(node.category) ?? 0) + 1);
+  }
+  const internalNodeCount = [...nodeTypes.values()].reduce((total, count) => total + count, 0);
   return (
     <div className="min-w-0 space-y-3 overflow-auto rounded-lg border border-border bg-card p-4 text-sm [overflow-wrap:anywhere]">
       {fileName || summary ? (
@@ -93,7 +111,10 @@ export function InfoPanel({
           <Section title="References" items={summary.referencedTextures} />
           <Section
             title="Internal Nodes"
-            items={summary.nodes.map((node) => `${node.name ?? '(unnamed)'} [${node.category}]`)}
+            count={internalNodeCount}
+            items={[...nodeTypes]
+              .sort(([left], [right]) => left.localeCompare(right))
+              .map(([type, count]) => `${type} (${count})`)}
           />
         </>
       ) : null}

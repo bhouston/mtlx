@@ -321,7 +321,7 @@ test('validity checks collapse successes, expand failures, and remain keyboard a
     'File details',
     'Materials (1)',
     'References (0)',
-    'Internal Nodes (2)',
+    'Internal Nodes (1)',
     'Validity Checks ✓Passed',
   ]);
   expect(

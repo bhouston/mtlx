@@ -53,3 +53,38 @@ it('distinguishes warnings, unchecked dependencies, pending rendering and previe
   expect(failed.querySelector('[data-check="Preview"]')!.textContent).toContain('No GPU');
   expect(failed.querySelector('[data-validity-state]')!.hasAttribute('open')).toBe(true);
 });
+
+it('summarizes internal node types and usage counts without material nodes or instance names', () => {
+  const document = render({
+    summary: {
+      path: 'test.mtlx',
+      nodeGraphCount: 1,
+      topLevelNodeCount: 3,
+      nodeCategories: [],
+      referencedTextures: [],
+      materials: [
+        { name: 'surface', category: 'surfacematerial' },
+        { name: 'volume', category: 'volumematerial' },
+      ],
+      nodes: [
+        { name: 'surface', category: 'surfacematerial' },
+        { name: 'volume', category: 'volumematerial' },
+        { name: 'shader_instance', category: 'standard_surface' },
+        { name: 'multiply_a', category: 'multiply' },
+        { name: 'multiply_b', category: 'multiply' },
+        { name: 'multiply_c', category: 'multiply' },
+      ],
+    },
+  });
+  const section = [...document.querySelectorAll('details')].find(
+    (element) => element.querySelector('summary')?.textContent === 'Internal Nodes (4)',
+  )!;
+  expect([...section.querySelectorAll('li')].map((item) => item.textContent)).toEqual([
+    'multiply (3)',
+    'standard_surface (1)',
+  ]);
+  expect(section.textContent).not.toContain('shader_instance');
+  expect(section.textContent).not.toContain('multiply_a');
+  expect(section.textContent).not.toContain('surfacematerial');
+  expect(section.textContent).not.toContain('volumematerial');
+});

@@ -22,6 +22,9 @@ Unknown-size downloads show received bytes; phase milestones do not estimate ela
 The details panel uses matching collapsible sections in this order: File details, Materials,
 References, Internal Nodes, and Validity Checks. File details starts open; Materials starts open
 only for documents with multiple materials. References and Internal Nodes include counts and start collapsed.
+Internal Nodes groups entries alphabetically by node type and shows each type's usage count, without
+instance names or material nodes (`surfacematerial` / `volumematerial`). Its heading counts the remaining
+node instances, so you can audit which functionality a material requires.
 Validity Checks uses one collapsed summary when all checks pass. Expand it for XML, nodes, structure,
 types, dependencies, renderer support and preview results. Failures and warnings expand automatically
 with diagnostics beneath the affected check; unavailable checks are never marked as passed.
