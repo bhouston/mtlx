@@ -37,9 +37,11 @@ function ExtensionPage() {
         </p>
       </div>
 
-      <div className="flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted text-xs text-muted-foreground">
-        screenshot
-      </div>
+      <img
+        src="/extension.webp"
+        alt="Mtlx Viewer extension screenshot"
+        className="aspect-video rounded-md border border-border bg-muted object-contain"
+      />
 
       <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
         {FEATURES.map((feature) => (

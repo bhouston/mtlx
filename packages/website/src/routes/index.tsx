@@ -1,21 +1,41 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { GithubIcon } from 'lucide-react';
-import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 });
 
-const CLI_EXAMPLE = `mtlx info material.mtlx
-mtlx check material.mtlx.zip
-mtlx transform material.mtlx material.mtlx.zip`;
+const CLI_EXAMPLE = `npm install -g mtlx-cli
 
-const LIBRARY_EXAMPLE = `import { loadMaterialXPackage, writeMaterialXPackage } from 'mtlx-core/node';
+# validate a file; exits non-zero on any error-level issue, so it works as a CI gate
+mtlx check material.mtlx
+
+# print material/texture/document info
+mtlx info material.mtlx.zip --format json
+
+# pack a .mtlx (plus its textures) into a single .mtlx.zip
+mtlx transform material.mtlx material.mtlx.zip
+
+# unpack a .mtlx.zip back into a .mtlx with textures alongside it
+mtlx transform material.mtlx.zip out/material.mtlx
+
+# convert while packing: resize textures and switch their format
+mtlx transform material.mtlx material.mtlx.zip --max-image-size 2048 --image-format webp
+
+# open a 3D preview in your browser (local only, nothing is uploaded)
+mtlx view material.mtlx`;
+
+const LIBRARY_EXAMPLE = `import { loadMaterialXPackage, writeMaterialXPackage, transform } from 'mtlx-core/node';
 import { resizeTextures } from 'mtlx-core/textures';
 
+// unpack a .mtlx.zip (or load a bare .mtlx) into an in-memory package
 const pkg = await loadMaterialXPackage('material.mtlx');
-await transform(pkg, resizeTextures({ maxImageSize: 2048 }));
+
+// resize oversized textures and reformat them, all in one pass
+await transform(pkg, resizeTextures({ maxImageSize: 2048, imageFormat: 'webp' }));
+
+// pack it back into a single .mtlx.zip, textures included
 await writeMaterialXPackage(pkg, 'material.mtlx.zip');`;
 
 function CodeBlock({ code }: { code: string }) {
@@ -62,17 +82,6 @@ function HomePage() {
           toolkit — no binary dependencies, runs the same on Node.js and in the browser, on Windows, macOS, and Linux.
           Parse, validate, package, and transform <code>.mtlx</code> and <code>.mtlx.zip</code> files.
         </p>
-        <div className="mt-2 flex gap-3">
-          <Link to="/viewer" className={buttonVariants({ size: 'sm' })}>
-            Open the viewer
-          </Link>
-          <a
-            href="https://www.npmjs.com/package/mtlx-core"
-            className={buttonVariants({ size: 'sm', variant: 'outline' })}
-          >
-            Read the docs
-          </a>
-        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -80,15 +89,17 @@ function HomePage() {
           <CardHeader>
             <CardTitle>
               <Link to="/viewer" className="text-primary underline underline-offset-4">
-                Viewer
+                Online Viewer
               </Link>
             </CardTitle>
             <CardDescription>Drag and drop a MaterialX file, inspect it, and preview it in 3D.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-1 flex-col gap-3">
-            <div className="flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted text-xs text-muted-foreground">
-              live 3D preview
-            </div>
+            <img
+              src="/viewer.webp"
+              alt="Mtlx viewer screenshot"
+              className="aspect-video rounded-md border border-border bg-muted object-contain"
+            />
             <PackageLinks
               github="https://github.com/bhouston/mtlx/blob/main/packages/viewer/README.md"
               npm="https://www.npmjs.com/package/mtlx-viewer"
@@ -97,6 +108,25 @@ function HomePage() {
         </Card>
 
         <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              <Link to="/extension" className="text-primary underline underline-offset-4">
+                VS Code Extension
+              </Link>
+            </CardTitle>
+            <CardDescription>Preview, inspect, and convert MaterialX files right in the editor.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-3">
+            <img
+              src="/extension.webp"
+              alt="Mtlx Viewer extension screenshot"
+              className="aspect-video rounded-md border border-border bg-muted object-contain"
+            />
+            <PackageLinks github="https://github.com/bhouston/mtlx/blob/main/packages/vscode-extension/README.md" />
+          </CardContent>
+        </Card>
+
+        <Card className="flex flex-col sm:col-span-2">
           <CardHeader>
             <CardTitle>
               <a href="https://www.npmjs.com/package/mtlx-cli" className="text-primary underline underline-offset-4">
@@ -116,24 +146,7 @@ function HomePage() {
           </CardContent>
         </Card>
 
-        <Card className="flex flex-col">
-          <CardHeader>
-            <CardTitle>
-              <Link to="/extension" className="text-primary underline underline-offset-4">
-                VS Code extension
-              </Link>
-            </CardTitle>
-            <CardDescription>Preview, inspect, and convert MaterialX files right in the editor.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-1 flex-col gap-3">
-            <div className="flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted text-xs text-muted-foreground">
-              screenshot
-            </div>
-            <PackageLinks github="https://github.com/bhouston/mtlx/blob/main/packages/vscode-extension/README.md" />
-          </CardContent>
-        </Card>
-
-        <Card className="flex flex-col">
+        <Card className="flex flex-col sm:col-span-2">
           <CardHeader>
             <CardTitle>
               <a href="https://www.npmjs.com/package/mtlx-core" className="text-primary underline underline-offset-4">

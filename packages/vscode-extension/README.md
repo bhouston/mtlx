@@ -6,6 +6,8 @@ macOS, and Linux.
 
 Preview, inspect, and convert [MaterialX](https://materialx.org) files directly in VS Code.
 
+![Mtlx Viewer screenshot](images/screenshot.webp)
+
 - Opens `.mtlx` and `.mtlx.zip` files in a 3D preview (three.js, on a sphere), plus a
   stats panel: version, materials (surfaces/volumes), referenced textures, internal node list,
   and validity/issues.
