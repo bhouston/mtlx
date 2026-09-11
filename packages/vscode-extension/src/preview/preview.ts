@@ -9,8 +9,22 @@ import { createMtlxScene, parseStudioEnvironment, type GeometryKind, type MtlxSc
 // esbuild's dataurl loader (see build-preview.js) inlines this as a base64 data: URL string.
 import studioEnvironmentDataUrl from 'mtlx-viewer/assets/studio-environment.png';
 
-declare const acquireVsCodeApi: (() => { postMessage(message: unknown): void }) | undefined;
+interface PreviewState {
+  material?: string;
+  geometry?: GeometryKind;
+}
+declare const acquireVsCodeApi:
+  | (() => {
+      postMessage(message: unknown): void;
+      getState(): PreviewState | undefined;
+      setState(state: PreviewState): void;
+    })
+  | undefined;
 const vscode = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : undefined;
+const previewState = vscode?.getState() ?? {};
+let disposeCurrent = () => {};
+let payloadGeneration = 0;
+window.addEventListener('pagehide', () => disposeCurrent());
 
 interface MaterialInfo {
   name?: string;
@@ -155,6 +169,18 @@ async function renderScene(
   textures: PreviewTexture[],
   shaderBall: ArrayBuffer,
 ): Promise<void> {
+  disposeCurrent();
+  let disposed = false;
+  const disposers: (() => void)[] = [];
+  const own = (dispose: () => void) => {
+    if (disposed) dispose();
+    else disposers.push(dispose);
+  };
+  disposeCurrent = () => {
+    disposed = true;
+    while (disposers.length) disposers.pop()?.();
+  };
+  errorEl.style.display = 'none';
   const width = canvasEl.clientWidth || 512;
   const height = canvasEl.clientHeight || 512;
 
@@ -163,11 +189,16 @@ async function renderScene(
 
   log('Creating WebGPURenderer...');
   const renderer = new THREE.WebGPURenderer({ canvas: canvasEl, antialias: true });
+  own(() => {
+    renderer.setAnimationLoop(null);
+    renderer.dispose();
+  });
   renderer.setSize(width, height, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   await renderer.init();
+  if (disposed) return;
   const backend = (renderer as unknown as { backend?: { isWebGPUBackend?: boolean } }).backend;
   log(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);
 
@@ -175,16 +206,25 @@ async function renderScene(
   // @types/three lags three's addon source: fromEquirectangular() isn't in its PMREMGenerator
   // typings yet.
   const pmremGenerator = new THREE.PMREMGenerator(renderer) as unknown as {
-    fromEquirectangular: (texture: THREE.Texture) => { texture: THREE.Texture };
+    fromEquirectangular: (texture: THREE.Texture) => { texture: THREE.Texture; dispose(): void };
+    dispose(): void;
   };
+  own(() => pmremGenerator.dispose());
   const envTexture = await parseStudioEnvironment(dataUrlToArrayBuffer(studioEnvironmentDataUrl));
-  const environment = pmremGenerator.fromEquirectangular(envTexture).texture;
+  if (disposed) {
+    envTexture.dispose();
+    return;
+  }
+  const environmentTarget = pmremGenerator.fromEquirectangular(envTexture);
+  own(() => environmentTarget.dispose());
+  const environment = environmentTarget.texture;
   envTexture.dispose();
   scene.environment = environment;
   scene.background = environment;
   log('Environment ready.');
 
   const controls = new OrbitControls(camera, renderer.domElement);
+  own(() => controls.dispose());
   controls.enableDamping = true;
 
   const resize = () => {
@@ -194,7 +234,9 @@ async function renderScene(
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
   };
-  new ResizeObserver(resize).observe(canvasEl);
+  const observer = new ResizeObserver(resize);
+  own(() => observer.disconnect());
+  observer.observe(canvasEl);
 
   let clock = performance.now();
   let mtlxScene: MtlxScene | undefined;
@@ -223,34 +265,62 @@ async function renderScene(
     // never reaches this map, so it's a no-op there.
     if (textures.length) {
       const textureUrls = new Map(textures.map((t) => [t.path, URL.createObjectURL(new Blob([t.data]))]));
+      own(() => {
+        for (const url of textureUrls.values()) URL.revokeObjectURL(url);
+      });
       manager.setURLModifier((url) => textureUrls.get(url) ?? url);
       log(`Embedded ${textureUrls.size} referenced texture(s) from disk.`);
     }
 
     mtlxScene = await createMtlxScene(camera, controls, { data, fileName, shaderBall, manager });
+    const loadedScene = mtlxScene;
+    own(() => loadedScene.dispose());
+    if (disposed) return;
+    if (previewState.material && mtlxScene.materialNames.includes(previewState.material))
+      mtlxScene.setMaterial(previewState.material);
+    if (previewState.geometry) mtlxScene.setGeometry(previewState.geometry);
+    geometrySelectEl.value = mtlxScene.geometry;
     scene.add(mtlxScene.root);
     populateMaterialSelect(mtlxScene);
     log(`Material applied (${mtlxScene.materialNames.length} available).`);
   } catch (error) {
+    if (disposed) return;
+    disposeCurrent();
     showError(`MaterialX parse error: ${error instanceof Error ? error.message : String(error)}`);
     return;
   }
 
-  materialSelectEl.addEventListener('change', () => mtlxScene?.setMaterial(materialSelectEl.value));
-  geometrySelectEl.addEventListener('change', () => mtlxScene?.setGeometry(geometrySelectEl.value as GeometryKind));
+  const changeMaterial = () => {
+    mtlxScene?.setMaterial(materialSelectEl.value);
+    previewState.material = materialSelectEl.value;
+    vscode?.setState(previewState);
+  };
+  const changeGeometry = () => {
+    mtlxScene?.setGeometry(geometrySelectEl.value as GeometryKind);
+    previewState.geometry = geometrySelectEl.value as GeometryKind;
+    vscode?.setState(previewState);
+  };
+  materialSelectEl.addEventListener('change', changeMaterial);
+  geometrySelectEl.addEventListener('change', changeGeometry);
+  own(() => materialSelectEl.removeEventListener('change', changeMaterial));
+  own(() => geometrySelectEl.removeEventListener('change', changeGeometry));
 }
 
 function onMessage(event: MessageEvent<PreviewPayload>): void {
   const payload = event.data;
+  const generation = ++payloadGeneration;
 
   if (payload.parseError) {
+    disposeCurrent();
     errorEl.textContent = payload.parseError;
     errorEl.style.display = 'block';
   }
   renderStats(payload);
 
-  if (payload.data && payload.shaderBall) {
+  if (!payload.parseError && payload.data && payload.shaderBall) {
     renderScene(payload.data, payload.fileName, payload.textures, payload.shaderBall).catch((error: unknown) => {
+      if (generation !== payloadGeneration) return;
+      disposeCurrent();
       showError(`3D preview error: ${error instanceof Error ? error.message : String(error)}`);
     });
   }
@@ -259,3 +329,11 @@ function onMessage(event: MessageEvent<PreviewPayload>): void {
 log('Preview script loaded, waiting for document data...');
 
 window.addEventListener('message', onMessage);
+
+// Register before requesting data, including when VS Code recreates a hidden webview.
+// oxlint-disable-next-line unicorn/require-post-message-target-origin
+vscode?.postMessage({ type: 'ready' });
+document.getElementById('refresh')?.addEventListener('click', () => {
+  // oxlint-disable-next-line unicorn/require-post-message-target-origin
+  vscode?.postMessage({ type: 'refresh' });
+});

@@ -38,6 +38,7 @@ async function runConvert(uris: vscode.Uri[], target: TargetFormat): Promise<voi
 export function activate(context: vscode.ExtensionContext): void {
   const previewProvider = new MtlxPreviewProvider(context);
   context.subscriptions.push(
+    previewProvider,
     vscode.window.registerCustomEditorProvider('mtlx.mtlxPreview', previewProvider, {
       webviewOptions: { retainContextWhenHidden: false },
     }),

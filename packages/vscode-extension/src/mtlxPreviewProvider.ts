@@ -9,6 +9,10 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
 
   constructor(private readonly _context: vscode.ExtensionContext) {}
 
+  dispose(): void {
+    this._output.dispose();
+  }
+
   async openCustomDocument(uri: vscode.Uri): Promise<MtlxPreviewDocument> {
     const raw = await vscode.workspace.fs.readFile(uri);
     const fileName = path.basename(uri.fsPath);
@@ -48,42 +52,75 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
     const scriptUri = webviewPanel.webview.asWebviewUri(
       vscode.Uri.joinPath(this._context.extensionUri, 'media', 'preview.js'),
     );
-    webviewPanel.webview.html = getPreviewHtml(webviewPanel.webview, scriptUri);
-
-    // Static asset (not per-document) — same bytes-over-postMessage approach as the document and
-    // its textures, so the webview never needs its own fetch/CSP allowance for it.
     const shaderBall = await vscode.workspace.fs.readFile(
       vscode.Uri.joinPath(this._context.extensionUri, 'media', 'shaderball.glb'),
     );
-
-    webviewPanel.webview.onDidReceiveMessage((message: { type?: string; message?: string }) => {
-      if (message.type === 'log' && message.message) {
-        this._output.appendLine(message.message);
-      }
-    });
-
-    // Send document data to webview (VS Code Webview.postMessage has no targetOrigin)
+    let disposed = false;
+    let generation = 0;
     /* oxlint-disable unicorn/require-post-message-target-origin */
-    webviewPanel.webview.postMessage({
-      fileName: document.fileName,
-      fileSize: document.fileSize,
-      valid: !document.parseError && !document.issues.some((issue) => issue.level === 'error'),
-      issues: document.issues,
-      summary: document.summary,
-      parseError: document.parseError,
-      // Raw original bytes — three.js's MaterialXLoader.parseBuffer() natively understands
-      // plain .mtlx AND .mtlx.zip (it sniffs the zip magic bytes), so the webview needs no
-      // zip-handling code of its own.
-      data: document.raw.buffer,
-      // Sibling texture files for a loose .mtlx (see _readReferencedTextures) — the webview turns
-      // these into blob: URLs and rewrites the loader's texture requests to them.
-      // VS Code's webview message channel only special-cases top-level ArrayBuffers for binary
-      // transfer; a Uint8Array nested inside a plain object (unlike `data` above) silently arrives
-      // empty/corrupt, so send `.buffer` explicitly here too.
-      textures: document.textures.map((t) => ({ path: t.path, data: t.data.buffer })),
-      shaderBall: shaderBall.buffer,
-    });
+    const refresh = async () => {
+      const request = ++generation;
+      try {
+        const current = await this.openCustomDocument(document.uri);
+        if (disposed || request !== generation) return;
+        // oxlint-disable-next-line unicorn/require-post-message-target-origin
+        await webviewPanel.webview.postMessage({
+          fileName: current.fileName,
+          fileSize: current.fileSize,
+          valid: !current.parseError && !current.issues.some((issue) => issue.level === 'error'),
+          issues: current.issues,
+          summary: current.summary,
+          parseError: current.parseError,
+          data: current.raw.buffer,
+          textures: current.textures.map((texture) => ({ path: texture.path, data: texture.data.buffer })),
+          shaderBall: shaderBall.buffer,
+        });
+      } catch (error) {
+        if (disposed || request !== generation) return;
+        const message = error instanceof Error ? error.message : String(error);
+        // oxlint-disable-next-line unicorn/require-post-message-target-origin
+        await webviewPanel.webview.postMessage({
+          fileName: document.fileName,
+          fileSize: 0,
+          valid: false,
+          issues: [{ level: 'error', location: document.uri.toString(), message }],
+          parseError: message,
+          textures: [],
+        });
+      }
+    };
     /* oxlint-enable unicorn/require-post-message-target-origin */
+    const listener = webviewPanel.webview.onDidReceiveMessage((message: { type?: string; message?: string }) => {
+      if (message.type === 'ready' || message.type === 'refresh') void refresh();
+      else if (message.type === 'log' && message.message) this._output.appendLine(message.message);
+    });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const scheduleRefresh = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (!disposed && webviewPanel.visible) void refresh();
+      }, 100);
+    };
+    // A fresh ready request restores hidden tabs. Watch sibling resources so saved edits and
+    // texture replacements update visible previews as well.
+    const watcher = vscode.workspace.createFileSystemWatcher(
+      new vscode.RelativePattern(vscode.Uri.joinPath(document.uri, '..'), '**/*'),
+    );
+    const subscriptions = [
+      listener,
+      watcher,
+      watcher.onDidChange(scheduleRefresh),
+      watcher.onDidCreate(scheduleRefresh),
+      watcher.onDidDelete(scheduleRefresh),
+    ];
+    webviewPanel.onDidDispose(() => {
+      disposed = true;
+      generation++;
+      clearTimeout(timer);
+      for (const subscription of subscriptions) subscription.dispose();
+    });
+    // The handler must be registered before the script can announce readiness.
+    webviewPanel.webview.html = getPreviewHtml(webviewPanel.webview, scriptUri);
   }
 }
 
@@ -167,6 +204,7 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
   <div class="layout">
     <div class="viewport-wrap">
       <div class="toolbar">
+        <button id="refresh" type="button" title="Reload document and textures">Refresh</button>
         <select id="material-select" title="Material"></select>
         <select id="geometry-select" title="Geometry">
           <option value="totem">Totem</option>
