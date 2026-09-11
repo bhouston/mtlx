@@ -2,6 +2,7 @@ packages:
   - packages/*
 allowBuilds:
   '@parcel/watcher': false
+  '@sentry/cli': true
   '@vscode/vsce-sign': true
   esbuild: true
   keytar: true

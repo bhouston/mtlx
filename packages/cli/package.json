@@ -28,6 +28,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@sentry/node": "^10.74.0",
     "mtlx-core": "workspace:*",
     "mtlx-viewer": "workspace:*",
     "type-fest": "^5.1.0",

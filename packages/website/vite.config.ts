@@ -1,3 +1,6 @@
+import process from 'node:process';
+
+import { sentryTanstackStart } from '@sentry/tanstackstart-react/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { nitroV2Plugin } from '@tanstack/nitro-v2-vite-plugin';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
@@ -10,6 +13,11 @@ export default defineConfig({
   },
   plugins: [
     tanstackStart(),
+    sentryTanstackStart({
+      org: 'drivecore',
+      project: 'mtlx-website',
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
     react(),
     nitroV2Plugin({
       preset: 'node-server',
