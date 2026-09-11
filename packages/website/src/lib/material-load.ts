@@ -26,7 +26,7 @@ export class MaterialLoadController {
   async load(
     input: { url: string; name: string } | File,
     commit: (result: LoadedMaterial) => void,
-    fail: (message: string) => void,
+    fail: (message: string, analysis?: MaterialXAnalysis) => void,
     onProgress?: (progress: MaterialLoadProgress) => void,
   ): Promise<void> {
     this.cancel();
@@ -62,7 +62,10 @@ export class MaterialLoadController {
       if (generation !== this.generation) return;
       data = result.data;
       const analysis = result.analysis;
-      if (analysis.parseError) throw new Error(analysis.parseError);
+      if (analysis.parseError) {
+        fail(analysis.parseError, analysis);
+        return;
+      }
       progress(80, 'Preparing preview…');
       commit({
         source: { kind: 'buffer', data, name: resourceName },

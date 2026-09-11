@@ -88,3 +88,16 @@ it('reports download and analysis stages before committing a material', async ()
     'committed',
   ]);
 });
+
+it('preserves parse diagnostics so the failed XML check can be displayed', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('<broken>')));
+  const fail = vi.fn();
+  const commit = vi.fn();
+  await new MaterialLoadController().load(
+    { url: 'https://example.com/broken.mtlx', name: 'broken.mtlx' },
+    commit,
+    fail,
+  );
+  expect(commit).not.toHaveBeenCalled();
+  expect(fail).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ parseError: expect.any(String) }));
+});

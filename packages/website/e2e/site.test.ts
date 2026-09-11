@@ -39,7 +39,9 @@ async function expectReady() {
     .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
     .toBe('ready');
   expect(await page.locator('canvas').count()).toBe(1);
-  expect(await page.locator('main').innerText()).toContain('Document checks passed');
+  await expect
+    .poll(() => page.locator('[data-validity-state]').getAttribute('data-validity-state'), { timeout: 30_000 })
+    .toBe('passed');
   expect(await page.locator('main').innerText()).not.toContain('3D preview error:');
   expect(pageErrors).toEqual([]);
 }
@@ -61,9 +63,12 @@ test('a failed replacement clears old details and repeated loads resize the canv
     mimeType: 'application/xml',
     buffer: Buffer.from('<broken>'),
   });
-  await expect.poll(() => page.locator('dl').count()).toBe(0);
+  await expect.poll(() => page.locator('[data-check=XML]').getAttribute('data-check-state')).toBe('failed');
+  expect(await page.locator('[data-validity-state]').evaluate((element) => (element as HTMLDetailsElement).open)).toBe(
+    true,
+  );
   await expect.poll(() => page.locator('canvas').count()).toBe(0);
-  expect(await page.locator('main').innerText()).toContain('Load a material to see its details here.');
+  expect(await page.locator('[data-check=Structure]').getAttribute('data-check-state')).toBe('unchecked');
   for (const width of [900, 1100]) {
     await page.setInputFiles('input[type=file]', materialPath);
     await expectReady();
@@ -238,7 +243,9 @@ test('CLI ZIP sample renders both materials from bundled textures and restores i
   const url = `http://localhost:${PORT}/materials/compound_zip/compound_zip.mtlx.zip`;
   expect(new URL(page.url()).searchParams.get('materialUrl')).toBe(url);
   expect(await page.getByRole('textbox', { name: 'Material URL' }).inputValue()).toBe(url);
-  await expect.poll(() => page.locator('main').innerText(), { timeout: 30_000 }).toContain('Dependency checks passed');
+  await expect
+    .poll(() => page.locator('[data-check=Dependencies]').getAttribute('data-check-state'), { timeout: 30_000 })
+    .toBe('passed');
   const material = page.getByRole('combobox', { name: 'Material', exact: true });
   expect(await material.locator('option').allTextContents()).toEqual(['Copper', 'Tiled_Wood']);
   await material.selectOption('Tiled_Wood');
@@ -298,4 +305,35 @@ test('material loading overlays a streamed progress bar and clears it on success
     server.closeAllConnections();
     await new Promise<void>((closed) => server.close(() => closed()));
   }
+});
+
+test('validity checks collapse successes, expand failures, and remain keyboard accessible', async () => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.goto(`http://localhost:${PORT}/viewer`);
+  await page.setInputFiles('input[type=file]', materialPath);
+  await expectReady();
+  const checks = page.locator('[data-validity-state]');
+  const summary = checks.locator('summary');
+  if (process.env.MTLX_VALIDITY_SCREENSHOT)
+    await page.screenshot({ path: `${process.env.MTLX_VALIDITY_SCREENSHOT}-passed.png`, fullPage: true });
+  expect(await checks.evaluate((element) => (element as HTMLDetailsElement).open)).toBe(false);
+  await summary.focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(() => checks.evaluate((element) => (element as HTMLDetailsElement).open)).toBe(true);
+  expect(await checks.locator('[data-check="XML"]').innerText()).toContain('XML');
+  await page.setInputFiles('input[type=file]', {
+    name: 'broken.mtlx',
+    mimeType: 'application/xml',
+    buffer: Buffer.from('<broken>'),
+  });
+  await expect.poll(() => checks.getAttribute('data-validity-state')).toBe('failed');
+  expect(await checks.evaluate((element) => (element as HTMLDetailsElement).open)).toBe(true);
+  expect(await checks.locator('[data-check="XML"]').getAttribute('data-check-state')).toBe('failed');
+  if (process.env.MTLX_VALIDITY_SCREENSHOT)
+    await page.screenshot({ path: `${process.env.MTLX_VALIDITY_SCREENSHOT}-failed.png`, fullPage: true });
+  await summary.click();
+  await expect.poll(() => checks.evaluate((element) => (element as HTMLDetailsElement).open)).toBe(false);
+  await page.setInputFiles('input[type=file]', materialPath);
+  await expectReady();
+  expect(await checks.evaluate((element) => (element as HTMLDetailsElement).open)).toBe(false);
 });

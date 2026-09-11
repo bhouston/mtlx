@@ -19,6 +19,9 @@ analysis runs in a worker; loose remote materials resolve dependencies relative 
 A blue-on-white progress overlay appears immediately while loading, advances with streamed bytes
 when a download size is available, and shows the checking and rendering stages before the preview.
 Unknown-size downloads show received bytes; phase milestones do not estimate elapsed time.
+Validity Checks uses one collapsed summary when all checks pass. Expand it for XML, nodes, structure,
+types, dependencies, renderer support and preview results. Failures and warnings expand automatically
+with diagnostics beneath the affected check; unavailable checks are never marked as passed.
 Local loose documents cannot read neighboring files through the browser file picker. ZIP inputs
 provide an inventory for archive and recursive dependency checks.
 

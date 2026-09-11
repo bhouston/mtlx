@@ -91,7 +91,8 @@ function ViewerPage() {
         setAnalysis(result.analysis);
         appendLog(`Parsed ${input.name}.`);
       },
-      (message) => {
+      (message, failedAnalysis) => {
+        setAnalysis(failedAnalysis ?? null);
         setLoadProgress(null);
         setFileError(message);
         appendLog(`ERROR: ${message}`);
@@ -174,7 +175,7 @@ function ViewerPage() {
         >
           {detailsOpen ? 'Hide details' : 'Show details'}
         </Button>
-        {fileError ? (
+        {fileError && !analysis?.parseError ? (
           <p role="alert" className="min-w-0 text-sm text-destructive [overflow-wrap:anywhere]">
             {fileError}
           </p>
