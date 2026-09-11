@@ -333,11 +333,11 @@ export const commitMaterialXPackageWrite = async (plan: MaterialXWritePlan): Pro
       }
     }
   } catch (error) {
-    for (const target of published.reverse()) await unlink(target).catch(() => {});
+    for (const target of published.toReversed()) await unlink(target).catch(() => {});
     throw error;
   } finally {
     for (const { temporary } of staged) await unlink(temporary).catch(() => {});
-    for (const dir of createdDirs.reverse()) await rmdir(dir).catch(() => {});
+    for (const dir of createdDirs.toReversed()) await rmdir(dir).catch(() => {});
   }
   return { outputPath: plan.outputPath, rootPath: plan.rootPath, format: plan.format, entries: plan.entries };
 };

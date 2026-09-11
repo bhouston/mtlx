@@ -29,14 +29,15 @@ it('derives summaries and validation from the edited canonical tree', () => {
   );
 });
 
+const makeGraphPackage = (name: string) => ({
+  rootPath: 'm.mtlx',
+  resources: [],
+  document: parseMaterialX(`<materialx><nodegraph name="${name}"/></materialx>`),
+});
+
 it('derives all merged graphs rather than retaining the first input view', () => {
-  const make = (name: string) => ({
-    rootPath: 'm.mtlx',
-    resources: [],
-    document: parseMaterialX(`<materialx><nodegraph name="${name}"/></materialx>`),
-  });
   // Use attributed graphs: empty element fidelity has a separate regression/fix.
-  const result = mergeMaterialXPackages([make('a'), make('b')]);
+  const result = mergeMaterialXPackages([makeGraphPackage('a'), makeGraphPackage('b')]);
   expect(result.document.nodeGraphs).toHaveLength(2);
   expect(summarizeMaterialX('', result.document).nodeGraphCount).toBe(2);
 });

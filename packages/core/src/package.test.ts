@@ -71,18 +71,19 @@ describe('resolveMaterialXResources', () => {
   });
 });
 
+const makeTextureResource = (archivePath: string, value: number) => ({
+  archivePath,
+  sourcePath: archivePath,
+  data: new Uint8Array([value]),
+});
+
 describe('mergeMaterialXPackages', () => {
   it('preserves chained resource identities without mutating either input', () => {
-    const resource = (archivePath: string, value: number) => ({
-      archivePath,
-      sourcePath: archivePath,
-      data: new Uint8Array([value]),
-    });
-    const a = makePackage('a', nodegraphWithTexture('A'), [resource('textures/albedo.png', 1)]);
+    const a = makePackage('a', nodegraphWithTexture('A'), [makeTextureResource('textures/albedo.png', 1)]);
     const b = makePackage(
       'b',
       '<materialx><image name="B"><input name="file" type="filename" value="textures/albedo.png"/><input name="other" type="filename" value="textures/albedo-2.png"/></image></materialx>',
-      [resource('textures/albedo.png', 2), resource('textures/albedo-2.png', 3)],
+      [makeTextureResource('textures/albedo.png', 2), makeTextureResource('textures/albedo-2.png', 3)],
     );
     const before = serializeMaterialX(b.document);
     const merged = mergeMaterialXPackages([a, b]);

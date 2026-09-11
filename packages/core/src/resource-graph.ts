@@ -60,13 +60,13 @@ export const documentResourceReferences = (document: MaterialXDocument): Resourc
 };
 
 /** Call only after materializing every filename reference in this document. */
+const clearElementFilePrefix = (element: MaterialXElement): void => {
+  delete element.attributes.fileprefix;
+  element.children.forEach(clearElementFilePrefix);
+};
 export const clearFilePrefixes = (document: MaterialXDocument): void => {
   delete document.attributes.fileprefix;
-  const visit = (element: MaterialXElement) => {
-    delete element.attributes.fileprefix;
-    element.children.forEach(visit);
-  };
-  document.elements.forEach(visit);
+  document.elements.forEach(clearElementFilePrefix);
 };
 
 export interface MaterialXDependencyEdge extends ResourceReference {

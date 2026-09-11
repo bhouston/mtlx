@@ -13,13 +13,15 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
+function identity() {}
+
 describe('staged material processing', () => {
   it('reports a transform that leaves serialized package content unchanged', async () => {
     const input = path.join(dir, 'input.mtlx');
     await writeFile(input, xml);
     const result = await processMaterialX(input, path.join(dir, 'out.mtlx'), {
       dryRun: true,
-      transforms: [function identity() {}],
+      transforms: [identity],
     });
     expect(result.success).toBe(true);
     expect(result.operations).toEqual([{ name: 'identity', status: 'unchanged' }]);

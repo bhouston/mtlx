@@ -9,6 +9,13 @@ const makePng = async (width: number, height: number): Promise<Uint8Array> =>
       .toBuffer(),
   );
 
+const makeColorTexture = async (color: string) =>
+  new Uint8Array(
+    await sharp({ create: { width: 8, height: 8, channels: 3, background: color } })
+      .png()
+      .toBuffer(),
+  );
+
 describe('transformImage', () => {
   it('leaves an already-small, already-web-format image untouched with no options', async () => {
     const data = await makePng(16, 16);
@@ -72,24 +79,18 @@ describe('resizeTextures', () => {
       const { packageToEntries, packageFromArchive } = await import('./package.js');
       const { createMaterialXZipArchive, inspectMaterialXZipArchive } = await import('./mtlxzip.js');
       const { resizeTextures } = await import('./textures.js');
-      const make = async (color: string) =>
-        new Uint8Array(
-          await sharp({ create: { width: 8, height: 8, channels: 3, background: color } })
-            .png()
-            .toBuffer(),
-        );
       const pkg = {
         rootPath: 'm.mtlx',
         document: parseMaterialX(
           '<materialx><image name="red"><input name="file" type="filename" value="a.png"/></image><image name="blue"><input name="file" type="filename" value="a.webp"/></image></materialx>',
         ),
         resources: [
-          { archivePath: 'a.png', sourcePath: 'a.png', data: await make('red') },
+          { archivePath: 'a.png', sourcePath: 'a.png', data: await makeColorTexture('red') },
           {
             archivePath: 'a.webp',
             sourcePath: 'a.webp',
             data: new Uint8Array(
-              await sharp(await make('blue'))
+              await sharp(await makeColorTexture('blue'))
                 .webp()
                 .toBuffer(),
             ),
