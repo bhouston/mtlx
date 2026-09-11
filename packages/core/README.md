@@ -10,10 +10,6 @@ Part of the [mtlx](https://github.com/bhouston/mtlx) suite: a pure TypeScript/Ja
 MaterialX toolkit with no binary dependencies, working out of the box on Node, browsers, Windows,
 macOS, and Linux.
 
-- CLI: [mtlx-cli on npm](https://www.npmjs.com/package/mtlx-cli)
-- Viewer: [mtlx.ben3d.ca](https://mtlx.ben3d.ca)
-- Source: [github.com/bhouston/mtlx](https://github.com/bhouston/mtlx)
-
 ```sh
 npm install mtlx-core
 ```

@@ -79,7 +79,7 @@ function HomePage() {
         <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>
-              <Link to="/viewer" className="hover:underline hover:underline-offset-4">
+              <Link to="/viewer" className="text-primary underline underline-offset-4">
                 Viewer
               </Link>
             </CardTitle>
@@ -99,7 +99,7 @@ function HomePage() {
         <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>
-              <Link to="/extension" className="hover:underline hover:underline-offset-4">
+              <Link to="/extension" className="text-primary underline underline-offset-4">
                 VS Code extension
               </Link>
             </CardTitle>
@@ -116,7 +116,7 @@ function HomePage() {
         <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>
-              <a href="https://www.npmjs.com/package/mtlx-cli" className="hover:underline hover:underline-offset-4">
+              <a href="https://www.npmjs.com/package/mtlx-cli" className="text-primary underline underline-offset-4">
                 CLI
               </a>
             </CardTitle>
@@ -136,7 +136,7 @@ function HomePage() {
         <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>
-              <a href="https://www.npmjs.com/package/mtlx-core" className="hover:underline hover:underline-offset-4">
+              <a href="https://www.npmjs.com/package/mtlx-core" className="text-primary underline underline-offset-4">
                 Library
               </a>
             </CardTitle>

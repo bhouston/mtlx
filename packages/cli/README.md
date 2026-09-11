@@ -15,128 +15,31 @@ transforming MaterialX files (`.mtlx`, `.mtlx.zip`).
 npm install --global mtlx-cli
 ```
 
-<details>
-  <summary><i>Troubleshooting</i></summary>
-
-mtlx uses [sharp](https://sharp.pixelplumbing.com/) to resize and reformat textures. If
-installation fails on sharp, consult the [sharp installation](https://sharp.pixelplumbing.com/install)
-page for your platform.
-
-</details>
-
-`transform` reads any format and writes any format, so packing and unpacking are just a conversion
-with no options. Every command accepts `--format text|json|yaml` (default `text`), so output can
-be piped into other tools:
+Every command accepts `--format text|json|yaml` (default `text`), so output can be piped into
+other tools. `transform` reads any format and writes any format, so packing and unpacking are just
+a conversion with no options.
 
 ```sh
+# validate a file; exits non-zero on any error-level issue, so it works as a CI gate
 mtlx check material.mtlx
+
+# print material/texture/document info
 mtlx info material.mtlx.zip --format json
-mtlx transform material.mtlx material.mtlx.zip                    # pack
-mtlx transform material.mtlx.zip out/material.mtlx                # unpack
+
+# pack a .mtlx (plus its textures) into a single .mtlx.zip
+mtlx transform material.mtlx material.mtlx.zip
+
+# unpack a .mtlx.zip back into a .mtlx with textures alongside it
+mtlx transform material.mtlx.zip out/material.mtlx
+
+# convert while packing: resize textures and switch their format
 mtlx transform material.mtlx material.mtlx.zip --max-image-size 2048 --image-format webp
-```
 
-`check` exits non-zero when any error-level issue is found, so it works as a CI gate.
-
-## Viewing a file
-
-```sh
+# open a 3D preview in your browser (local only, nothing is uploaded)
 mtlx view material.mtlx
 ```
 
-Starts a local HTTP server (127.0.0.1, random free port), opens your default browser to a 3D
-preview rendered with the same three.js viewer as the [website](https://mtlx.ben3d.ca) and VS Code
-extension, and prints the URL in case the browser doesn't open automatically (e.g. over SSH or in
-CI). Nothing is uploaded anywhere — the server only serves files from your machine to your own
-browser, and shuts down on Ctrl+C (or automatically after 30 minutes idle).
-
-## Reference
-
-The following is generated from `mtlx --help` by `pnpm docs:cli`; do not edit it by hand.
-
-<!-- begin:cli_help -->
-
-```text
-mtlx <command>
-
-Commands:
-  mtlx check <input>               Validate a .mtlx or .mtlx.zip file
-  mtlx info <input>                Print information about a .mtlx or .mtlx.zip file
-  mtlx transform <input> <output>  Convert between .mtlx and .mtlx.zip (pack/unpack), optionally
-                                   resizing or reformatting textures
-  mtlx view <input>                Open a local 3D preview of a .mtlx or .mtlx.zip file in your
-                                   browser
-
-Options:
-  --version  Show version number                                                           [boolean]
-  --help     Show help                                                                     [boolean]
-
-Documentation: https://www.npmjs.com/package/mtlx-cli
-```
-
-```text
-mtlx check <input>
-
-Validate a .mtlx or .mtlx.zip file
-
-Positionals:
-  input  Path to .mtlx or .mtlx.zip file                                         [string] [required]
-
-Options:
-  --version  Show version number                                                           [boolean]
-  --help     Show help                                                                     [boolean]
-  --format   Output format                       [choices: "text", "json", "yaml"] [default: "text"]
-```
-
-```text
-mtlx info <input>
-
-Print information about a .mtlx or .mtlx.zip file
-
-Positionals:
-  input  Path to .mtlx or .mtlx.zip file                                         [string] [required]
-
-Options:
-  --version  Show version number                                                           [boolean]
-  --help     Show help                                                                     [boolean]
-  --format   Output format                       [choices: "text", "json", "yaml"] [default: "text"]
-```
-
-```text
-mtlx transform <input> <output>
-
-Convert between .mtlx and .mtlx.zip (pack/unpack), optionally resizing or reformatting textures
-
-Positionals:
-  input   Path to .mtlx or .mtlx.zip file                                        [string] [required]
-  output  Output path; the extension picks the format (a .mtlx path unpacks resources beside it)
-                                                                                 [string] [required]
-
-Texture options:
-  --max-image-size  Resize any texture whose longest edge exceeds this many pixels          [number]
-  --image-format    Convert textures to this image format    [choices: "webp", "png", "jpg", "avif"]
-  --image-quality   Quality for lossy image formats (webp/jpg/avif)           [number] [default: 95]
-
-Options:
-  --version  Show version number                                                           [boolean]
-  --help     Show help                                                                     [boolean]
-  --format   Output format                       [choices: "text", "json", "yaml"] [default: "text"]
-```
-
-```text
-mtlx view <input>
-
-Open a local 3D preview of a .mtlx or .mtlx.zip file in your browser
-
-Positionals:
-  input  Path to .mtlx or .mtlx.zip file                                         [string] [required]
-
-Options:
-  --version  Show version number                                                           [boolean]
-  --help     Show help                                                                     [boolean]
-```
-
-<!-- end:cli_help -->
+Run `mtlx <command> --help` for the full option list of any command.
 
 ## License
 
