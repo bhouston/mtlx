@@ -27,6 +27,53 @@ adjust the inspection lighting. The bottom **IBL** dropdown switches between **S
 internal nodes are collapsed initially. **Copy diagnostics** and **Download diagnostics** include
 validation issues, resource failures and renderer logs for bug reports.
 
+## Viewer settings
+
+The bridge is the default IBL in both the website and extension. Configure the extension under
+**Settings → Mtlx Viewer**, or in user/workspace `settings.json`:
+
+```json
+{
+  "mtlx.preview.ibls": [
+    { "name": "courtyard", "source": "~/IBLs/courtyard.hdr" },
+    { "name": "gallery", "source": "https://example.com/ibl/gallery.exr" }
+  ],
+  "mtlx.preview.defaultIbl": "courtyard",
+  "mtlx.preview.autoRotate": false,
+  "mtlx.preview.geometries": [
+    { "name": "bust", "source": "models/bust.gltf" },
+    { "name": "sample_mesh", "source": "https://example.com/models/sample.glb" }
+  ],
+  "mtlx.preview.defaultGeometry": "bust"
+}
+```
+
+Replace the example paths/URLs with your files. Names are case-sensitive identifiers matching
+`[a-zA-Z_][a-zA-Z0-9_]*`: letters or underscore first, followed by letters, digits or underscores.
+Duplicates within a list and built-in names are rejected. IBL and geometry names are separate
+namespaces, so the same custom name can appear in both.
+
+| Setting                        | Default    | Built-in names / behavior                                                       |
+| ------------------------------ | ---------- | ------------------------------------------------------------------------------- |
+| `mtlx.preview.ibls`            | `[]`       | Additional named equirectangular `.hdr`, `.exr`, `.png`, `.jpg` / `.jpeg` files |
+| `mtlx.preview.defaultIbl`      | `"bridge"` | `bridge`, `studio`, or an additional IBL name                                   |
+| `mtlx.preview.autoRotate`      | `true`     | Reduced motion takes precedence; rotation can be enabled manually               |
+| `mtlx.preview.geometries`      | `[]`       | Additional named `.gltf` / `.glb` mesh scenes                                   |
+| `mtlx.preview.defaultGeometry` | `"totem"`  | `totem`, `sphere`, `plane`, or an additional geometry name                      |
+
+Relative paths resolve from the material's workspace folder (or the material's folder when no
+workspace folder exists). Absolute paths and `~/` refer to the extension host's filesystem.
+HTTP(S) URLs are read by the extension host, so they do not depend on browser CORS permissions.
+Standard glTF external buffers and images resolve relative to the geometry file, including the
+final URL after an HTTP redirect. Custom geometry uses the selected MaterialX material; its own
+materials are replaced. Draco, Meshopt and KTX2 decoders are not configured by this viewer.
+
+Assets load when selected. Reads are limited to 128 MiB per IBL or geometry including its sidecars,
+and 256 external glTF resources. Refresh reloads assets; configuration edits refresh visible previews
+and reapply defaults. Manual choices survive ordinary refreshes and tab recreation until settings
+change. Invalid entries/defaults appear in settings diagnostics and fall back to built-ins. Load
+failures keep the current preview, or use a built-in fallback if the initial asset fails.
+
 ## Convert materials
 
 Right-click one or more `.mtlx` / `.mtlx.zip` files in Explorer and choose **Convert to .mtlx**

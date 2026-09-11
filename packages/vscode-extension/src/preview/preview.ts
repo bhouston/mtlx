@@ -9,11 +9,13 @@ import {
   createMtlxScene,
   parseEnvironment,
   createEnvironmentSwitcher,
-  type EnvironmentKind,
+  parseEnvironmentFile,
   type GeometryKind,
   type MtlxScene,
 } from 'mtlx-viewer';
 // esbuild's dataurl loader (see build-preview.js) inlines this as a base64 data: URL string.
+import { parsePreviewSettings, type PreviewSettings } from '../previewSettings.js';
+import type { PreviewAssetBytes } from '../previewAssets.js';
 import studioEnvironmentDataUrl from 'mtlx-viewer/assets/studio-environment.png';
 
 interface PreviewState {
@@ -23,7 +25,8 @@ interface PreviewState {
   detailsOpen?: boolean;
   exposure?: number;
   environmentIntensity?: number;
-  environmentKind?: EnvironmentKind;
+  environmentKind?: string;
+  settingsKey?: string;
   camera?: { position: number[]; target: number[]; zoom: number; rotation: number[] };
 }
 declare const acquireVsCodeApi:
@@ -69,6 +72,7 @@ interface PreviewTexture {
 }
 
 interface PreviewPayload {
+  settings?: PreviewSettings;
   fileName: string;
   fileSize: number;
   valid: boolean;
@@ -80,6 +84,44 @@ interface PreviewPayload {
   shaderBall?: ArrayBuffer;
   resourcesChecked?: boolean;
   resourcePaths?: string[];
+}
+
+let nextAssetRequest = 0;
+const pendingAssets = new Map<
+  number,
+  { resolve: (asset: PreviewAssetBytes) => void; reject: (error: Error) => void }
+>();
+function requestAsset(kind: 'ibl' | 'geometry', name: string, signal: AbortSignal): Promise<PreviewAssetBytes> {
+  signal.throwIfAborted();
+  return new Promise((resolve, reject) => {
+    const requestId = ++nextAssetRequest;
+    const finish = () => {
+      clearTimeout(timer);
+      signal.removeEventListener('abort', abort);
+      pendingAssets.delete(requestId);
+    };
+    const abort = () => {
+      finish();
+      reject(new Error('Asset request cancelled'));
+    };
+    const timer = setTimeout(() => {
+      finish();
+      reject(new Error('Asset request timed out'));
+    }, 120_000);
+    signal.addEventListener('abort', abort, { once: true });
+    pendingAssets.set(requestId, {
+      resolve: (asset) => {
+        finish();
+        resolve(asset);
+      },
+      reject: (error) => {
+        finish();
+        reject(error);
+      },
+    });
+    // oxlint-disable-next-line unicorn/require-post-message-target-origin
+    vscode?.postMessage({ type: 'loadAsset', requestId, kind, name });
+  });
 }
 
 const canvasEl = document.getElementById('viewport') as HTMLCanvasElement;
@@ -208,6 +250,7 @@ async function renderScene(
   fileName: string,
   textures: PreviewTexture[],
   shaderBall: ArrayBuffer,
+  settings: PreviewSettings,
 ): Promise<void> {
   disposeCurrent();
   let disposed = false;
@@ -255,9 +298,13 @@ async function renderScene(
   const environments = createEnvironmentSwitcher(
     async (kind) => {
       if (kind === 'studio') return parseEnvironment(kind, dataUrlToArrayBuffer(studioEnvironmentDataUrl));
-      const response = await fetch(document.body.dataset.hdrUrl!, { signal: environmentAbort.signal });
-      if (!response.ok) throw new Error(`HTTP ${response.status} loading IBL`);
-      return parseEnvironment(kind, await response.arrayBuffer());
+      if (kind === 'bridge') {
+        const response = await fetch(document.body.dataset.hdrUrl!, { signal: environmentAbort.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status} loading IBL`);
+        return parseEnvironment('default', await response.arrayBuffer());
+      }
+      const asset = await requestAsset('ibl', kind, environmentAbort.signal);
+      return parseEnvironmentFile(asset.data, asset.source);
     },
     (texture) => pmremGenerator.fromEquirectangular(texture),
     (texture) => {
@@ -267,22 +314,34 @@ async function renderScene(
   );
   own(() => environments.dispose());
   const environmentSelect = document.getElementById('environment-select') as HTMLSelectElement;
-  environmentSelect.value = previewState.environmentKind === 'default' ? 'default' : 'studio';
+  environmentSelect.replaceChildren(
+    ...[
+      { name: 'bridge', label: 'San Giuseppe Bridge' },
+      { name: 'studio', label: 'Studio' },
+      ...settings.ibls.map((asset) => ({ name: asset.name, label: asset.name })),
+    ].map((entry) => new Option(entry.label, entry.name)),
+  );
+  environmentSelect.value = previewState.environmentKind ?? settings.defaultIbl;
   const environmentStatus = document.getElementById('environment-status') as HTMLOutputElement;
-  const changeEnvironment = async () => {
-    const kind = environmentSelect.value as EnvironmentKind;
+  const changeEnvironment = async (): Promise<void> => {
+    const kind = environmentSelect.value;
     previewState.environmentKind = kind;
     vscode?.setState(previewState);
     environmentStatus.textContent = 'Loading environment…';
     try {
       if (await environments.set(kind)) {
         environmentStatus.textContent = '';
-        log(`Environment ready: ${kind === 'studio' ? 'Studio' : 'San Giuseppe Bridge'}.`);
+        log(`Environment ready: ${kind === 'studio' ? 'Studio' : kind === 'bridge' ? 'San Giuseppe Bridge' : kind}.`);
       }
     } catch (error) {
       if (disposed || kind !== previewState.environmentKind) return;
       environmentStatus.textContent = `Environment failed to load: ${error instanceof Error ? error.message : String(error)}`;
       log(environmentStatus.textContent);
+      if (!scene.environment && kind !== 'studio') {
+        environmentSelect.value = kind === 'bridge' ? 'studio' : 'bridge';
+        log(`Using fallback IBL: ${environmentSelect.value}.`);
+        await changeEnvironment();
+      }
     }
   };
   environmentSelect.addEventListener('change', changeEnvironment);
@@ -326,6 +385,37 @@ async function renderScene(
 
   let clock = performance.now();
   let mtlxScene: MtlxScene | undefined;
+  let geometryGeneration = 0;
+  const geometryLoads = new Map<string, Promise<void>>();
+  const loadGeometry = async (name: string) => {
+    if (!settings.geometries.some((asset) => asset.name === name)) return;
+    if (!geometryLoads.has(name))
+      geometryLoads.set(
+        name,
+        (async () => {
+          const asset = await requestAsset('geometry', name, environmentAbort.signal);
+          if (disposed) return;
+          const manager = new THREE.LoadingManager();
+          const urls = new Map(
+            asset.resources.map((resource) => [resource.path, URL.createObjectURL(new Blob([resource.data]))]),
+          );
+          own(() => {
+            for (const url of urls.values()) URL.revokeObjectURL(url);
+          });
+          manager.setURLModifier((url) => urls.get(url) ?? url);
+          await mtlxScene!.addGeometry(name, asset.data, manager);
+        })().catch((error: unknown) => {
+          geometryLoads.delete(name);
+          throw error;
+        }),
+      );
+    await geometryLoads.get(name);
+  };
+  geometrySelectEl.replaceChildren(
+    ...['totem', 'sphere', 'plane', ...settings.geometries.map((asset) => asset.name)].map(
+      (name) => new Option(name, name),
+    ),
+  );
 
   try {
     log(`Parsing MaterialX document (${fileName})...`);
@@ -364,7 +454,17 @@ async function renderScene(
     if (disposed) return;
     if (previewState.material && mtlxScene.materialNames.includes(previewState.material))
       mtlxScene.setMaterial(previewState.material);
-    if (previewState.geometry) mtlxScene.setGeometry(previewState.geometry);
+    const initialGeometry = previewState.geometry ?? settings.defaultGeometry;
+    try {
+      await loadGeometry(initialGeometry);
+    } catch (error) {
+      if (disposed) return;
+      log(`Geometry ${initialGeometry}: ${error instanceof Error ? error.message : String(error)}. Using totem.`);
+      delete previewState.camera;
+    }
+    if (disposed) return;
+    mtlxScene.setGeometry(initialGeometry);
+    previewState.geometry = mtlxScene.geometry;
     geometrySelectEl.value = mtlxScene.geometry;
     scene.add(mtlxScene.root);
     populateMaterialSelect(mtlxScene);
@@ -382,7 +482,7 @@ async function renderScene(
     rotationEl.setAttribute('aria-pressed', String(!mtlxScene?.autoRotate));
   };
   const motionChanged = () => {
-    if (mtlxScene) mtlxScene.autoRotate = !preference.matches && (previewState.rotating ?? true);
+    if (mtlxScene) mtlxScene.autoRotate = !preference.matches && (previewState.rotating ?? settings.autoRotate);
     updateRotation();
   };
   motionChanged();
@@ -435,6 +535,7 @@ async function renderScene(
   rotationEl.disabled = false;
   resetEl.disabled = false;
   setPreviewStatus('ready');
+  clock = performance.now();
   renderer.setAnimationLoop(() => {
     const now = performance.now();
     const deltaSeconds = (now - clock) / 1000;
@@ -452,10 +553,24 @@ async function renderScene(
     previewState.material = materialSelectEl.value;
     vscode?.setState(previewState);
   };
-  const changeGeometry = () => {
-    mtlxScene?.setGeometry(geometrySelectEl.value as GeometryKind);
-    previewState.geometry = geometrySelectEl.value as GeometryKind;
-    saveCamera();
+  const geometryStatus = document.getElementById('geometry-status') as HTMLOutputElement;
+  const changeGeometry = async () => {
+    const request = ++geometryGeneration;
+    const name = geometrySelectEl.value;
+    geometryStatus.textContent = `Loading geometry: ${name}…`;
+    try {
+      await loadGeometry(name);
+      if (disposed || request !== geometryGeneration) return;
+      mtlxScene?.setGeometry(name);
+      previewState.geometry = name;
+      geometryStatus.textContent = '';
+      saveCamera();
+    } catch (error) {
+      if (disposed || request !== geometryGeneration) return;
+      geometrySelectEl.value = mtlxScene?.geometry ?? 'totem';
+      geometryStatus.textContent = `Geometry failed to load: ${error instanceof Error ? error.message : String(error)}`;
+      log(geometryStatus.textContent);
+    }
   };
   materialSelectEl.addEventListener('change', changeMaterial);
   geometrySelectEl.addEventListener('change', changeGeometry);
@@ -463,14 +578,35 @@ async function renderScene(
   own(() => geometrySelectEl.removeEventListener('change', changeGeometry));
 }
 
-function onMessage(event: MessageEvent<PreviewPayload>): void {
-  const payload = event.data;
+function onMessage(
+  event: MessageEvent<PreviewPayload | (PreviewAssetBytes & { type: 'asset'; requestId: number; error?: string })>,
+): void {
+  if ('type' in event.data && event.data.type === 'asset') {
+    const reply = event.data;
+    const pending = pendingAssets.get(reply.requestId);
+    if (reply.error) pending?.reject(new Error(reply.error));
+    else pending?.resolve(reply);
+    return;
+  }
+  const payload = event.data as PreviewPayload;
   const generation = ++payloadGeneration;
   disposeCurrent();
+  const settings = payload.settings ?? parsePreviewSettings({});
+  const settingsKey = JSON.stringify(settings);
+  if (previewState.settingsKey !== settingsKey) {
+    previewState.settingsKey = settingsKey;
+    previewState.environmentKind = settings.defaultIbl;
+    previewState.geometry = settings.defaultGeometry;
+    previewState.rotating = settings.autoRotate;
+    delete previewState.camera;
+  }
   lastPayload = payload;
   failedResources = [];
   logLines.length = 0;
   logEl.replaceChildren();
+  for (const warning of settings.warnings) log(`Settings: ${warning}`);
+  const settingsStatus = document.getElementById('settings-status');
+  if (settingsStatus) settingsStatus.textContent = settings.warnings.join(' ');
   errorEl.style.display = 'none';
   setPreviewStatus(payload.parseError ? 'unavailable: document could not be parsed' : 'loading');
 
@@ -482,11 +618,13 @@ function onMessage(event: MessageEvent<PreviewPayload>): void {
   renderStats(payload);
 
   if (!payload.parseError && payload.data && payload.shaderBall) {
-    renderScene(payload.data, payload.fileName, payload.textures, payload.shaderBall).catch((error: unknown) => {
-      if (generation !== payloadGeneration) return;
-      disposeCurrent();
-      showError(`3D preview error: ${error instanceof Error ? error.message : String(error)}`);
-    });
+    renderScene(payload.data, payload.fileName, payload.textures, payload.shaderBall, settings).catch(
+      (error: unknown) => {
+        if (generation !== payloadGeneration) return;
+        disposeCurrent();
+        showError(`3D preview error: ${error instanceof Error ? error.message : String(error)}`);
+      },
+    );
   }
 }
 

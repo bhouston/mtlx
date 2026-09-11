@@ -1,5 +1,7 @@
 import { DEFAULT_MATERIALX_READ_LIMITS } from 'mtlx-core';
 import { getPreviewHtml } from './previewHtml.js';
+import { parsePreviewSettings } from './previewSettings.js';
+import { loadPreviewAsset } from './previewAssets.js';
 import { analyze } from './mtlxAnalyze.js';
 import * as vscode from 'vscode';
 import { MtlxPreviewDocument } from './mtlxPreviewDocument.js';
@@ -55,6 +57,15 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
     let disposed = false;
     let generation = 0;
     let ready = false;
+    const assetAbort = new AbortController();
+    const readSettings = () => {
+      const config = vscode.workspace.getConfiguration('mtlx.preview', document.uri);
+      return parsePreviewSettings(
+        Object.fromEntries(
+          ['ibls', 'geometries', 'defaultIbl', 'defaultGeometry', 'autoRotate'].map((key) => [key, config.get(key)]),
+        ),
+      );
+    };
     let timer: ReturnType<typeof setTimeout> | undefined;
     let resourceSubscriptions: vscode.Disposable[] = [];
     const scheduleRefresh = () => {
@@ -96,6 +107,7 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
         if (disposed || request !== generation) return;
         watchResources(current);
         await webviewPanel.webview.postMessage({
+          settings: readSettings(),
           fileName: current.fileName,
           fileSize: current.fileSize,
           valid: !current.parseError && !current.issues.some((issue) => issue.level === 'error'),
@@ -124,8 +136,38 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
     };
     /* oxlint-enable unicorn/require-post-message-target-origin */
     const listener = webviewPanel.webview.onDidReceiveMessage(
-      async (message: { type?: string; message?: string; diagnostics?: string }) => {
-        if (message.type === 'ready' || message.type === 'refresh') {
+      async (message: {
+        type?: string;
+        message?: string;
+        diagnostics?: string;
+        requestId?: number;
+        kind?: 'ibl' | 'geometry';
+        name?: string;
+      }) => {
+        if (disposed) return;
+        if (message.type === 'loadAsset' && Number.isSafeInteger(message.requestId)) {
+          try {
+            const settings = readSettings();
+            const list =
+              message.kind === 'ibl' ? settings.ibls : message.kind === 'geometry' ? settings.geometries : [];
+            const asset = list.find((entry) => entry.name === message.name);
+            if (!asset) throw new Error('Unknown configured preview asset');
+            const result = await loadPreviewAsset(asset, message.kind!, document.uri, assetAbort.signal);
+            if (!disposed)
+              // oxlint-disable-next-line unicorn/require-post-message-target-origin
+              await webviewPanel.webview.postMessage({ type: 'asset', requestId: message.requestId, ...result });
+          } catch (error) {
+            if (!disposed) {
+              const response = {
+                type: 'asset',
+                requestId: message.requestId,
+                error: error instanceof Error ? error.message : String(error),
+              };
+              // oxlint-disable-next-line unicorn/require-post-message-target-origin
+              await webviewPanel.webview.postMessage(response);
+            }
+          }
+        } else if (message.type === 'ready' || message.type === 'refresh') {
           ready = true;
           void refresh();
         } else if (message.type === 'log' && message.message) this._output.appendLine(message.message);
@@ -144,12 +186,16 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
     watchResources(document);
     const subscriptions = [
       listener,
+      vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration('mtlx.preview', document.uri)) scheduleRefresh();
+      }),
       webviewPanel.onDidChangeViewState(() => {
         if (ready && webviewPanel.visible) void refresh();
       }),
     ];
     webviewPanel.onDidDispose(() => {
       disposed = true;
+      assetAbort.abort();
       generation++;
       clearTimeout(timer);
       for (const subscription of [...subscriptions, ...resourceSubscriptions]) subscription.dispose();

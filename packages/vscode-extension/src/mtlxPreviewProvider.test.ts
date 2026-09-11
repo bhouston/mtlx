@@ -20,6 +20,8 @@ const mocked = vi.hoisted(() => {
   };
   return {
     uri,
+    configuration: {} as Record<string, unknown>,
+    configurationChanged: undefined as ((event: { affectsConfiguration: () => boolean }) => void) | undefined,
     readFile: vi.fn(),
     clipboard: vi.fn(),
     writeFile: vi.fn(),
@@ -37,6 +39,12 @@ vi.mock('vscode', () => ({
   window: { createOutputChannel: () => ({ appendLine: vi.fn(), dispose: vi.fn() }), showSaveDialog: mocked.saveDialog },
   env: { clipboard: { writeText: mocked.clipboard } },
   workspace: {
+    getConfiguration: () => ({ get: (key: string) => mocked.configuration[key] }),
+    getWorkspaceFolder: () => undefined,
+    onDidChangeConfiguration: (callback: typeof mocked.configurationChanged) => {
+      mocked.configurationChanged = callback;
+      return { dispose: vi.fn() };
+    },
     fs: { readFile: mocked.readFile, writeFile: mocked.writeFile, stat: async () => ({ size: 10 }) },
     createFileSystemWatcher: (pattern: { base: vscode.Uri; pattern: string }) => {
       const watcher = { pattern, change: () => {}, create: () => {}, delete: () => {}, dispose: vi.fn() };
@@ -60,6 +68,7 @@ vi.mock('vscode', () => ({
   },
   Uri: {
     parse: mocked.uri,
+    file: (path: string) => mocked.uri(new URL(path, 'file:///').href),
     joinPath: (uri: vscode.Uri, ...parts: string[]) => uri.with({ path: `${uri.path}/${parts.join('/')}` }),
   },
   RelativePattern: class {
@@ -73,6 +82,7 @@ import { MtlxPreviewProvider, resolveResourceUri } from './mtlxPreviewProvider.j
 
 beforeEach(() => {
   mocked.watchers.length = 0;
+  mocked.configuration = {};
   mocked.readFile.mockReset();
 });
 const encode = (text: string) => new TextEncoder().encode(text);
@@ -82,7 +92,13 @@ async function setup() {
     extensionUri: mocked.uri('file:///extension'),
   } as vscode.ExtensionContext);
   const document = await provider.openCustomDocument(rootUri);
-  let receive: (message: { type: string; diagnostics?: string }) => void = vi.fn();
+  let receive: (message: {
+    type: string;
+    diagnostics?: string;
+    kind?: 'ibl' | 'geometry';
+    name?: string;
+    requestId?: number;
+  }) => void = vi.fn();
   let dispose: () => void = vi.fn();
   let viewState: () => void = vi.fn();
   const postMessage = vi.fn().mockResolvedValue(true);
@@ -114,6 +130,7 @@ async function setup() {
     panel,
     postMessage,
     receive: (type: string, diagnostics?: string) => receive({ type, diagnostics }),
+    requestAsset: (name: string, requestId: number) => receive({ type: 'loadAsset', kind: 'ibl', name, requestId }),
     dispose: () => {
       dispose();
       provider.dispose();
@@ -234,5 +251,43 @@ it('exports diagnostics through the host clipboard and chosen save URI', async (
       encode(diagnostics),
     ),
   );
+  host.dispose();
+});
+
+it('delivers defaults, reloads changed settings, and only serves configured asset names', async () => {
+  mocked.readFile.mockResolvedValue(encode('<materialx version="1.39"/>'));
+  const host = await setup();
+  host.receive('ready');
+  await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(1));
+  expect(host.postMessage.mock.calls[0]![0].settings).toMatchObject({
+    defaultIbl: 'bridge',
+    defaultGeometry: 'totem',
+    autoRotate: true,
+  });
+  mocked.configuration = {
+    ibls: [{ name: 'gallery', source: '/gallery.hdr' }],
+    defaultIbl: 'gallery',
+    defaultGeometry: 'sphere',
+    autoRotate: false,
+  };
+  mocked.configurationChanged?.({ affectsConfiguration: () => true });
+  await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(2));
+  expect(host.postMessage.mock.calls[1]![0].settings).toMatchObject({
+    defaultIbl: 'gallery',
+    defaultGeometry: 'sphere',
+    autoRotate: false,
+  });
+  host.requestAsset('gallery', 3);
+  await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(3));
+  expect(host.postMessage.mock.calls[2]![0]).toMatchObject({ type: 'asset', requestId: 3, source: '/gallery.hdr' });
+  const reads = mocked.readFile.mock.calls.length;
+  host.requestAsset('/unconfigured/file.hdr', 4);
+  await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(4));
+  expect(host.postMessage.mock.calls[3]![0]).toMatchObject({
+    type: 'asset',
+    requestId: 4,
+    error: 'Unknown configured preview asset',
+  });
+  expect(mocked.readFile).toHaveBeenCalledTimes(reads);
   host.dispose();
 });

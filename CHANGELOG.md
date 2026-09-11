@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Default both viewers to the bridge IBL. Add extension settings for named IBLs and glTF/GLB
+  geometries, default selections by identifier, and default rotation. Custom assets support local
+  files and HTTP(S) URLs, including glTF sidecars, with validation and settings-change refresh.
+
 - Add Studio / San Giuseppe Bridge IBL selection along the bottom of the website and extension
   viewers, preserving inspection settings and restoring the extension selection across tabs.
 

@@ -94,7 +94,84 @@
         ],
         "priority": "default"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Mtlx Viewer",
+      "properties": {
+        "mtlx.preview.ibls": {
+          "type": "array",
+          "default": [],
+          "scope": "resource",
+          "description": "Additional equirectangular HDR, EXR, PNG or JPEG environments. Built-in names: bridge, studio.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "source"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+                "description": "Unique case-sensitive identifier. Built-in names are reserved."
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Local file path or HTTP(S) URL. Relative paths use the material workspace folder; ~ uses your home folder."
+              }
+            }
+          }
+        },
+        "mtlx.preview.geometries": {
+          "type": "array",
+          "default": [],
+          "scope": "resource",
+          "description": "Additional glTF/GLB preview geometries. Built-in names: totem, sphere, plane.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "source"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+                "description": "Unique case-sensitive identifier. Built-in names are reserved."
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Local file path or HTTP(S) URL. Relative paths use the material workspace folder; ~ uses your home folder."
+              }
+            }
+          }
+        },
+        "mtlx.preview.defaultIbl": {
+          "type": "string",
+          "default": "bridge",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+          "scope": "resource",
+          "description": "IBL name used for new previews. Built-ins: bridge, studio; or an additional IBL name."
+        },
+        "mtlx.preview.defaultGeometry": {
+          "type": "string",
+          "default": "totem",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+          "scope": "resource",
+          "description": "Geometry name used for new previews. Built-ins: totem, sphere, plane; or an additional geometry name."
+        },
+        "mtlx.preview.autoRotate": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "Rotate new previews by default. Reduced-motion preferences take precedence; rotation can still be enabled manually."
+        }
+      }
+    }
   },
   "icon": "images/icon.png",
   "engines": {
