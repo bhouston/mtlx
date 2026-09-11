@@ -99,23 +99,6 @@ function HomePage() {
         <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>
-              <Link to="/extension" className="text-primary underline underline-offset-4">
-                VS Code extension
-              </Link>
-            </CardTitle>
-            <CardDescription>Preview, inspect, and convert MaterialX files right in the editor.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-1 flex-col gap-3">
-            <div className="flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted text-xs text-muted-foreground">
-              screenshot
-            </div>
-            <PackageLinks github="https://github.com/bhouston/mtlx/blob/main/packages/vscode-extension/README.md" />
-          </CardContent>
-        </Card>
-
-        <Card className="flex flex-col">
-          <CardHeader>
-            <CardTitle>
               <a href="https://www.npmjs.com/package/mtlx-cli" className="text-primary underline underline-offset-4">
                 CLI
               </a>
@@ -130,6 +113,23 @@ function HomePage() {
               github="https://github.com/bhouston/mtlx/blob/main/packages/cli/README.md"
               npm="https://www.npmjs.com/package/mtlx-cli"
             />
+          </CardContent>
+        </Card>
+
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              <Link to="/extension" className="text-primary underline underline-offset-4">
+                VS Code extension
+              </Link>
+            </CardTitle>
+            <CardDescription>Preview, inspect, and convert MaterialX files right in the editor.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-3">
+            <div className="flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted text-xs text-muted-foreground">
+              screenshot
+            </div>
+            <PackageLinks github="https://github.com/bhouston/mtlx/blob/main/packages/vscode-extension/README.md" />
           </CardContent>
         </Card>
 

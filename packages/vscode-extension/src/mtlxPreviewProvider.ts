@@ -156,9 +156,9 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
       height: 100vh;
       overflow: hidden;
     }
-    .layout { display: flex; gap: 16px; flex: 1; min-height: 0; }
+    .layout { display: flex; gap: 12px; flex: 1; min-height: 0; }
     .viewport-wrap { flex: 3; min-width: 0; position: relative; display: flex; flex-direction: column; }
-    .toolbar { display: flex; gap: 8px; padding-bottom: 8px; flex: none; }
+    .toolbar { display: flex; gap: 8px; padding-bottom: 12px; flex: none; }
     .toolbar select {
       background: var(--vscode-dropdown-background);
       color: var(--vscode-dropdown-foreground);
@@ -187,6 +187,7 @@ function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string 
       color: var(--vscode-descriptionForeground);
       background: var(--vscode-textCodeBlock-background, rgba(128, 128, 128, 0.1));
       padding: 4px 8px;
+      margin-top: 12px;
       border-top: 1px solid var(--vscode-panel-border, transparent);
     }
     /* Narrow editor pane (e.g. side-by-side split): stack the info panel under the viewport

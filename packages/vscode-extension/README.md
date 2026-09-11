@@ -1,7 +1,5 @@
 # Mtlx Viewer
 
-<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
-
 Part of the [mtlx](https://github.com/bhouston/mtlx) suite: a pure TypeScript/JavaScript
 MaterialX toolkit with no binary dependencies, working out of the box on Node, browsers, Windows,
 macOS, and Linux.
