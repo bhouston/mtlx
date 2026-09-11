@@ -1,21 +1,15 @@
 import { ChevronDown, SlidersHorizontal } from 'lucide-react';
 import type { ComponentProps } from 'react';
-import { TONE_MAPPING_OPTIONS, type RenderingSettings, type ViewerSettings } from '../renderingSettings.js';
+import {
+  GEOMETRY_OPTIONS,
+  IBL_OPTIONS,
+  TONE_MAPPING_OPTIONS,
+  type RenderingSettings,
+  type SettingsOption,
+  type ViewerSettings,
+} from '../renderingSettings.js';
 import { cn } from './utils.js';
-
-export interface SettingsOption {
-  value: string;
-  label: string;
-}
-export const GEOMETRY_OPTIONS: SettingsOption[] = [
-  { value: 'totem', label: 'Totem' },
-  { value: 'sphere', label: 'Sphere' },
-  { value: 'plane', label: 'Plane' },
-];
-export const IBL_OPTIONS: SettingsOption[] = [
-  { value: 'studio', label: 'Studio' },
-  { value: 'bridge', label: 'San Giuseppe Bridge' },
-];
+export { GEOMETRY_OPTIONS, IBL_OPTIONS, type SettingsOption } from '../renderingSettings.js';
 
 export interface ViewerSettingsPanelProps extends Omit<ComponentProps<'details'>, 'onChange'> {
   settings: ViewerSettings;

@@ -62,7 +62,14 @@ it('loads named geometry, applies the active material, resets it and releases or
   );
   await scene.addGeometry('__proto__', new ArrayBuffer(0));
   const object = scene.root.children.at(-1)!;
-  const mesh = object.children[0] as THREE.Mesh;
+  // Uniformly scaled to fit a unit cube (largest extent 1, proportions kept) and centered.
+  const bounds = new THREE.Box3().setFromObject(object);
+  expect(Math.max(...bounds.getSize(new THREE.Vector3()).toArray())).toBeCloseTo(1);
+  expect(bounds.getCenter(new THREE.Vector3()).length()).toBeLessThan(1e-6);
+  const inner = object.children[0]!;
+  expect(inner.scale.x).toBe(inner.scale.y);
+  expect(inner.scale.y).toBe(inner.scale.z);
+  const mesh = object.getObjectByProperty('isMesh', true) as THREE.Mesh;
   const originalMaterial = mesh.material as THREE.Material;
   const disposeMaterial = vi.spyOn(originalMaterial, 'dispose');
   const disposeGeometry = vi.spyOn(mesh.geometry, 'dispose');

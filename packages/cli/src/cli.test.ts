@@ -401,6 +401,33 @@ describe('mtlx', () => {
     }
   });
 
+  it('check accepts a glob pattern and reports every match', async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-check-glob-'));
+    try {
+      for (const name of ['metal', 'wood']) {
+        writeFileSync(
+          path.join(tempDir, `${name}.mtlx`),
+          `<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_${name}" type="material" /></materialx>`,
+          'utf8',
+        );
+      }
+      writeFileSync(path.join(tempDir, 'broken.mtlx'), '<materialx version="1.39"><unclosed>', 'utf8');
+
+      const ok = await cli.run(['check', path.join(tempDir, '{metal,wood}.mtlx'), '--format', 'json'], {
+        timeout: 8_000,
+      });
+      expect(ok).toSucceed();
+      expect(JSON.parse(ok.stdout).map((r: { ok: boolean }) => r.ok)).toEqual([true, true]);
+
+      const failed = await cli.run(['check', path.join(tempDir, '*.mtlx')], { timeout: 8_000 });
+      expect(failed).toFail();
+      expect(failed).toHaveStdout(/metal\.mtlx/);
+      expect(failed).toHaveStdout(/wood\.mtlx/);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
   it('transform fails clearly when a glob matches nothing', async () => {
     const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-glob-empty-'));
     try {

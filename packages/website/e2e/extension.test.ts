@@ -122,7 +122,6 @@ test.each([false, true])(
                 settings: configured,
                 fileName: 'copper.mtlx',
                 fileSize: fileBytes.length,
-                valid: true,
                 issues: [],
                 resourcesChecked: true,
                 textures: [],

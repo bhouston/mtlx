@@ -1,6 +1,6 @@
 import { analyzeInWorker } from './analyze-in-worker';
 import { materialByteLimit, readBoundedResponse } from './material-bytes';
-import type { MaterialXAnalysis } from './validate';
+import type { MaterialXAnalysis } from './material-analysis';
 
 export interface MaterialLoadProgress {
   value: number;

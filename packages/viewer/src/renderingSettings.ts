@@ -16,6 +16,20 @@ export interface RenderingSettings {
 }
 export const DEFAULT_RENDERING_SETTINGS: RenderingSettings = { bloom: true, ao: true, toneMapping: 'neutral' };
 
+export interface SettingsOption {
+  value: string;
+  label: string;
+}
+export const GEOMETRY_OPTIONS: SettingsOption[] = [
+  { value: 'totem', label: 'Totem' },
+  { value: 'sphere', label: 'Sphere' },
+  { value: 'plane', label: 'Plane' },
+];
+export const IBL_OPTIONS: SettingsOption[] = [
+  { value: 'studio', label: 'Studio' },
+  { value: 'bridge', label: 'San Giuseppe Bridge' },
+];
+
 export const DEFAULT_VIEWER_SETTINGS = {
   ibl: 'bridge' as 'bridge' | 'studio',
   ...DEFAULT_RENDERING_SETTINGS,

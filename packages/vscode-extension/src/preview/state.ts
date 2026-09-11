@@ -1,54 +1,59 @@
-import type { RenderingSettings, GeometryKind } from 'mtlx-viewer';
-export interface PreviewState extends Partial<RenderingSettings> {
-  material?: string;
-  geometry?: GeometryKind;
-  rotating?: boolean;
-  exposure?: number;
-  environmentIntensity?: number;
-  environmentKind?: string;
+import { parseViewerSettings, type ViewerSettings } from 'mtlx-viewer/settings';
+import type { PreviewSettings } from '../previewSettings.js';
+
+export interface PreviewCamera {
+  position: number[];
+  target: number[];
+  zoom: number;
+  rotation: number[];
+}
+/** Persisted per webview via `vscode.setState`. */
+export interface PreviewState {
+  /** The host configuration these settings were derived from; a change resets to its defaults. */
   settingsKey?: string;
-  camera?: { position: number[]; target: number[]; zoom: number; rotation: number[] };
+  settings?: Partial<ViewerSettings>;
+  camera?: PreviewCamera;
 }
 
-import { parseViewerSettings } from 'mtlx-viewer/settings';
-import type { PreviewSettings } from '../previewSettings.js';
-import { vscode } from './host.js';
-
-/** Keep the existing VS Code storage keys so saved previews survive upgrades. */
-export const previewState: PreviewState = vscode?.getState() ?? {};
+/** Viewer settings implied by the host configuration alone. */
+export const hostDefaults = (settings: PreviewSettings): ViewerSettings => ({
+  ibl: settings.defaultIbl,
+  geometry: settings.defaultGeometry,
+  rotate: settings.autoRotate,
+  bloom: settings.bloom,
+  ao: settings.ao,
+  toneMapping: settings.toneMapping,
+  exposure: 0,
+  intensity: 1,
+  materialName: '',
+});
 
 const vector = (value: unknown): value is number[] =>
   Array.isArray(value) && value.length === 3 && value.every((n) => typeof n === 'number' && Number.isFinite(n));
 
-export function normalizePreviewState(saved: PreviewState, settings: PreviewSettings): PreviewState {
+/** Validates saved state against the current host configuration; changed host defaults win over saved choices. */
+export function normalizePreviewState(
+  saved: PreviewState,
+  settings: PreviewSettings,
+): Required<Pick<PreviewState, 'settingsKey' | 'settings'>> & { settings: ViewerSettings; camera?: PreviewCamera } {
   const settingsKey = JSON.stringify(settings);
   const changed = saved.settingsKey !== settingsKey;
+  const defaults = hostDefaults(settings);
   const parsed = parseViewerSettings(
-    {
-      ibl: changed ? settings.defaultIbl : saved.environmentKind,
-      geometry: changed ? settings.defaultGeometry : saved.geometry,
-      rotate: changed ? settings.autoRotate : saved.rotating,
-      bloom: changed ? settings.bloom : saved.bloom,
-      ao: changed ? settings.ao : saved.ao,
-      toneMapping: changed ? settings.toneMapping : saved.toneMapping,
-      exposure: saved.exposure,
-      intensity: saved.environmentIntensity,
-      materialName: saved.material,
-    },
+    { ...saved.settings },
     { ibls: settings.ibls.map((asset) => asset.name), geometries: settings.geometries.map((asset) => asset.name) },
   );
+  const { exposure, intensity, materialName, ...hostOwned } = parsed;
   const camera = saved.camera;
   return {
     settingsKey,
-    environmentKind: parsed.ibl ?? settings.defaultIbl,
-    geometry: parsed.geometry ?? settings.defaultGeometry,
-    rotating: parsed.rotate ?? settings.autoRotate,
-    bloom: parsed.bloom ?? settings.bloom,
-    ao: parsed.ao ?? settings.ao,
-    toneMapping: parsed.toneMapping ?? settings.toneMapping,
-    exposure: parsed.exposure ?? 0,
-    environmentIntensity: parsed.intensity ?? 1,
-    material: parsed.materialName,
+    settings: {
+      ...defaults,
+      ...(changed ? {} : hostOwned),
+      ...(exposure !== undefined ? { exposure } : {}),
+      ...(intensity !== undefined ? { intensity } : {}),
+      ...(materialName !== undefined ? { materialName } : {}),
+    },
     camera:
       !changed &&
       camera &&
@@ -61,8 +66,4 @@ export function normalizePreviewState(saved: PreviewState, settings: PreviewSett
         ? camera
         : undefined,
   };
-}
-
-export function restorePreviewSettings(settings: PreviewSettings): void {
-  Object.assign(previewState, normalizePreviewState(previewState, settings));
 }

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { GithubIcon } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'mtlx-viewer/react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -8,8 +8,9 @@ export const Route = createFileRoute('/')({
 
 const CLI_EXAMPLE = `npm install -g mtlx-cli
 
-# validate a file; exits non-zero on any error-level issue, so it works as a CI gate
+# validate a file, or every file matching a glob; exits non-zero on any error-level issue, so it works as a CI gate
 mtlx check material.mtlx
+mtlx check "materials/*.mtlx" --strict
 
 # print material/texture/document info
 mtlx info material.mtlx.zip --format json

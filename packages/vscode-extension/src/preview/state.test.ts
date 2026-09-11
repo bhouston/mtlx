@@ -9,49 +9,52 @@ const settings = parsePreviewSettings({
   defaultGeometry: 'bust',
 });
 const camera = { position: [1, 2, 3], target: [0, 0, 0], zoom: 1, rotation: [0, 1, 0] };
-it('preserves existing storage keys, custom assets, and camera on restoration', () => {
+it('preserves saved settings, custom assets, and camera on restoration', () => {
   const saved: PreviewState = {
     settingsKey: JSON.stringify(settings),
-    environmentKind: 'gallery',
-    geometry: 'bust',
-    rotating: false,
-    bloom: false,
-    ao: false,
-    toneMapping: 'agx',
-    environmentIntensity: 0.6,
-    exposure: -1,
-    material: 'Copper',
+    settings: {
+      ibl: 'gallery',
+      geometry: 'bust',
+      rotate: false,
+      bloom: false,
+      ao: false,
+      toneMapping: 'agx',
+      intensity: 0.6,
+      exposure: -1,
+      materialName: 'Copper',
+    },
     camera,
   };
   expect(normalizePreviewState(saved, settings)).toEqual(saved);
 });
 it('applies changed host defaults and clears the old camera while retaining lighting and material choice', () => {
   const state = normalizePreviewState(
-    { settingsKey: 'old', geometry: 'sphere', exposure: 1, environmentIntensity: 0.8, material: 'Copper', camera },
+    {
+      settingsKey: 'old',
+      settings: { geometry: 'sphere', exposure: 1, intensity: 0.8, materialName: 'Copper' },
+      camera,
+    },
     settings,
   );
-  expect(state.geometry).toBe('bust');
-  expect(state.environmentKind).toBe('gallery');
+  expect(state.settings.geometry).toBe('bust');
+  expect(state.settings.ibl).toBe('gallery');
   expect(state.camera).toBeUndefined();
-  expect(state.exposure).toBe(1);
-  expect(state.environmentIntensity).toBe(0.8);
-  expect(state.material).toBe('Copper');
+  expect(state.settings.exposure).toBe(1);
+  expect(state.settings.intensity).toBe(0.8);
+  expect(state.settings.materialName).toBe('Copper');
 });
 it('validates stale storage without losing supported custom asset names', () => {
   const state = normalizePreviewState(
     {
       settingsKey: JSON.stringify(settings),
-      geometry: 'removed',
-      environmentKind: 'removed',
-      exposure: Infinity,
-      environmentIntensity: 100,
+      settings: { geometry: 'removed', ibl: 'removed', exposure: Infinity, intensity: 100 },
       camera: { ...camera, target: [NaN, 0, 0] },
     },
     settings,
   );
-  expect(state.geometry).toBe('bust');
-  expect(state.environmentKind).toBe('gallery');
-  expect(state.exposure).toBe(0);
-  expect(state.environmentIntensity).toBe(2);
+  expect(state.settings.geometry).toBe('bust');
+  expect(state.settings.ibl).toBe('gallery');
+  expect(state.settings.exposure).toBe(0);
+  expect(state.settings.intensity).toBe(2);
   expect(state.camera).toBeUndefined();
 });

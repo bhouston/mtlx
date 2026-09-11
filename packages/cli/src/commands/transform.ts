@@ -1,7 +1,8 @@
-import { glob, stat } from 'node:fs/promises';
+import { stat } from 'node:fs/promises';
 import path from 'node:path';
 import { processMaterialX, type MaterialXProcessingResult } from 'mtlx-core/node';
 import { defineCommand } from 'yargs-file-commands';
+import { expandInputs } from '../inputs.js';
 import { formatOption, printOutput } from '../output.js';
 import {
   TEXTURE_OPTION_GROUP,
@@ -25,23 +26,6 @@ const renderText = (result: MaterialXProcessingResult): string =>
 const renderBatchSummary = (results: MaterialXProcessingResult[], outputDir: string, dryRun: boolean): string => {
   const count = results.filter((result) => result.success).length;
   return `${dryRun ? 'Would write' : 'Wrote'} ${count} file${count === 1 ? '' : 's'} to ${outputDir}`;
-};
-
-/** Expands each token as a glob pattern (a plain path matches itself), preserving first-seen
- * order and dropping duplicates matched by more than one pattern. */
-const expandInputs = async (patterns: string[]): Promise<string[]> => {
-  const seen = new Set<string>();
-  for (const pattern of patterns) {
-    let matched = false;
-    for await (const match of glob(pattern)) {
-      matched = true;
-      seen.add(match);
-    }
-    if (!matched) {
-      throw new Error(`No files matched: ${pattern}`);
-    }
-  }
-  return [...seen];
 };
 
 /** An `--output` is a directory (batch mode) if it already exists as one, or, when it doesn't

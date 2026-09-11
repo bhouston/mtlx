@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cn } from '../utils.js';
+import { cn } from 'mtlx-viewer/react';
 
 function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   return (

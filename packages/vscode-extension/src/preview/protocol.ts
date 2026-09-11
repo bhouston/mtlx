@@ -9,7 +9,6 @@ export interface PreviewPayload {
   settings?: PreviewSettings;
   fileName: string;
   fileSize: number;
-  valid: boolean;
   issues: MaterialXValidationIssue[];
   summary?: MaterialXSummary;
   parseError?: string;
@@ -17,5 +16,4 @@ export interface PreviewPayload {
   textures: PreviewTexture[];
   shaderBall?: ArrayBuffer;
   resourcesChecked?: boolean;
-  resourcePaths?: string[];
 }

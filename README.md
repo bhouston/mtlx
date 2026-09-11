@@ -90,7 +90,7 @@ npm install --global mtlx-cli
 ```
 
 ```sh
-mtlx check material.mtlx
+mtlx check "materials/*.mtlx"                                   # validate one file or a glob
 mtlx view material.mtlx                                        # local browser preview
 mtlx info material.mtlx.zip --format json
 mtlx x material.mtlx -o material.mtlx.zip                         # pack

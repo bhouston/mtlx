@@ -1,13 +1,12 @@
 /**
- * Shared three.js MaterialX preview scene and IBL environments, used by the mtlx.ben3d.ca website
- * and the VS Code extension.
+ * Shared three.js MaterialX preview viewer, used by the mtlx.ben3d.ca website, the VS Code
+ * extension and `mtlx view`. Everything here pulls in three.js; the three-free pieces live at
+ * `mtlx-viewer/settings`, `mtlx-viewer/diagnostics` and `mtlx-viewer/capabilities`.
  *
  * @module mtlx-viewer
  */
 export * from './environment.js';
 export * from './scene.js';
 export * from './rendering.js';
-export * from './renderingSettings.js';
-export * from './diagnostics.js';
-export * from './lifecycle.js';
 export * from './runtime.js';
+export * from './viewer.js';

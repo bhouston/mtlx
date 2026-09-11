@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { Link2 } from 'lucide-react';
-import { Button } from 'mtlx-viewer/react';
-import { Input } from 'mtlx-viewer/react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogTrigger,

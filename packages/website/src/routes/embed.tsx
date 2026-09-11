@@ -1,8 +1,8 @@
 import { viewerSearch, viewerSettings } from '@/lib/viewer-search';
 import { createFileRoute } from '@tanstack/react-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MaterialViewer } from '@/components/MaterialViewerLazy';
-import { resolveMaterialParam } from '@/lib/presets';
+import { useMaterialLoad } from '@/hooks/use-material-load';
 
 export const Route = createFileRoute('/embed')({
   ssr: false,
@@ -13,25 +13,21 @@ export const Route = createFileRoute('/embed')({
 /** Chromeless viewer for iframe embedding: `/embed?materialUrl=<preset id or .mtlx URL>`. */
 function EmbedPage() {
   const search = Route.useSearch();
-  const { materialUrl } = search;
   const navigate = Route.useNavigate();
+  const { load, clear, source, fileError, loadProgress } = useMaterialLoad();
   const [viewerError, setViewerError] = useState<string | null>(null);
-
-  // resolveMaterialParam is pure and synchronous, so derive the source (and any "unknown
-  // material" error) straight from the search param during render instead of an effect.
-  const resolved = materialUrl ? resolveMaterialParam(materialUrl) : undefined;
-  const resolveError = materialUrl && !resolved ? `Unknown material "${materialUrl}"` : null;
-  const source = useMemo(() => {
-    const value = materialUrl ? resolveMaterialParam(materialUrl) : undefined;
-    return value ? { kind: 'url' as const, folderUrl: value.folderUrl, fileName: value.fileName } : null;
-  }, [materialUrl]);
-  const error = resolveError ?? viewerError;
+  useEffect(() => {
+    if (search.materialUrl) load(search.materialUrl);
+    else clear();
+  }, [search.materialUrl, load, clear]);
+  const error = fileError ?? viewerError;
 
   return (
     <div className="p-2">
       <MaterialViewer
         source={source}
         onError={setViewerError}
+        loadProgress={loadProgress}
         settings={viewerSettings(search)}
         onSettingsChange={(patch) =>
           void navigate({

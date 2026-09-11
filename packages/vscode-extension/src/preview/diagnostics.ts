@@ -6,7 +6,6 @@ export interface Diagnostics {
   lines: string[];
   error?: string;
   report: PreviewReport;
-  materials: string[];
   geometryStatus: string;
   environmentStatus: string;
 }
@@ -14,7 +13,6 @@ export interface Diagnostics {
 const initial = (parseError?: string): Diagnostics => ({
   lines: [],
   report: { state: parseError ? 'idle' : 'loading', resources: 'unchecked', failedResources: [] },
-  materials: [],
   geometryStatus: '',
   environmentStatus: '',
 });
@@ -50,18 +48,11 @@ export function showError(message: string): void {
 export function clearError(): void {
   update({ error: undefined });
 }
-export function setReport(patch: Partial<PreviewReport>): void {
-  update({ report: { ...state.report, ...patch } });
+export function setReport(report: PreviewReport): void {
+  update({ report });
 }
-export function setStatus(
-  patch: Partial<Pick<Diagnostics, 'materials' | 'geometryStatus' | 'environmentStatus'>>,
-): void {
+export function setStatus(patch: Partial<Pick<Diagnostics, 'geometryStatus' | 'environmentStatus'>>): void {
   update(patch);
-}
-export function recordFailedResource(url: string): void {
-  if (!state.report.failedResources.includes(url))
-    setReport({ failedResources: [...state.report.failedResources, url] });
-  log(`Failed to load resource: ${url}`);
 }
 
 window.addEventListener('error', (event) => showError(`Uncaught error: ${event.message}`));

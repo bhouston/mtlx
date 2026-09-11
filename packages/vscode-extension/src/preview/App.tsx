@@ -9,28 +9,17 @@ import {
 } from 'mtlx-viewer/react';
 import { computeChecks, type CheckState } from 'mtlx-viewer/diagnostics';
 import type { ViewerSettings } from 'mtlx-viewer/settings';
+import type { Viewer } from 'mtlx-viewer';
 import { parsePreviewSettings } from '../previewSettings.js';
 import type { PreviewAssetBytes } from '../previewAssets.js';
 import type { PreviewPayload } from './protocol.js';
 import { vscode, receiveAsset } from './host.js';
-import { previewState, restorePreviewSettings, type PreviewState } from './state.js';
-import { startPreviewScene, type PreviewScene } from './scene.js';
+import { normalizePreviewState, type PreviewState } from './state.js';
+import { startPreviewScene } from './scene.js';
 import { getDiagnostics, subscribeDiagnostics, resetDiagnostics, log } from './diagnostics.js';
 
 type HostMessage = PreviewPayload | (PreviewAssetBytes & { type: 'asset'; requestId: number; error?: string });
 
-/** ViewerSettings keys → persisted PreviewState keys (kept so saved previews survive upgrades). */
-const STATE_KEYS: Record<keyof ViewerSettings, keyof PreviewState> = {
-  ibl: 'environmentKind',
-  geometry: 'geometry',
-  rotate: 'rotating',
-  bloom: 'bloom',
-  ao: 'ao',
-  toneMapping: 'toneMapping',
-  exposure: 'exposure',
-  intensity: 'environmentIntensity',
-  materialName: 'material',
-};
 const CHECK_SYMBOL: Record<CheckState, string> = {
   passed: '✓',
   failed: '✗',
@@ -55,20 +44,27 @@ function useMediaQuery(query: string): boolean {
   );
 }
 
+/** Persisted webview state with a synchronous mirror, so scene callbacks and effects see the same value. */
+function usePersistedState(): [PreviewState, (update: (current: PreviewState) => PreviewState) => void] {
+  const [state, setState] = useState<PreviewState>(() => vscode?.getState() ?? {});
+  const ref = useRef(state);
+  const update = useCallback((fn: (current: PreviewState) => PreviewState) => {
+    ref.current = fn(ref.current);
+    vscode?.setState(ref.current);
+    setState(ref.current);
+  }, []);
+  return [state, update];
+}
+
 export function PreviewApp() {
   const [payload, setPayload] = useState<PreviewPayload>();
-  const [ui, setUi] = useState<PreviewState>(() => ({ ...previewState }));
-  const [scene, setScene] = useState<PreviewScene | null>(null);
-  const sceneRef = useRef<PreviewScene | null>(null);
+  const [state, updateState] = usePersistedState();
+  const [viewer, setViewer] = useState<Viewer | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const diagnostics = useSyncExternalStore(subscribeDiagnostics, getDiagnostics);
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const loggedChecks = useRef('');
   const settings = useMemo(() => payload?.settings ?? parsePreviewSettings({}), [payload]);
-  const persist = useCallback(() => {
-    vscode?.setState(previewState);
-    setUi({ ...previewState });
-  }, []);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent<HostMessage>) => {
@@ -77,20 +73,13 @@ export function PreviewApp() {
         return;
       }
       const next = event.data as PreviewPayload;
-      // Dispose first so the outgoing scene saves its camera before the settings are normalized
-      // (a settings change discards the saved camera).
-      sceneRef.current?.dispose();
       const parsed = next.settings ?? parsePreviewSettings({});
-      restorePreviewSettings(parsed);
       resetDiagnostics(next.parseError);
       loggedChecks.current = '';
       for (const warning of parsed.warnings) log(`Settings: ${warning}`);
       setPayload({ ...next, settings: parsed });
-      persist();
     };
-    const onPageHide = () => sceneRef.current?.dispose();
     window.addEventListener('message', onMessage);
-    window.addEventListener('pagehide', onPageHide);
     // Mirror VS Code's theme class so the shared `dark:` styles follow the editor theme.
     const syncTheme = () =>
       document.documentElement.classList.toggle(
@@ -106,10 +95,9 @@ export function PreviewApp() {
     vscode?.postMessage({ type: 'ready' });
     return () => {
       window.removeEventListener('message', onMessage);
-      window.removeEventListener('pagehide', onPageHide);
       observer.disconnect();
     };
-  }, [persist]);
+  }, []);
 
   useEffect(() => {
     document.body.dataset.previewState = diagnostics.report.state;
@@ -117,49 +105,61 @@ export function PreviewApp() {
 
   useEffect(() => {
     if (!payload) return;
+    // The previous scene saved its camera in its cleanup, before this normalization can discard it.
+    const normalized = normalizePreviewState(vscode?.getState() ?? {}, payload.settings ?? parsePreviewSettings({}));
+    updateState(() => normalized);
     const canvas = canvasRef.current;
     if (payload.parseError || !payload.data || !payload.shaderBall || !canvas) return;
-    const next = startPreviewScene({
+    let created: Viewer | undefined;
+    let cancelled = false;
+    startPreviewScene({
       canvas,
       data: payload.data,
       fileName: payload.fileName,
       textures: payload.textures,
       shaderBall: payload.shaderBall,
-      settings,
-      state: previewState,
-      persist,
-    });
-    sceneRef.current = next;
-    void next.ready.then(() => {
-      if (!next.disposed && sceneRef.current === next) setScene(next);
-    });
+      settings: payload.settings ?? parsePreviewSettings({}),
+      // Reduced motion is honoured from the first frame, not only once the settings effect runs.
+      viewerSettings: {
+        ...normalized.settings,
+        rotate: normalized.settings.rotate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      },
+      camera: normalized.camera,
+      onCamera: (camera) => updateState((current) => ({ ...current, camera })),
+    })
+      .then((next) => {
+        created = next;
+        if (cancelled) next.dispose();
+        else setViewer(next);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled)
+          log(`ERROR: MaterialX preview error: ${error instanceof Error ? error.message : String(error)}`);
+      });
+    const onPageHide = () => created?.dispose();
+    window.addEventListener('pagehide', onPageHide);
     return () => {
-      setScene(null);
-      if (sceneRef.current === next) sceneRef.current = null;
-      next.dispose();
+      cancelled = true;
+      window.removeEventListener('pagehide', onPageHide);
+      created?.dispose();
+      setViewer(null);
     };
-  }, [payload, settings, persist]);
+  }, [payload, updateState]);
 
-  const rotating = !!ui.rotating && !reducedMotion;
-  useEffect(() => scene?.setRotating(rotating), [scene, rotating]);
+  const viewerSettings: ViewerSettings = {
+    ...normalizePreviewState({}, settings).settings,
+    ...state.settings,
+  };
+  const rotating = viewerSettings.rotate && !reducedMotion;
   useEffect(() => {
-    if (scene && ui.geometry) void scene.setGeometry(ui.geometry);
-  }, [scene, ui.geometry]);
-  useEffect(() => {
-    if (scene && ui.environmentKind) void scene.setEnvironment(ui.environmentKind);
-  }, [scene, ui.environmentKind]);
-  useEffect(() => {
-    if (scene && ui.material) scene.setMaterial(ui.material);
-  }, [scene, ui.material]);
-  useEffect(() => {
-    scene?.applyRendering({
-      bloom: ui.bloom ?? settings.bloom,
-      ao: ui.ao ?? settings.ao,
-      toneMapping: ui.toneMapping ?? settings.toneMapping,
-      exposure: ui.exposure ?? 0,
-      intensity: ui.environmentIntensity ?? 1,
+    if (!viewer) return;
+    void viewer.setSettings({ ...viewerSettings, rotate: rotating }).then((applied) => {
+      // A geometry that failed to load leaves the previous one active; reflect that in the UI.
+      if (!viewer.disposed && applied.geometry !== viewerSettings.geometry)
+        updateState((current) => ({ ...current, settings: { ...current.settings, geometry: applied.geometry } }));
     });
-  }, [scene, settings, ui.bloom, ui.ao, ui.toneMapping, ui.exposure, ui.environmentIntensity]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the settings' values, not the object
+  }, [viewer, rotating, ...Object.values(viewerSettings)]);
 
   const viewerError = payload?.parseError ? undefined : diagnostics.error;
   const checks = useMemo(
@@ -187,28 +187,15 @@ export function PreviewApp() {
     }
   }, [checks]);
 
-  const viewerSettings: ViewerSettings = {
-    ibl: ui.environmentKind ?? settings.defaultIbl,
-    geometry: ui.geometry ?? settings.defaultGeometry,
-    rotate: !!ui.rotating,
-    bloom: ui.bloom ?? settings.bloom,
-    ao: ui.ao ?? settings.ao,
-    toneMapping: ui.toneMapping ?? settings.toneMapping,
-    exposure: ui.exposure ?? 0,
-    intensity: ui.environmentIntensity ?? 1,
-    materialName: ui.material ?? '',
-  };
-  const updateSettings = (patch: Partial<ViewerSettings>) => {
-    for (const [key, value] of Object.entries(patch))
-      (previewState as Record<string, unknown>)[STATE_KEYS[key as keyof ViewerSettings]] = value;
-    persist();
-  };
+  const updateSettings = (patch: Partial<ViewerSettings>) =>
+    updateState((current) => ({ ...current, settings: { ...current.settings, ...patch } }));
   const geometries = [
     ...GEOMETRY_OPTIONS,
     ...settings.geometries.map((asset) => ({ value: asset.name, label: asset.name })),
   ];
   const ibls = [...IBL_OPTIONS, ...settings.ibls.map((asset) => ({ value: asset.name, label: asset.name }))];
   const error = payload?.parseError ?? diagnostics.error;
+  const materialNames = viewer?.scene.materialNames ?? [];
 
   return (
     <div className="flex min-h-screen flex-col gap-3 p-3 md:h-screen md:overflow-hidden">
@@ -234,16 +221,14 @@ export function PreviewApp() {
           className="viewer-frame relative aspect-square w-full min-w-0 overflow-hidden rounded-xl border border-border bg-zinc-950 shadow-sm md:aspect-auto md:min-h-0"
           data-preview-state={diagnostics.report.state}
         >
-          <canvas
-            ref={canvasRef}
-            id="viewport"
-            tabIndex={0}
-            aria-label="Material preview. Arrow keys pan."
-            className="absolute inset-0 h-full w-full"
-          />
+          <canvas ref={canvasRef} id="viewport" className="absolute inset-0 h-full w-full" />
           <MaterialSelect
-            names={diagnostics.materials}
-            value={viewerSettings.materialName}
+            names={materialNames}
+            value={
+              materialNames.includes(viewerSettings.materialName)
+                ? viewerSettings.materialName
+                : (viewer?.scene.activeMaterial ?? '')
+            }
             onChange={(name) => updateSettings({ materialName: name })}
           />
           {error ? (

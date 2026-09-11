@@ -28,18 +28,7 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       if (stat.size > DEFAULT_MATERIALX_READ_LIMITS.maxEntryBytes) throw new Error('Resource byte limit exceeded');
       return vscode.workspace.fs.readFile(resourceUri);
     });
-    return new MtlxPreviewDocument(
-      uri,
-      raw.length,
-      fileName,
-      raw,
-      result.issues,
-      result.summary,
-      result.parseError,
-      result.resources.map((resource) => ({ path: resource.sourcePath, data: resource.data })),
-      result.resourcesChecked,
-      result.resourcePaths,
-    );
+    return new MtlxPreviewDocument(uri, fileName, raw, result);
   }
 
   async resolveCustomEditor(document: MtlxPreviewDocument, webviewPanel: vscode.WebviewPanel): Promise<void> {
@@ -81,7 +70,7 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       resourceSubscriptions = [];
       const uris = [
         document.uri,
-        ...current.resourcePaths.flatMap((resourcePath) => {
+        ...current.analysis.resourcePaths.flatMap((resourcePath) => {
           try {
             return [resolveResourceUri(document.uri, resourcePath)];
           } catch {
@@ -108,18 +97,18 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
         const current = await this.openCustomDocument(document.uri);
         if (disposed || request !== generation) return;
         watchResources(current);
+        const { issues, summary, parseError, resourcesChecked, resources } = current.analysis;
         await webviewPanel.webview.postMessage({
           settings: readSettings(),
           fileName: current.fileName,
-          fileSize: current.fileSize,
-          valid: !current.parseError && !current.issues.some((issue) => issue.level === 'error'),
-          issues: current.issues,
-          summary: current.summary,
-          parseError: current.parseError,
-          resourcesChecked: current.resourcesChecked,
-          resourcePaths: current.resourcePaths,
+          fileSize: current.raw.length,
+          issues,
+          summary,
+          parseError,
+          resourcesChecked,
           data: current.raw.slice().buffer,
-          textures: current.textures.map((texture) => ({ path: texture.path, data: texture.data.slice().buffer })),
+          // Sibling textures of a loose .mtlx, served to the webview as blob: URLs.
+          textures: resources.map((resource) => ({ path: resource.sourcePath, data: resource.data.slice().buffer })),
           shaderBall: shaderBall.slice().buffer,
         });
       } catch (error) {
@@ -129,7 +118,6 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
         await webviewPanel.webview.postMessage({
           fileName: document.fileName,
           fileSize: 0,
-          valid: false,
           issues: [{ level: 'error', location: document.uri.toString(), message }],
           parseError: message,
           textures: [],

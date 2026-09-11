@@ -34,6 +34,7 @@ Quote glob patterns so `mtlx` expands them (including brace lists).
 
 ```sh
 mtlx check material.mtlx
+mtlx check "materials/*.mtlx" --strict                     # every match; exits 1 if any fail
 mtlx info material.mtlx.zip --format json
 mtlx view material.mtlx
 ```
@@ -85,8 +86,9 @@ and reserves planned shared texture names across inputs without writing files.
 
 ### Validation scope
 
-`mtlx check material.mtlx` runs the basic rule group by default. Add `--strict` to fail on warnings,
-or select additional groups explicitly:
+`mtlx check material.mtlx` runs the basic rule group by default. It accepts several paths or glob
+patterns and checks every match, exiting non-zero if any file fails. Add `--strict` to fail on
+warnings, or select additional groups explicitly:
 
 ```sh
 mtlx check material.mtlx --strict --rules basic structure types resources
@@ -153,7 +155,8 @@ Run `mtlx <command> --help` for the full option list of any command.
 mtlx <command>
 
 Commands:
-  mtlx check <input>         Run selected document checks on a .mtlx or .mtlx.zip file
+  mtlx check <inputs..>      Run selected document checks on one or more .mtlx or .mtlx.zip files
+                             (glob patterns accepted)
   mtlx info <input>          Print information about a .mtlx or .mtlx.zip file
   mtlx transform <inputs..>  Convert, combine, or resize/reformat textures across one or more .mtlx
                              / .mtlx.zip files (glob patterns accepted), writing --output. A
@@ -169,12 +172,9 @@ Documentation: https://www.npmjs.com/package/mtlx-cli
 ```
 
 ```text
-mtlx check <input>
+mtlx check <inputs..>
 
-Run selected document checks on a .mtlx or .mtlx.zip file
-
-Positionals:
-  input  Path to .mtlx or .mtlx.zip file                                         [string] [required]
+Run selected document checks on one or more .mtlx or .mtlx.zip files (glob patterns accepted)
 
 Options:
   --version  Show version number                                                           [boolean]

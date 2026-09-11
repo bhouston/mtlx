@@ -1,6 +1,7 @@
 import { MATERIALX_VALIDATION_RULES, type MaterialXValidationRule, type MaterialXValidationIssue } from 'mtlx-core';
 import { checkMaterialX } from 'mtlx-core/node';
 import { defineCommand } from 'yargs-file-commands';
+import { expandInputs } from '../inputs.js';
 import { formatOption, printOutput } from '../output.js';
 
 interface CheckResult {
@@ -35,15 +36,10 @@ const renderText = (result: CheckResult): string => {
 };
 
 export const command = defineCommand({
-  command: 'check <input>',
-  describe: 'Run selected document checks on a .mtlx or .mtlx.zip file',
+  command: 'check <inputs..>',
+  describe: 'Run selected document checks on one or more .mtlx or .mtlx.zip files (glob patterns accepted)',
   builder: (yargs) =>
     yargs
-      .positional('input', {
-        describe: 'Path to .mtlx or .mtlx.zip file',
-        type: 'string',
-        demandOption: true,
-      })
       .option('strict', { type: 'boolean', default: false, describe: 'Fail on warnings as well as errors' })
       .option('rules', {
         type: 'string',
@@ -54,9 +50,15 @@ export const command = defineCommand({
       })
       .options(formatOption),
   handler: async (argv) => {
-    const result = await runCheck(argv.input, { strict: argv.strict, rules: argv.rules as MaterialXValidationRule[] });
-    printOutput(result, argv.format, () => renderText(result));
-    if (!result.ok) {
+    const inputs = await expandInputs(argv.inputs as string[]);
+    const results: CheckResult[] = [];
+    for (const input of inputs) {
+      results.push(await runCheck(input, { strict: argv.strict, rules: argv.rules as MaterialXValidationRule[] }));
+    }
+    // A single input keeps the original scalar output shape; several inputs emit an array.
+    const output = results.length === 1 ? results[0] : results;
+    printOutput(output, argv.format, () => results.map(renderText).join('\n'));
+    if (results.some((result) => !result.ok)) {
       process.exitCode = 1;
     }
   },

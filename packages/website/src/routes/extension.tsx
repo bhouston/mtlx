@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { buttonVariants } from 'mtlx-viewer/react';
+import { buttonVariants } from '@/components/ui/button';
 
 export const Route = createFileRoute('/extension')({
   head: () => ({

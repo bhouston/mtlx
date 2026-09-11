@@ -50,3 +50,11 @@ export function applyViewerRenderingSettings(
   renderer.toneMappingExposure = 2 ** settings.exposure;
   scene.environmentIntensity = settings.intensity;
 }
+
+/** Decode a base64 data: URL (e.g. a bundler-inlined asset) into bytes; data: URLs are not fetchable under strict CSP. */
+export function dataUrlToArrayBuffer(dataUrl: string): ArrayBuffer {
+  const binary = atob(dataUrl.slice(dataUrl.indexOf(',') + 1));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}

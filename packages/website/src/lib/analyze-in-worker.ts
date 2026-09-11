@@ -1,4 +1,4 @@
-import type { MaterialXAnalysis } from './validate';
+import type { MaterialXAnalysis } from './material-analysis';
 import { analyzeBytes } from './material-analysis';
 
 export interface MaterialAnalysisResult {

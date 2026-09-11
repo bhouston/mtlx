@@ -106,12 +106,12 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('bridge');
   await expect
     .poll(() => page.locator('main').innerText(), { timeout: 30_000 })
-    .toContain('Environment ready: bridge.');
+    .toContain('Environment ready: San Giuseppe Bridge.');
   expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
   expect(await page.getByRole('combobox', { name: 'Geometry', exact: true }).inputValue()).toBe('sphere');
   await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('studio');
   await expect
-    .poll(async () => (await page.locator('main').innerText()).split('Environment ready: studio.').length, {
+    .poll(async () => (await page.locator('main').innerText()).split('Environment ready: Studio.').length, {
       timeout: 30_000,
     })
     .toBe(2);

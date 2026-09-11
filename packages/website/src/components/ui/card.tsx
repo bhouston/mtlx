@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cn } from '../utils.js';
+import { cn } from 'mtlx-viewer/react';
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (

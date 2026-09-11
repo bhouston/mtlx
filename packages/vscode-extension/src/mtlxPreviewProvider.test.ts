@@ -147,11 +147,13 @@ describe('preview lifecycle', () => {
     expect(host.postMessage).not.toHaveBeenCalled();
     host.receive('ready');
     await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(1));
-    expect(host.postMessage.mock.calls[0]?.[0].valid).toBe(true);
+    const invalid = (payload: { parseError?: string; issues: Array<{ level: string }> }) =>
+      !!payload.parseError || payload.issues.some((issue) => issue.level === 'error');
+    expect(invalid(host.postMessage.mock.calls[0]?.[0])).toBe(false);
     text = '<materialx>';
     host.receive('refresh');
     await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(2));
-    expect(host.postMessage.mock.calls[1]?.[0].valid).toBe(false);
+    expect(invalid(host.postMessage.mock.calls[1]?.[0])).toBe(true);
     host.receive('ready');
     await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(3));
     host.dispose();

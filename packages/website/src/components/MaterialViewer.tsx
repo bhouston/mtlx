@@ -1,23 +1,20 @@
 import { DEFAULT_VIEWER_SETTINGS, type ViewerSettings } from '@/lib/viewer-search';
 import { MaterialLoadingOverlay } from './MaterialLoadingOverlay';
 import type { MaterialLoadProgress } from '@/lib/material-load';
-import { analyzeInWorker } from '@/lib/analyze-in-worker';
-import { materialByteLimit, readBoundedResponse } from '@/lib/material-bytes';
-import { CleanupScope } from 'mtlx-viewer/lifecycle';
 import { useEffect, useRef, useState } from 'react';
-import type * as ThreeNS from 'three/webgpu';
 import { MaterialSelect, ViewerSettingsPanel } from 'mtlx-viewer/react';
-import type { MtlxScene } from 'mtlx-viewer';
+import type { Viewer } from 'mtlx-viewer';
+import type { PreviewReport } from 'mtlx-viewer/diagnostics';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
-import defaultEnvironmentUrl from 'mtlx-viewer/assets/default-environment.hdr?url';
+import bridgeEnvironmentUrl from 'mtlx-viewer/assets/default-environment.hdr?url';
 import shaderBallUrl from 'mtlx-viewer/assets/shaderball.glb?url';
 
-export type MaterialSource =
-  | { kind: 'buffer'; data: ArrayBuffer; name: string }
-  | { kind: 'url'; folderUrl: string; fileName: string };
-
-import type { PreviewReport } from 'mtlx-viewer/diagnostics';
 export type { PreviewReport } from 'mtlx-viewer/diagnostics';
+
+export interface MaterialSource {
+  data: ArrayBuffer;
+  name: string;
+}
 
 export interface MaterialViewerProps {
   source: MaterialSource | null;
@@ -30,29 +27,23 @@ export interface MaterialViewerProps {
   onStatus?: (report: PreviewReport) => void;
 }
 
-async function resolveSourceBytes(
-  source: MaterialSource,
-  signal: AbortSignal,
-): Promise<{ data: ArrayBuffer; fileName: string }> {
-  if (source.kind === 'buffer') {
-    return { data: source.data, fileName: source.name };
-  }
-  // Pass the full URL (not just the bare filename) as MaterialXLoader's resource path — it
-  // derives the texture base folder from everything before the last "/", the same way
-  // `.setPath(folderUrl).loadAsync(fileName)` used to; the browser can then fetch a preset's
-  // sibling textures (e.g. wood_grain's) directly from raw.githubusercontent.com by relative URL.
-  const url = `${source.folderUrl}${source.fileName}`;
+const ENVIRONMENT_URLS: Record<string, string> = { studio: studioEnvironmentUrl, bridge: bridgeEnvironmentUrl };
+const STAGE_PROGRESS = {
+  renderer: { value: 80, label: 'Preparing preview…' },
+  environment: { value: 85, label: 'Loading lighting…' },
+  material: { value: 90, label: 'Loading materials and textures…' },
+  render: { value: 95, label: 'Rendering preview…' },
+  ready: { value: 100, label: 'Preview ready' },
+} as const;
+
+async function fetchBytes(url: string, signal: AbortSignal): Promise<ArrayBuffer> {
   const response = await fetch(url, { signal });
   if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
-  const data = await readBoundedResponse(response, materialByteLimit(source.fileName), signal);
-  const result = await analyzeInWorker(data, source.fileName, signal, response.url || url);
-  if (result.analysis.parseError) throw new Error(result.analysis.parseError);
-  return { data: result.data, fileName: response.url || url };
+  return response.arrayBuffer();
 }
 
-// three.js 0.186's MaterialXLoader (via mtlx-viewer's createMtlxScene) natively understands
-// .mtlx and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
-// embedded in the archive itself, so this component doesn't need any zip handling of its own.
+// three.js 0.186's MaterialXLoader (via mtlx-viewer) natively understands .mtlx and .mtlx.zip and
+// resolves textures embedded in the archive itself, so this component needs no zip handling.
 export function MaterialViewer({
   source,
   loadProgress,
@@ -62,302 +53,117 @@ export function MaterialViewer({
   settings,
   onSettingsChange,
 }: MaterialViewerProps) {
-  const [renderProgress, setRenderProgress] = useState<MaterialLoadProgress>({
-    value: 80,
-    label: 'Preparing preview…',
-  });
   const [localSettings, setLocalSettings] = useState<ViewerSettings>(DEFAULT_VIEWER_SETTINGS);
   const currentSettings = settings ?? localSettings;
   const updateSettings = (patch: Partial<ViewerSettings>) => {
     if (onSettingsChange) onSettingsChange(patch);
     else setLocalSettings((current) => ({ ...current, ...patch }));
   };
-  const {
-    ibl: environmentKind,
-    exposure,
-    intensity: environmentIntensity,
-    rotate: rotating,
-    geometry,
-    materialName,
-  } = currentSettings;
-  const { bloom, ao, toneMapping } = currentSettings;
-  const renderingSettings = { bloom, ao, toneMapping };
-  const environmentKindRef = useRef(environmentKind);
-  environmentKindRef.current = environmentKind;
-  const switchEnvironmentRef = useRef<((kind: string) => Promise<void>) | null>(null);
-  const [environmentMessage, setEnvironmentMessage] = useState('');
-  const settingsRef = useRef({ exposure, environmentIntensity, renderingSettings, geometry, materialName });
-  settingsRef.current = { exposure, environmentIntensity, renderingSettings, geometry, materialName };
-  const applySettingsRef = useRef<(() => void) | null>(null);
-  useEffect(() => applySettingsRef.current?.(), [exposure, environmentIntensity, bloom, ao, toneMapping]);
-  useEffect(() => {
-    void switchEnvironmentRef.current?.(environmentKind);
-  }, [environmentKind]);
-  useEffect(() => {
-    mtlxSceneRef.current?.setGeometry(geometry);
-  }, [geometry]);
-  const frameRef = useRef<HTMLDivElement>(null);
-  const rotatingRef = useRef(rotating);
-  rotatingRef.current = rotating;
-  useEffect(() => {
-    if (mtlxSceneRef.current) mtlxSceneRef.current.autoRotate = rotating;
-  }, [rotating]);
-  const statusCallback = useRef(onStatus);
-  statusCallback.current = onStatus;
+  // Everything the running viewer reports, tagged with its source so a stale run never shows through.
+  interface Run {
+    source: MaterialSource;
+    state: PreviewReport['state'];
+    stage: keyof typeof STAGE_PROGRESS;
+    environment: string;
+    viewer: Viewer | null;
+  }
+  const [run, setRun] = useState<Run | null>(null);
+  const live = run?.source === source ? run : null;
+  const viewer = live?.viewer ?? null;
+  const previewState = live?.state ?? (source ? 'loading' : 'idle');
   const containerRef = useRef<HTMLDivElement>(null);
-  const mtlxSceneRef = useRef<MtlxScene | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [previewState, setPreviewState] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
-  const [materialNames, setMaterialNames] = useState<string[]>([]);
-  const [activeMaterial, setActiveMaterial] = useState('');
+  // Callbacks and the initial settings are read from a ref so a new source never rebuilds the viewer.
+  const callbacks = useRef({ onError, onLog, onStatus, settings: currentSettings });
   useEffect(() => {
-    const scene = mtlxSceneRef.current;
-    if (scene && materialName && scene.materialNames.includes(materialName)) {
-      scene.setMaterial(materialName);
-      setActiveMaterial(materialName);
-    }
-  }, [materialName]);
+    callbacks.current = { onError, onLog, onStatus, settings: currentSettings };
+  });
 
   useEffect(() => {
     const container = containerRef.current;
-    mtlxSceneRef.current = null;
-    setMaterialNames([]);
-    setActiveMaterial('');
-    const report: PreviewReport = { state: source ? 'loading' : 'idle', resources: 'unchecked', failedResources: [] };
-    const publish = () => {
-      setPreviewState(report.state);
-      statusCallback.current?.({ ...report, failedResources: [...report.failedResources] });
-    };
-    publish();
-    if (!container || !source) {
-      setLoading(false);
-      return;
-    }
-
-    let disposed = false;
+    const idle: PreviewReport = { state: source ? 'loading' : 'idle', resources: 'unchecked', failedResources: [] };
+    callbacks.current.onStatus?.(idle);
+    if (!container || !source) return;
     const abort = new AbortController();
-    const scope = new CleanupScope();
-    const own = (release: () => void) => scope.own(release);
-    own(() => abort.abort());
-    const cleanup = () => scope.dispose();
-    const fetchBytes = async (url: string) => {
-      const response = await fetch(url, { signal: abort.signal });
-      if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
-      return response.arrayBuffer();
-    };
-    setRenderProgress({ value: 80, label: 'Preparing preview…' });
-    setLoading(true);
-    onError(null);
-
+    let created: Viewer | undefined;
+    const patch = (fields: Partial<Omit<Run, 'source'>>) =>
+      setRun((current) => ({
+        source,
+        state: 'loading',
+        stage: 'renderer',
+        environment: '',
+        viewer: null,
+        ...(current?.source === source ? current : {}),
+        ...fields,
+      }));
+    callbacks.current.onError(null);
     (async () => {
-      const THREE: typeof ThreeNS = await import('three/webgpu');
-      const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
-      const {
-        createMtlxScene,
-        parseEnvironment,
-        createEnvironmentSwitcher,
-        createViewerRendering,
-        createViewerRenderer,
-        observeViewerResize,
-        applyViewerRenderingSettings,
-      } = await import('mtlx-viewer');
-      if (disposed) return;
-
-      const width = container.clientWidth || 512;
-      const height = container.clientHeight || 512;
-
-      onLog?.('Creating WebGPURenderer...');
-      const renderer = await createViewerRenderer(scope, { width, height });
-      if (disposed) return;
-      const backend = (renderer as unknown as { backend?: { isWebGPUBackend?: boolean } }).backend;
-      onLog?.(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);
-      container.replaceChildren(renderer.domElement);
-
-      setRenderProgress({ value: 85, label: 'Loading lighting…' });
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
-      const rendering = createViewerRendering(renderer, scene, camera, settingsRef.current.renderingSettings);
-      own(() => rendering.dispose());
-      const applySettings = () => {
-        applyViewerRenderingSettings(renderer, scene, rendering, {
-          ...settingsRef.current.renderingSettings,
-          exposure: settingsRef.current.exposure,
-          intensity: settingsRef.current.environmentIntensity,
-        });
-      };
-      applySettingsRef.current = applySettings;
-      applySettings();
-      own(() => {
-        if (applySettingsRef.current === applySettings) applySettingsRef.current = null;
-      });
-      const pmremGenerator = new THREE.PMREMGenerator(renderer) as unknown as {
-        fromEquirectangular: (texture: ThreeNS.Texture) => { texture: ThreeNS.Texture; dispose(): void };
-        dispose(): void;
-      };
-      own(() => pmremGenerator.dispose());
-      const environments = createEnvironmentSwitcher(
-        async (kind) =>
-          parseEnvironment(
-            kind === 'studio' ? 'studio' : 'default',
-            await fetchBytes(kind === 'studio' ? studioEnvironmentUrl : defaultEnvironmentUrl),
-          ),
-        (texture) => pmremGenerator.fromEquirectangular(texture),
-        (texture) => {
-          scene.environment = texture;
-          scene.background = texture;
+      const { createViewer, parseEnvironmentFile } = await import('mtlx-viewer');
+      const shaderBall = await fetchBytes(shaderBallUrl, abort.signal);
+      created = await createViewer({
+        container,
+        data: source.data,
+        fileName: source.name,
+        shaderBall,
+        settings: callbacks.current.settings,
+        loadEnvironment: async (kind) => {
+          const url = ENVIRONMENT_URLS[kind] ?? ENVIRONMENT_URLS.studio!;
+          return parseEnvironmentFile(await fetchBytes(url, abort.signal), url);
         },
-      );
-      own(() => environments.dispose());
-      const switchEnvironment = async (kind: string) => {
-        setEnvironmentMessage('Loading environment…');
-        try {
-          if (await environments.set(kind)) {
-            setEnvironmentMessage('');
-            onLog?.(`Environment ready: ${kind}.`);
-          }
-        } catch (error) {
-          if (disposed || scope.disposed || kind !== environmentKindRef.current) return;
-          setEnvironmentMessage(
-            `Environment failed to load: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
-      };
-      switchEnvironmentRef.current = switchEnvironment;
-      own(() => {
-        if (switchEnvironmentRef.current === switchEnvironment) switchEnvironmentRef.current = null;
+        onLog: (line) => callbacks.current.onLog?.(line),
+        onStage: (stage) => patch({ stage }),
+        onStatus: (status) => {
+          if (status.environment !== undefined) patch({ environment: status.environment });
+        },
+        onReport: (report) => {
+          patch({ state: report.state });
+          callbacks.current.onStatus?.(report);
+        },
+        onError: (text) => {
+          patch({ viewer: null });
+          callbacks.current.onError(text);
+        },
       });
-      await switchEnvironment(environmentKindRef.current);
-      if (disposed) return;
-
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      renderer.domElement.tabIndex = 0;
-      renderer.domElement.setAttribute('aria-label', 'Material preview. Arrow keys pan the camera.');
-      controls.listenToKeyEvents(renderer.domElement);
-      own(() => controls.dispose());
-
-      {
-        setRenderProgress({ value: 90, label: 'Loading materials and textures…' });
-        onLog?.('Parsing MaterialX document...');
-        const manager = new THREE.LoadingManager();
-        manager.onStart = () => {
-          if (disposed || scope.disposed) return;
-          report.resources = 'loading';
-          publish();
-        };
-        manager.onLoad = () => {
-          if (disposed || scope.disposed) return;
-          report.resources = 'loaded';
-          publish();
-        };
-        manager.onProgress = (url, loaded, total) => onLog?.(`Loading ${url}: ${loaded}/${total}`);
-        manager.onError = (url) => {
-          if (disposed || scope.disposed) return;
-          if (!report.failedResources.includes(url)) report.failedResources.push(url);
-          publish();
-          onLog?.(`Failed to load resource: ${url}`);
-        };
-
-        const [{ data, fileName }, shaderBall] = await Promise.all([
-          resolveSourceBytes(source, abort.signal),
-          fetchBytes(shaderBallUrl),
-        ]);
-        if (disposed) return;
-
-        const mtlxScene = await createMtlxScene(camera, controls, {
-          data,
-          fileName,
-          shaderBall,
-          manager,
-          autoRotate: rotatingRef.current,
-        });
-        own(() => mtlxScene.dispose());
-        if (disposed) return;
-        scene.add(mtlxScene.root);
-        mtlxSceneRef.current = mtlxScene;
-        setMaterialNames(mtlxScene.materialNames);
-        if (mtlxScene.materialNames.includes(settingsRef.current.materialName))
-          mtlxScene.setMaterial(settingsRef.current.materialName);
-        setActiveMaterial(mtlxScene.activeMaterial);
-        mtlxScene.setGeometry(settingsRef.current.geometry);
-        mtlxScene.autoRotate = rotatingRef.current;
-        onLog?.(`Material applied (${mtlxScene.materialNames.length} available).`);
-      }
-
-      let frameId = 0;
-      observeViewerResize(scope, container, renderer, camera);
-      own(() => cancelAnimationFrame(frameId));
-
-      let clock = performance.now();
-      const animate = () => {
-        const now = performance.now();
-        mtlxSceneRef.current?.update((now - clock) / 1000);
-        clock = now;
-        controls.update();
-        void rendering.render().catch((error: unknown) => {
-          if (disposed || scope.disposed) return;
-          cleanup();
-          report.state = 'error';
-          publish();
-          mtlxSceneRef.current = null;
-          onError(error instanceof Error ? error.message : String(error));
-        });
-        frameId = requestAnimationFrame(animate);
-      };
-      // A mounted canvas alone does not establish that shader compilation/rendering succeeded.
-      setRenderProgress({ value: 95, label: 'Rendering preview…' });
-      await rendering.render();
-      if (disposed) return;
-      setRenderProgress({ value: 100, label: 'Preview ready' });
-      report.state = 'ready';
-      publish();
-      setLoading(false);
-      animate();
+      if (abort.signal.aborted) created.dispose();
+      else patch({ viewer: created });
     })().catch((error: unknown) => {
-      cleanup();
-      if (disposed) return;
-      setLoading(false);
-      report.state = 'error';
-      publish();
-      const message = error instanceof Error ? error.message : String(error);
-      onLog?.(`ERROR: ${message}`);
-      onError(message);
+      if (abort.signal.aborted) return;
+      const text = error instanceof Error ? error.message : String(error);
+      callbacks.current.onLog?.(`ERROR: ${text}`);
+      callbacks.current.onError(text);
     });
-
     return () => {
-      disposed = true;
-      mtlxSceneRef.current = null;
-      cleanup();
+      abort.abort();
+      created?.dispose();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- source is compared by identity intentionally
   }, [source]);
 
-  const progress =
-    loadProgress ??
-    (source && (loading || previewState === 'idle' || previewState === 'loading') ? renderProgress : null);
+  const { ibl, geometry, rotate, bloom, ao, toneMapping, exposure, intensity, materialName } = currentSettings;
+  useEffect(() => {
+    void viewer?.setSettings({ ibl, geometry, rotate, bloom, ao, toneMapping, exposure, intensity, materialName });
+  }, [viewer, ibl, geometry, rotate, bloom, ao, toneMapping, exposure, intensity, materialName]);
+
+  const loading = !!source && previewState !== 'ready' && previewState !== 'error';
+  const progress = loadProgress ?? (loading ? STAGE_PROGRESS[live?.stage ?? 'renderer'] : null);
+  const environmentMessage = live?.environment ?? '';
+  const materialNames = viewer?.scene.materialNames ?? [];
 
   return (
     <div
-      ref={frameRef}
       aria-busy={!!progress}
       data-preview-state={previewState}
       className="viewer-frame relative flex w-full flex-col sm:aspect-square overflow-hidden rounded-xl border border-border bg-zinc-950 shadow-sm"
     >
       <MaterialSelect
         names={materialNames}
-        value={activeMaterial}
-        onChange={(name) => {
-          setActiveMaterial(name);
-          updateSettings({ materialName: name });
-          mtlxSceneRef.current?.setMaterial(name);
-        }}
+        value={materialNames.includes(materialName) ? materialName : (viewer?.scene.activeMaterial ?? '')}
+        onChange={(name) => updateSettings({ materialName: name })}
       />
       <output className="sr-only">Preview: {previewState}</output>
       <div
         ref={containerRef}
         className="relative aspect-square w-full shrink-0 overflow-hidden sm:h-full [&>canvas]:absolute [&>canvas]:inset-0"
       />
-      {materialNames.length ? (
+      {viewer ? (
         <ViewerSettingsPanel
           className="m-3 sm:absolute sm:right-3 sm:bottom-3 sm:left-3 sm:m-0"
           settings={currentSettings}

@@ -12,13 +12,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MaterialXLoader } from 'three/addons/loaders/MaterialXLoader.js';
 
 /**
- * *Which preview geometry to render the active material onto.*
- *
- * @category Viewer
- */
-export type GeometryKind = string;
-
-/**
  * *Options for {@link createMtlxScene}.*
  *
  * @category Viewer
@@ -31,7 +24,7 @@ export interface MtlxSceneOptions {
   /** Defaults to the document's last material (matches prior single-material behavior). */
   materialName?: string;
   /** Defaults to 'totem'. */
-  geometry?: GeometryKind;
+  geometry?: string;
   /** Defaults to true. */
   autoRotate?: boolean;
   /** The shaderball (`mtlx-viewer/assets/shaderball.glb`) used for the 'totem' geometry. */
@@ -50,15 +43,16 @@ export interface MtlxScene {
   root: THREE.Group;
   materialNames: string[];
   activeMaterial: string;
-  geometry: GeometryKind;
+  geometry: string;
   autoRotate: boolean;
   /** Releases owned geometries, materials and textures; safe to call repeatedly. */
   dispose(): void;
   setMaterial(name: string): void;
-  setGeometry(kind: GeometryKind): void;
+  hasGeometry(name: string): boolean;
+  setGeometry(kind: string): void;
   /** Load an additional named glTF/GLB geometry; this scene owns its resources. */
   addGeometry(name: string, data: ArrayBuffer, manager?: THREE.LoadingManager): Promise<void>;
-  /** Restore the active geometry orientation and initial camera framing. */
+  /** Restore every geometry's orientation and the initial camera framing. */
   resetCamera(): void;
   /** Call every frame; advances the auto-rotation. */
   update(deltaSeconds: number): void;
@@ -133,24 +127,37 @@ function applyMaterial(object: THREE.Object3D, material: THREE.Material): void {
   });
 }
 
-/** Frames the camera above and back from `object`, looking down at it, sized to its bounding box. */
-function frameObject(
-  camera: THREE.PerspectiveCamera,
-  controls: { target: THREE.Vector3; update: () => void; enableDamping?: boolean },
-  object: THREE.Object3D,
-): void {
+/**
+ * Wraps `object` so it is centered at the origin and fits a 1 m cube: one uniform scale from the
+ * largest extent, so proportions are kept. The wrapper is what rotates, so spinning happens about
+ * the object's center; the inner transform only recenters and rescales, leaving vertex data and
+ * any shared geometry untouched.
+ */
+function normalizeToUnitCube(object: THREE.Object3D): THREE.Group {
   const box = new THREE.Box3().setFromObject(object);
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
-  const radius = Math.max(size.x, size.y, size.z, 0.01) * 0.5;
-  const distance = (radius / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2))) * 1.4;
+  const scale = 1 / Math.max(size.x, size.y, size.z, 1e-6);
+  object.scale.setScalar(scale);
+  object.position.copy(center).multiplyScalar(-scale);
+  return new THREE.Group().add(object);
+}
+
+const UNIT_RADIUS = 0.5;
+
+/** Frames the unit cube every geometry is normalized into: above and back, looking down at the origin. */
+function frameCamera(
+  camera: THREE.PerspectiveCamera,
+  controls: { target: THREE.Vector3; update: () => void; enableDamping?: boolean },
+): void {
+  const distance = (UNIT_RADIUS / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2))) * 1.4;
   const elevation = THREE.MathUtils.degToRad(35); // looking down at the object, not head-on
-  camera.position.set(center.x, center.y + distance * Math.sin(elevation), center.z + distance * Math.cos(elevation));
+  camera.position.set(0, distance * Math.sin(elevation), distance * Math.cos(elevation));
   camera.near = Math.max(distance / 100, 0.01);
   camera.far = distance * 100;
   camera.updateProjectionMatrix();
-  controls.target.copy(center);
-  camera.lookAt(center);
+  controls.target.set(0, 0, 0);
+  camera.lookAt(controls.target);
   controls.update();
 }
 
@@ -181,7 +188,7 @@ export async function createMtlxScene(
 
   let totem: THREE.Group;
   try {
-    totem = await loadShaderBall(manager, options.shaderBall);
+    totem = normalizeToUnitCube(await loadShaderBall(manager, options.shaderBall));
     // Start facing front-right; capture this orientation below as the Reset baseline.
     totem.rotateY(Math.PI / 4);
   } catch (error) {
@@ -191,8 +198,8 @@ export async function createMtlxScene(
   }
   const geometries: Record<string, THREE.Object3D> = Object.assign(Object.create(null), {
     totem,
-    sphere: buildSphere(),
-    plane: buildPlane(),
+    sphere: normalizeToUnitCube(buildSphere()),
+    plane: normalizeToUnitCube(buildPlane()),
   });
   let disposed = false;
   const additionalDisposers: Array<() => void> = [];
@@ -202,7 +209,7 @@ export async function createMtlxScene(
   const root = new THREE.Group();
   for (const object of Object.values(geometries)) root.add(object);
 
-  const applyVisibility = (active: GeometryKind) => {
+  const applyVisibility = (active: string) => {
     for (const [kind, object] of Object.entries(geometries)) object.visible = kind === active;
   };
 
@@ -231,7 +238,7 @@ export async function createMtlxScene(
     async addGeometry(name, data, geometryManager = new THREE.LoadingManager()) {
       if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name) || geometries[name])
         throw new Error(`Invalid or duplicate geometry name: ${name}`);
-      const object = await loadShaderBall(geometryManager, data);
+      const object = normalizeToUnitCube(await loadShaderBall(geometryManager, data));
       const release = collectDisposables([object]);
       if (disposed) {
         release();
@@ -255,12 +262,12 @@ export async function createMtlxScene(
       root.add(object);
       additionalDisposers.push(release);
     },
+    hasGeometry: (name) => !!geometries[name],
     setGeometry(kind) {
       if (!geometries[kind]) return;
       scene.geometry = kind;
       applyVisibility(kind);
       applyMaterial(geometries[kind]!, materials[scene.activeMaterial]!);
-      frameObject(camera, controls, geometries[kind]);
     },
     resetCamera() {
       // Drain pending orbit/pan damping before restoring framing, so Reset remains still.
@@ -272,7 +279,7 @@ export async function createMtlxScene(
       }
       for (const [object, rotation] of originalRotations) object.rotation.copy(rotation);
       camera.zoom = 1;
-      frameObject(camera, controls, geometries[scene.geometry]!);
+      frameCamera(camera, controls);
     },
     update(deltaSeconds) {
       if (scene.autoRotate) {
@@ -283,7 +290,7 @@ export async function createMtlxScene(
 
   applyVisibility(scene.geometry);
   applyMaterial(geometries[scene.geometry]!, materials[scene.activeMaterial]!);
-  frameObject(camera, controls, geometries[scene.geometry]!);
+  frameCamera(camera, controls);
 
   return scene;
 }

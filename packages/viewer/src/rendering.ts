@@ -58,8 +58,8 @@ export function createViewerRendering(
   configure(initial);
   return {
     configure,
-    // Match consumer error handling while using r186's synchronous render API after renderer.init().
-    async render() {
+    /** Synchronous after renderer.init(); throws on shader compilation failure. */
+    render() {
       if (!disposed) pipeline.render();
     },
     dispose() {
