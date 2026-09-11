@@ -5,6 +5,9 @@ it('defaults to bridge, totem and rotation', () => {
     defaultIbl: 'bridge',
     defaultGeometry: 'totem',
     autoRotate: true,
+    bloom: true,
+    ao: true,
+    toneMapping: 'neutral',
     warnings: [],
   });
 });
@@ -37,4 +40,16 @@ it('rejects malformed names, collisions and unknown defaults without losing vali
   expect(result.geometries).toEqual([]);
   expect(result).toMatchObject({ defaultIbl: 'bridge', defaultGeometry: 'totem', autoRotate: true });
   expect(result.warnings).toHaveLength(8);
+});
+
+it('validates effect defaults and tone mapping names', () => {
+  expect(parsePreviewSettings({ bloom: false, ao: false, toneMapping: 'agx' })).toMatchObject({
+    bloom: false,
+    ao: false,
+    toneMapping: 'agx',
+    warnings: [],
+  });
+  const invalid = parsePreviewSettings({ bloom: 'false', ao: 0, toneMapping: 'neural' });
+  expect(invalid).toMatchObject({ bloom: true, ao: true, toneMapping: 'neutral' });
+  expect(invalid.warnings).toHaveLength(3);
 });

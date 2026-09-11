@@ -62,7 +62,9 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       const config = vscode.workspace.getConfiguration('mtlx.preview', document.uri);
       return parsePreviewSettings(
         Object.fromEntries(
-          ['ibls', 'geometries', 'defaultIbl', 'defaultGeometry', 'autoRotate'].map((key) => [key, config.get(key)]),
+          ['ibls', 'geometries', 'defaultIbl', 'defaultGeometry', 'autoRotate', 'bloom', 'ao', 'toneMapping'].map(
+            (key) => [key, config.get(key)],
+          ),
         ),
       );
     };

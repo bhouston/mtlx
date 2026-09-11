@@ -93,6 +93,9 @@ test.each([false, true])(
             defaultIbl: 'gallery',
             defaultGeometry: 'bust',
             autoRotate: false,
+            bloom: false,
+            ao: false,
+            toneMapping: 'agx',
             warnings: [],
           }
         : undefined;
@@ -135,6 +138,12 @@ test.each([false, true])(
       expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe(
         custom ? 'gallery' : 'bridge',
       );
+      expect(await page.getByRole('checkbox', { name: 'Bloom', exact: true }).isChecked()).toBe(!custom);
+      expect(await page.getByRole('checkbox', { name: 'Ambient occlusion' }).isChecked()).toBe(!custom);
+      expect(await page.getByRole('combobox', { name: 'Tone mapping' }).inputValue()).toBe(custom ? 'agx' : 'neutral');
+      await page.getByRole('checkbox', { name: 'Bloom', exact: true }).setChecked(custom);
+      await page.getByRole('checkbox', { name: 'Ambient occlusion' }).setChecked(custom);
+      await page.getByRole('combobox', { name: 'Tone mapping' }).selectOption('reinhard');
       if (custom) {
         expect(
           await page.evaluate(
@@ -173,6 +182,9 @@ test.each([false, true])(
       ).toBe(true);
       await page.reload();
       await send();
+      expect(await page.getByRole('checkbox', { name: 'Bloom', exact: true }).isChecked()).toBe(custom);
+      expect(await page.getByRole('checkbox', { name: 'Ambient occlusion' }).isChecked()).toBe(custom);
+      expect(await page.getByRole('combobox', { name: 'Tone mapping' }).inputValue()).toBe('reinhard');
       expect(await page.getByRole('combobox', { name: 'Geometry' }).inputValue()).toBe('sphere');
       expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('bridge');
       expect(await page.locator('#log').innerText()).toContain('Environment ready: San Giuseppe Bridge.');

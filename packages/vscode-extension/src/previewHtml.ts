@@ -100,6 +100,9 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri, e
       <canvas id="viewport" tabindex="0" aria-label="Material preview. Arrow keys pan; Reset restores object and camera."></canvas>
       <div class="toolbar">
         <label>IBL <select id="environment-select" aria-label="IBL environment"><option value="studio">Studio</option><option value="bridge" selected>San Giuseppe Bridge</option></select></label>
+        <label>Tone mapping <select id="tone-mapping" aria-label="Tone mapping"></select></label>
+        <label><input id="bloom" type="checkbox" checked aria-label="Bloom"> Bloom</label>
+        <label><input id="ao" type="checkbox" checked aria-label="Ambient occlusion"> AO</label>
         <label>Exposure <input id="exposure" type="range" min="-2" max="2" step="0.1" value="0" aria-label="Exposure"></label>
         <label>Intensity <input id="environment" type="range" min="0" max="2" step="0.1" value="1" aria-label="Environment intensity"></label>
       </div>

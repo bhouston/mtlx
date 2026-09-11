@@ -20,6 +20,9 @@ use **Refresh** to reload manually. Material, geometry, camera, rotation and lig
 
 Use **Pause rotation** to hold the object still, or **Reset** to restore its original orientation and
 the camera's position, target and zoom. Reduced-motion preferences pause rotation automatically.
+The object turns once every 40 seconds. Bottom controls toggle **Bloom** and **AO** (full-resolution,
+32-sample GTAO with denoising) and select **Tone mapping**. Bloom and AO default on; tone mapping
+defaults to **Neutral**. AO affects indirect lighting and bloom is applied before tone mapping.
 Arrow keys pan when the canvas is focused. **Fullscreen** requests webview fullscreen; if the
 editor blocks it, use VS Code's **Toggle Full Screen** command. Exposure and environment intensity
 adjust the inspection lighting. The bottom **IBL** dropdown switches between **Studio** and
@@ -42,6 +45,9 @@ asset has a `name` and a `source` file path or HTTP(S) URL:
   ],
   "mtlx.preview.defaultIbl": "courtyard",
   "mtlx.preview.autoRotate": false,
+  "mtlx.preview.bloom": true,
+  "mtlx.preview.ao": true,
+  "mtlx.preview.toneMapping": "neutral",
   "mtlx.preview.geometries": [
     { "name": "bust", "source": "models/bust.gltf" },
     { "name": "sample_mesh", "source": "https://example.com/models/sample.glb" }
@@ -55,13 +61,16 @@ Replace the example paths/URLs with your files. Names are case-sensitive identif
 Duplicates within a list and built-in names are rejected. IBL and geometry names are separate
 namespaces, so the same custom name can appear in both.
 
-| Setting                        | Default    | Built-in names / behavior                                                       |
-| ------------------------------ | ---------- | ------------------------------------------------------------------------------- |
-| `mtlx.preview.ibls`            | `[]`       | Additional named equirectangular `.hdr`, `.exr`, `.png`, `.jpg` / `.jpeg` files |
-| `mtlx.preview.defaultIbl`      | `"bridge"` | `bridge`, `studio`, or an additional IBL name                                   |
-| `mtlx.preview.autoRotate`      | `true`     | Reduced motion takes precedence; rotation can be enabled manually               |
-| `mtlx.preview.geometries`      | `[]`       | Additional named `.gltf` / `.glb` mesh scenes                                   |
-| `mtlx.preview.defaultGeometry` | `"totem"`  | `totem`, `sphere`, `plane`, or an additional geometry name                      |
+| Setting                        | Default     | Built-in names / behavior                                                       |
+| ------------------------------ | ----------- | ------------------------------------------------------------------------------- |
+| `mtlx.preview.ibls`            | `[]`        | Additional named equirectangular `.hdr`, `.exr`, `.png`, `.jpg` / `.jpeg` files |
+| `mtlx.preview.defaultIbl`      | `"bridge"`  | `bridge`, `studio`, or an additional IBL name                                   |
+| `mtlx.preview.autoRotate`      | `true`      | Reduced motion takes precedence; rotation can be enabled manually               |
+| `mtlx.preview.geometries`      | `[]`        | Additional named `.gltf` / `.glb` mesh scenes                                   |
+| `mtlx.preview.defaultGeometry` | `"totem"`   | `totem`, `sphere`, `plane`, or an additional geometry name                      |
+| `mtlx.preview.bloom`           | `true`      | Enable HDR bloom by default                                                     |
+| `mtlx.preview.ao`              | `true`      | Enable denoised GTAO by default                                                 |
+| `mtlx.preview.toneMapping`     | `"neutral"` | `neutral`, `aces` (ACES Filmic), `agx`, `reinhard`, `cineon`, `linear`, `none`  |
 
 Relative paths resolve from the material's workspace folder (or the material's folder when no
 workspace folder exists). Absolute paths and `~/` refer to the extension host's filesystem.

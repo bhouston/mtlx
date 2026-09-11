@@ -1,9 +1,10 @@
+import { TONE_MAPPING_OPTIONS, type RenderingSettings } from 'mtlx-viewer/settings';
 export const PREVIEW_NAME_PATTERN = '^[a-zA-Z_][a-zA-Z0-9_]*$';
 export interface NamedPreviewAsset {
   name: string;
   source: string;
 }
-export interface PreviewSettings {
+export interface PreviewSettings extends RenderingSettings {
   ibls: NamedPreviewAsset[];
   geometries: NamedPreviewAsset[];
   defaultIbl: string;
@@ -49,8 +50,13 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
     warnings.push(`${key}: unknown name "${String(value)}"; using ${fallback}.`);
     return fallback;
   };
-  if (input.autoRotate !== undefined && typeof input.autoRotate !== 'boolean')
-    warnings.push('autoRotate must be a boolean; using true.');
+  const boolean = (key: string) => {
+    if (input[key] !== undefined && typeof input[key] !== 'boolean')
+      warnings.push(`${key} must be a boolean; using true.`);
+    return typeof input[key] === 'boolean' ? input[key] : true;
+  };
+  const toneMapping = TONE_MAPPING_OPTIONS.find((option) => option.value === (input.toneMapping ?? 'neutral'))?.value;
+  if (!toneMapping) warnings.push('toneMapping is unknown; using neutral.');
   return {
     ibls,
     geometries,
@@ -60,7 +66,10 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
       ['totem', 'sphere', 'plane', ...geometries.map((asset) => asset.name)],
       'totem',
     ),
-    autoRotate: typeof input.autoRotate === 'boolean' ? input.autoRotate : true,
+    autoRotate: boolean('autoRotate'),
+    bloom: boolean('bloom'),
+    ao: boolean('ao'),
+    toneMapping: toneMapping ?? 'neutral',
     warnings,
   };
 }

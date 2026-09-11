@@ -31,6 +31,9 @@ const SETTINGS_EXAMPLE = `{
   ],
   "mtlx.preview.defaultIbl": "courtyard",
   "mtlx.preview.autoRotate": false,
+  "mtlx.preview.bloom": true,
+  "mtlx.preview.ao": true,
+  "mtlx.preview.toneMapping": "neutral",
   "mtlx.preview.geometries": [
     { "name": "bust", "source": "models/bust.gltf" },
     { "name": "sample_mesh", "source": "https://example.com/models/sample.glb" }
@@ -40,7 +43,7 @@ const SETTINGS_EXAMPLE = `{
 
 function ExtensionPage() {
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-6 p-6 py-10">
+    <main className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-6 p-6 py-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold">Mtlx Viewer for VS Code</h1>
         <p className="text-muted-foreground">
@@ -85,6 +88,11 @@ function ExtensionPage() {
           <code>settings.json</code>. San Giuseppe Bridge is the default IBL in both the website and extension. These
           settings customize the extension's previews.
         </p>
+        <p className="text-sm text-muted-foreground">
+          Bottom controls toggle Bloom and AO and select Tone mapping. Bloom and AO default on; tone mapping defaults to
+          Neutral. AO uses full-resolution, 32-sample GTAO with denoising and affects indirect lighting. Bloom runs
+          before tone mapping. Auto-rotation completes one turn every 40 seconds.
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <caption className="sr-only">Extension viewer settings and defaults</caption>
@@ -109,6 +117,13 @@ function ExtensionPage() {
                   'mtlx.preview.autoRotate',
                   'true',
                   'Rotate by default. Reduced motion takes precedence; rotation can still be enabled manually.',
+                ],
+                ['mtlx.preview.bloom', 'true', 'Enable HDR bloom by default.'],
+                ['mtlx.preview.ao', 'true', 'Enable full-resolution, denoised GTAO by default.'],
+                [
+                  'mtlx.preview.toneMapping',
+                  '"neutral"',
+                  'neutral, aces (ACES Filmic), agx, reinhard, cineon, linear, none.',
                 ],
                 ['mtlx.preview.geometries', '[]', 'Additional named .gltf / .glb mesh scenes.'],
                 ['mtlx.preview.defaultGeometry', '"totem"', 'totem, sphere, plane, or an additional geometry name.'],

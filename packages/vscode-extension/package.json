@@ -169,6 +169,33 @@
           "default": true,
           "scope": "resource",
           "description": "Rotate new previews by default. Reduced-motion preferences take precedence; rotation can still be enabled manually."
+        },
+        "mtlx.preview.bloom": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "Enable HDR bloom by default."
+        },
+        "mtlx.preview.ao": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "Enable full-resolution, denoised GTAO ambient occlusion by default."
+        },
+        "mtlx.preview.toneMapping": {
+          "type": "string",
+          "default": "neutral",
+          "enum": [
+            "neutral",
+            "aces",
+            "agx",
+            "reinhard",
+            "cineon",
+            "linear",
+            "none"
+          ],
+          "scope": "resource",
+          "description": "Tone mapping for new previews: Neutral, ACES Filmic, AgX, Reinhard, Cineon, Linear, or None."
         }
       }
     }

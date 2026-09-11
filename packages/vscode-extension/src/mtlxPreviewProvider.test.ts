@@ -263,12 +263,18 @@ it('delivers defaults, reloads changed settings, and only serves configured asse
     defaultIbl: 'bridge',
     defaultGeometry: 'totem',
     autoRotate: true,
+    bloom: true,
+    ao: true,
+    toneMapping: 'neutral',
   });
   mocked.configuration = {
     ibls: [{ name: 'gallery', source: '/gallery.hdr' }],
     defaultIbl: 'gallery',
     defaultGeometry: 'sphere',
     autoRotate: false,
+    bloom: false,
+    ao: false,
+    toneMapping: 'agx',
   };
   mocked.configurationChanged?.({ affectsConfiguration: () => true });
   await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(2));
@@ -276,6 +282,9 @@ it('delivers defaults, reloads changed settings, and only serves configured asse
     defaultIbl: 'gallery',
     defaultGeometry: 'sphere',
     autoRotate: false,
+    bloom: false,
+    ao: false,
+    toneMapping: 'agx',
   });
   host.requestAsset('gallery', 3);
   await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(3));

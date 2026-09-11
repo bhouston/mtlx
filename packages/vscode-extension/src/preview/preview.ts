@@ -7,6 +7,9 @@ import * as THREE from 'three/webgpu';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import {
   createMtlxScene,
+  createViewerRendering,
+  TONE_MAPPING_OPTIONS,
+  type RenderingSettings,
   parseEnvironment,
   createEnvironmentSwitcher,
   parseEnvironmentFile,
@@ -18,7 +21,7 @@ import { parsePreviewSettings, type PreviewSettings } from '../previewSettings.j
 import type { PreviewAssetBytes } from '../previewAssets.js';
 import studioEnvironmentDataUrl from 'mtlx-viewer/assets/studio-environment.png';
 
-interface PreviewState {
+interface PreviewState extends Partial<RenderingSettings> {
   material?: string;
   geometry?: GeometryKind;
   rotating?: boolean;
@@ -281,7 +284,7 @@ async function renderScene(
   });
   renderer.setSize(width, height, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   await renderer.init();
   if (disposed) return;
@@ -349,6 +352,30 @@ async function renderScene(
   await changeEnvironment();
   if (disposed) return;
 
+  const rendering = createViewerRendering(renderer, scene, camera, {
+    bloom: previewState.bloom ?? settings.bloom,
+    ao: previewState.ao ?? settings.ao,
+    toneMapping: previewState.toneMapping ?? settings.toneMapping,
+  });
+  own(() => rendering.dispose());
+  const bloomEl = document.getElementById('bloom') as HTMLInputElement;
+  const aoEl = document.getElementById('ao') as HTMLInputElement;
+  const toneMappingEl = document.getElementById('tone-mapping') as HTMLSelectElement;
+  toneMappingEl.replaceChildren(...TONE_MAPPING_OPTIONS.map(({ value, label }) => new Option(label, value)));
+  bloomEl.checked = previewState.bloom ?? settings.bloom;
+  aoEl.checked = previewState.ao ?? settings.ao;
+  toneMappingEl.value = previewState.toneMapping ?? settings.toneMapping;
+  const applyRendering = () => {
+    previewState.bloom = bloomEl.checked;
+    previewState.ao = aoEl.checked;
+    previewState.toneMapping = toneMappingEl.value as RenderingSettings['toneMapping'];
+    rendering.configure({ bloom: previewState.bloom, ao: previewState.ao, toneMapping: previewState.toneMapping });
+    vscode?.setState(previewState);
+  };
+  for (const element of [bloomEl, aoEl, toneMappingEl]) {
+    element.addEventListener('change', applyRendering);
+    own(() => element.removeEventListener('change', applyRendering));
+  }
   const exposureEl = document.getElementById('exposure') as HTMLInputElement;
   const environmentEl = document.getElementById('environment') as HTMLInputElement;
   exposureEl.value = String(previewState.exposure ?? 0);
@@ -530,7 +557,7 @@ async function renderScene(
     rotationEl.removeEventListener('click', toggleRotation);
     resetEl.removeEventListener('click', reset);
   });
-  await renderer.renderAsync(scene, camera);
+  await rendering.render();
   if (disposed) return;
   rotationEl.disabled = false;
   resetEl.disabled = false;
@@ -542,7 +569,7 @@ async function renderScene(
     clock = now;
     mtlxScene?.update(deltaSeconds);
     controls.update();
-    void renderer.renderAsync(scene, camera).catch((error: unknown) => {
+    void rendering.render().catch((error: unknown) => {
       if (disposed) return;
       disposeCurrent();
       showError(error instanceof Error ? error.message : String(error));
@@ -598,6 +625,9 @@ function onMessage(
     previewState.environmentKind = settings.defaultIbl;
     previewState.geometry = settings.defaultGeometry;
     previewState.rotating = settings.autoRotate;
+    previewState.bloom = settings.bloom;
+    previewState.ao = settings.ao;
+    previewState.toneMapping = settings.toneMapping;
     delete previewState.camera;
   }
   lastPayload = payload;

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add bloom, denoised GTAO and selectable tone mapping to the website, extension and CLI viewers, with extension defaults (on, on, Neutral). Halve auto-rotation speed to one turn per 40 seconds.
+
 - Default both viewers to the bridge IBL. Add extension settings for named IBLs and glTF/GLB
   geometries, default selections by identifier, and default rotation. Custom assets support local
   files and HTTP(S) URLs, including glTF sidecars, with validation and settings-change refresh.
