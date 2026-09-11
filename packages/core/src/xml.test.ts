@@ -20,6 +20,19 @@ const SAMPLE_MTLX = `<?xml version="1.0"?>
 `;
 
 describe('parseMaterialX / serializeMaterialX', () => {
+  it('preserves empty elements, ordered categories, comments and mixed extension text', () => {
+    const source =
+      '<materialx version="1.39"><look/><image name="a"/><look name="b"/><image name="c"/><custom foo="bar">before<empty/>after</custom><!--keep--></materialx>';
+    const first = parseMaterialX(source);
+    const xml = serializeMaterialX(first);
+    expect(xml).toContain('<look/>');
+    expect(xml).not.toContain('look=""');
+    expect(xml).toContain('before<empty/>after');
+    expect(xml).toContain('<!--keep-->');
+    expect(parseMaterialX(xml).elements).toEqual(first.elements);
+    expect(first.attributes).toEqual({ version: '1.39' });
+  });
+
   it('parses the document into a lossless element tree mirroring the on-disk structure', () => {
     const document = parseMaterialX(SAMPLE_MTLX);
 

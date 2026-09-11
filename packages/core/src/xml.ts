@@ -11,90 +11,39 @@ import type {
 
 type XmlRecord = Record<string, unknown>;
 
-const parser = new XMLParser({
+const orderedOptions = {
   ignoreAttributes: false,
   attributeNamePrefix: '',
+  preserveOrder: true,
   parseTagValue: false,
   trimValues: false,
-});
-
+  commentPropName: '#comment',
+  cdataPropName: '#cdata',
+};
+const parser = new XMLParser(orderedOptions);
 const builder = new XMLBuilder({
-  ignoreAttributes: false,
-  attributeNamePrefix: '',
+  ...orderedOptions,
   format: false,
-  indentBy: '  ',
-  suppressBooleanAttributes: false,
   suppressEmptyNode: true,
+  suppressBooleanAttributes: false,
 });
+const PORT_TAGS = new Set(['input', 'output', 'parameter', '#text', '#comment', '#cdata']);
+const asStringRecord = (value: unknown): Record<string, string> =>
+  Object.fromEntries(Object.entries((value ?? {}) as XmlRecord).map(([key, entry]) => [key, String(entry)]));
 
-const DEFAULT_DOCUMENT_COLOR_SPACE = 'lin_rec709';
-const PORT_TAGS = new Set(['input', 'output', 'parameter']);
-
-const toArray = <T>(value: T | T[] | undefined): T[] => {
-  if (value === undefined) {
-    return [];
-  }
-  return Array.isArray(value) ? value : [value];
-};
-
-const asStringRecord = (value: unknown): Record<string, string> => {
-  if (!value || typeof value !== 'object') {
-    return {};
-  }
-  const result: Record<string, string> = {};
-  for (const [key, entry] of Object.entries(value)) {
-    if (key === '#text') {
-      continue;
-    }
-    if (entry === undefined || entry === null || typeof entry === 'object') {
-      continue;
-    }
-    result[key] = String(entry);
-  }
-  return result;
-};
-
-const parseElement = (name: string, xml: unknown): MaterialXElement => {
-  const raw = (xml && typeof xml === 'object' ? (xml as XmlRecord) : {}) as XmlRecord;
-  const attributes = asStringRecord(raw);
-  const rawText = typeof raw['#text'] === 'string' ? raw['#text'] : undefined;
-  const text = rawText && rawText.trim().length > 0 ? rawText : undefined;
-  const children: MaterialXElement[] = [];
-
-  for (const [childName, childValue] of Object.entries(raw)) {
-    if (childName === '#text') {
-      continue;
-    }
-    if (attributes[childName] !== undefined) {
-      continue;
-    }
-    if (!childValue || typeof childValue !== 'object') {
-      continue;
-    }
-    for (const entry of toArray(childValue)) {
-      children.push(parseElement(childName, entry));
-    }
-  }
-
-  return {
-    name,
-    attributes,
-    text,
-    children,
-  };
-};
-
-const elementToXml = (element: MaterialXElement): XmlRecord => {
-  const output: XmlRecord = { ...element.attributes };
-  if (element.text !== undefined) {
-    output['#text'] = element.text;
-  }
-  for (const child of element.children) {
-    const childXml = elementToXml(child);
-    const existing = output[child.name];
-    output[child.name] = existing ? [...toArray(existing), childXml] : [childXml];
-  }
-  return output;
+const parseOrdered = (records: XmlRecord[]): MaterialXElement[] =>
+  records.flatMap((record) => {
+    const name = Object.keys(record).find((key) => key !== ':@');
+    if (!name || name.startsWith('?')) return [];
+    if (name === '#text') return [{ name, attributes: {}, text: String(record[name]), children: [] }];
+    const children = parseOrdered(record[name] as XmlRecord[]);
+    return [{ name, attributes: asStringRecord(record[':@']), children }];
+  });
+const elementToOrdered = (element: MaterialXElement): XmlRecord => {
+  if (element.name === '#text') return { '#text': element.text ?? '' };
+  const children = element.children.map(elementToOrdered);
+  if (element.text !== undefined) children.unshift({ '#text': element.text });
+  return { [element.name]: children, ':@': element.attributes };
 };
 
 const parsePort = (tagName: string, xml: unknown): MaterialXInput | MaterialXOutput | MaterialXParameter => {
@@ -185,8 +134,8 @@ export const cloneMaterialXDocument = (document: MaterialXDocument): MaterialXDo
 /**
  * *Parses MaterialX XML text into a {@link MaterialXDocument}.*
  *
- * The result mirrors the on-disk structure losslessly: top-level nodes, node graphs, and a raw
- * element tree with every attribute preserved. Throws with line and column on malformed XML
+ * Preserves ordered elements, explicit attributes, text and comments semantically.
+ * Source whitespace, quote style and XML declarations are not preserved byte-for-byte. Throws with line and column on malformed XML
  * or a missing `<materialx>` root.
  *
  * Example:
@@ -208,32 +157,15 @@ export const parseMaterialX = (xml: string): MaterialXDocument => {
     throw new Error(`Invalid MaterialX XML at line ${line}, column ${col}: ${msg}`);
   }
 
-  const parsed = parser.parse(xml) as XmlRecord;
-  const root = parsed.materialx as XmlRecord | undefined;
-  if (!root || typeof root !== 'object') {
+  const roots = parseOrdered(parser.parse(xml) as XmlRecord[]).filter((entry) => !entry.name.startsWith('#'));
+  const root = roots[0];
+  if (roots.length !== 1 || root?.name !== 'materialx') {
     throw new Error('Invalid MaterialX XML: missing <materialx> root');
   }
-
-  const attributes: Record<string, string> = {
-    colorspace: DEFAULT_DOCUMENT_COLOR_SPACE,
-    ...asStringRecord(root),
-  };
-  const elements: MaterialXElement[] = [];
-  for (const [tag, value] of Object.entries(root)) {
-    if (tag === '#text') {
-      continue;
-    }
-    if (attributes[tag] !== undefined) {
-      continue;
-    }
-    if (!value || typeof value !== 'object') {
-      continue;
-    }
-    for (const entry of toArray(value)) {
-      elements.push(parseElement(tag, entry));
-    }
-  }
-  return createMaterialXDocument(attributes, elements);
+  return createMaterialXDocument(
+    root.attributes,
+    root.children.filter((entry) => entry.name !== '#text' || entry.text?.trim()),
+  );
 };
 
 /**
@@ -243,19 +175,5 @@ export const parseMaterialX = (xml: string): MaterialXDocument => {
  * @category Parsing
  */
 export const serializeMaterialX = (document: MaterialXDocument): string => {
-  const root: XmlRecord = { ...document.attributes };
-  if (!root.version) {
-    root.version = '1.39';
-  }
-
-  if (document.elements.length > 0) {
-    for (const element of document.elements) {
-      const existing = root[element.name];
-      const xmlElement = elementToXml(element);
-      root[element.name] = existing ? [...toArray(existing), xmlElement] : [xmlElement];
-    }
-    return builder.build({ materialx: root });
-  }
-
-  return builder.build({ materialx: root });
+  return builder.build([{ materialx: document.elements.map(elementToOrdered), ':@': document.attributes }]);
 };
