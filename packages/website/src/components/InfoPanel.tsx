@@ -42,12 +42,17 @@ export function InfoPanel({ fileName, fileSize, summary, issues, parseError, vie
     );
   }
 
+  const warningCount = issues.filter((issue) => issue.level === 'warning').length;
   const valid = !parseError && !issues.some((issue) => issue.level === 'error');
 
   return (
-    <div className="flex h-full flex-col overflow-auto rounded-lg border border-border bg-card p-4 text-sm">
+    <div className="flex h-full flex-col min-w-0 break-words overflow-auto rounded-lg border border-border bg-card p-4 text-sm">
       <p className={valid ? 'font-semibold text-green-600 dark:text-green-400' : 'font-semibold text-destructive'}>
-        {valid ? '✓ Valid' : '✗ Invalid'}
+        {valid ? '✓ Basic document checks passed' : '✗ Basic document checks failed'}
+      </p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        {warningCount} warning{warningCount === 1 ? '' : 's'}. Parsing and selected structural checks only; resource
+        completeness and shader compatibility are not established.
       </p>
       {parseError ? <p className="mt-1 text-destructive">Parse error: {parseError}</p> : null}
       {viewerError ? <p className="mt-1 text-destructive">3D preview error: {viewerError}</p> : null}
