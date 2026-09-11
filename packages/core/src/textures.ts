@@ -1,3 +1,4 @@
+import { applyResourceDestinations, planResourceDestinations } from './resource-graph.js';
 /**
  * Texture resizing and reformatting, backed by [sharp](https://sharp.pixelplumbing.com/).
  *
@@ -7,7 +8,7 @@
  * @module mtlx-core/textures
  */
 import sharp from 'sharp';
-import { isImagePath, posixExtname, rewriteResourcePath, withExtension, type Transform } from './package.js';
+import { isImagePath, posixExtname, withExtension, type Transform } from './package.js';
 
 /**
  * *Web-compatible output formats.*
@@ -126,19 +127,17 @@ export const transformImage = async (
  */
 export const resizeTextures = (options: TransformImageOptions = {}): Transform => {
   return async (pkg) => {
+    const results = new Map<(typeof pkg.resources)[number], Awaited<ReturnType<typeof transformImage>>>();
     for (const resource of pkg.resources) {
-      if (!isImagePath(resource.archivePath)) {
-        continue;
+      if (isImagePath(resource.archivePath)) {
+        results.set(resource, await transformImage(resource.data, posixExtname(resource.archivePath), options));
       }
-      const result = await transformImage(resource.data, posixExtname(resource.archivePath), options);
-      if (!result.changed) {
-        continue;
-      }
-      // ponytail: a.png + a.webp both becoming a.webp collide; dedupe names if that ever bites.
-      const archivePath = withExtension(resource.archivePath, result.extension);
-      rewriteResourcePath(pkg.document, resource.archivePath, archivePath);
-      resource.archivePath = archivePath;
-      resource.data = result.data;
     }
+    const destinations = planResourceDestinations(pkg, (resource) => {
+      const result = results.get(resource);
+      return result?.changed ? withExtension(resource.archivePath, result.extension) : resource.archivePath;
+    });
+    applyResourceDestinations(pkg, destinations);
+    for (const [resource, result] of results) if (result.changed) resource.data = result.data;
   };
 };

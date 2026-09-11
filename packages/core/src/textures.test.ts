@@ -65,6 +65,51 @@ describe('transformImage', () => {
 });
 
 describe('resizeTextures', () => {
+  it.each(['png', 'webp', 'avif'] as const)(
+    'keeps colliding texture identities through %s conversion and archive roundtrip',
+    async (imageFormat) => {
+      const { parseMaterialX } = await import('./xml.js');
+      const { packageToEntries, packageFromArchive } = await import('./package.js');
+      const { createMaterialXZipArchive, inspectMaterialXZipArchive } = await import('./mtlxzip.js');
+      const { resizeTextures } = await import('./textures.js');
+      const make = async (color: string) =>
+        new Uint8Array(
+          await sharp({ create: { width: 8, height: 8, channels: 3, background: color } })
+            .png()
+            .toBuffer(),
+        );
+      const pkg = {
+        rootPath: 'm.mtlx',
+        document: parseMaterialX(
+          '<materialx><image name="red"><input name="file" type="filename" value="a.png"/></image><image name="blue"><input name="file" type="filename" value="a.webp"/></image></materialx>',
+        ),
+        resources: [
+          { archivePath: 'a.png', sourcePath: 'a.png', data: await make('red') },
+          {
+            archivePath: 'a.webp',
+            sourcePath: 'a.webp',
+            data: new Uint8Array(
+              await sharp(await make('blue'))
+                .webp()
+                .toBuffer(),
+            ),
+          },
+        ],
+      };
+      await resizeTextures({ imageFormat })(pkg);
+      const result = packageFromArchive(inspectMaterialXZipArchive(createMaterialXZipArchive(packageToEntries(pkg))));
+      expect(new Set(result.resources.map((r) => r.archivePath)).size).toBe(2);
+      const colors = await Promise.all(
+        result.document.nodes.map(async (node) => {
+          const resource = result.resources.find((r) => r.archivePath === node.inputs[0]?.value)!;
+          return sharp(resource.data).raw().toBuffer();
+        }),
+      );
+      expect(colors[0]![0]).toBeGreaterThan(colors[0]![2]!);
+      expect(colors[1]![2]).toBeGreaterThan(colors[1]![0]!);
+    },
+  );
+
   it('transforms image resources in a package and rewrites the document references', async () => {
     const { parseMaterialX, serializeMaterialX } = await import('./xml.js');
     const { transform } = await import('./package.js');
