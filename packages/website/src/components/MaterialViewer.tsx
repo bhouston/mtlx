@@ -4,7 +4,7 @@ import { CleanupScope } from '@/lib/cleanup-scope';
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
 import { DEFAULT_RENDERING_SETTINGS, TONE_MAPPING_OPTIONS, type RenderingSettings } from 'mtlx-viewer/settings';
-import type { EnvironmentKind, GeometryKind, MtlxScene } from 'mtlx-viewer';
+import type { GeometryKind, MtlxScene } from 'mtlx-viewer';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
 import defaultEnvironmentUrl from 'mtlx-viewer/assets/default-environment.hdr?url';
 import shaderBallUrl from 'mtlx-viewer/assets/shaderball.glb?url';
@@ -26,6 +26,8 @@ export interface MaterialViewerProps {
   onLog?: (message: string) => void;
   onStatus?: (report: PreviewReport) => void;
 }
+
+type EnvironmentName = 'bridge' | 'studio';
 
 const GEOMETRY_OPTIONS: { value: GeometryKind; label: string }[] = [
   { value: 'totem', label: 'Totem' },
@@ -57,9 +59,9 @@ async function resolveSourceBytes(
 // .mtlx and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
 // embedded in the archive itself, so this component doesn't need any zip handling of its own.
 export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialViewerProps) {
-  const [environmentKind, setEnvironmentKind] = useState<EnvironmentKind>('default');
-  const environmentKindRef = useRef<EnvironmentKind>('default');
-  const switchEnvironmentRef = useRef<((kind: EnvironmentKind) => Promise<void>) | null>(null);
+  const [environmentKind, setEnvironmentName] = useState<EnvironmentName>('bridge');
+  const environmentKindRef = useRef<EnvironmentName>('bridge');
+  const switchEnvironmentRef = useRef<((kind: EnvironmentName) => Promise<void>) | null>(null);
   const [environmentMessage, setEnvironmentMessage] = useState('');
   const [renderingSettings, setRenderingSettings] = useState<RenderingSettings>({ ...DEFAULT_RENDERING_SETTINGS });
   const [exposure, setExposure] = useState(0);
@@ -181,7 +183,7 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       const environments = createEnvironmentSwitcher(
         async (kind) =>
           parseEnvironment(
-            kind as EnvironmentKind,
+            kind === 'studio' ? 'studio' : 'default',
             await fetchBytes(kind === 'studio' ? studioEnvironmentUrl : defaultEnvironmentUrl),
           ),
         (texture) => pmremGenerator.fromEquirectangular(texture),
@@ -191,12 +193,12 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
         },
       );
       own(() => environments.dispose());
-      const switchEnvironment = async (kind: EnvironmentKind) => {
+      const switchEnvironment = async (kind: EnvironmentName) => {
         setEnvironmentMessage('Loading environment…');
         try {
           if (await environments.set(kind)) {
             setEnvironmentMessage('');
-            onLog?.(`Environment ready: ${kind === 'studio' ? 'Studio' : 'San Giuseppe Bridge'}.`);
+            onLog?.(`Environment ready: ${kind}.`);
           }
         } catch (error) {
           if (disposed || scope.disposed || kind !== environmentKindRef.current) return;
@@ -404,14 +406,14 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
               value={environmentKind}
               className="min-w-0 rounded border border-white/20 bg-black/70 px-1 py-1"
               onChange={(event) => {
-                const kind = event.target.value as EnvironmentKind;
+                const kind = event.target.value as EnvironmentName;
                 environmentKindRef.current = kind;
-                setEnvironmentKind(kind);
+                setEnvironmentName(kind);
                 void switchEnvironmentRef.current?.(kind);
               }}
             >
-              <option value="studio">Studio</option>
-              <option value="default">San Giuseppe Bridge</option>
+              <option value="studio">studio</option>
+              <option value="bridge">bridge</option>
             </select>
           </label>
           <label className="flex items-center gap-2">
