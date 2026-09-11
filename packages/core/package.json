@@ -45,7 +45,7 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "dev": "tsc -b -w --preserveWatchOutput --noEmitOnError",
+    "dev": "tsc -b -w --preserveWatchOutput",
     "test": "vitest run"
   },
   "dependencies": {

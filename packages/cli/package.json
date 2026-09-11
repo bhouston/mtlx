@@ -23,7 +23,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc -b && node scripts/build-viewer.mjs",
-    "dev": "tsc -b -w --preserveWatchOutput --noEmitOnError",
+    "dev": "tsc -b -w --preserveWatchOutput",
     "start": "node bin/cli.js",
     "test": "vitest run"
   },
