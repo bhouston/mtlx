@@ -42,6 +42,26 @@ function populateMaterialSelect(scene: MtlxScene): void {
   materialSelectEl.disabled = scene.materialNames.length <= 1;
 }
 
+let disposed = false;
+const abort = new AbortController();
+const releases: (() => void)[] = [];
+const own = (release: () => void) => {
+  if (disposed) release();
+  else releases.push(release);
+};
+const dispose = () => {
+  if (disposed) return;
+  disposed = true;
+  abort.abort();
+  for (const release of releases.splice(0).toReversed()) release();
+};
+window.addEventListener('pagehide', dispose, { once: true });
+const fetchBytes = async (url: string) => {
+  const response = await fetch(url, { signal: abort.signal });
+  if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
+  return response.arrayBuffer();
+};
+
 async function main(): Promise<void> {
   const fileName = window.__MTLX_FILE__;
   if (!fileName) {
@@ -50,11 +70,16 @@ async function main(): Promise<void> {
   }
 
   const renderer = new THREE.WebGPURenderer({ canvas: canvasEl, antialias: true });
+  own(() => {
+    renderer.setAnimationLoop(null);
+    renderer.dispose();
+  });
   renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   await renderer.init();
+  if (disposed) return;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.05, 1000);
@@ -62,22 +87,30 @@ async function main(): Promise<void> {
   // @types/three lags three's addon source: fromEquirectangular() isn't in its PMREMGenerator
   // typings yet.
   const pmremGenerator = new THREE.PMREMGenerator(renderer) as unknown as {
-    fromEquirectangular: (texture: THREE.Texture) => { texture: THREE.Texture };
+    fromEquirectangular: (texture: THREE.Texture) => { texture: THREE.Texture; dispose(): void };
+    dispose(): void;
   };
+  own(() => pmremGenerator.dispose());
   const envTexture = await parseStudioEnvironment(dataUrlToArrayBuffer(studioEnvironmentDataUrl));
-  const environment = pmremGenerator.fromEquirectangular(envTexture).texture;
-  envTexture.dispose();
+  own(() => envTexture.dispose());
+  if (disposed) return;
+  const environmentTarget = pmremGenerator.fromEquirectangular(envTexture);
+  own(() => environmentTarget.dispose());
+  const environment = environmentTarget.texture;
   scene.environment = environment;
   scene.background = environment;
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
+  own(() => controls.dispose());
 
-  window.addEventListener('resize', () => {
+  const resize = () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight, false);
-  });
+  };
+  window.addEventListener('resize', resize);
+  own(() => window.removeEventListener('resize', resize));
 
   let clock = performance.now();
   let mtlxScene: MtlxScene | undefined;
@@ -86,18 +119,25 @@ async function main(): Promise<void> {
     mtlxScene?.update((now - clock) / 1000);
     clock = now;
     controls.update();
-    void renderer.renderAsync(scene, camera);
+    void renderer.renderAsync(scene, camera).catch((error: unknown) => {
+      if (disposed) return;
+      dispose();
+      showError(error instanceof Error ? error.message : String(error));
+    });
   });
 
   try {
-    const [data, shaderBall] = await Promise.all([
-      fetch(fileName).then((r) => r.arrayBuffer()),
-      fetch('/__mtlx_view__/shaderball.glb').then((r) => r.arrayBuffer()),
-    ]);
+    const [data, shaderBall] = await Promise.all([fetchBytes(fileName), fetchBytes('/__mtlx_view__/shaderball.glb')]);
+    if (disposed) return;
     mtlxScene = await createMtlxScene(camera, controls, { data, fileName, shaderBall });
+    const ownedScene = mtlxScene;
+    own(() => ownedScene.dispose());
+    if (disposed) return;
     scene.add(mtlxScene.root);
     populateMaterialSelect(mtlxScene);
   } catch (error) {
+    if (disposed) return;
+    dispose();
     showError(`MaterialX preview error: ${error instanceof Error ? error.message : String(error)}`);
     return;
   }
@@ -106,4 +146,8 @@ async function main(): Promise<void> {
   geometrySelectEl.addEventListener('change', () => mtlxScene?.setGeometry(geometrySelectEl.value as GeometryKind));
 }
 
-main().catch((error: unknown) => showError(error instanceof Error ? error.message : String(error)));
+main().catch((error: unknown) => {
+  if (disposed) return;
+  dispose();
+  showError(error instanceof Error ? error.message : String(error));
+});
