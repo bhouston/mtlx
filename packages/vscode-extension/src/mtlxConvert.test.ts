@@ -1,10 +1,10 @@
 import { cpSync, existsSync } from 'node:fs';
-import { mkdtemp, readdir, rm } from 'node:fs/promises';
+import { mkdtemp, readdir, rm, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { convertMaterialXFile, outputPathFor } from './mtlxConvert.js';
+import { convertMaterialXFile, convertMaterialXFiles, outputPathFor } from './mtlxConvert.js';
 
 // Real material-samples.com materials, shared with the CLI's and website's tests via the
 // repo-root /assets rather than duplicated per package.
@@ -62,5 +62,27 @@ describe('convertMaterialXFile', () => {
 
     const tmpEntries = await readdir(tmpdir());
     expect(tmpEntries.some((entry) => entry.startsWith('mtlx-convert-'))).toBe(false);
+  });
+});
+
+describe('safe conversion', () => {
+  it('preserves an existing output and uses a numbered destination', async () => {
+    cpSync(path.join(fixturesDir, 'copper'), dir, { recursive: true });
+    const existing = path.join(dir, 'copper.mtlx.zip');
+    await writeFile(existing, 'existing material');
+    const output = await convertMaterialXFile(path.join(dir, 'copper.mtlx'), 'mtlx.zip');
+    expect(output).toBe(path.join(dir, 'copper-2.mtlx.zip'));
+    expect(await readFile(existing, 'utf8')).toBe('existing material');
+  });
+
+  it('summarizes mixed selections and continues after failures', async () => {
+    cpSync(path.join(fixturesDir, 'copper'), dir, { recursive: true });
+    const result = await convertMaterialXFiles(
+      [path.join(dir, 'already.mtlx.zip'), path.join(dir, 'missing.mtlx'), path.join(dir, 'copper.mtlx')],
+      'mtlx.zip',
+    );
+    expect(result.skipped).toHaveLength(1);
+    expect(result.failed).toHaveLength(1);
+    expect(result.converted).toEqual([path.join(dir, 'copper.mtlx.zip')]);
   });
 });

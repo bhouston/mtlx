@@ -1,4 +1,5 @@
 import * as path from 'node:path';
+import { open, rm } from 'node:fs/promises';
 import { detectFormat, type MaterialXFormat } from 'mtlx-core';
 import { loadMaterialXPackage, writeMaterialXPackage } from 'mtlx-core/node';
 
@@ -26,6 +27,49 @@ export const convertMaterialXFile = async (fsPath: string, target: TargetFormat)
   if (detectFormat(fsPath) === target) {
     throw new Error(`${path.basename(fsPath)} is already ${target}`);
   }
-  const result = await writeMaterialXPackage(await loadMaterialXPackage(fsPath), outputPathFor(fsPath, target));
-  return result.outputPath;
+  const pkg = await loadMaterialXPackage(fsPath);
+  const basePath = outputPathFor(fsPath, target);
+  const extension = target === 'mtlx' ? '.mtlx' : '.mtlx.zip';
+  let outputPath = basePath;
+  for (let suffix = 2; ; suffix++) {
+    try {
+      // Reserve the destination atomically, including when concurrent conversions race.
+      const handle = await open(outputPath, 'wx');
+      await handle.close();
+      break;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+      outputPath = `${basePath.slice(0, -extension.length)}-${suffix}${extension}`;
+    }
+  }
+  try {
+    return (await writeMaterialXPackage(pkg, outputPath)).outputPath;
+  } catch (error) {
+    await rm(outputPath, { force: true });
+    throw error;
+  }
 };
+
+export interface ConversionSummary {
+  converted: string[];
+  skipped: string[];
+  failed: { path: string; message: string }[];
+}
+
+export async function convertMaterialXFiles(
+  paths: string[],
+  target: TargetFormat,
+  onProgress: () => void = () => {},
+): Promise<ConversionSummary> {
+  const summary: ConversionSummary = { converted: [], skipped: [], failed: [] };
+  for (const filePath of paths) {
+    try {
+      if (detectFormat(filePath) === target) summary.skipped.push(filePath);
+      else summary.converted.push(await convertMaterialXFile(filePath, target));
+    } catch (error) {
+      summary.failed.push({ path: filePath, message: error instanceof Error ? error.message : String(error) });
+    }
+    onProgress();
+  }
+  return summary;
+}

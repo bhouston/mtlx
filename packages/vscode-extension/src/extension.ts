@@ -1,29 +1,37 @@
 import * as vscode from 'vscode';
-import { convertMaterialXFile, filterMtlxUris, normalizeUris, type TargetFormat } from './mtlxOperations.js';
+import { filterMtlxUris, normalizeUris, type TargetFormat } from './mtlxOperations.js';
+import { convertMaterialXFiles } from './mtlxConvert.js';
 import { MtlxPreviewProvider } from './mtlxPreviewProvider.js';
 
 async function runConvert(uris: vscode.Uri[], target: TargetFormat): Promise<void> {
-  const run = async (uri: vscode.Uri) => {
-    try {
-      await convertMaterialXFile(uri.fsPath, target);
-    } catch (error) {
-      vscode.window.showErrorMessage(`Mtlx: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  };
-
-  if (uris.length > 1) {
-    await vscode.window.withProgress(
-      { location: vscode.ProgressLocation.Notification, title: `Converting to ${target}…`, cancellable: false },
-      async (progress) => {
-        const increment = 100 / uris.length;
-        for (const uri of uris) {
-          await run(uri);
-          progress.report({ increment });
-        }
-      },
-    );
-  } else if (uris[0]) {
-    await run(uris[0]);
+  const result = await vscode.window.withProgress(
+    { location: vscode.ProgressLocation.Notification, title: `Converting to ${target}…`, cancellable: false },
+    (progress) =>
+      convertMaterialXFiles(
+        uris.map((uri) => uri.fsPath),
+        target,
+        () => {
+          progress.report({ increment: 100 / uris.length });
+        },
+      ),
+  );
+  const message = `Mtlx: ${result.converted.length} converted, ${result.skipped.length} skipped, ${result.failed.length} failed.`;
+  const actions = result.converted.length ? ['Open'] : [];
+  if (result.failed.length) actions.push('Details');
+  const selected = result.failed.length
+    ? await vscode.window.showWarningMessage(message, ...actions)
+    : await vscode.window.showInformationMessage(message, ...actions);
+  if (selected === 'Details') {
+    const document = await vscode.workspace.openTextDocument({
+      content: result.failed.map((failure) => `${failure.path}: ${failure.message}`).join('\n'),
+    });
+    await vscode.window.showTextDocument(document);
+  } else if (selected === 'Open') {
+    const output =
+      result.converted.length === 1
+        ? result.converted[0]
+        : await vscode.window.showQuickPick(result.converted, { placeHolder: 'Open converted material' });
+    if (output) await vscode.commands.executeCommand('vscode.openWith', vscode.Uri.file(output), 'mtlx.mtlxPreview');
   }
 }
 
