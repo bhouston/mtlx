@@ -6,6 +6,7 @@
  * Callers own the renderer/camera/controls/animation-loop (each host has its own conventions for
  * that already) and just add `.root` to their scene and call `.update(deltaSeconds)` each frame.
  */
+import { collectDisposables } from './disposal.js';
 import * as THREE from 'three/webgpu';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MaterialXLoader } from 'three/addons/loaders/MaterialXLoader.js';
@@ -51,6 +52,8 @@ export interface MtlxScene {
   activeMaterial: string;
   geometry: GeometryKind;
   autoRotate: boolean;
+  /** Releases owned geometries, materials and textures; safe to call repeatedly. */
+  dispose(): void;
   setMaterial(name: string): void;
   setGeometry(kind: GeometryKind): void;
   /** Call every frame; advances the auto-rotation. */
@@ -159,11 +162,20 @@ export async function createMtlxScene(
     throw new Error('No materials found in this MaterialX document');
   }
 
+  let totem: THREE.Group;
+  try {
+    totem = await loadShaderBall(manager, options.shaderBall);
+  } catch (error) {
+    collectDisposables(Object.values(materials))();
+    throw error;
+  }
   const geometries: Record<GeometryKind, THREE.Object3D> = {
-    totem: await loadShaderBall(manager, options.shaderBall),
+    totem,
     sphere: buildSphere(),
     plane: buildPlane(),
   };
+  // Capture original glTF/default materials before replacing them with MaterialX materials.
+  const disposeResources = collectDisposables([...Object.values(geometries), ...Object.values(materials)]);
   const root = new THREE.Group();
   for (const object of Object.values(geometries)) root.add(object);
 
@@ -173,6 +185,11 @@ export async function createMtlxScene(
 
   const scene: MtlxScene = {
     root,
+    dispose() {
+      root.removeFromParent();
+      disposeResources();
+      root.clear();
+    },
     materialNames,
     activeMaterial:
       options.materialName && materials[options.materialName] ? options.materialName : materialNames.at(-1)!,

@@ -4,6 +4,9 @@ export default defineConfig({
   test: {
     projects: [
       {
+        test: { name: 'viewer', include: ['packages/viewer/src/**/*.test.ts'], environment: 'node' },
+      },
+      {
         test: {
           name: 'core',
           include: ['packages/core/src/**/*.test.ts'],

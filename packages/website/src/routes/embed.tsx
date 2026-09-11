@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { MaterialViewer } from '@/components/MaterialViewerLazy';
 import { resolveMaterialParam } from '@/lib/presets';
 
@@ -23,7 +23,10 @@ function EmbedPage() {
   // material" error) straight from the search param during render instead of an effect.
   const resolved = material ? resolveMaterialParam(material) : undefined;
   const resolveError = material && !resolved ? `Unknown material "${material}"` : null;
-  const source = resolved ? { kind: 'url' as const, folderUrl: resolved.folderUrl, fileName: resolved.fileName } : null;
+  const source = useMemo(() => {
+    const value = material ? resolveMaterialParam(material) : undefined;
+    return value ? { kind: 'url' as const, folderUrl: value.folderUrl, fileName: value.fileName } : null;
+  }, [material]);
   const error = resolveError ?? viewerError;
 
   return (

@@ -1,3 +1,4 @@
+import { CleanupScope } from '@/lib/cleanup-scope';
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
 import type { GeometryKind, MtlxScene } from 'mtlx-viewer';
@@ -21,7 +22,10 @@ const GEOMETRY_OPTIONS: { value: GeometryKind; label: string }[] = [
   { value: 'plane', label: 'Plane' },
 ];
 
-async function resolveSourceBytes(source: MaterialSource): Promise<{ data: ArrayBuffer; fileName: string }> {
+async function resolveSourceBytes(
+  source: MaterialSource,
+  signal: AbortSignal,
+): Promise<{ data: ArrayBuffer; fileName: string }> {
   if (source.kind === 'buffer') {
     return { data: source.data, fileName: source.name };
   }
@@ -30,7 +34,9 @@ async function resolveSourceBytes(source: MaterialSource): Promise<{ data: Array
   // `.setPath(folderUrl).loadAsync(fileName)` used to; the browser can then fetch a preset's
   // sibling textures (e.g. wood_grain's) directly from raw.githubusercontent.com by relative URL.
   const url = `${source.folderUrl}${source.fileName}`;
-  const data = await (await fetch(url)).arrayBuffer();
+  const response = await fetch(url, { signal });
+  if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
+  const data = await response.arrayBuffer();
   return { data, fileName: url };
 }
 
@@ -51,11 +57,21 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
     setMaterialNames([]);
     setActiveMaterial('');
     if (!container || !source) {
+      setLoading(false);
       return;
     }
 
     let disposed = false;
-    let cleanup: (() => void) | undefined;
+    const abort = new AbortController();
+    const scope = new CleanupScope();
+    const own = (release: () => void) => scope.own(release);
+    own(() => abort.abort());
+    const cleanup = () => scope.dispose();
+    const fetchBytes = async (url: string) => {
+      const response = await fetch(url, { signal: abort.signal });
+      if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
+      return response.arrayBuffer();
+    };
     setLoading(true);
     onError(null);
 
@@ -70,6 +86,10 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
 
       onLog?.('Creating WebGPURenderer...');
       const renderer = new THREE.WebGPURenderer({ antialias: true });
+      own(() => {
+        renderer.dispose();
+        renderer.domElement.remove();
+      });
       // Leave updateStyle at its default (true) — this also sets the canvas's CSS size to
       // width/height, not just its pixel buffer. With `false` the canvas kept its devicePixelRatio-
       // scaled buffer size as its CSS size too, rendering ~2x too big and getting cropped by the
@@ -79,10 +99,7 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       await renderer.init();
-      if (disposed) {
-        renderer.dispose();
-        return;
-      }
+      if (disposed) return;
       const backend = (renderer as unknown as { backend?: { isWebGPUBackend?: boolean } }).backend;
       onLog?.(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);
       container.replaceChildren(renderer.domElement);
@@ -93,39 +110,43 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
       // Shared studio IBL (packages/viewer), baked once from RoomEnvironment, so the website and
       // VS Code preview render the same lighting.
       onLog?.('Loading studio environment...');
-      const envBytes = await (await fetch(studioEnvironmentUrl)).arrayBuffer();
+      const envBytes = await fetchBytes(studioEnvironmentUrl);
+      if (disposed) return;
       const studioTexture = await parseStudioEnvironment(envBytes);
-      if (disposed) {
-        renderer.dispose();
-        return;
-      }
+      own(() => studioTexture.dispose());
+      if (disposed) return;
       // @types/three lags three's addon source: fromEquirectangular() isn't in its
       // PMREMGenerator typings yet.
       const pmremGenerator = new THREE.PMREMGenerator(renderer) as unknown as {
-        fromEquirectangular: (texture: ThreeNS.Texture) => { texture: ThreeNS.Texture };
+        fromEquirectangular: (texture: ThreeNS.Texture) => { texture: ThreeNS.Texture; dispose(): void };
+        dispose(): void;
       };
-      const environment = pmremGenerator.fromEquirectangular(studioTexture).texture;
-      studioTexture.dispose();
+      own(() => pmremGenerator.dispose());
+      const environmentTarget = pmremGenerator.fromEquirectangular(studioTexture);
+      own(() => environmentTarget.dispose());
+      const environment = environmentTarget.texture;
       scene.environment = environment;
       scene.background = environment;
       onLog?.('Environment ready.');
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
+      own(() => controls.dispose());
 
-      try {
+      {
         onLog?.('Parsing MaterialX document...');
         const manager = new THREE.LoadingManager();
         manager.onProgress = (url, loaded, total) => onLog?.(`Loading ${url}: ${loaded}/${total}`);
         manager.onError = (url) => onLog?.(`Failed to load resource: ${url}`);
 
         const [{ data, fileName }, shaderBall] = await Promise.all([
-          resolveSourceBytes(source),
-          (async () => (await fetch(shaderBallUrl)).arrayBuffer())(),
+          resolveSourceBytes(source, abort.signal),
+          fetchBytes(shaderBallUrl),
         ]);
         if (disposed) return;
 
         const mtlxScene = await createMtlxScene(camera, controls, { data, fileName, shaderBall, manager });
+        own(() => mtlxScene.dispose());
         if (disposed) return;
         scene.add(mtlxScene.root);
         mtlxSceneRef.current = mtlxScene;
@@ -133,10 +154,6 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
         setActiveMaterial(mtlxScene.activeMaterial);
         setGeometry(mtlxScene.geometry);
         onLog?.(`Material applied (${mtlxScene.materialNames.length} available).`);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        onLog?.(`ERROR: ${message}`);
-        onError(message);
       }
 
       let frameId = 0;
@@ -145,10 +162,12 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
         const h = container.clientHeight || 512;
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
-        renderer.setSize(w, h, false);
+        renderer.setSize(w, h);
       };
       const resizeObserver = new ResizeObserver(resize);
       resizeObserver.observe(container);
+      own(() => resizeObserver.disconnect());
+      own(() => cancelAnimationFrame(frameId));
 
       let clock = performance.now();
       const animate = () => {
@@ -156,19 +175,20 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
         mtlxSceneRef.current?.update((now - clock) / 1000);
         clock = now;
         controls.update();
-        void renderer.renderAsync(scene, camera);
+        void renderer.renderAsync(scene, camera).catch((error: unknown) => {
+          if (disposed) return;
+          cleanup();
+          mtlxSceneRef.current = null;
+          onError(error instanceof Error ? error.message : String(error));
+        });
         frameId = requestAnimationFrame(animate);
       };
       animate();
 
       setLoading(false);
-      cleanup = () => {
-        cancelAnimationFrame(frameId);
-        resizeObserver.disconnect();
-        controls.dispose();
-        renderer.dispose();
-      };
     })().catch((error: unknown) => {
+      cleanup();
+      if (disposed) return;
       setLoading(false);
       const message = error instanceof Error ? error.message : String(error);
       onLog?.(`ERROR: ${message}`);
@@ -177,7 +197,8 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
 
     return () => {
       disposed = true;
-      cleanup?.();
+      mtlxSceneRef.current = null;
+      cleanup();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- source is compared by identity intentionally
   }, [source]);

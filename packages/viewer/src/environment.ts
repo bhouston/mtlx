@@ -40,6 +40,7 @@ export const ENVIRONMENT_ASSET_FILES: Record<EnvironmentKind, string> = {
 export async function parseStudioEnvironment(data: ArrayBuffer): Promise<Texture> {
   const bitmap = await createImageBitmap(new Blob([data], { type: 'image/png' }));
   const texture = new Texture(bitmap);
+  texture.addEventListener('dispose', () => bitmap.close());
   texture.mapping = EquirectangularReflectionMapping;
   texture.needsUpdate = true;
   return texture;
