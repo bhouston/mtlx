@@ -25,6 +25,11 @@ it('Reset restores object orientation, camera position, target and zoom without 
     fileName: 'sample.mtlx',
     shaderBall: new ArrayBuffer(0),
   });
+  const totem = scene.root.children.find((child) => child.visible)!;
+  expect(totem.rotation.y).toBeCloseTo(Math.PI / 4);
+  scene.update(5);
+  scene.resetCamera();
+  expect(totem.rotation.y).toBeCloseTo(Math.PI / 4);
   scene.setGeometry('sphere');
   const position = camera.position.clone();
   const target = controls.target.clone();

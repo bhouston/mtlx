@@ -169,6 +169,8 @@ export async function createMtlxScene(
   let totem: THREE.Group;
   try {
     totem = await loadShaderBall(manager, options.shaderBall);
+    // Start facing front-right; capture this orientation below as the Reset baseline.
+    totem.rotateY(Math.PI / 4);
   } catch (error) {
     collectDisposables(Object.values(materials))();
     throw error;
