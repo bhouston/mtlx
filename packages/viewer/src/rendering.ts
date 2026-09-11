@@ -39,7 +39,7 @@ export function createViewerRendering(
   const aoContext = builtinAOContext(aoTexture.sample(TSL.screenUV).r);
   const scenePass = TSL.pass(scene, camera, { samples: 4 });
   const color = scenePass.getTextureNode();
-  const glow = bloom(color, 0.25, 0.5, 1);
+  const glow = bloom(color, 0.05, 0.5, 1);
   let settings: RenderingSettings | undefined;
   let disposed = false;
   const configure = (next: RenderingSettings) => {
