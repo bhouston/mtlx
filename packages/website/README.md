@@ -31,7 +31,9 @@ Legacy `material=<preset id or URL>` links remain readable. New shared links use
 Choose `compound` in the sample picker to load a document containing `Copper` and `Tiled_Wood`.
 Use the viewer's bottom Material dropdown to switch between them. The document and both wood
 textures are hosted in `public/materials/compound/`, so this sample works without GitHub access.
-A portable direct link is `/viewer?materialUrl=/materials/compound/compound.mtlx`.
+The `compound_zip` sample contains the same document and textures in one `.mtlx.zip` archive.
+It is hosted at `/materials/compound_zip/compound_zip.mtlx.zip`.
+A portable direct link to the loose sample is `/viewer?materialUrl=/materials/compound/compound.mtlx`.
 
 Regenerate the fixture from the repository root using the CLI:
 
@@ -41,6 +43,14 @@ node packages/cli/bin/cli.js transform assets/copper/copper.mtlx assets/wood_gra
 node packages/cli/bin/cli.js check packages/website/public/materials/compound/compound.mtlx --rules basic structure types resources --strict
 ```
 
+Create and validate the ZIP example with the CLI:
+
+```sh
+node packages/cli/bin/cli.js transform packages/website/public/materials/compound/compound.mtlx --output packages/website/public/materials/compound_zip/compound_zip.mtlx.zip
+node packages/cli/bin/cli.js check packages/website/public/materials/compound_zip/compound_zip.mtlx.zip --rules basic structure types resources --strict
+```
+
+The ZIP regression test blocks external texture requests to verify the archive is self-contained.
 The browser regression test checks both material choices, texture requests, a rendered change
 when switching materials, and sample selection after reloading the shared URL.
 

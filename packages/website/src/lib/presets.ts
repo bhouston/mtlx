@@ -3,6 +3,7 @@
 export interface PresetMaterial {
   category: 'standard_surface' | 'open_pbr_surface' | 'gltf_pbr' | 'local';
   name: string;
+  format?: 'mtlx' | 'mtlx.zip';
 }
 
 export const PRESET_MATERIALS: PresetMaterial[] = [
@@ -18,15 +19,16 @@ export const PRESET_MATERIALS: PresetMaterial[] = [
   { category: 'open_pbr_surface', name: 'soapbubble' },
   { category: 'gltf_pbr', name: 'glass_dispersion' },
   { category: 'local', name: 'compound' },
+  { category: 'local', name: 'compound_zip', format: 'mtlx.zip' },
 ];
 
 const RAW_BASE = 'https://raw.githubusercontent.com/bhouston/material-samples/main/materials/showcase';
 
-/** Folder URL containing `${name}.mtlx` plus any textures it references relatively. */
+/** Folder containing the document or archive and any external textures. */
 export const presetFolderUrl = (preset: PresetMaterial): string =>
   preset.category === 'local' ? `/materials/${preset.name}/` : `${RAW_BASE}/${preset.category}/${preset.name}/`;
 
-export const presetFileName = (preset: PresetMaterial): string => `${preset.name}.mtlx`;
+export const presetFileName = (preset: PresetMaterial): string => `${preset.name}.${preset.format ?? 'mtlx'}`;
 
 /** Stable id used in the `material` URL query param and the dropdown value. */
 export const presetId = (preset: PresetMaterial): string => `${preset.category}/${preset.name}`;

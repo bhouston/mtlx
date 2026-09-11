@@ -220,3 +220,31 @@ test('rendering effects default on and toggle without replacing the scene', asyn
   await expectReady();
   expect(shaderErrors).toEqual([]);
 });
+
+test('CLI ZIP sample renders both materials from bundled textures and restores its sample selection', async () => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const externalTextures: string[] = [];
+  await page.route('**/materials/**/*.jpg', (route) => {
+    externalTextures.push(route.request().url());
+    return route.abort();
+  });
+  await page.goto(`http://localhost:${PORT}/viewer`);
+  await page.getByRole('combobox', { name: 'Sample material' }).click();
+  await page.getByRole('option', { name: 'compound_zip', exact: true }).click();
+  await expectReady();
+  const url = `http://localhost:${PORT}/materials/compound_zip/compound_zip.mtlx.zip`;
+  expect(new URL(page.url()).searchParams.get('materialUrl')).toBe(url);
+  expect(await page.getByRole('textbox', { name: 'Material URL' }).inputValue()).toBe(url);
+  await expect.poll(() => page.locator('main').innerText(), { timeout: 30_000 }).toContain('Dependency checks passed');
+  const material = page.getByRole('combobox', { name: 'Material', exact: true });
+  expect(await material.locator('option').allTextContents()).toEqual(['Copper', 'Tiled_Wood']);
+  await material.selectOption('Tiled_Wood');
+  const wood = await page.locator('canvas').screenshot();
+  await material.selectOption('Copper');
+  await expect.poll(async () => (await page.locator('canvas').screenshot()).equals(wood)).toBe(false);
+  await page.reload();
+  await expectReady();
+  expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toBe('compound_zip');
+  expect(externalTextures).toEqual([]);
+});

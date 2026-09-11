@@ -76,3 +76,14 @@ it('resolves locally hosted samples and makes their URLs portable across deploym
   expect(materialSearch({ material: 'local/compound' })).toEqual({ materialUrl: presetUrl(compound) });
   expect(resolveMaterialParam('//example.com/material.mtlx')).toBeUndefined();
 });
+
+it('resolves the ZIP sample to its archive URL', async () => {
+  const { presetUrl } = await import('./presets.js');
+  const preset = PRESET_MATERIALS.find((entry) => entry.name === 'compound_zip')!;
+  expect(presetFileName(preset)).toBe('compound_zip.mtlx.zip');
+  expect(presetUrl(preset)).toBe('/materials/compound_zip/compound_zip.mtlx.zip');
+  expect(resolveMaterialParam('local/compound_zip')).toEqual({
+    folderUrl: '/materials/compound_zip/',
+    fileName: 'compound_zip.mtlx.zip',
+  });
+});
