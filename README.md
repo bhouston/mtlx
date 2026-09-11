@@ -22,7 +22,7 @@ everyday artists and developers.
 | Package                                                                                         | Description                                                                                                                                                   |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`mtlx-core`](https://github.com/bhouston/mtlx/tree/main/packages/core)                         | Parse, validate, package, and transform MaterialX. Pure and browser-safe; Node helpers under `mtlx-core/node`, texture processing under `mtlx-core/textures`. |
-| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command: `check`, `info`, and `transform` (convert, pack, unpack, resize textures).                                                                |
+| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command: `check`, `info`, and `transform`/`x` (convert, pack, unpack, combine, resize textures).                                                   |
 | [`website`](https://github.com/bhouston/mtlx/tree/main/packages/website)                        | Drag-and-drop viewer and validator at [mtlx.ben3d.ca](https://mtlx.ben3d.ca), plus these docs.                                                                |
 | [`mtlx-vscode-extension`](https://github.com/bhouston/mtlx/tree/main/packages/vscode-extension) | "Mtlx Viewer": preview, inspect, and convert MaterialX files inside VS Code.                                                                                  |
 
@@ -67,9 +67,10 @@ npm install --global mtlx-cli
 ```sh
 mtlx check material.mtlx
 mtlx info material.mtlx.zip --format json
-mtlx transform material.mtlx material.mtlx.zip                    # pack
-mtlx transform material.mtlx.zip out/material.mtlx                # unpack
-mtlx transform material.mtlx material.mtlx.zip --max-image-size 2048 --image-format webp
+mtlx x material.mtlx -o material.mtlx.zip                         # pack
+mtlx x material.mtlx.zip -o out/material.mtlx                     # unpack
+mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
+mtlx x metal.mtlx wood.mtlx glass.mtlx -o combined.mtlx.zip        # combine
 ```
 
 See the [mtlx-cli README](https://www.npmjs.com/package/mtlx-cli) for the full reference.

@@ -15,13 +15,16 @@ mtlx check material.mtlx
 mtlx info material.mtlx.zip --format json
 
 # pack a .mtlx (plus its textures) into a single .mtlx.zip
-mtlx transform material.mtlx material.mtlx.zip
+mtlx x material.mtlx -o material.mtlx.zip
 
 # unpack a .mtlx.zip back into a .mtlx with textures alongside it
-mtlx transform material.mtlx.zip out/material.mtlx
+mtlx x material.mtlx.zip -o out/material.mtlx
 
 # convert while packing: resize textures and switch their format
-mtlx transform material.mtlx material.mtlx.zip --max-image-size 2048 --image-format webp
+mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
+
+# combine multiple materials into a single .mtlx.zip
+mtlx x metal.mtlx wood.mtlx glass.mtlx -o combined.mtlx.zip
 
 # open a 3D preview in your browser (local only, nothing is uploaded)
 mtlx view material.mtlx`;

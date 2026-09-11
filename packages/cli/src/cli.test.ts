@@ -128,16 +128,19 @@ describe('mtlx', () => {
     const fixture = await makePackFixture();
     const outputDir = path.join(fixture.tempDir, 'out');
     try {
-      const packResult = await cli.run(['transform', fixture.materialPath, fixture.archivePath], { timeout: 8_000 });
+      const packResult = await cli.run(['transform', fixture.materialPath, '-o', fixture.archivePath], {
+        timeout: 8_000,
+      });
       expect(packResult).toSucceed();
       expect(existsSync(fixture.archivePath)).toBe(true);
 
       const checkResult = await cli.run(['check', fixture.archivePath], { timeout: 8_000 });
       expect(checkResult).toSucceed();
 
-      const unpackResult = await cli.run(['transform', fixture.archivePath, path.join(outputDir, 'material.mtlx')], {
-        timeout: 8_000,
-      });
+      const unpackResult = await cli.run(
+        ['transform', fixture.archivePath, '-o', path.join(outputDir, 'material.mtlx')],
+        { timeout: 8_000 },
+      );
       expect(unpackResult).toSucceed();
       expect(existsSync(path.join(outputDir, 'material.mtlx'))).toBe(true);
       expect(existsSync(path.join(outputDir, 'textures/albedo.png'))).toBe(true);
@@ -157,13 +160,79 @@ describe('mtlx', () => {
       const checkResult = await cli.run(['check', zipPath], { timeout: 8_000 });
       expect(checkResult).toSucceed();
 
-      const unpackResult = await cli.run(['transform', zipPath, path.join(outputDir, 'material.mtlx')], {
+      const unpackResult = await cli.run(['transform', zipPath, '-o', path.join(outputDir, 'material.mtlx')], {
         timeout: 8_000,
       });
       expect(unpackResult).toSucceed();
       expect(existsSync(path.join(outputDir, 'material.mtlx'))).toBe(true);
     } finally {
       await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('transform combines multiple inputs into one output via --output', async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-combine-'));
+    try {
+      const aPath = path.join(tempDir, 'a.mtlx');
+      const bPath = path.join(tempDir, 'b.mtlx');
+      const outputPath = path.join(tempDir, 'combined.mtlx');
+      writeFileSync(
+        aPath,
+        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_a" type="material" /></materialx>',
+        'utf8',
+      );
+      writeFileSync(
+        bPath,
+        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_b" type="material" /></materialx>',
+        'utf8',
+      );
+
+      const result = await cli.run(['transform', aPath, bPath, '-o', outputPath], { timeout: 8_000 });
+      expect(result).toSucceed();
+
+      const info = await cli.run(['info', outputPath, '--format', 'json'], { timeout: 8_000 });
+      expect(info).toSucceed();
+      expect(
+        JSON.parse(info.stdout).materials.toSorted((l: { name: string }, r: { name: string }) =>
+          l.name.localeCompare(r.name),
+        ),
+      ).toEqual([
+        { name: 'M_a', category: 'surfacematerial' },
+        { name: 'M_b', category: 'surfacematerial' },
+      ]);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('transform fails to combine inputs that share a top-level name', async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-combine-dup-'));
+    try {
+      const aPath = path.join(tempDir, 'a.mtlx');
+      writeFileSync(
+        aPath,
+        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_a" type="material" /></materialx>',
+        'utf8',
+      );
+
+      const result = await cli.run(['transform', aPath, aPath, '-o', path.join(tempDir, 'out.mtlx')], {
+        timeout: 8_000,
+      });
+      expect(result).toFail();
+      expect(result).toHaveStderr(/duplicate top-level name/);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it("the 'x' alias behaves like transform", async () => {
+    const fixture = await makePackFixture();
+    try {
+      const result = await cli.run(['x', fixture.materialPath, '-o', fixture.archivePath], { timeout: 8_000 });
+      expect(result).toSucceed();
+      expect(existsSync(fixture.archivePath)).toBe(true);
+    } finally {
+      await rm(fixture.tempDir, { recursive: true, force: true });
     }
   });
 
@@ -201,6 +270,7 @@ describe('mtlx', () => {
           [
             'transform',
             materialPath,
+            '-o',
             path.join(outputDir, 'wood_grain.mtlx'),
             '--max-image-size',
             '32',
@@ -234,13 +304,13 @@ describe('mtlx', () => {
         const materialPath = path.join(tempDir, 'wood_grain.mtlx');
         const archivePath = path.join(tempDir, 'wood_grain.mtlx.zip');
         const packResult = await cli.run(
-          ['transform', materialPath, archivePath, '--max-image-size', '32', '--image-format', 'webp'],
+          ['transform', materialPath, '-o', archivePath, '--max-image-size', '32', '--image-format', 'webp'],
           { timeout: 15_000 },
         );
         expect(packResult).toSucceed();
 
         const unpackResult = await cli.run(
-          ['transform', archivePath, path.join(tempDir, 'out', 'wood_grain.mtlx'), '--format', 'json'],
+          ['transform', archivePath, '-o', path.join(tempDir, 'out', 'wood_grain.mtlx'), '--format', 'json'],
           { timeout: 8_000 },
         );
         expect(unpackResult).toSucceed();

@@ -16,8 +16,9 @@ npm install --global mtlx-cli
 ```
 
 Every command accepts `--format text|json|yaml` (default `text`), so output can be piped into
-other tools. `transform` reads any format and writes any format, so packing and unpacking are just
-a conversion with no options.
+other tools. `transform` (aliased `x`) takes one or more `--input`/positional files and one
+`--output`/`-o` (like ffmpeg): it reads any format and writes any format, so packing and unpacking
+are just a conversion with no options, and multiple inputs are combined into a single output.
 
 ```sh
 # validate a file; exits non-zero on any error-level issue, so it works as a CI gate
@@ -27,13 +28,16 @@ mtlx check material.mtlx
 mtlx info material.mtlx.zip --format json
 
 # pack a .mtlx (plus its textures) into a single .mtlx.zip
-mtlx transform material.mtlx material.mtlx.zip
+mtlx x material.mtlx -o material.mtlx.zip
 
 # unpack a .mtlx.zip back into a .mtlx with textures alongside it
-mtlx transform material.mtlx.zip out/material.mtlx
+mtlx x material.mtlx.zip -o out/material.mtlx
 
 # convert while packing: resize textures and switch their format
-mtlx transform material.mtlx material.mtlx.zip --max-image-size 2048 --image-format webp
+mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
+
+# combine multiple materials into a single .mtlx.zip
+mtlx x metal.mtlx wood.mtlx glass.mtlx -o combined.mtlx.zip
 
 # open a 3D preview in your browser (local only, nothing is uploaded)
 mtlx view material.mtlx

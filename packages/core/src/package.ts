@@ -339,6 +339,67 @@ export const packageToEntries = (pkg: MaterialXPackage): MaterialXPackageEntry[]
 };
 
 /**
+ * *Combines multiple packages into one, root document first.* Resources are concatenated,
+ * renaming (and rewriting references to) any archive path that collides with one already taken.
+ * Throws if two inputs share a top-level element name (materials, nodegraphs, etc.), since
+ * MaterialX names must be unique within a document and there's no safe way to rename one without
+ * also rewriting every reference to it.
+ *
+ * A single-package input is returned as-is.
+ *
+ * @category Packaging
+ */
+export const mergeMaterialXPackages = (packages: MaterialXPackage[]): MaterialXPackage => {
+  if (packages.length === 0) {
+    throw new Error('No input files to merge');
+  }
+  const [first, ...rest] = packages as [MaterialXPackage, ...MaterialXPackage[]];
+  if (rest.length === 0) {
+    return first;
+  }
+
+  const usedNames = new Set(
+    first.document.elements.map((element) => element.attributes.name).filter((name): name is string => !!name),
+  );
+  const usedArchivePaths = new Set(first.resources.map((resource) => resource.archivePath));
+
+  const merged: MaterialXPackage = {
+    rootPath: first.rootPath,
+    document: { ...first.document, elements: [...first.document.elements] },
+    resources: [...first.resources],
+  };
+
+  for (const pkg of rest) {
+    for (const element of pkg.document.elements) {
+      const name = element.attributes.name;
+      if (name && usedNames.has(name)) {
+        throw new Error(`Cannot combine inputs: duplicate top-level name "${name}"`);
+      }
+      if (name) {
+        usedNames.add(name);
+      }
+    }
+    for (const resource of pkg.resources) {
+      let { archivePath } = resource;
+      if (usedArchivePaths.has(archivePath)) {
+        const slash = archivePath.lastIndexOf('/');
+        const directory = archivePath.slice(0, slash);
+        const basename = archivePath.slice(slash + 1);
+        const renamed = uniqueArchivePath(directory, basename, usedArchivePaths);
+        rewriteResourcePath(pkg.document, archivePath, renamed);
+        archivePath = renamed;
+      } else {
+        usedArchivePaths.add(archivePath);
+      }
+      merged.resources.push({ ...resource, archivePath });
+    }
+    merged.document.elements.push(...pkg.document.elements);
+  }
+
+  return merged;
+};
+
+/**
  * *Builds a package from an inspected archive.* Accepts the result of
  * {@link inspectMaterialXZipArchive}; throws if the archive reported errors or has no root
  * document.

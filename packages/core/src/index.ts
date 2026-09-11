@@ -9,6 +9,7 @@ export { checkMaterialXZipArchive, createMaterialXZipArchive, inspectMaterialXZi
 export type { MaterialXZipArchive, MaterialXZipEntry } from './mtlxzip.js';
 export {
   detectFormat,
+  mergeMaterialXPackages,
   packageFromArchive,
   packageToEntries,
   resolveMaterialXResources,

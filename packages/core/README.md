@@ -48,6 +48,7 @@ import {
   checkMaterialXZipArchive,
   detectFormat,
   materialXNodeRegistry,
+  mergeMaterialXPackages,
   parseMaterialX,
   resolveMaterialXResources,
   rewriteResourcePath,
@@ -88,6 +89,10 @@ await transform(pkg, resizeTextures({ maxImageSize: 2048 }));
 
 // If a transform renames a resource, keep the document's references in sync.
 rewriteResourcePath(document, 'textures/old.png', 'textures/new.png');
+
+// Combine multiple packages into one, renaming any colliding resource archive path;
+// throws if two inputs share a top-level element name.
+const combined = mergeMaterialXPackages([metalPkg, woodPkg, glassPkg]);
 ```
 
 Writing your own transform is the same shape:
