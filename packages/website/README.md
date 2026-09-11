@@ -19,6 +19,9 @@ analysis runs in a worker; loose remote materials resolve dependencies relative 
 A blue-on-white progress overlay appears immediately while loading, advances with streamed bytes
 when a download size is available, and shows the checking and rendering stages before the preview.
 Unknown-size downloads show received bytes; phase milestones do not estimate elapsed time.
+The details panel uses matching collapsible sections in this order: File details, Materials,
+References, Internal Nodes, and Validity Checks. File details starts open; Materials starts open
+only for documents with multiple materials. References and Internal Nodes include counts and start collapsed.
 Validity Checks uses one collapsed summary when all checks pass. Expand it for XML, nodes, structure,
 types, dependencies, renderer support and preview results. Failures and warnings expand automatically
 with diagnostics beneath the affected check; unavailable checks are never marked as passed.

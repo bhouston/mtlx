@@ -166,6 +166,10 @@ test('locally hosted CLI compound sample validates, switches materials, and surv
   await page.getByRole('combobox', { name: 'Sample material' }).click();
   await page.getByRole('option', { name: 'compound', exact: true }).click();
   await expectReady();
+  const materialsSection = page
+    .locator('#material-details details')
+    .filter({ has: page.locator('summary', { hasText: 'Materials (2)' }) });
+  expect(await materialsSection.evaluate((element) => (element as HTMLDetailsElement).open)).toBe(true);
   const url = `http://localhost:${PORT}/materials/compound/compound.mtlx`;
   expect(new URL(page.url()).searchParams.get('materialUrl')).toBe(url);
   expect(await page.getByRole('textbox', { name: 'Material URL' }).inputValue()).toBe(url);
@@ -312,6 +316,17 @@ test('validity checks collapse successes, expand failures, and remain keyboard a
   await page.goto(`http://localhost:${PORT}/viewer`);
   await page.setInputFiles('input[type=file]', materialPath);
   await expectReady();
+  const sections = page.locator('#material-details > div > details');
+  expect(await sections.locator(':scope > summary').allTextContents()).toEqual([
+    'File details',
+    'Materials (1)',
+    'References (0)',
+    'Internal Nodes (2)',
+    'Validity Checks ✓Passed',
+  ]);
+  expect(
+    await sections.evaluateAll((elements) => elements.map((element) => (element as HTMLDetailsElement).open)),
+  ).toEqual([true, false, false, false, false]);
   const checks = page.locator('[data-validity-state]');
   const summary = checks.locator('summary');
   if (process.env.MTLX_VALIDITY_SCREENSHOT)
