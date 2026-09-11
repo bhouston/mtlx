@@ -1,3 +1,6 @@
+import { validateMaterialXPackage } from './validate-package.js';
+import { validateDocument } from './validate.js';
+import type { MaterialXReadLimits } from './limits.js';
 import { applyResourceDestinations, buildResourceGraph, cloneMaterialXPackage } from './resource-graph.js';
 /**
  * Filesystem entry points for Node.js: read and write `.mtlx` and `.mtlx.zip` files.
@@ -11,7 +14,7 @@ import { createHash } from 'node:crypto';
 import { lstat, mkdir, readFile, writeFile, rename, unlink, link, rmdir } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
-import { checkMaterialXZipArchive, createMaterialXZipArchive, inspectMaterialXZipArchive } from './mtlxzip.js';
+import { createMaterialXZipArchive, inspectMaterialXZipArchive } from './mtlxzip.js';
 import {
   detectFormat,
   packageFromArchive,
@@ -23,7 +26,7 @@ import {
   type MaterialXPackage,
 } from './package.js';
 import type { MaterialXDocument, MaterialXValidationIssue } from './types.js';
-import { checkMaterialXText, type MaterialXValidationOptions } from './validate.js';
+import { type MaterialXValidationOptions } from './validate.js';
 import { parseMaterialX, serializeMaterialX } from './xml.js';
 
 const textDecoder = new TextDecoder();
@@ -369,17 +372,48 @@ export interface CheckMaterialXResult {
  */
 export const checkMaterialX = async (
   inputPath: string,
-  options: { validation?: MaterialXValidationOptions } = {},
+  options: { validation?: MaterialXValidationOptions; limits?: Partial<MaterialXReadLimits> } = {},
 ): Promise<CheckMaterialXResult> => {
-  void options;
+  const format = detectFormat(inputPath);
+  const validation = {
+    ...options.validation,
+    rules: options.validation?.rules ?? ['basic', 'structure', 'resources'],
+  } as MaterialXValidationOptions;
   try {
-    const format = detectFormat(inputPath);
     const data = await readFile(inputPath);
-    const issues =
-      format === 'mtlx' ? checkMaterialXText(textDecoder.decode(data), inputPath) : checkMaterialXZipArchive(data);
-    return { path: inputPath, format, issues };
+    const document = format === 'mtlx' ? parseMaterialX(textDecoder.decode(data), options.limits) : undefined;
+    if (!document) {
+      const archive = inspectMaterialXZipArchive(data, options.limits);
+      if (!archive.rootEntry) return { path: inputPath, format, issues: archive.issues };
+      return { path: inputPath, format, issues: validateMaterialXPackage(packageFromArchive(archive), validation) };
+    }
+    if (!validation.rules!.includes('resources'))
+      return { path: inputPath, format, issues: validateDocument(document, validation) };
+    const resources = await resolveMaterialXResources(
+      document,
+      (rel) => readFile(path.join(path.dirname(inputPath), rel)),
+      { rootPath: path.basename(inputPath) },
+    );
+    return {
+      path: inputPath,
+      format,
+      issues: validateMaterialXPackage({ rootPath: path.basename(inputPath), document, resources }, validation),
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return { path: inputPath, format: 'mtlx', issues: [{ level: 'error', location: inputPath, message }] };
+    const resourceError = /Referenced file|include cycle|references cannot/.test(message);
+    return {
+      path: inputPath,
+      format,
+      issues: [
+        {
+          level: 'error',
+          code: resourceError ? 'RESOURCE_RESOLUTION_FAILED' : 'READ_OR_PARSE_ERROR',
+          rule: resourceError ? 'resources' : 'basic',
+          location: inputPath,
+          message,
+        },
+      ],
+    };
   }
 };

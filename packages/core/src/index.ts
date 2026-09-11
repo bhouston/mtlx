@@ -55,3 +55,5 @@ export type { MaterialXResourceGraph, MaterialXDependencyEdge } from './resource
 
 export { DEFAULT_MATERIALX_READ_LIMITS } from './limits.js';
 export type { MaterialXReadLimits } from './limits.js';
+
+export { validateMaterialXPackage } from './validate-package.js';

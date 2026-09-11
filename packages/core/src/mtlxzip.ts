@@ -1,3 +1,6 @@
+import { packageFromArchive } from './package.js';
+import { validateMaterialXPackage } from './validate-package.js';
+import type { MaterialXValidationOptions } from './validate.js';
 import { Unzip, UnzipInflate, unzipSync, zipSync } from 'fflate';
 import { resolveMaterialXReadLimits, type MaterialXReadLimits } from './limits.js';
 import type { MaterialXPackageEntry } from './package.js';
@@ -172,13 +175,25 @@ export const createMaterialXZipArchive = (entries: MaterialXPackageEntry[]): Uin
 export const checkMaterialXZipArchive = (
   data: Uint8Array,
   limits?: Partial<MaterialXReadLimits>,
+  validation?: MaterialXValidationOptions,
 ): MaterialXValidationIssue[] => {
   const archive = inspectMaterialXZipArchive(data, limits);
-  if (!archive.rootEntry) {
-    return archive.issues;
+  if (!archive.rootEntry) return archive.issues;
+  const parseIssues = checkMaterialXText(textDecoder.decode(archive.rootEntry.data), archive.rootEntry.path, limits, {
+    rules: [],
+  });
+  if (parseIssues.some((issue) => issue.level === 'error')) return [...archive.issues, ...parseIssues];
+  try {
+    return [...archive.issues, ...validateMaterialXPackage(packageFromArchive(archive), validation)];
+  } catch (error) {
+    return [
+      {
+        level: 'error',
+        code: 'PACKAGE_INVALID',
+        rule: 'resources',
+        location: archive.rootEntry.path,
+        message: error instanceof Error ? error.message : String(error),
+      },
+    ];
   }
-  return [
-    ...archive.issues,
-    ...checkMaterialXText(textDecoder.decode(archive.rootEntry.data), archive.rootEntry.path, limits),
-  ];
 };
