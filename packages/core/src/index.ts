@@ -43,3 +43,11 @@ export type {
 } from './types.js';
 export { checkMaterialXText, validateDocument } from './validate.js';
 export { createMaterialXDocument, cloneMaterialXDocument, parseMaterialX, serializeMaterialX } from './xml.js';
+
+export {
+  buildResourceGraph,
+  cloneMaterialXPackage,
+  planResourceDestinations,
+  applyResourceDestinations,
+} from './resource-graph.js';
+export type { MaterialXResourceGraph, MaterialXDependencyEdge } from './resource-graph.js';

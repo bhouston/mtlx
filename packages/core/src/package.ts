@@ -38,6 +38,10 @@ export const detectFormat = (filePath: string): MaterialXFormat => {
  * @category Packaging
  */
 export interface MaterialXResource {
+  /** Stable identity in a resolved dependency graph. */
+  id?: string;
+  /** Canonical tree for an included MaterialX document; serialized on output. */
+  document?: MaterialXDocument;
   archivePath: string;
   sourcePath: string;
   data: Uint8Array;
