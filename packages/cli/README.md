@@ -6,7 +6,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 
-Part of the [mtlx](https://github.com/bhouston/mtlx) suite. Installs the `mtlx` command
+Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca). Installs the `mtlx` command
 for validating, inspecting, packaging, previewing, and transforming MaterialX files
 (`.mtlx`, `.mtlx.zip`). Requires Node.js 22 or later. Texture conversion uses sharp's native image
 processing; browser-safe library imports are available separately through `mtlx-core`.

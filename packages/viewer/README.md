@@ -6,9 +6,9 @@
 [![npm downloads](https://img.shields.io/npm/dm/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 
-The shared browser preview layer of the [mtlx](https://github.com/bhouston/mtlx) suite:
-three.js MaterialX scenes and IBL environment assets used by the website, CLI preview, and VS Code
-extension. The caller supplies a compatible three.js renderer and owns its rendering lifecycle.
+Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca).
+Provides three.js MaterialX scenes and IBL environment assets used by the website, CLI preview, and VS Code
+extension. Callers own the rendering lifecycle, with optional shared helpers for renderer setup and cleanup.
 Preview support follows three.js's MaterialX loader; it is not a full reference MaterialX renderer.
 
 ```sh
@@ -19,8 +19,8 @@ npm install mtlx-viewer three
 
 `createMtlxScene` parses a `.mtlx` / `.mtlx.zip` file and builds a swappable preview scene: a
 shaderball/sphere/plane wearing the material, ready to add to your own `THREE.Scene`. Callers own
-the renderer, camera, controls, and animation loop; this package only owns the
-MaterialX-to-three.js parsing and the shared preview geometry/environments.
+the renderer, camera, controls, and animation loop. The scene owns MaterialX parsing and its
+preview geometry, materials, and textures.
 
 ```ts
 import { createMtlxScene, type MtlxScene } from 'mtlx-viewer';
@@ -97,14 +97,20 @@ threeScene.environment = texture;
 // ENVIRONMENT_ASSET_FILES maps each kind to its asset file name under mtlx-viewer/assets.
 ```
 
-## Inspection controls and capabilities
+## Shared host utilities
 
-The bridge is the initial environment in both hosts. The website and VS Code hosts provide pause/resume rotation, reduced-motion support, Reset,
-fullscreen, exposure, and environment intensity controls. The bottom IBL dropdown selects Studio
-or San Giuseppe Bridge, using the same HDR asset as the three-ntc website. Switching IBLs retains
-the camera, geometry, material and exposure; superseded environment loads are disposed. Hosts should pass `autoRotate: false`
-when the user's reduced-motion preference is active. Reset retains material, geometry, and
-lighting choices. The renderer and its `THREE.Scene` own exposure and environment intensity.
+Both the website and VS Code extension use these framework-independent modules:
+
+- `mtlx-viewer/diagnostics`: `computeChecks`, `summarizeInternalNodes`, and `formatFileSize` produce common inspection results without DOM or React dependencies.
+- `mtlx-viewer/settings`: `parseViewerSettings` validates rendering, lighting, rotation, material, and asset selections. Hosts can supply allowed custom IBL and geometry names. Persistence remains host-specific: website query parameters or VS Code webview state.
+- `mtlx-viewer/lifecycle`: `CleanupScope` releases resources in reverse ownership order, exactly once, including resources registered after disposal.
+- The main entry exports `createViewerRenderer`, `observeViewerResize`, and `applyViewerRenderingSettings`. These helpers share renderer initialization, pixel-ratio limits, resize handling, EV exposure, and lighting settings. Hosts retain their canvas sizing policy and animation loop.
+
+The website's query adapter supports the built-in environments and geometries. The extension's
+state adapter also supports configured assets and preserves its existing storage keys and saved camera.
+Its configuration determines initial rotation; reduced-motion preferences take precedence.
+
+## Inspection capabilities
 
 <!-- test:capabilities -->
 

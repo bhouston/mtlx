@@ -101,7 +101,7 @@ export function summarizeInternalNodes(summary?: {
     types.set(node.category, (types.get(node.category) ?? 0) + 1);
   }
   return {
-    types: [...types].sort(([a], [b]) => a.localeCompare(b)),
+    types: [...types].toSorted(([a], [b]) => a.localeCompare(b)),
     count: [...types.values()].reduce((total, count) => total + count, 0),
   };
 }

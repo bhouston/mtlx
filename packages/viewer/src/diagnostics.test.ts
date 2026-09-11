@@ -32,13 +32,15 @@ it('does not claim unrun validation passed after malformed XML', () => {
   expect(checks[0]?.state).toBe('failed');
   expect(checks.slice(1).every((check) => check.state === 'unchecked')).toBe(true);
 });
+const dependencyCheck = (input: DiagnosticInput) =>
+  computeChecks(input).checks.find((check) => check.name === 'Dependencies')!;
+
 it('distinguishes pending, unchecked, and failed dependencies', () => {
-  const state = (input: DiagnosticInput) => computeChecks(input).checks.find((check) => check.name === 'Dependencies')!;
-  expect(state({ ...ready, resourcesChecked: false }).state).toBe('unchecked');
-  expect(state({ ...ready, preview: { state: 'loading', resources: 'loading', failedResources: [] } }).state).toBe(
-    'pending',
-  );
-  const failed = state({
+  expect(dependencyCheck({ ...ready, resourcesChecked: false }).state).toBe('unchecked');
+  expect(
+    dependencyCheck({ ...ready, preview: { state: 'loading', resources: 'loading', failedResources: [] } }).state,
+  ).toBe('pending');
+  const failed = dependencyCheck({
     ...ready,
     preview: { state: 'ready', resources: 'loaded', failedResources: ['texture.png'] },
   });

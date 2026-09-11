@@ -10,6 +10,8 @@
 _A TypeScript/JavaScript [MaterialX](https://materialx.org) toolkit for inspecting,
 packaging, transforming, and previewing materials._
 
+The [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca) includes libraries, a CLI, a web viewer, and a VS Code extension.
+
 mtlx works with loose `.mtlx` documents and `.mtlx.zip` archives. Try the
 [web viewer](https://mtlx.ben3d.ca), automate material preparation with the CLI, or embed the
 library in your application. The root `mtlx-core` API is browser-safe and has no filesystem or

@@ -17,6 +17,9 @@ import { vscode } from './host.js';
 /** Keep the existing VS Code storage keys so saved previews survive upgrades. */
 export const previewState: PreviewState = vscode?.getState() ?? {};
 
+const vector = (value: unknown): value is number[] =>
+  Array.isArray(value) && value.length === 3 && value.every((n) => typeof n === 'number' && Number.isFinite(n));
+
 export function normalizePreviewState(saved: PreviewState, settings: PreviewSettings): PreviewState {
   const settingsKey = JSON.stringify(settings);
   const changed = saved.settingsKey !== settingsKey;
@@ -34,8 +37,6 @@ export function normalizePreviewState(saved: PreviewState, settings: PreviewSett
     },
     { ibls: settings.ibls.map((asset) => asset.name), geometries: settings.geometries.map((asset) => asset.name) },
   );
-  const vector = (value: unknown): value is number[] =>
-    Array.isArray(value) && value.length === 3 && value.every((n) => typeof n === 'number' && Number.isFinite(n));
   const camera = saved.camera;
   return {
     settingsKey,

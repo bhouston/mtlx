@@ -20,8 +20,8 @@ mtlx x material.mtlx -o material.mtlx.zip
 # unpack a .mtlx.zip back into a .mtlx with textures alongside it
 mtlx x material.mtlx.zip -o out/material.mtlx
 
-# convert while packing: resize textures and switch their format
-mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
+# convert while packing: resize textures and switch their format to be web compatible
+mtlx x material.mtlx -o material.mtlx.zip --profile web
 
 # combine multiple materials (a glob or an explicit list) into a single .mtlx.zip
 mtlx x "materials/*.mtlx" -o combined.mtlx.zip

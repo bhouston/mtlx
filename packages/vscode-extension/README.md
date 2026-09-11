@@ -1,7 +1,7 @@
 # Mtlx Viewer
 
 Preview, inspect, and package [MaterialX](https://materialx.org) materials inside desktop VS Code.
-Part of the [mtlx toolkit](https://github.com/bhouston/mtlx).
+Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca).
 
 ![Mtlx Viewer screenshot](images/screenshot.webp)
 
@@ -116,6 +116,20 @@ watching with a mocked VS Code API, plus the actual bundled webview in Chromium 
 recreation, keyboard controls and reduced motion). This does not certify every real editor/GPU
 combination. The manifest requires VS Code 1.85 or later. Marketplace and Open VSX should both
 publish the same packaged README and VSIX.
+
+## Preview implementation
+
+`src/preview/preview.ts` handles incoming document messages and replacement. The other webview modules own distinct responsibilities:
+
+- `host.ts`: VS Code API access and cancellable asset request/reply handling.
+- `state.ts`: validation and restoration of persisted settings, custom asset names, and camera state.
+- `scene.ts`: material/geometry loading and scene orchestration.
+- `settings-controls.ts`, `scene-controls.ts`, `environment-controls.ts`: disposable control bindings.
+- `diagnostics.ts`: editor-themed inspection UI and diagnostic logs, using the shared `mtlx-viewer/diagnostics` calculations.
+
+Shared renderer setup, resize handling, rendering settings, and resource ownership live in `mtlx-viewer`.
+The webview remains plain TypeScript and DOM code. Run `pnpm --filter mtlx-vscode-extension check:preview`
+to type-check it separately from the extension host, and `build:preview` to create the browser bundle.
 
 ## Author
 

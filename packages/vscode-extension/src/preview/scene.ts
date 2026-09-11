@@ -3,8 +3,7 @@ import { bindSceneControls } from './scene-controls.js';
 import * as THREE from 'three/webgpu';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createMtlxScene, CleanupScope, createViewerRenderer, observeViewerResize, type MtlxScene } from 'mtlx-viewer';
-// esbuild's dataurl loader (see build-preview.js) inlines this as a base64 data: URL string.
-import { type PreviewSettings } from '../previewSettings.js';
+import type { PreviewSettings } from '../previewSettings.js';
 
 import { vscode, requestAsset } from './host.js';
 import { previewState } from './state.js';

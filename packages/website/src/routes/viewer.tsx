@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { MaterialViewer } from '@/components/MaterialViewerLazy';
 import { InfoPanel } from '@/components/InfoPanel';
@@ -56,6 +56,13 @@ function ViewerPage() {
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-semibold tracking-tight">MaterialX viewer</h1>
         <p className="text-sm text-muted-foreground">Preview and validate .mtlx and .mtlx.zip files in your browser.</p>
+        <p className="text-sm text-muted-foreground">
+          Part of the{' '}
+          <Link to="/" className="text-primary underline underline-offset-4">
+            Mtlx suite of web-focused MaterialX tools
+          </Link>
+          .
+        </p>
       </header>
       <ViewerToolbar search={search} onLoadFile={loadFromFile} onLoadUrl={loadFromUrl} />
       {fileError && !analysis?.parseError ? (

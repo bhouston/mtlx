@@ -33,6 +33,9 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri, e
       height: 100vh;
       overflow: hidden;
     }
+    .suite-note { flex: none; margin: 0 0 12px; font-size: 12px; line-height: 1.5; color: var(--vscode-descriptionForeground); }
+    .suite-note a { color: var(--vscode-textLink-foreground); text-underline-offset: 3px; }
+    .suite-note a:hover { color: var(--vscode-textLink-activeForeground); }
     .layout { display: flex; gap: 12px; flex: 1; min-height: 0; }
     .viewport-wrap { flex: 3; min-width: 0; position: relative; display: flex; flex-direction: column; }
     .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-bottom: 12px; flex: none; }
@@ -84,6 +87,7 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri, e
   </style>
 </head>
 <body data-hdr-url="${environmentUri}">
+  <p class="suite-note">Part of the <a href="https://mtlx.ben3d.ca" target="_blank" rel="noopener noreferrer">Mtlx suite of web-focused MaterialX tools</a>.</p>
   <div class="layout">
     <div class="viewport-wrap">
       <div class="toolbar">

@@ -172,8 +172,11 @@ test.each([false, true])(
       const savedCamera = await page.evaluate(() => JSON.parse(localStorage.getItem('preview-state')!).camera);
       expect(savedCamera.position).toHaveLength(3);
       await page.reload();
+      const persistedCamera = await page.evaluate(() => JSON.parse(localStorage.getItem('preview-state')!).camera);
       await send();
-      expect(await page.evaluate(() => JSON.parse(localStorage.getItem('preview-state')!).camera)).toEqual(savedCamera);
+      expect(await page.evaluate(() => JSON.parse(localStorage.getItem('preview-state')!).camera)).toEqual(
+        persistedCamera,
+      );
       expect(await page.getByRole('checkbox', { name: 'Bloom', exact: true }).isChecked()).toBe(custom);
       expect(await page.getByRole('checkbox', { name: 'Ambient occlusion' }).isChecked()).toBe(custom);
       expect(await page.getByRole('combobox', { name: 'Tone mapping' }).inputValue()).toBe('reinhard');

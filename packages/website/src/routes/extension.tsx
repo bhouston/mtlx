@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { buttonVariants } from '@/components/ui/button';
 
 export const Route = createFileRoute('/extension')({
@@ -52,6 +52,13 @@ function ExtensionPage() {
             MaterialX
           </a>{' '}
           files directly in VS Code, built on the same <code>mtlx-core</code> library as the CLI and this site's viewer.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Part of the{' '}
+          <Link to="/" className="text-primary underline underline-offset-4">
+            Mtlx suite of web-focused MaterialX tools
+          </Link>
+          .
         </p>
       </div>
 

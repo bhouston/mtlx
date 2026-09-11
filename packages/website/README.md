@@ -1,5 +1,7 @@
 # MaterialX website
 
+Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca).
+
 The React/TanStack Start website hosts the MaterialX inspector and documentation. It uses the
 shared `mtlx-viewer` scene and assets; parsing and validation come from `mtlx-core`.
 
@@ -121,5 +123,7 @@ root as context and `packages/website/Dockerfile`, exposes port 8080, and runs t
 - `src/hooks/use-material-load.ts`: TanStack Query mutation state, progress, and cancellation on replacement/unmount.
 - `src/lib/material-load.ts`: abortable file/download and analysis promise with structured error diagnostics.
 - `src/lib/material-analysis.worker.ts`: all validation rules and recursive remote resources.
+- `../viewer/src/diagnostics.ts`: shared validation statuses and internal-node summaries.
+- `../viewer/src/runtime.ts` and `lifecycle.ts`: shared renderer setup, resizing, settings application, and cleanup.
 - `../viewer/src/scene.ts`: shared geometry, material selection, rotation and Reset.
 - `../core/src/inspect.ts`: shared XML/archive/dependency inspection.

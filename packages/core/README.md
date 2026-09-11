@@ -6,7 +6,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 
-Part of the [mtlx](https://github.com/bhouston/mtlx) suite. The root TypeScript/JavaScript
+Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca). The root TypeScript/JavaScript
 API runs on bytes and text in browsers and Node. Filesystem helpers and native sharp texture
 processing are exposed through separate Node-only subpaths. Installing this package also installs
 sharp; keeping it out of browser bundles does not make the npm dependency native-free.
