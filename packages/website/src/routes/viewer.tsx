@@ -5,9 +5,9 @@ import { InfoPanel } from '@/components/InfoPanel';
 import { LogPanel } from '@/components/LogPanel';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { extractMaterialXText } from '@/lib/materialx-zip';
+import { MaterialLoadController } from '@/lib/material-load';
 import { PRESET_MATERIALS, presetId, resolveMaterialParam } from '@/lib/presets';
-import { analyzeMaterialXText, type MaterialXAnalysis } from '@/lib/validate';
+import type { MaterialXAnalysis } from '@/lib/validate';
 
 export interface ViewerSearch {
   material?: string;
@@ -32,6 +32,8 @@ export const Route = createFileRoute('/viewer')({
 function ViewerPage() {
   const { material } = Route.useSearch();
   const navigate = Route.useNavigate();
+  const loader = useRef(new MaterialLoadController());
+  useEffect(() => () => loader.current.cancel(), []);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [source, setSource] = useState<MaterialSource | null>(null);
   const [fileMeta, setFileMeta] = useState<{ name: string; size: number } | null>(null);
@@ -48,44 +50,39 @@ function ViewerPage() {
     if (message) appendLog(`ERROR: ${message}`);
   };
 
-  const loadFromFile = async (file: File) => {
+  const load = async (input: File | { url: string; name: string }) => {
+    setSource(null);
+    setFileMeta(null);
+    setAnalysis(null);
+    setViewerError(null);
     setFileError(null);
-    const lowerName = file.name.toLowerCase();
-    if (!lowerName.endsWith('.mtlx') && !lowerName.endsWith('.mtlx.zip')) {
+    appendLog(`Loading ${input.name}...`);
+    await loader.current.load(
+      input,
+      (result) => {
+        setSource(result.source);
+        setFileMeta(result.fileMeta);
+        setAnalysis(result.analysis);
+        appendLog(`Parsed ${input.name}.`);
+      },
+      (message) => {
+        setFileError(message);
+        appendLog(`ERROR: ${message}`);
+      },
+    );
+  };
+
+  const loadFromFile = async (file: File) => {
+    loader.current.cancel();
+    if (!/\.mtlx(\.zip)?$/i.test(file.name)) {
+      setSource(null);
+      setFileMeta(null);
+      setAnalysis(null);
       setFileError('Unsupported file type — drop a .mtlx or .mtlx.zip file.');
       return;
     }
     void navigate({ to: '.', search: {} });
-    appendLog(`Loading ${file.name}...`);
-    try {
-      const data = await file.arrayBuffer();
-      setSource({ kind: 'buffer', data, name: file.name });
-      const text = lowerName.endsWith('.mtlx') ? new TextDecoder().decode(data) : extractMaterialXText(data);
-      setFileMeta({ name: file.name, size: data.byteLength });
-      setAnalysis(analyzeMaterialXText(file.name, text));
-      appendLog(`Parsed ${file.name}.`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setFileError(message);
-      appendLog(`ERROR: ${message}`);
-    }
-  };
-
-  const loadFromUrl = async (folderUrl: string, fileName: string) => {
-    setFileError(null);
-    setSource({ kind: 'url', folderUrl, fileName });
-    const url = `${folderUrl}${fileName}`;
-    appendLog(`Fetching ${url}...`);
-    try {
-      const text = await fetch(url).then((response) => response.text());
-      setFileMeta({ name: fileName, size: new TextEncoder().encode(text).length });
-      setAnalysis(analyzeMaterialXText(fileName, text));
-      appendLog(`Parsed ${fileName}.`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setFileError(message);
-      appendLog(`ERROR: ${message}`);
-    }
+    await load(file);
   };
 
   // Drive the viewer entirely from the `material` query param, so a link can be shared and reloaded.
@@ -93,10 +90,15 @@ function ViewerPage() {
     if (!material) return;
     const resolved = resolveMaterialParam(material);
     if (!resolved) {
+      loader.current.cancel();
+      setSource(null);
+      setFileMeta(null);
+      setAnalysis(null);
+      setFileError(`Unknown material "${material}"`);
       appendLog(`ERROR: Unknown material "${material}"`);
       return;
     }
-    void loadFromUrl(resolved.folderUrl, resolved.fileName);
+    void load({ url: `${resolved.folderUrl}${resolved.fileName}`, name: resolved.fileName });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [material]);
 
@@ -155,7 +157,7 @@ function ViewerPage() {
       </div>
 
       <div
-        className={`grid gap-6 rounded-lg md:grid-cols-[3fr_1fr] ${dragActive ? 'outline-2 outline-offset-4 outline-primary' : ''}`}
+        className={`grid gap-6 rounded-lg md:grid-cols-[minmax(0,3fr)_minmax(260px,1fr)] ${dragActive ? 'outline-2 outline-offset-4 outline-primary' : ''}`}
         onDragOver={(event) => {
           event.preventDefault();
           setDragActive(true);
