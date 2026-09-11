@@ -11,9 +11,6 @@ MaterialX toolkit with no binary dependencies, working out of the box on Node, b
 macOS, and Linux. Installs the `mtlx` command for validating, inspecting, converting, and
 transforming MaterialX files (`.mtlx`, `.mtlx.zip`).
 
-- Library: [mtlx-core on npm](https://www.npmjs.com/package/mtlx-core)
-- Source: [github.com/bhouston/mtlx](https://github.com/bhouston/mtlx)
-
 ```sh
 npm install --global mtlx-cli
 ```

@@ -12,9 +12,6 @@ macOS, and Linux. This package holds the shared three.js MaterialX preview scene
 (image-based lighting) environment assets, used by both the [mtlx.ben3d.ca](https://mtlx.ben3d.ca)
 website and the VS Code extension so neither reimplements this from scratch.
 
-- Library: [mtlx-core on npm](https://www.npmjs.com/package/mtlx-core)
-- Source: [github.com/bhouston/mtlx](https://github.com/bhouston/mtlx)
-
 ```sh
 npm install mtlx-viewer three
 ```
