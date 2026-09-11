@@ -14,11 +14,13 @@ export const normalizeResourcePath = (value: string): string => {
 };
 export const resourceDirname = (value: string): string => value.slice(0, value.lastIndexOf('/') + 1);
 export const resolveResourcePath = (documentPath: string, value: string): string =>
-  value.startsWith('/') || /^[a-z]:/i.test(value)
+  value.startsWith('/') || /^[a-z][a-z0-9+.-]*:/i.test(value)
     ? value
-    : normalizeResourcePath(resourceDirname(documentPath) + value);
+    : /^[a-z][a-z0-9+.-]*:/i.test(documentPath)
+      ? new URL(value, documentPath).href
+      : normalizeResourcePath(resourceDirname(documentPath) + value);
 export const relativeResourcePath = (documentPath: string, target: string): string => {
-  if (target.startsWith('/') || /^[a-z]:/i.test(target)) return target;
+  if (target.startsWith('/') || /^[a-z][a-z0-9+.-]*:/i.test(target)) return target;
   const from = resourceDirname(documentPath).split('/').filter(Boolean);
   const to = target.split('/');
   while (from.length && from[0] === to[0]) {

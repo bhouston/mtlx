@@ -42,7 +42,7 @@ export class MaterialLoadController {
         resourceName = input.name;
       }
       if (generation !== this.generation) return;
-      const result = await analyzeInWorker(data, input.name, abort.signal);
+      const result = await analyzeInWorker(data, input.name, abort.signal, 'url' in input ? resourceName : undefined);
       if (generation !== this.generation) return;
       data = result.data;
       const analysis = result.analysis;

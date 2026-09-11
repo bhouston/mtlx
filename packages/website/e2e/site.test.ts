@@ -33,7 +33,7 @@ async function expectReady() {
     .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
     .toBe('ready');
   expect(await page.locator('canvas').count()).toBe(1);
-  expect(await page.locator('main').innerText()).toContain('Basic document checks passed');
+  expect(await page.locator('main').innerText()).toContain('Document checks passed');
   expect(await page.locator('main').innerText()).not.toContain('3D preview error:');
   expect(pageErrors).toEqual([]);
 }

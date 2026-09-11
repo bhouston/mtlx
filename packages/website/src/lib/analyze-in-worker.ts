@@ -12,6 +12,7 @@ export async function analyzeInWorker(
   data: ArrayBuffer,
   name: string,
   signal: AbortSignal,
+  resourceUrl?: string,
 ): Promise<MaterialAnalysisResult> {
   signal.throwIfAborted();
   let worker: Worker;
@@ -24,7 +25,7 @@ export async function analyzeInWorker(
       throw new Error(
         'Background analysis is unavailable; this browser can only analyze plain XML files up to 1 MiB without a worker.',
       );
-    const analysis = analyzeBytes(data, name);
+    const analysis = await analyzeBytes(data, name, resourceUrl, signal);
     analysis.issues.push({
       level: 'warning',
       code: 'WORKER_UNAVAILABLE',
@@ -58,7 +59,7 @@ export async function analyzeInWorker(
       reject(new Error(`Background material analysis failed: ${event.message || 'worker could not load'}`));
     });
     try {
-      worker.postMessage({ data, name }, [data]);
+      worker.postMessage({ data, name, resourceUrl }, [data]);
     } catch (error) {
       finish();
       reject(error);

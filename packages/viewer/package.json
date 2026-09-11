@@ -23,7 +23,11 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./assets/*": "./assets/*"
+    "./assets/*": "./assets/*",
+    "./capabilities": {
+      "types": "./dist/capabilities.d.ts",
+      "default": "./dist/capabilities.js"
+    }
   },
   "scripts": {
     "build": "tsc -p .",

@@ -10,6 +10,7 @@ export interface InfoPanelProps {
   viewerError?: string | null;
   preview?: PreviewReport;
   localFile?: boolean;
+  resourcesChecked?: boolean;
 }
 
 function formatFileSize(bytes: number): string {
@@ -42,6 +43,7 @@ export function InfoPanel({
   viewerError,
   preview,
   localFile,
+  resourcesChecked,
 }: InfoPanelProps) {
   if (!fileName && !parseError)
     return (
@@ -50,7 +52,10 @@ export function InfoPanel({
       </div>
     );
   const warningCount = issues.filter((issue) => issue.level === 'warning').length;
-  const valid = !parseError && !issues.some((issue) => issue.level === 'error');
+  const valid =
+    !parseError &&
+    !issues.some((issue) => issue.level === 'error' && issue.rule !== 'resources' && issue.rule !== 'renderer-support');
+  const resourceErrors = issues.filter((issue) => issue.level === 'error' && issue.rule === 'resources').length;
   const failed = preview?.failedResources ?? [];
   return (
     <div className="min-w-0 overflow-auto rounded-lg border border-border bg-card p-4 text-sm [overflow-wrap:anywhere]">
@@ -58,18 +63,24 @@ export function InfoPanel({
         <p>
           <strong>Document: </strong>
           <span className={valid ? 'text-green-600 dark:text-green-400' : 'text-destructive'}>
-            {valid ? '✓ Basic document checks passed' : '✗ Basic document checks failed'}
+            {valid ? '✓ Document checks passed' : '✗ Document checks failed'}
           </span>
         </p>
         <p>
           <strong>Resources: </strong>
-          {failed.length
-            ? `${failed.length} failed to load`
-            : preview?.resources === 'loading'
-              ? 'Loading requested resources…'
-              : preview?.resources === 'loaded'
-                ? 'Requested resources loaded'
-                : 'Not checked'}
+          {resourceErrors
+            ? `${resourceErrors} resource issues`
+            : failed.length
+              ? `${failed.length} failed to load`
+              : preview?.resources === 'loading'
+                ? 'Loading requested resources…'
+                : resourcesChecked
+                  ? 'Dependency checks passed'
+                  : preview?.resources === 'loaded'
+                    ? 'Requested resources loaded'
+                    : resourcesChecked
+                      ? 'Dependency checks passed'
+                      : 'Unavailable for checking'}
         </p>
         <p>
           <strong>Preview: </strong>
@@ -77,8 +88,8 @@ export function InfoPanel({
         </p>
       </output>
       <p className="mt-2 text-xs text-muted-foreground">
-        {warningCount} warning{warningCount === 1 ? '' : 's'}. Parsing and selected structural checks only; resource
-        completeness and shader compatibility are not established.
+        {warningCount} warning{warningCount === 1 ? '' : 's'}. Checks: XML, structure, types, dependencies and renderer
+        categories. Shader compilation is checked by the preview.
       </p>
       {parseError ? <p className="mt-2 text-destructive">Parse error: {parseError}</p> : null}
       {viewerError ? <p className="mt-2 text-destructive">3D preview error: {viewerError}</p> : null}

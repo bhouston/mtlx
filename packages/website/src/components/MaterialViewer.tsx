@@ -46,7 +46,7 @@ async function resolveSourceBytes(
   const response = await fetch(url, { signal });
   if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
   const data = await readBoundedResponse(response, materialByteLimit(source.fileName), signal);
-  const result = await analyzeInWorker(data, source.fileName, signal);
+  const result = await analyzeInWorker(data, source.fileName, signal, response.url || url);
   if (result.analysis.parseError) throw new Error(result.analysis.parseError);
   return { data: result.data, fileName: response.url || url };
 }

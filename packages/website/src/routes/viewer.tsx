@@ -255,6 +255,7 @@ function ViewerPage() {
             parseError={analysis?.parseError}
             viewerError={viewerError}
             preview={preview}
+            resourcesChecked={analysis?.resourcesChecked}
             localFile={source?.kind === 'buffer' && !/^https?:/.test(source.name) && !source.name.endsWith('.zip')}
           />
         </aside>
