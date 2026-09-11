@@ -62,12 +62,24 @@ pnpm docs:cli    # splice `mtlx --help` output into packages/cli/README.md (comm
 
 ## Releasing
 
-Update `CHANGELOG.md`, bump versions, then:
+Update `CHANGELOG.md` and package versions, then prepare and verify the actual npm tarballs:
 
 ```sh
-pnpm docs:cli && git add packages/cli/README.md
-pnpm make-release:core
-pnpm make-release:cli
+pnpm pack:release
+pnpm check:release
 ```
+
+The individual `make-release:core`, `make-release:viewer`, and `make-release:cli` commands
+build and pack into the root `publish/` directory. They never publish. Packing uses pnpm's
+workspace-aware packer, preserving each package's declared files and resolving workspace versions.
+The check installs all three tarballs with production dependencies in a temporary consumer,
+then exercises CLI help, validation, packing/unpacking, preview HTTP assets, and viewer exports.
+It requires registry access for external dependencies and never opens a browser.
+
+After reviewing the artifacts, publish the exact checked tarballs explicitly with
+`npm publish publish/<package>-<version>.tgz --access public`, in dependency order:
+`mtlx-core`, `mtlx-viewer`, then `mtlx-cli`. Do not rebuild between verification and publication.
+Build the extension separately with `pnpm --filter mtlx-vscode-extension package`; test that VSIX
+in VS Code before publishing it through the extension Marketplace workflow.
 
 The website deploys to Cloud Run from `main` via GitHub Actions.

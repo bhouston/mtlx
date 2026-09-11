@@ -18,7 +18,10 @@
     "docs:cli": "node scripts/docs-cli.mjs",
     "make-release:core": "node scripts/make-release.mjs packages/core",
     "make-release:cli": "node scripts/make-release.mjs packages/cli",
-    "gcloud": "gcloud auth application-default login && gcloud config set account \"neuralsoft@gmail.com\" && gcloud config set project bhouston-general-hosting && gcloud config set run/region us-central1"
+    "gcloud": "gcloud auth application-default login && gcloud config set account \"neuralsoft@gmail.com\" && gcloud config set project bhouston-general-hosting && gcloud config set run/region us-central1",
+    "make-release:viewer": "node scripts/make-release.mjs packages/viewer",
+    "pack:release": "pnpm make-release:core && pnpm make-release:viewer && pnpm make-release:cli",
+    "check:release": "node scripts/check-release.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.20.0",
