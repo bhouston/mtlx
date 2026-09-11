@@ -81,7 +81,7 @@ const parseNodeFromElement = (element: MaterialXElement): MaterialXNode => {
     category: element.name,
     name: element.attributes.name,
     type: element.attributes.type,
-    attributes: element.attributes,
+    attributes: { ...element.attributes },
     inputs,
     outputs,
     parameters,
@@ -104,12 +104,20 @@ const parseNodeGraphFromElement = (element: MaterialXElement): MaterialXNodeGrap
 
   return {
     name: element.attributes.name,
-    attributes: element.attributes,
+    attributes: { ...element.attributes },
     inputs,
     outputs,
     parameters,
     nodes,
   };
+};
+
+const freezeView = <T>(view: T): T => {
+  if (view && typeof view === 'object' && !Object.isFrozen(view)) {
+    for (const value of Object.values(view)) freezeView(value);
+    Object.freeze(view);
+  }
+  return view;
 };
 
 /** Creates a document whose typed views are always derived from its canonical element tree.
@@ -121,12 +129,14 @@ export const createMaterialXDocument = (
   attributes,
   elements,
   get nodes() {
-    return this.elements
-      .filter((entry) => entry.name !== 'nodegraph' && !entry.name.startsWith('#'))
-      .map(parseNodeFromElement);
+    return freezeView(
+      this.elements
+        .filter((entry) => entry.name !== 'nodegraph' && !entry.name.startsWith('#'))
+        .map(parseNodeFromElement),
+    );
   },
   get nodeGraphs() {
-    return this.elements.filter((entry) => entry.name === 'nodegraph').map(parseNodeGraphFromElement);
+    return freezeView(this.elements.filter((entry) => entry.name === 'nodegraph').map(parseNodeGraphFromElement));
   },
 });
 

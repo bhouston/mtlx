@@ -8,15 +8,15 @@ export interface MaterialXElement {
 }
 
 export interface MaterialXPort {
-  name: string;
-  type?: MaterialXValueType;
-  value?: string;
-  attributes: Record<string, string>;
+  readonly name: string;
+  readonly type?: MaterialXValueType;
+  readonly value?: string;
+  readonly attributes: Readonly<Record<string, string>>;
 }
 
 export interface MaterialXInput extends MaterialXPort {
-  nodeName?: string;
-  output?: string;
+  readonly nodeName?: string;
+  readonly output?: string;
 }
 
 export interface MaterialXOutput extends MaterialXPort {}
@@ -24,22 +24,22 @@ export interface MaterialXOutput extends MaterialXPort {}
 export interface MaterialXParameter extends MaterialXPort {}
 
 export interface MaterialXNode {
-  category: string;
-  name?: string;
-  type?: MaterialXValueType;
-  attributes: Record<string, string>;
-  inputs: MaterialXInput[];
-  outputs: MaterialXOutput[];
-  parameters: MaterialXParameter[];
+  readonly category: string;
+  readonly name?: string;
+  readonly type?: MaterialXValueType;
+  readonly attributes: Readonly<Record<string, string>>;
+  readonly inputs: readonly MaterialXInput[];
+  readonly outputs: readonly MaterialXOutput[];
+  readonly parameters: readonly MaterialXParameter[];
 }
 
 export interface MaterialXNodeGraph {
-  name?: string;
-  attributes: Record<string, string>;
-  inputs: MaterialXInput[];
-  outputs: MaterialXOutput[];
-  parameters: MaterialXParameter[];
-  nodes: MaterialXNode[];
+  readonly name?: string;
+  readonly attributes: Readonly<Record<string, string>>;
+  readonly inputs: readonly MaterialXInput[];
+  readonly outputs: readonly MaterialXOutput[];
+  readonly parameters: readonly MaterialXParameter[];
+  readonly nodes: readonly MaterialXNode[];
 }
 
 /**

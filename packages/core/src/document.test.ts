@@ -4,6 +4,18 @@ import { mergeMaterialXPackages, rewriteResourcePath } from './package.js';
 import { summarizeMaterialX } from './summary.js';
 import { validateDocument } from './validate.js';
 
+it('makes derived snapshots immutable without freezing the canonical tree', () => {
+  const document = parseMaterialX(
+    '<materialx><image name="a"><input name="file" type="filename" value="a.png"/></image></materialx>',
+  );
+  const snapshot = document.nodes[0]!;
+  expect(() => Object.assign(snapshot, { name: 'wrong' })).toThrow();
+  expect(() => Object.assign(snapshot.inputs[0]!, { value: 'wrong' })).toThrow();
+  document.elements[0]!.attributes.name = 'b';
+  expect(snapshot.name).toBe('a');
+  expect(document.nodes[0]?.name).toBe('b');
+});
+
 it('derives summaries and validation from the edited canonical tree', () => {
   const document = parseMaterialX(
     '<materialx version="1.39"><image name="a"><input name="file" type="filename" value="a.png"/></image></materialx>',
