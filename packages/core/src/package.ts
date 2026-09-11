@@ -162,7 +162,15 @@ export const isImagePath = (filePath: string): boolean => imageExtensions.has(po
 const isExternalReference = (value: string): boolean => /^[a-z][a-z0-9+.-]*:/i.test(value);
 const isAbsoluteReference = (value: string): boolean => value.startsWith('/') || /^[a-z]:[\\/]/i.test(value);
 
-/** Normalizes `./a/../b/c.png` to `b/c.png`, throwing if it escapes the root directory. */
+/**
+ * Normalizes `./a/../b/c.png` to `b/c.png`. A `..` that runs past the start (`../textures/x.png`)
+ * is kept rather than rejected: nothing in the MaterialX spec confines a relative reference to the
+ * document's own directory, and real content legitimately shares files across sibling directories
+ * this way — the caller's {@link ResourceReader} resolves it exactly like any other relative disk
+ * path. This is distinct from {@link validateArchivePath}, which does reject `..` because it
+ * guards *archive* entries (extracting a `.mtlx.zip` can't be allowed to write outside its target
+ * directory, a classic zip-slip).
+ */
 const normalizeReference = (value: string): string => {
   const segments: string[] = [];
   for (const segment of value.split('/')) {
@@ -170,10 +178,11 @@ const normalizeReference = (value: string): string => {
       continue;
     }
     if (segment === '..') {
-      if (segments.length === 0) {
-        throw new Error(`Referenced file is outside the MaterialX root directory: ${value}`);
+      if (segments.length > 0 && segments[segments.length - 1] !== '..') {
+        segments.pop();
+      } else {
+        segments.push('..');
       }
-      segments.pop();
       continue;
     }
     segments.push(segment);

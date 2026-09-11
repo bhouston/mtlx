@@ -22,8 +22,11 @@ are just a conversion with no options.
 
 - **`-o` is a `.mtlx` or `.mtlx.zip` path** — every input is combined into that single file.
 - **`-o` is a directory** (it already exists, or its path has no `.mtlx`/`.mtlx.zip` extension) —
-  each input is converted separately into that directory, keeping its own basename and format
-  (batch mode).
+  each input is converted separately into that directory, keeping its own format and its path
+  relative to the inputs' common directory (so a glob matching same-named files from different
+  directories doesn't collide) (batch mode). One bad input is reported and skipped rather than
+  aborting the rest of the batch; the command exits non-zero if any input failed. Prints a
+  one-line summary by default — pass `--verbose` to list every file written.
 
 Quote glob patterns so `mtlx` expands them (with brace-list support), not your shell:
 
@@ -43,6 +46,9 @@ mtlx x material.mtlx.zip -o out/material.mtlx
 # convert while packing: resize textures and switch their format
 mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
 
+# same result via a named preset: webp-preferred, 2048px max
+mtlx x material.mtlx -o material.mtlx.zip --profile web
+
 # combine an explicit list of materials into a single .mtlx.zip
 mtlx x metal.mtlx wood.mtlx glass.mtlx -o combined.mtlx.zip
 
@@ -58,6 +64,17 @@ mtlx x "materials/*.mtlx" -o out/ --max-image-size 2048 --image-format webp
 # open a 3D preview in your browser (local only, nothing is uploaded)
 mtlx view material.mtlx
 ```
+
+### `--profile`
+
+`--profile <name>` is shorthand for a `--max-image-size`/`--image-format` pair. It's a filter,
+not a blanket re-encode: a texture already in an acceptable format and under the size ceiling
+passes through untouched, and only an incompatible or oversized texture is converted/resized.
+`--max-image-size`/`--image-format` each override the profile's value if also given.
+
+| Profile | max size | format                                                                                                       |
+| ------- | -------- | ------------------------------------------------------------------------------------------------------------ |
+| `web`   | 2048px   | prefers webp (non-web sources default to webp; webp/png/jpg/avif sources keep their format unless oversized) |
 
 ### `--texture-library`/`-tl`
 
@@ -77,6 +94,10 @@ mtlx x material.mtlx -o out/material.mtlx --texture-library /srv/shared-textures
 It's a no-op for `.mtlx.zip` output: the archive format always stores textures at `./textures`
 inside the zip, so `--texture-library` is ignored there (with a warning) — use it only when
 writing loose `.mtlx` files.
+
+Writes are deduplicated against whatever's already in the target directory: a texture whose bytes
+match an existing file of the same name reuses it, and one that merely shares a name gets a `-2`
+suffix instead of overwriting it — safe to point multiple materials at the same shared library.
 
 Run `mtlx <command> --help` for the full option list of any command.
 

@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { mergeMaterialXPackages, relocateTextureResources, type MaterialXPackage } from './package.js';
+import {
+  mergeMaterialXPackages,
+  relocateTextureResources,
+  resolveMaterialXResources,
+  type MaterialXPackage,
+} from './package.js';
 import { parseMaterialX, serializeMaterialX } from './xml.js';
 
 const nodegraphWithTexture = (nodeName: string) => `<materialx version="1.39">
@@ -14,6 +19,21 @@ const makePackage = (name: string, xml: string, resources: MaterialXPackage['res
   rootPath: `${name}.mtlx`,
   document: parseMaterialX(xml),
   resources,
+});
+
+describe('resolveMaterialXResources', () => {
+  it("allows a relative reference that escapes the document's own directory", async () => {
+    const document = parseMaterialX(nodegraphWithTexture('NG'));
+    document.elements[0]!.children[0]!.children[0]!.attributes.value = '../../shared/textures/albedo.png';
+    const resources = await resolveMaterialXResources(document, async (rel) => {
+      expect(rel).toBe('../../shared/textures/albedo.png');
+      return new Uint8Array([1, 2, 3]);
+    });
+    expect(resources).toHaveLength(1);
+    expect(resources[0]!.sourcePath).toBe('../../shared/textures/albedo.png');
+    // The archive path stays contained under textures/ regardless of where the source came from.
+    expect(resources[0]!.archivePath).toBe('textures/albedo.png');
+  });
 });
 
 describe('mergeMaterialXPackages', () => {

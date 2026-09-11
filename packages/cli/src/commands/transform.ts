@@ -14,6 +14,10 @@ import {
 const renderText = (result: { outputPath: string; rootPath: string; entries: string[] }): string =>
   [`Wrote ${result.outputPath}`, `Root ${result.rootPath}`, `Entries ${result.entries.length}`].join('\n');
 
+/** Batch mode's default (non-`--verbose`) text output: one line, not one per input. */
+const renderBatchSummary = (results: Array<{ outputPath: string }>, outputDir: string): string =>
+  `Wrote ${results.length} file${results.length === 1 ? '' : 's'} to ${outputDir}`;
+
 /** Expands each token as a glob pattern (a plain path matches itself), preserving first-seen
  * order and dropping duplicates matched by more than one pattern. */
 const expandInputs = async (patterns: string[]): Promise<string[]> => {
@@ -42,6 +46,22 @@ const isDirectoryOutput = async (outputPath: string): Promise<boolean> => {
   }
 };
 
+/** The deepest directory that contains every path, so batch mode can mirror each input's
+ * subdirectory under `--output` instead of flattening to basename (which collides whenever a
+ * glob matches same-named files, e.g. many "material.mtlx", from different directories). */
+const commonAncestorDir = (absolutePaths: string[]): string => {
+  const segmentsList = absolutePaths.map((p) => path.dirname(p).split(path.sep));
+  let common = segmentsList[0]!;
+  for (const segments of segmentsList.slice(1)) {
+    let i = 0;
+    while (i < common.length && i < segments.length && common[i] === segments[i]) {
+      i += 1;
+    }
+    common = common.slice(0, i);
+  }
+  return common.join(path.sep) || path.sep;
+};
+
 export const command = defineCommand({
   command: 'transform <inputs..>',
   aliases: ['x'],
@@ -57,6 +77,11 @@ export const command = defineCommand({
           'input separately (same basename, same format) into that directory',
         type: 'string',
         demandOption: true,
+      })
+      .option('verbose', {
+        describe: 'Batch mode: print every file written instead of just a one-line summary',
+        type: 'boolean',
+        default: false,
       })
       .options(textureTransformOptions)
       .group(TEXTURE_OPTION_KEYS, TEXTURE_OPTION_GROUP)
@@ -79,26 +104,44 @@ export const command = defineCommand({
 
       if (await isDirectoryOutput(argv.output)) {
         // Batch mode: each input is converted independently (not combined) and keeps its own
-        // basename and format. Only the top-level output filename is checked for collisions;
-        // ponytail: two *different* loose .mtlx inputs that both reference e.g.
-        // "textures/albedo.png" would still clobber each other's texture in the shared output
-        // directory — route those through .mtlx.zip outputs (self-contained per input) if that
-        // matters, or combine them into one archive instead of batching.
+        // format. Its path relative to the inputs' common ancestor directory is mirrored under
+        // `--output`, so a glob that matches same-named files from different directories (e.g.
+        // many "material.mtlx") doesn't collide — a flat basename-only layout would. Texture
+        // dedup (see mtlx-core/node's writeMaterialXPackage) still applies per output directory,
+        // so pass an absolute `--texture-library` to consolidate textures across every input.
+        const absoluteInputs = inputs.map((input) => path.resolve(input));
+        const baseDir = commonAncestorDir(absoluteInputs);
         const usedOutputPaths = new Set<string>();
         const results: Awaited<ReturnType<typeof writeMaterialXPackage>>[] = [];
-        for (const input of inputs) {
-          const outputPath = path.join(argv.output, path.basename(input));
-          if (usedOutputPaths.has(outputPath)) {
-            throw new Error(`Two inputs would both write ${outputPath}; rename one of them`);
-          }
-          usedOutputPaths.add(outputPath);
-          warnIfZip(outputPath);
+        const failures: Array<{ input: string; message: string }> = [];
+        for (const [index, input] of inputs.entries()) {
+          const outputPath = path.join(argv.output, path.relative(baseDir, absoluteInputs[index]!));
+          try {
+            if (usedOutputPaths.has(outputPath)) {
+              throw new Error(`Two inputs would both write ${outputPath}; rename one of them`);
+            }
+            usedOutputPaths.add(outputPath);
+            warnIfZip(outputPath);
 
-          const pkg = await loadMaterialXPackage(input);
-          await transform(pkg, ...textureTransforms(argv));
-          results.push(await writeMaterialXPackage(pkg, outputPath, writeOptions));
+            const pkg = await loadMaterialXPackage(input);
+            await transform(pkg, ...textureTransforms(argv));
+            results.push(await writeMaterialXPackage(pkg, outputPath, writeOptions));
+          } catch (error) {
+            // One bad input (e.g. a reference escaping its own directory) shouldn't abort an
+            // otherwise-good batch of hundreds of files; report it and keep going.
+            failures.push({ input, message: error instanceof Error ? error.message : String(error) });
+          }
         }
-        printOutput(results, argv.format, () => results.map(renderText).join('\n\n'));
+        printOutput(results, argv.format, () =>
+          argv.verbose ? results.map(renderText).join('\n\n') : renderBatchSummary(results, argv.output),
+        );
+        for (const failure of failures) {
+          console.error(`ERROR ${failure.input}: ${failure.message}`);
+        }
+        if (failures.length > 0) {
+          console.error(`${failures.length} of ${inputs.length} inputs failed`);
+          process.exitCode = 1;
+        }
         return;
       }
 

@@ -135,7 +135,9 @@ await writeMaterialXPackage(pkg, 'material.mtlx.zip');
 
 // Loose .mtlx output only: put textures under a chosen directory (relative — '../' allowed — or
 // absolute) instead of the default textures/ bucket. Ignored for .mtlx.zip, which always uses
-// textures/.
+// textures/. Writing is content-deduplicated against whatever's already in that directory: a
+// same-named file with identical bytes is reused, one with different bytes gets a -2 suffix
+// instead of being overwritten.
 await writeMaterialXPackage(pkg, 'out/material.mtlx', { textureLibrary: '../shared-textures' });
 
 // Validate a file on disk without throwing; works as a CI gate.

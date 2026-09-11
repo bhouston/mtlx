@@ -48,6 +48,29 @@ const makePackFixture = async () => {
   return { tempDir, materialPath, archivePath: path.join(tempDir, 'material.mtlx.zip') };
 };
 
+/** Like {@link makePackFixture}, but the texture is a real image (given filename + bytes)
+ * referenced by that same filename, so profile/resize behavior can be checked against it. */
+const makeTextureFixture = async (textureFilename: string, textureData: Uint8Array) => {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-texture-'));
+  await mkdir(path.join(tempDir, 'textures'), { recursive: true });
+  const materialPath = path.join(tempDir, 'material.mtlx');
+  writeFileSync(
+    materialPath,
+    `<?xml version="1.0"?>
+<materialx version="1.39">
+  <nodegraph name="NG_test">
+    <image name="albedo" type="color3">
+      <input name="file" type="filename" value="textures/${textureFilename}" />
+    </image>
+  </nodegraph>
+  <surfacematerial name="M_test" type="material" />
+</materialx>`,
+    'utf8',
+  );
+  writeFileSync(path.join(tempDir, 'textures', textureFilename), textureData);
+  return { tempDir, materialPath };
+};
+
 describe('mtlx', () => {
   beforeAll(() => {
     execSync('pnpm --filter mtlx-core build && pnpm --filter mtlx build', {
@@ -285,7 +308,7 @@ describe('mtlx', () => {
     }
   });
 
-  it('transform batch mode fails when two inputs would write the same output filename', async () => {
+  it('transform batch mode mirrors subdirectories so same-named inputs do not collide', async () => {
     const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-batch-collide-'));
     try {
       await mkdir(path.join(tempDir, 'sub'), { recursive: true });
@@ -302,11 +325,13 @@ describe('mtlx', () => {
         'utf8',
       );
 
-      const result = await cli.run(['transform', aPath, bPath, '-o', path.join(tempDir, 'out')], {
+      const outDir = path.join(tempDir, 'out');
+      const result = await cli.run(['transform', aPath, bPath, '-o', outDir], {
         timeout: 8_000,
       });
-      expect(result).toFail();
-      expect(result).toHaveStderr(/Two inputs would both write/);
+      expect(result).toSucceed();
+      expect(existsSync(path.join(outDir, 'material.mtlx'))).toBe(true);
+      expect(existsSync(path.join(outDir, 'sub', 'material.mtlx'))).toBe(true);
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }
@@ -441,6 +466,103 @@ describe('mtlx', () => {
         const xmlText = await readFile(path.join(outputDir, 'wood_grain.mtlx'), 'utf8');
         expect(xmlText).toContain('textures/wood_color.webp');
         expect(xmlText).not.toContain('.jpg');
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('transform --profile web leaves an already-compliant texture untouched (filter, not re-encode)', async () => {
+      // wood_grain's textures are 128x128 jpg: already a web format, well under 2048px.
+      const tempDir = await copyFixture('wood_grain');
+      try {
+        const materialPath = path.join(tempDir, 'wood_grain.mtlx');
+        const outputDir = path.join(tempDir, 'wood_grain-web');
+        const result = await cli.run(
+          ['transform', materialPath, '-o', path.join(outputDir, 'wood_grain.mtlx'), '--profile', 'web'],
+          { timeout: 8_000 },
+        );
+        expect(result).toSucceed();
+
+        const originalBytes = await readFile(path.join(tempDir, 'textures/wood_color.jpg'));
+        const outputBytes = await readFile(path.join(outputDir, 'textures/wood_color.jpg'));
+        expect(outputBytes).toEqual(originalBytes);
+
+        const xmlText = await readFile(path.join(outputDir, 'wood_grain.mtlx'), 'utf8');
+        expect(xmlText).toContain('textures/wood_color.jpg');
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('transform --profile web resizes an oversized web-format texture without changing its format', async () => {
+      const oversized = await sharp({ create: { width: 4096, height: 2048, channels: 3, background: 'red' } })
+        .png()
+        .toBuffer();
+      const fixture = await makeTextureFixture('albedo.png', new Uint8Array(oversized));
+      try {
+        const outputPath = path.join(fixture.tempDir, 'out/material.mtlx');
+        const result = await cli.run(['transform', fixture.materialPath, '-o', outputPath, '--profile', 'web'], {
+          timeout: 8_000,
+        });
+        expect(result).toSucceed();
+
+        const metadata = await sharp(path.join(fixture.tempDir, 'out/textures/albedo.png')).metadata();
+        expect(metadata.format).toBe('png');
+        expect(Math.max(metadata.width ?? 0, metadata.height ?? 0)).toBeLessThanOrEqual(2048);
+      } finally {
+        await rm(fixture.tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('transform --profile web reformats a non-web texture to webp', async () => {
+      const tiff = await sharp({ create: { width: 16, height: 16, channels: 3, background: 'blue' } })
+        .tiff()
+        .toBuffer();
+      const fixture = await makeTextureFixture('albedo.tif', new Uint8Array(tiff));
+      try {
+        const outputPath = path.join(fixture.tempDir, 'out/material.mtlx');
+        const result = await cli.run(['transform', fixture.materialPath, '-o', outputPath, '--profile', 'web'], {
+          timeout: 8_000,
+        });
+        expect(result).toSucceed();
+
+        expect(existsSync(path.join(fixture.tempDir, 'out/textures/albedo.webp'))).toBe(true);
+        const xmlText = await readFile(outputPath, 'utf8');
+        expect(xmlText).toContain('textures/albedo.webp');
+      } finally {
+        await rm(fixture.tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('transform --profile web --max-image-size overrides the profile default', async () => {
+      const oversized = await sharp({ create: { width: 4096, height: 2048, channels: 3, background: 'green' } })
+        .png()
+        .toBuffer();
+      const fixture = await makeTextureFixture('albedo.png', new Uint8Array(oversized));
+      try {
+        const outputPath = path.join(fixture.tempDir, 'out/material.mtlx');
+        const result = await cli.run(
+          ['transform', fixture.materialPath, '-o', outputPath, '--profile', 'web', '--max-image-size', '64'],
+          { timeout: 8_000 },
+        );
+        expect(result).toSucceed();
+
+        const metadata = await sharp(path.join(fixture.tempDir, 'out/textures/albedo.png')).metadata();
+        expect(Math.max(metadata.width ?? 0, metadata.height ?? 0)).toBeLessThanOrEqual(64);
+      } finally {
+        await rm(fixture.tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('transform rejects an unknown --profile', async () => {
+      const tempDir = await copyFixture('wood_grain');
+      try {
+        const materialPath = path.join(tempDir, 'wood_grain.mtlx');
+        const result = await cli.run(
+          ['transform', materialPath, '-o', path.join(tempDir, 'out.mtlx.zip'), '--profile', 'nope'],
+          { timeout: 8_000 },
+        );
+        expect(result.exitCode).not.toBe(0);
       } finally {
         await rm(tempDir, { recursive: true, force: true });
       }

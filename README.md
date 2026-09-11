@@ -70,6 +70,7 @@ mtlx info material.mtlx.zip --format json
 mtlx x material.mtlx -o material.mtlx.zip                         # pack
 mtlx x material.mtlx.zip -o out/material.mtlx                     # unpack
 mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
+mtlx x material.mtlx -o material.mtlx.zip --profile web           # same, via a named preset
 mtlx x "{metal,wood,glass}.mtlx" -o combined.mtlx.zip             # combine
 mtlx x "materials/*.mtlx" -o out/                                 # batch: one output file per input
 ```

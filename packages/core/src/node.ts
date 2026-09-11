@@ -6,15 +6,19 @@
  *
  * @module mtlx-core/node
  */
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { checkMaterialXZipArchive, createMaterialXZipArchive, inspectMaterialXZipArchive } from './mtlxzip.js';
 import {
   detectFormat,
   packageFromArchive,
   packageToEntries,
+  posixExtname,
   relocateTextureResources,
   resolveMaterialXResources,
+  rewriteResourcePath,
+  validateArchivePath,
   type MaterialXFormat,
   type MaterialXPackage,
 } from './package.js';
@@ -107,6 +111,76 @@ export interface WriteMaterialXPackageResult {
   entries: string[];
 }
 
+interface DedupEntry {
+  size: number;
+  hash?: string;
+}
+
+/** One directory's worth of existing filenames, scanned once (sizes only; hashes computed lazily). */
+interface DedupStore {
+  dir: string;
+  byName: Map<string, DedupEntry>;
+}
+
+const createDedupStore = async (dir: string): Promise<DedupStore> => {
+  const byName = new Map<string, DedupEntry>();
+  let names: string[];
+  try {
+    names = await readdir(dir);
+  } catch {
+    return { dir, byName }; // directory doesn't exist yet
+  }
+  await Promise.all(
+    names.map(async (name) => {
+      try {
+        const info = await stat(path.join(dir, name));
+        if (info.isFile()) {
+          byName.set(name, { size: info.size });
+        }
+      } catch {
+        // raced with a delete between readdir and stat; ignore
+      }
+    }),
+  );
+  return { dir, byName };
+};
+
+const hashBytes = (data: Uint8Array): string => createHash('sha256').update(data).digest('hex');
+
+/**
+ * *Writes `data` into `store.dir` as `baseName + extension`, deduplicating against existing files
+ * by content.* Hashing only happens once a same-size candidate is found — both `data` and the
+ * existing file are hashed then (the latter cached on the store so a repeat comparison never
+ * re-reads it); distinct-size files never pay a hashing cost at all. Returns the filename actually
+ * written to or matched: `baseName + extension` unless that name is taken by different content, in
+ * which case `-2`, `-3`, ... suffixes are tried until a free or byte-identical name is found.
+ */
+const commitFile = async (
+  store: DedupStore,
+  baseName: string,
+  extension: string,
+  data: Uint8Array,
+): Promise<string> => {
+  let newHash: string | undefined; // only computed once a same-size candidate shows up
+  for (let suffix = 1; ; suffix += 1) {
+    const name = suffix === 1 ? `${baseName}${extension}` : `${baseName}-${suffix}${extension}`;
+    const existing = store.byName.get(name);
+    if (!existing) {
+      await mkdir(store.dir, { recursive: true });
+      await writeFile(path.join(store.dir, name), data);
+      store.byName.set(name, { size: data.length, hash: newHash });
+      return name;
+    }
+    if (existing.size === data.length) {
+      newHash ??= hashBytes(data);
+      existing.hash ??= hashBytes(await readFile(path.join(store.dir, name)));
+      if (existing.hash === newHash) {
+        return name; // identical content already on disk, reuse it
+      }
+    }
+  }
+};
+
 /**
  * *Options for {@link writeMaterialXPackage}.*
  *
@@ -141,30 +215,56 @@ export const writeMaterialXPackage = async (
   if (relocated) {
     relocateTextureResources(pkg, options.textureLibrary!);
   }
-  // Relocated resources may carry an absolute or `..`-relative disk path, which is a valid write
-  // target here but not a valid *archive* path, so archive-path validation is skipped for them.
-  const entries = packageToEntries(pkg, { validate: !relocated });
   await mkdir(path.dirname(outputPath), { recursive: true });
 
   if (format === 'mtlx') {
     const outputDir = path.dirname(outputPath);
-    const [root, ...resources] = entries;
-    await writeFile(outputPath, root!.data);
-    for (const entry of resources) {
-      const target = path.isAbsolute(entry.path)
-        ? path.resolve(entry.path)
-        : path.join(outputDir, ...entry.path.split('/'));
-      await mkdir(path.dirname(target), { recursive: true });
-      await writeFile(target, entry.data);
+    // A texture directory may already hold files from a previous run (the default `textures/`
+    // next to the document, or a shared `--texture-library`), so each resource is deduplicated
+    // against what's actually on disk rather than written blindly — see commitFile above. One
+    // DedupStore per target directory, scanned once and reused across resources in this call.
+    const stores = new Map<string, DedupStore>();
+    for (const resource of pkg.resources) {
+      const target = path.isAbsolute(resource.archivePath)
+        ? path.resolve(resource.archivePath)
+        : path.join(outputDir, ...resource.archivePath.split('/'));
+      const dir = path.dirname(target);
+      let store = stores.get(dir);
+      if (!store) {
+        store = await createDedupStore(dir);
+        stores.set(dir, store);
+      }
+      const basename = path.basename(target);
+      const extension = posixExtname(basename);
+      const stem = extension ? basename.slice(0, -extension.length) : basename;
+      const finalName = await commitFile(store, stem, extension, resource.data);
+      if (finalName !== basename) {
+        const slash = resource.archivePath.lastIndexOf('/');
+        const newArchivePath = `${resource.archivePath.slice(0, slash + 1)}${finalName}`;
+        rewriteResourcePath(pkg.document, resource.archivePath, newArchivePath);
+        resource.archivePath = newArchivePath;
+      }
     }
+    // Relocated resources may carry an absolute or `..`-relative disk path, which is a valid
+    // write target here but not a valid *archive* path, so validation is skipped for them.
+    if (!relocated) {
+      for (const p of [pkg.rootPath, ...pkg.resources.map((r) => r.archivePath)]) {
+        const issue = validateArchivePath(p);
+        if (issue) {
+          throw new Error(`${issue}: ${p}`);
+        }
+      }
+    }
+    await writeFile(outputPath, serializeMaterialX(pkg.document), 'utf8');
     return {
       outputPath,
       rootPath: outputPath,
       format,
-      entries: [path.basename(outputPath), ...resources.map((entry) => entry.path)],
+      entries: [path.basename(outputPath), ...pkg.resources.map((resource) => resource.archivePath)],
     };
   }
 
+  const entries = packageToEntries(pkg);
   await writeFile(outputPath, createMaterialXZipArchive(entries));
   return { outputPath, rootPath: pkg.rootPath, format, entries: entries.map((entry) => entry.path) };
 };
