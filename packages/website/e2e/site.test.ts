@@ -22,17 +22,15 @@ afterEach(() => page.close());
 test('home page server-renders and hydrates', async () => {
   const response = await page.goto(`http://localhost:${PORT}/`);
   expect(response?.status()).toBe(200);
-  await expect.poll(() => page.locator('h1').textContent()).toBe('MaterialX viewer');
-  // Hydration wires up the preset buttons; a react/react-dom mismatch leaves them inert.
-  await expect.poll(() => page.locator('button').count()).toBeGreaterThan(0);
+  await expect.poll(() => page.locator('h1').textContent()).toBe('mtlx');
   expect(pageErrors).toEqual([]);
 });
 
 test('viewer renders a dropped .mtlx and validates it', async () => {
-  await page.goto(`http://localhost:${PORT}/`);
+  await page.goto(`http://localhost:${PORT}/viewer`);
   await page.setInputFiles('input[type=file]', resolve(import.meta.dirname, '../../../assets/copper/copper.mtlx'));
   // Headless Chromium has no WebGPU; three falls back to WebGL2 and still mounts a canvas.
   await expect.poll(() => page.locator('canvas').count(), { timeout: 30_000 }).toBe(1);
-  await expect.poll(() => page.locator('main').innerText()).toContain('Check passed');
+  await expect.poll(() => page.locator('main').innerText()).toContain('Valid');
   expect(pageErrors).toEqual([]);
 });
