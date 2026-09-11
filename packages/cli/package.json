@@ -1,6 +1,6 @@
 {
   "name": "mtlx-cli",
-  "version": "0.4.0",
+  "version": "0.6.0",
   "description": "mtlx: validate, inspect, convert, and transform MaterialX (.mtlx, .mtlx.zip) files.",
   "homepage": "https://mtlx.ben3d.ca",
   "license": "MIT",

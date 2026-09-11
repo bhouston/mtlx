@@ -136,6 +136,7 @@ test.each([false, true])(
         await expect
           .poll(() => page.locator('body').getAttribute('data-preview-state'), { timeout: 30_000 })
           .toBe('ready');
+        await page.getByText('Viewer settings', { exact: true }).click();
       };
       await page.goto(`http://localhost:${PORT}/__extension-test__/index.html`);
       await send();
