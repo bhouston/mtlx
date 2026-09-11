@@ -1,3 +1,4 @@
+import type { MaterialXReadLimits } from './limits.js';
 import { materialXNodeRegistry } from './registry.js';
 import type { MaterialXDocument, MaterialXNode, MaterialXNodeSpec, MaterialXValidationIssue } from './types.js';
 import { parseMaterialX } from './xml.js';
@@ -49,7 +50,7 @@ const validateNode = (
  * Example:
  *
  * ```ts
- * const issues = validateDocument(parseMaterialX(xml));
+ * const issues = validateDocument(parseMaterialX(xml, limits));
  * const ok = !issues.some((issue) => issue.level === 'error');
  * ```
  *
@@ -86,9 +87,13 @@ export const validateDocument = (
  *
  * @category Validation
  */
-export const checkMaterialXText = (xml: string, location = ''): MaterialXValidationIssue[] => {
+export const checkMaterialXText = (
+  xml: string,
+  location = '',
+  limits?: Partial<MaterialXReadLimits>,
+): MaterialXValidationIssue[] => {
   try {
-    return validateDocument(parseMaterialX(xml));
+    return validateDocument(parseMaterialX(xml, limits));
   } catch (error) {
     return [{ level: 'error', location, message: error instanceof Error ? error.message : String(error) }];
   }

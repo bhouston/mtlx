@@ -51,3 +51,6 @@ export {
   applyResourceDestinations,
 } from './resource-graph.js';
 export type { MaterialXResourceGraph, MaterialXDependencyEdge } from './resource-graph.js';
+
+export { DEFAULT_MATERIALX_READ_LIMITS } from './limits.js';
+export type { MaterialXReadLimits } from './limits.js';

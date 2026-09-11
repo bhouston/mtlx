@@ -1,3 +1,4 @@
+import { assertMaterialXXmlLimits, type MaterialXReadLimits } from './limits.js';
 import { XMLBuilder, XMLParser, XMLValidator } from 'fast-xml-parser';
 import type {
   MaterialXDocument,
@@ -150,7 +151,8 @@ export const cloneMaterialXDocument = (document: MaterialXDocument): MaterialXDo
  *
  * @category Parsing
  */
-export const parseMaterialX = (xml: string): MaterialXDocument => {
+export const parseMaterialX = (xml: string, limits?: Partial<MaterialXReadLimits>): MaterialXDocument => {
+  assertMaterialXXmlLimits(xml, limits);
   const xmlValidation = XMLValidator.validate(xml);
   if (xmlValidation !== true) {
     const { line, col, msg } = xmlValidation.err;
