@@ -184,7 +184,7 @@ export const checkMaterialXZipArchive = (
   });
   if (parseIssues.some((issue) => issue.level === 'error')) return [...archive.issues, ...parseIssues];
   try {
-    return [...archive.issues, ...validateMaterialXPackage(packageFromArchive(archive), validation)];
+    return [...archive.issues, ...validateMaterialXPackage(packageFromArchive(archive, { limits }), validation)];
   } catch (error) {
     return [
       {

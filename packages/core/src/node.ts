@@ -1,7 +1,7 @@
 import { validateMaterialXPackage } from './validate-package.js';
 import { validateDocument } from './validate.js';
 import type { MaterialXReadLimits } from './limits.js';
-import { applyResourceDestinations, buildResourceGraph, cloneMaterialXPackage } from './resource-graph.js';
+import { applyResourceDestinations, cloneMaterialXPackage } from './resource-graph.js';
 /**
  * Filesystem entry points for Node.js: read and write `.mtlx` and `.mtlx.zip` files.
  *
@@ -36,8 +36,10 @@ const textDecoder = new TextDecoder();
  *
  * @category Parsing
  */
-export const readMaterialX = async (filePath: string): Promise<MaterialXDocument> =>
-  parseMaterialX(await readFile(filePath, 'utf8'));
+export const readMaterialX = async (
+  filePath: string,
+  limits?: Partial<MaterialXReadLimits>,
+): Promise<MaterialXDocument> => parseMaterialX(await readFile(filePath, 'utf8'), limits);
 
 /**
  * *Serializes a document and writes it to a `.mtlx` file.*
@@ -47,7 +49,8 @@ export const readMaterialX = async (filePath: string): Promise<MaterialXDocument
 export const writeMaterialX = async (filePath: string, document: MaterialXDocument): Promise<void> =>
   writeFile(filePath, serializeMaterialX(document), 'utf8');
 
-const readArchive = async (inputPath: string) => inspectMaterialXZipArchive(await readFile(inputPath));
+const readArchive = async (inputPath: string, limits?: Partial<MaterialXReadLimits>) =>
+  inspectMaterialXZipArchive(await readFile(inputPath), limits);
 
 /**
  * *Loads just the document out of a `.mtlx` or `.mtlx.zip` path.* Use this when you only need to
@@ -57,17 +60,18 @@ const readArchive = async (inputPath: string) => inspectMaterialXZipArchive(awai
  */
 export const loadMaterialXDocument = async (
   inputPath: string,
+  options: { limits?: Partial<MaterialXReadLimits> } = {},
 ): Promise<{ document: MaterialXDocument; rootPath: string; format: MaterialXFormat }> => {
   const format = detectFormat(inputPath);
   if (format === 'mtlx') {
-    return { document: await readMaterialX(inputPath), rootPath: inputPath, format };
+    return { document: await readMaterialX(inputPath, options.limits), rootPath: inputPath, format };
   }
-  const archive = await readArchive(inputPath);
+  const archive = await readArchive(inputPath, options.limits);
   if (!archive.rootEntry) {
     throw new Error(`No root .mtlx entry found in ${inputPath}`);
   }
   return {
-    document: parseMaterialX(textDecoder.decode(archive.rootEntry.data)),
+    document: parseMaterialX(textDecoder.decode(archive.rootEntry.data), options.limits),
     rootPath: archive.rootEntry.path,
     format,
   };
@@ -89,18 +93,21 @@ export const loadMaterialXDocument = async (
  *
  * @category Packaging
  */
-export const loadMaterialXPackage = async (inputPath: string): Promise<MaterialXPackage> => {
+export const loadMaterialXPackage = async (
+  inputPath: string,
+  options: { limits?: Partial<MaterialXReadLimits> } = {},
+): Promise<MaterialXPackage> => {
   if (detectFormat(inputPath) === 'mtlx') {
-    const document = await readMaterialX(inputPath);
+    const document = await readMaterialX(inputPath, options.limits);
     const rootDir = path.dirname(inputPath);
     const resources = await resolveMaterialXResources(
       document,
       (rel) => readFile(path.join(rootDir, ...rel.split('/'))),
-      { rootPath: path.basename(inputPath) },
+      { rootPath: path.basename(inputPath), limits: options.limits },
     );
     return { rootPath: path.basename(inputPath), document, resources };
   }
-  return packageFromArchive(await readArchive(inputPath));
+  return packageFromArchive(await readArchive(inputPath, options.limits), options);
 };
 
 /**
@@ -185,9 +192,9 @@ export const planMaterialXPackageWrite = async (
     if (issue || entry.includes('\0')) throw new Error(`${issue ?? 'Null in archive path'}: ${entry}`);
   }
   const pkg = cloneMaterialXPackage(input);
-  const missing = buildResourceGraph(pkg).edges.filter((edge) => !edge.resourceId && edge.targetPath !== pkg.rootPath);
-  if (missing.length)
-    throw new Error(`Unresolved package resource: ${missing[0]!.value} in ${missing[0]!.documentPath}`);
+  const resourceIssues = validateMaterialXPackage(pkg, { rules: ['resources'] });
+  if (resourceIssues.some((issue) => issue.level === 'error'))
+    throw new Error(resourceIssues.map((issue) => issue.message).join('; '));
   const format = detectFormat(outputPath);
   const output = path.resolve(outputPath);
   await assertNoSymlinks(output);
@@ -383,14 +390,18 @@ export const checkMaterialX = async (
     if (!document) {
       const archive = inspectMaterialXZipArchive(data, options.limits);
       if (!archive.rootEntry) return { path: inputPath, format, issues: archive.issues };
-      return { path: inputPath, format, issues: validateMaterialXPackage(packageFromArchive(archive), validation) };
+      return {
+        path: inputPath,
+        format,
+        issues: validateMaterialXPackage(packageFromArchive(archive, options), validation),
+      };
     }
     if (!validation.rules!.includes('resources'))
       return { path: inputPath, format, issues: validateDocument(document, validation) };
     const resources = await resolveMaterialXResources(
       document,
       (rel) => readFile(path.join(path.dirname(inputPath), rel)),
-      { rootPath: path.basename(inputPath) },
+      { rootPath: path.basename(inputPath), limits: options.limits },
     );
     return {
       path: inputPath,

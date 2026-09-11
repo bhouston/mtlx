@@ -1,3 +1,4 @@
+import type { MaterialXReadLimits } from './limits.js';
 import {
   applyResourceDestinations,
   cloneMaterialXPackage,
@@ -225,7 +226,7 @@ export type ResourceReader = (relativePath: string) => Promise<Uint8Array>;
 export const resolveMaterialXResources = async (
   document: MaterialXDocument,
   readResource: ResourceReader,
-  options: { rootPath?: string } = {},
+  options: { rootPath?: string; limits?: Partial<MaterialXReadLimits> } = {},
 ): Promise<MaterialXResource[]> => {
   const rootSource = options.rootPath ?? 'material.mtlx';
   const rootDestination = posixBasename(rootSource);
@@ -251,7 +252,7 @@ export const resolveMaterialXResources = async (
       const resource: MaterialXResource = { id: target, archivePath: '', sourcePath: target, data };
       resources.set(target, resource);
       if (posixExtname(target).toLowerCase() === '.mtlx') {
-        resource.document = parseMaterialX(new TextDecoder().decode(data));
+        resource.document = parseMaterialX(new TextDecoder().decode(data), options.limits);
         visiting.add(target);
         await visit(target, resource.document);
         visiting.delete(target);
@@ -404,11 +405,14 @@ export const mergeMaterialXPackages = (packages: MaterialXPackage[]): MaterialXP
  *
  * @category Packaging
  */
-export const packageFromArchive = (archive: {
-  entries: Array<{ path: string; data: Uint8Array; isDirectory?: boolean }>;
-  rootEntry?: { path: string; data: Uint8Array };
-  issues: Array<{ level: string; location: string; message: string }>;
-}): MaterialXPackage => {
+export const packageFromArchive = (
+  archive: {
+    entries: Array<{ path: string; data: Uint8Array; isDirectory?: boolean }>;
+    rootEntry?: { path: string; data: Uint8Array };
+    issues: Array<{ level: string; location: string; message: string }>;
+  },
+  options: { limits?: Partial<MaterialXReadLimits> } = {},
+): MaterialXPackage => {
   const errors = archive.issues.filter((issue) => issue.level === 'error');
   if (errors.length > 0) {
     throw new Error(errors.map((issue) => `${issue.location}: ${issue.message}`).join('\n'));
@@ -433,13 +437,13 @@ export const packageFromArchive = (archive: {
         sourcePath: entry.path,
         data: entry.data,
         ...(entry.path.toLowerCase().endsWith('.mtlx')
-          ? { document: parseMaterialX(new TextDecoder().decode(entry.data)) }
+          ? { document: parseMaterialX(new TextDecoder().decode(entry.data), options.limits) }
           : {}),
       };
     });
   return {
     rootPath: archive.rootEntry.path,
-    document: parseMaterialX(new TextDecoder().decode(archive.rootEntry.data)),
+    document: parseMaterialX(new TextDecoder().decode(archive.rootEntry.data), options.limits),
     resources,
   };
 };

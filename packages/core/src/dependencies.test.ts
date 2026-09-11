@@ -81,3 +81,16 @@ it('materializes inherited file prefixes and roundtrips an absolute texture-libr
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+it('applies caller XML budgets to included documents too', async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), 'mtlx-budget-'));
+  try {
+    await writeFile(path.join(dir, 'm.mtlx'), '<materialx><xi:include href="lib.mtlx"/></materialx>');
+    await writeFile(path.join(dir, 'lib.mtlx'), '<materialx><look name="a"/><look name="b"/></materialx>');
+    await expect(loadMaterialXPackage(path.join(dir, 'm.mtlx'), { limits: { maxXmlElements: 2 } })).rejects.toThrow(
+      /maxXmlElements/,
+    );
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
