@@ -22,6 +22,8 @@ provide an inventory for archive and recursive dependency checks.
 `/viewer?materialUrl=<encoded HTTP(S) URL>` and `/embed?materialUrl=<encoded HTTP(S) URL>` use the
 same source. The bottom IBL dropdown defaults to San Giuseppe Bridge and also offers Studio (the three-ntc
 website environment) without resetting the camera or material. Selecting a sample populates the URL input; a matching URL selects its sample.
+Bottom controls toggle bloom and full-resolution, denoised GTAO and select tone mapping. Bloom and
+AO default on; tone mapping defaults to Neutral. Auto-rotation takes 40 seconds per turn.
 Legacy `material=<preset id or URL>` links remain readable. New shared links use `materialUrl`.
 
 ## Compound sample

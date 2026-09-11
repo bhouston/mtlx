@@ -3,6 +3,7 @@ import { materialByteLimit, readBoundedResponse } from '@/lib/material-bytes';
 import { CleanupScope } from '@/lib/cleanup-scope';
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
+import { DEFAULT_RENDERING_SETTINGS, TONE_MAPPING_OPTIONS, type RenderingSettings } from 'mtlx-viewer/settings';
 import type { EnvironmentKind, GeometryKind, MtlxScene } from 'mtlx-viewer';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
 import defaultEnvironmentUrl from 'mtlx-viewer/assets/default-environment.hdr?url';
@@ -60,12 +61,13 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
   const environmentKindRef = useRef<EnvironmentKind>('default');
   const switchEnvironmentRef = useRef<((kind: EnvironmentKind) => Promise<void>) | null>(null);
   const [environmentMessage, setEnvironmentMessage] = useState('');
+  const [renderingSettings, setRenderingSettings] = useState<RenderingSettings>({ ...DEFAULT_RENDERING_SETTINGS });
   const [exposure, setExposure] = useState(0);
   const [environmentIntensity, setEnvironmentIntensity] = useState(1);
-  const settingsRef = useRef({ exposure, environmentIntensity });
-  settingsRef.current = { exposure, environmentIntensity };
+  const settingsRef = useRef({ exposure, environmentIntensity, renderingSettings });
+  settingsRef.current = { exposure, environmentIntensity, renderingSettings };
   const applySettingsRef = useRef<(() => void) | null>(null);
-  useEffect(() => applySettingsRef.current?.(), [exposure, environmentIntensity]);
+  useEffect(() => applySettingsRef.current?.(), [exposure, environmentIntensity, renderingSettings]);
   const frameRef = useRef<HTMLDivElement>(null);
   const [rotating, setRotating] = useState(false);
   const rotatingRef = useRef(false);
@@ -130,7 +132,8 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
     (async () => {
       const THREE: typeof ThreeNS = await import('three/webgpu');
       const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
-      const { createMtlxScene, parseEnvironment, createEnvironmentSwitcher } = await import('mtlx-viewer');
+      const { createMtlxScene, parseEnvironment, createEnvironmentSwitcher, createViewerRendering } =
+        await import('mtlx-viewer');
       if (disposed) return;
 
       const width = container.clientWidth || 512;
@@ -148,7 +151,7 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       // container's overflow-hidden to just the top-left corner.
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMapping = THREE.NeutralToneMapping;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       await renderer.init();
       if (disposed) return;
@@ -157,7 +160,11 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       container.replaceChildren(renderer.domElement);
 
       const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
+      const rendering = createViewerRendering(renderer, scene, camera, settingsRef.current.renderingSettings);
+      own(() => rendering.dispose());
       const applySettings = () => {
+        rendering.configure(settingsRef.current.renderingSettings);
         renderer.toneMappingExposure = 2 ** settingsRef.current.exposure;
         scene.environmentIntensity = settingsRef.current.environmentIntensity;
       };
@@ -166,8 +173,6 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       own(() => {
         if (applySettingsRef.current === applySettings) applySettingsRef.current = null;
       });
-      const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
-
       const pmremGenerator = new THREE.PMREMGenerator(renderer) as unknown as {
         fromEquirectangular: (texture: ThreeNS.Texture) => { texture: ThreeNS.Texture; dispose(): void };
         dispose(): void;
@@ -280,7 +285,7 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
         mtlxSceneRef.current?.update((now - clock) / 1000);
         clock = now;
         controls.update();
-        void renderer.renderAsync(scene, camera).catch((error: unknown) => {
+        void rendering.render().catch((error: unknown) => {
           if (disposed || scope.disposed) return;
           cleanup();
           report.state = 'error';
@@ -291,7 +296,7 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
         frameId = requestAnimationFrame(animate);
       };
       // A mounted canvas alone does not establish that shader compilation/rendering succeeded.
-      await renderer.renderAsync(scene, camera);
+      await rendering.render();
       if (disposed) return;
       report.state = 'ready';
       publish();
@@ -409,6 +414,39 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
               <option value="default">San Giuseppe Bridge</option>
             </select>
           </label>
+          <label className="flex items-center gap-2">
+            Tone mapping
+            <select
+              aria-label="Tone mapping"
+              value={renderingSettings.toneMapping}
+              className="rounded border border-white/20 bg-black/70 px-1 py-1"
+              onChange={(event) =>
+                setRenderingSettings((current) => ({
+                  ...current,
+                  toneMapping: event.target.value as RenderingSettings['toneMapping'],
+                }))
+              }
+            >
+              {TONE_MAPPING_OPTIONS.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {(['bloom', 'ao'] as const).map((effect) => (
+            <label key={effect} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={renderingSettings[effect]}
+                aria-label={effect === 'ao' ? 'Ambient occlusion' : 'Bloom'}
+                onChange={(event) =>
+                  setRenderingSettings((current) => ({ ...current, [effect]: event.target.checked }))
+                }
+              />
+              {effect === 'ao' ? 'AO' : 'Bloom'}
+            </label>
+          ))}
           <label className="flex items-center gap-2">
             Exposure ({exposure.toFixed(1)} EV)
             <input

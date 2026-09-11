@@ -38,6 +38,9 @@ mtlx info material.mtlx.zip --format json
 mtlx view material.mtlx
 ```
 
+The preview's bottom controls toggle bloom and denoised GTAO and select tone mapping. Bloom and
+AO start enabled, with Neutral tone mapping. The totem rotates once every 40 seconds.
+
 ### Pack and unpack
 
 ```sh

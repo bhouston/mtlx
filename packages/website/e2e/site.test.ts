@@ -8,7 +8,10 @@ let page: Page;
 let pageErrors: string[];
 
 beforeAll(async () => {
-  browser = await chromium.launch();
+  browser = await chromium.launch({
+    channel: process.env.MTLX_WEBGPU ? 'chromium' : undefined,
+    args: process.env.MTLX_WEBGPU ? ['--enable-unsafe-webgpu'] : [],
+  });
 });
 afterAll(() => browser.close());
 
@@ -16,6 +19,7 @@ beforeEach(async () => {
   pageErrors = [];
   page = await browser.newPage();
   page.on('pageerror', (error) => pageErrors.push(error.message));
+  await page.route('**/favicon.ico', (route) => route.fulfill({ status: 204 }));
 });
 afterEach(() => page.close());
 
@@ -94,7 +98,9 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   expect(await page.getByRole('combobox', { name: 'Geometry', exact: true }).inputValue()).toBe('sphere');
   await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('studio');
   await expect
-    .poll(async () => (await page.locator('main').innerText()).split('Environment ready: Studio.').length)
+    .poll(async () => (await page.locator('main').innerText()).split('Environment ready: Studio.').length, {
+      timeout: 30_000,
+    })
     .toBe(2);
   await page.getByRole('button', { name: 'Reset' }).focus();
   await page.keyboard.press('Enter');
@@ -169,4 +175,44 @@ test('locally hosted CLI compound sample validates, switches materials, and surv
   await expectReady();
   expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toBe('compound');
   expect(await page.getByRole('textbox', { name: 'Material URL' }).inputValue()).toBe(url);
+});
+
+test('rendering effects default on and toggle without replacing the scene', async () => {
+  // Keep software WebGL2 rendering affordable while exercising the full-resolution pipeline.
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const shaderErrors: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error') shaderErrors.push(message.text());
+  });
+  await page.goto(`http://localhost:${PORT}/viewer?materialUrl=/materials/compound/compound.mtlx`);
+  await expectReady();
+  if (process.env.MTLX_WEBGPU) expect(await page.locator('main').innerText()).toContain('backend: WebGPU');
+  const canvas = await page.locator('canvas').elementHandle();
+  const toneMapping = page.getByRole('combobox', { name: 'Tone mapping' });
+  const bloom = page.getByRole('checkbox', { name: 'Bloom', exact: true });
+  const ao = page.getByRole('checkbox', { name: 'Ambient occlusion' });
+  expect(await toneMapping.inputValue()).toBe('neutral');
+  expect(await bloom.isChecked()).toBe(true);
+  expect(await ao.isChecked()).toBe(true);
+  await bloom.uncheck();
+  const occluded = await page.locator('canvas').screenshot();
+  await ao.uncheck();
+  await expect.poll(async () => (await page.locator('canvas').screenshot()).equals(occluded)).toBe(false);
+  const neutral = await page.locator('canvas').screenshot();
+  await toneMapping.selectOption('agx');
+  await expect.poll(async () => (await page.locator('canvas').screenshot()).equals(neutral)).toBe(false);
+  await ao.check();
+  const withoutBloom = await page.locator('canvas').screenshot();
+  await bloom.check();
+  await expect.poll(async () => (await page.locator('canvas').screenshot()).equals(withoutBloom)).toBe(false);
+  for (const value of ['aces', 'reinhard', 'cineon', 'linear', 'none', 'neutral']) {
+    await toneMapping.selectOption(value);
+    await page.locator('canvas').screenshot();
+  }
+  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
+  await page.setViewportSize({ width: 375, height: 800 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+  await expectReady();
+  expect(shaderErrors).toEqual([]);
 });

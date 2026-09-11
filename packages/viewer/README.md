@@ -128,3 +128,19 @@ MIT
 ## Author
 
 [Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com)
+
+## Rendering effects
+
+After initializing a `WebGPURenderer`, use `createViewerRendering(renderer, scene, camera)` and
+call its `render()` instead of rendering the scene directly. Its `configure({ bloom, ao, toneMapping })`
+method updates effects without rebuilding the material scene. Call `dispose()` before disposing the renderer.
+`DEFAULT_RENDERING_SETTINGS` and `TONE_MAPPING_OPTIONS` are also available through `mtlx-viewer/settings`
+without importing Three.js.
+
+Bloom and AO default on; tone mapping defaults to `neutral`. AO uses full-resolution, 32-sample GTAO
+with depth/normal-aware denoising and applies to indirect lighting through Three.js's AO context.
+Transparent surfaces are excluded from the AO pre-pass. Bloom runs in HDR before output tone mapping
+and color conversion. Disabled effects are omitted from the render graph. The passes resize with the
+renderer and release their render targets on disposal. This pipeline supports WebGPU and its WebGL2 fallback.
+
+The built-in totem starts 45° toward the front right. Auto-rotation takes 40 seconds per turn.

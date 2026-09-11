@@ -6,3 +6,5 @@
  */
 export * from './environment.js';
 export * from './scene.js';
+export * from './rendering.js';
+export * from './renderingSettings.js';

@@ -7,7 +7,15 @@
  */
 import * as THREE from 'three/webgpu';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createMtlxScene, parseStudioEnvironment, type GeometryKind, type MtlxScene } from 'mtlx-viewer';
+import {
+  createMtlxScene,
+  createViewerRendering,
+  TONE_MAPPING_OPTIONS,
+  type ToneMappingName,
+  parseStudioEnvironment,
+  type GeometryKind,
+  type MtlxScene,
+} from 'mtlx-viewer';
 // esbuild's dataurl loader (see build-viewer.mjs) inlines this as a base64 data: URL string.
 import studioEnvironmentDataUrl from 'mtlx-viewer/assets/studio-environment.png';
 
@@ -76,13 +84,31 @@ async function main(): Promise<void> {
   });
   renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   await renderer.init();
   if (disposed) return;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.05, 1000);
+
+  const rendering = createViewerRendering(renderer, scene, camera);
+  own(() => rendering.dispose());
+  const bloomEl = document.getElementById('bloom') as HTMLInputElement;
+  const aoEl = document.getElementById('ao') as HTMLInputElement;
+  const toneMappingEl = document.getElementById('tone-mapping') as HTMLSelectElement;
+  toneMappingEl.replaceChildren(...TONE_MAPPING_OPTIONS.map(({ value, label }) => new Option(label, value)));
+  toneMappingEl.value = 'neutral';
+  const applyRendering = () =>
+    rendering.configure({
+      bloom: bloomEl.checked,
+      ao: aoEl.checked,
+      toneMapping: toneMappingEl.value as ToneMappingName,
+    });
+  for (const element of [bloomEl, aoEl, toneMappingEl]) {
+    element.addEventListener('change', applyRendering);
+    own(() => element.removeEventListener('change', applyRendering));
+  }
 
   // @types/three lags three's addon source: fromEquirectangular() isn't in its PMREMGenerator
   // typings yet.
@@ -119,7 +145,7 @@ async function main(): Promise<void> {
     mtlxScene?.update((now - clock) / 1000);
     clock = now;
     controls.update();
-    void renderer.renderAsync(scene, camera).catch((error: unknown) => {
+    void rendering.render().catch((error: unknown) => {
       if (disposed) return;
       dispose();
       showError(error instanceof Error ? error.message : String(error));

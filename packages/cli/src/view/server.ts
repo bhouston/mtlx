@@ -77,6 +77,7 @@ function renderIndexHtml(fileName: string): string {
   html, body { margin: 0; height: 100%; background: #111; color: #eee; font-family: system-ui, sans-serif; }
   #viewport { display: block; width: 100vw; height: 100vh; }
   .toolbar { position: fixed; top: 12px; left: 12px; display: flex; gap: 8px; z-index: 1; }
+  .effects { top: auto; bottom: 12px; right: 12px; flex-wrap: wrap; }
   .toolbar select { font-size: 12px; padding: 2px 4px; }
   #error { position: fixed; bottom: 12px; left: 12px; right: 12px; color: #f88; white-space: pre-wrap; font-size: 12px; }
 </style>
@@ -89,6 +90,11 @@ function renderIndexHtml(fileName: string): string {
     <option value="sphere">Sphere</option>
     <option value="plane">Plane</option>
   </select>
+</div>
+<div class="toolbar effects">
+  <label>Tone mapping <select id="tone-mapping" aria-label="Tone mapping"></select></label>
+  <label><input id="bloom" type="checkbox" checked aria-label="Bloom"> Bloom</label>
+  <label><input id="ao" type="checkbox" checked aria-label="Ambient occlusion"> AO</label>
 </div>
 <canvas id="viewport"></canvas>
 <div id="error"></div>

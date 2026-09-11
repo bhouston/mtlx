@@ -27,6 +27,10 @@
     "./capabilities": {
       "types": "./dist/capabilities.d.ts",
       "default": "./dist/capabilities.js"
+    },
+    "./settings": {
+      "types": "./dist/renderingSettings.d.ts",
+      "default": "./dist/renderingSettings.js"
     }
   },
   "scripts": {
