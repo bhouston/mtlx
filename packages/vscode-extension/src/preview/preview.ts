@@ -121,7 +121,7 @@ function formatFileSize(bytes: number): string {
 }
 
 function renderStats(payload: PreviewPayload): void {
-  const validityHtml = `<p class="${payload.valid ? 'valid' : 'invalid'}">${payload.valid ? '✓ Valid' : '✗ Invalid'}</p>`;
+  const validityHtml = `<p class="${payload.valid ? 'valid' : 'invalid'}">${payload.valid ? '✓ Selected document checks passed' : '✗ Document checks failed'}</p><p>${payload.issues.filter((issue) => issue.level === 'warning').length} warnings. Full MaterialX conformance and shader compatibility are not established.</p>`;
 
   const issuesHtml = payload.issues.length
     ? `<h2>Issues</h2><ul>${payload.issues
