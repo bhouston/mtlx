@@ -51,6 +51,7 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
   const containerRef = useRef<HTMLDivElement>(null);
   const mtlxSceneRef = useRef<MtlxScene | null>(null);
   const [loading, setLoading] = useState(false);
+  const [previewState, setPreviewState] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [materialNames, setMaterialNames] = useState<string[]>([]);
   const [activeMaterial, setActiveMaterial] = useState('');
   const [geometry, setGeometry] = useState<GeometryKind>('totem');
@@ -60,6 +61,7 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
     mtlxSceneRef.current = null;
     setMaterialNames([]);
     setActiveMaterial('');
+    setPreviewState(source ? 'loading' : 'idle');
     if (!container || !source) {
       setLoading(false);
       return;
@@ -180,20 +182,25 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
         clock = now;
         controls.update();
         void renderer.renderAsync(scene, camera).catch((error: unknown) => {
-          if (disposed) return;
+          if (disposed || scope.disposed) return;
           cleanup();
+          setPreviewState('error');
           mtlxSceneRef.current = null;
           onError(error instanceof Error ? error.message : String(error));
         });
         frameId = requestAnimationFrame(animate);
       };
-      animate();
-
+      // A mounted canvas alone does not establish that shader compilation/rendering succeeded.
+      await renderer.renderAsync(scene, camera);
+      if (disposed) return;
+      setPreviewState('ready');
       setLoading(false);
+      animate();
     })().catch((error: unknown) => {
       cleanup();
       if (disposed) return;
       setLoading(false);
+      setPreviewState('error');
       const message = error instanceof Error ? error.message : String(error);
       onLog?.(`ERROR: ${message}`);
       onError(message);
@@ -208,7 +215,10 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
   }, [source]);
 
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-border bg-black">
+    <div
+      data-preview-state={previewState}
+      className="relative aspect-square w-full overflow-hidden rounded-lg border border-border bg-black"
+    >
       {materialNames.length > 0 ? (
         <div className="absolute top-2 left-2 z-10 flex gap-2">
           <select
