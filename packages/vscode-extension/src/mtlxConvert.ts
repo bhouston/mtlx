@@ -12,15 +12,15 @@ export const outputPathFor = (fsPath: string, target: TargetFormat): string => {
   const base = path
     .basename(fsPath)
     .replace(/\.mtlx\.zip$/i, '')
-    .replace(/\.(mtlx|mtlz)$/i, '');
-  const extension = target === 'mtlx' ? '.mtlx' : target === 'mtlz' ? '.mtlz' : '.mtlx.zip';
+    .replace(/\.mtlx$/i, '');
+  const extension = target === 'mtlx' ? '.mtlx' : '.mtlx.zip';
   return path.join(dir, `${base}${extension}`);
 };
 
 /**
- * Converts a .mtlx/.mtlz/.mtlx.zip file to one of the other two formats: load into a package,
- * write back out in the format the output extension implies. For a .mtlx target, resources are
- * written beside the document at their archive-relative paths.
+ * Converts a .mtlx/.mtlx.zip file to the other format: load into a package, write back out in
+ * the format the output extension implies. For a .mtlx target, resources are written beside the
+ * document at their archive-relative paths.
  */
 export const convertMaterialXFile = async (fsPath: string, target: TargetFormat): Promise<string> => {
   if (detectFormat(fsPath) === target) {

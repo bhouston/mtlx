@@ -3,9 +3,9 @@ import type { MaterialXPackageEntry } from './package.js';
 import type { MaterialXValidationIssue } from './types.js';
 import { checkMaterialXText } from './validate.js';
 
-// Relaxed reader/writer for ".mtlx.zip": an ordinary zip (any tool, any compression, root .mtlx
-// anywhere) containing a MaterialX document plus resources. Unlike ".mtlz" (see mtlz.ts), this
-// makes no spec-compliance assumptions about entry order or compression method.
+// Reader/writer for ".mtlx.zip": an ordinary zip (any tool, any compression, root .mtlx
+// anywhere) containing a MaterialX document plus resources. Makes no spec-compliance
+// assumptions about entry order or compression method.
 
 const textDecoder = new TextDecoder();
 
@@ -31,8 +31,7 @@ export interface MaterialXZipArchive {
 }
 
 /**
- * *Unzips `.mtlx.zip` bytes in memory and locates the root `.mtlx` entry.* Accepts any ordinary
- * zip, so it also reads `.mtlz` files when spec checks are not needed. Works in Node and the
+ * *Unzips `.mtlx.zip` bytes in memory and locates the root `.mtlx` entry.* Works in Node and the
  * browser.
  *
  * @category Packaging
@@ -62,8 +61,8 @@ export const inspectMaterialXZipArchive = (data: Uint8Array): MaterialXZipArchiv
 };
 
 /**
- * *Builds a DEFLATE-compressed `.mtlx.zip` archive in memory.* The relaxed counterpart of
- * {@link createMaterialZArchive}: no ordering, compression, or alignment constraints.
+ * *Builds a DEFLATE-compressed `.mtlx.zip` archive in memory.* No ordering, compression, or
+ * alignment constraints.
  *
  * @category Packaging
  */

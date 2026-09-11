@@ -14,11 +14,11 @@ const renderText = (result: { outputPath: string; rootPath: string; entries: str
 
 export const command = defineCommand({
   command: 'transform <input> <output>',
-  describe: 'Convert between .mtlx, .mtlz, and .mtlx.zip (pack/unpack), optionally resizing or reformatting textures',
+  describe: 'Convert between .mtlx and .mtlx.zip (pack/unpack), optionally resizing or reformatting textures',
   builder: (yargs) =>
     yargs
       .positional('input', {
-        describe: 'Path to .mtlx, .mtlz, or .mtlx.zip file',
+        describe: 'Path to .mtlx or .mtlx.zip file',
         type: 'string',
         demandOption: true,
       })

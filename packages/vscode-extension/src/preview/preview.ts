@@ -219,7 +219,7 @@ async function renderScene(
     // those exact paths to in-memory blob: URLs before the loader ever requests them. three's
     // ImageLoader/ImageBitmapLoader both route every texture URL through
     // `manager.resolveURL()`, which is what setURLModifier hooks into — no three.js patch needed.
-    // A zip-packaged .mtlz/.mtlx.zip resolves its textures from inside the archive on its own and
+    // A zip-packaged .mtlx.zip resolves its textures from inside the archive on its own and
     // never reaches this map, so it's a no-op there.
     if (textures.length) {
       const textureUrls = new Map(textures.map((t) => [t.path, URL.createObjectURL(new Blob([t.data]))]));

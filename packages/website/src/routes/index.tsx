@@ -1,176 +1,166 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useEffect, useRef, useState } from 'react';
-import { MaterialViewer, type MaterialSource } from '@/components/MaterialViewerLazy';
-import { InfoPanel } from '@/components/InfoPanel';
-import { LogPanel } from '@/components/LogPanel';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { extractMaterialXText } from '@/lib/materialx-zip';
-import { PRESET_MATERIALS, presetId, resolveMaterialParam } from '@/lib/presets';
-import { analyzeMaterialXText, type MaterialXAnalysis } from '@/lib/validate';
-
-export interface HomeSearch {
-  material?: string;
-}
+import { GithubIcon } from 'lucide-react';
+import { buttonVariants } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const Route = createFileRoute('/')({
-  ssr: false,
-  validateSearch: (search: Record<string, unknown>): HomeSearch =>
-    typeof search.material === 'string' ? { material: search.material } : {},
   component: HomePage,
 });
 
-function HomePage() {
-  const { material } = Route.useSearch();
-  const navigate = Route.useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [source, setSource] = useState<MaterialSource | null>(null);
-  const [fileMeta, setFileMeta] = useState<{ name: string; size: number } | null>(null);
-  const [analysis, setAnalysis] = useState<MaterialXAnalysis | null>(null);
-  const [viewerError, setViewerError] = useState<string | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
-  const [logLines, setLogLines] = useState<string[]>([]);
-  const [dragActive, setDragActive] = useState(false);
+const CLI_EXAMPLE = `mtlx info material.mtlx
+mtlx check material.mtlx.zip
+mtlx transform material.mtlx material.mtlx.zip`;
 
-  const appendLog = (message: string) => setLogLines((prev) => [...prev, message]);
+const LIBRARY_EXAMPLE = `import { loadMaterialXPackage, writeMaterialXPackage } from 'mtlx-core/node';
+import { resizeTextures } from 'mtlx-core/textures';
 
-  const handleViewerError = (message: string | null) => {
-    setViewerError(message);
-    if (message) appendLog(`ERROR: ${message}`);
-  };
+const pkg = await loadMaterialXPackage('material.mtlx');
+await transform(pkg, resizeTextures({ maxImageSize: 2048 }));
+await writeMaterialXPackage(pkg, 'material.mtlx.zip');`;
 
-  const loadFromFile = async (file: File) => {
-    setFileError(null);
-    const lowerName = file.name.toLowerCase();
-    if (!lowerName.endsWith('.mtlx') && !lowerName.endsWith('.mtlz') && !lowerName.endsWith('.mtlx.zip')) {
-      setFileError('Unsupported file type — drop a .mtlx, .mtlz, or .mtlx.zip file.');
-      return;
-    }
-    void navigate({ to: '.', search: {} });
-    appendLog(`Loading ${file.name}...`);
-    try {
-      const data = await file.arrayBuffer();
-      setSource({ kind: 'buffer', data, name: file.name });
-      const text = lowerName.endsWith('.mtlx') ? new TextDecoder().decode(data) : extractMaterialXText(data);
-      setFileMeta({ name: file.name, size: data.byteLength });
-      setAnalysis(analyzeMaterialXText(file.name, text));
-      appendLog(`Parsed ${file.name}.`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setFileError(message);
-      appendLog(`ERROR: ${message}`);
-    }
-  };
-
-  const loadFromUrl = async (folderUrl: string, fileName: string) => {
-    setFileError(null);
-    setSource({ kind: 'url', folderUrl, fileName });
-    const url = `${folderUrl}${fileName}`;
-    appendLog(`Fetching ${url}...`);
-    try {
-      const text = await fetch(url).then((response) => response.text());
-      setFileMeta({ name: fileName, size: new TextEncoder().encode(text).length });
-      setAnalysis(analyzeMaterialXText(fileName, text));
-      appendLog(`Parsed ${fileName}.`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setFileError(message);
-      appendLog(`ERROR: ${message}`);
-    }
-  };
-
-  // Drive the viewer entirely from the `material` query param, so a link can be shared and reloaded.
-  useEffect(() => {
-    if (!material) return;
-    const resolved = resolveMaterialParam(material);
-    if (!resolved) {
-      appendLog(`ERROR: Unknown material "${material}"`);
-      return;
-    }
-    void loadFromUrl(resolved.folderUrl, resolved.fileName);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [material]);
-
+function CodeBlock({ code }: { code: string }) {
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-6 p-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold">MaterialX viewer</h1>
-        <p className="text-sm text-muted-foreground">
-          A pure TypeScript/JavaScript MaterialX toolkit — no binary dependencies, works out of the box on Node,
-          browsers, Windows, macOS, and Linux.
+    <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
+      <code>{code}</code>
+    </pre>
+  );
+}
+
+function NpmIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M0 0v24h24V0H0zm19.2 19.2h-4.8V8.4H9.6v10.8H4.8V4.8h14.4v14.4z" />
+    </svg>
+  );
+}
+
+function PackageLinks({ github, npm }: { github: string; npm?: string }) {
+  return (
+    <div className="mt-auto flex justify-end gap-3 pt-1 text-muted-foreground">
+      <a href={github} aria-label="GitHub" className="hover:text-foreground">
+        <GithubIcon className="size-5" aria-hidden />
+      </a>
+      {npm ? (
+        <a href={npm} aria-label="npm" className="hover:text-foreground">
+          <NpmIcon className="size-5" />
+        </a>
+      ) : null}
+    </div>
+  );
+}
+
+function HomePage() {
+  return (
+    <main className="mx-auto flex max-w-5xl flex-col gap-10 p-6 py-10">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-semibold">mtlx</h1>
+        <p className="max-w-2xl text-muted-foreground">
+          A pure TypeScript/JavaScript{' '}
+          <a href="https://materialx.org" className="underline underline-offset-4">
+            MaterialX
+          </a>{' '}
+          toolkit — no binary dependencies, runs the same on Node.js and in the browser, on Windows, macOS, and Linux.
+          Parse, validate, package, and transform <code>.mtlx</code> and <code>.mtlx.zip</code> files.
         </p>
-        <p className="text-sm text-muted-foreground">Drag and drop a MaterialX file, or pick a sample below.</p>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <Select
-          value={material ?? ''}
-          onValueChange={(value) => void navigate({ to: '.', search: { material: value } })}
-        >
-          <SelectTrigger className="w-[260px]" size="sm">
-            <SelectValue placeholder="Load a sample material…" />
-          </SelectTrigger>
-          <SelectContent>
-            {PRESET_MATERIALS.map((preset) => (
-              <SelectItem key={presetId(preset)} value={presetId(preset)}>
-                {preset.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-          Choose File…
-        </Button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".mtlx,.mtlz,.zip"
-          className="hidden"
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (file) void loadFromFile(file);
-            event.target.value = '';
-          }}
-        />
-        {material ? (
-          <Link
-            to="/embed"
-            search={{ material }}
-            target="_blank"
-            className="text-sm text-muted-foreground underline underline-offset-4"
-          >
-            Embed link ↗
+        <div className="mt-2 flex gap-3">
+          <Link to="/viewer" className={buttonVariants({ size: 'sm' })}>
+            Open the viewer
           </Link>
-        ) : null}
-        {fileError ? <p className="text-sm text-destructive">{fileError}</p> : null}
+          <a
+            href="https://www.npmjs.com/package/mtlx-core"
+            className={buttonVariants({ size: 'sm', variant: 'outline' })}
+          >
+            Read the docs
+          </a>
+        </div>
       </div>
 
-      <div
-        className={`grid gap-6 rounded-lg md:grid-cols-[3fr_1fr] ${dragActive ? 'outline-2 outline-offset-4 outline-primary' : ''}`}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setDragActive(true);
-        }}
-        onDragLeave={() => setDragActive(false)}
-        onDrop={(event) => {
-          event.preventDefault();
-          setDragActive(false);
-          const file = event.dataTransfer.files[0];
-          if (file) void loadFromFile(file);
-        }}
-      >
-        <MaterialViewer source={source} onError={handleViewerError} onLog={appendLog} />
-        <InfoPanel
-          fileName={fileMeta?.name}
-          fileSize={fileMeta?.size}
-          summary={analysis?.summary}
-          issues={analysis?.issues ?? []}
-          parseError={analysis?.parseError}
-          viewerError={viewerError}
-        />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              <Link to="/viewer" className="hover:underline hover:underline-offset-4">
+                Viewer
+              </Link>
+            </CardTitle>
+            <CardDescription>Drag and drop a MaterialX file, inspect it, and preview it in 3D.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-3">
+            <div className="flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted text-xs text-muted-foreground">
+              live 3D preview
+            </div>
+            <PackageLinks
+              github="https://github.com/bhouston/mtlx/blob/main/packages/viewer/README.md"
+              npm="https://www.npmjs.com/package/mtlx-viewer"
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              <Link to="/extension" className="hover:underline hover:underline-offset-4">
+                VS Code extension
+              </Link>
+            </CardTitle>
+            <CardDescription>Preview, inspect, and convert MaterialX files right in the editor.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-3">
+            <div className="flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted text-xs text-muted-foreground">
+              screenshot
+            </div>
+            <PackageLinks github="https://github.com/bhouston/mtlx/blob/main/packages/vscode-extension/README.md" />
+          </CardContent>
+        </Card>
+
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              <a href="https://www.npmjs.com/package/mtlx-cli" className="hover:underline hover:underline-offset-4">
+                CLI
+              </a>
+            </CardTitle>
+            <CardDescription>
+              Validate, inspect, and convert <code>.mtlx</code> and <code>.mtlx.zip</code> files from the command line.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-3">
+            <CodeBlock code={CLI_EXAMPLE} />
+            <PackageLinks
+              github="https://github.com/bhouston/mtlx/blob/main/packages/cli/README.md"
+              npm="https://www.npmjs.com/package/mtlx-cli"
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              <a href="https://www.npmjs.com/package/mtlx-core" className="hover:underline hover:underline-offset-4">
+                Library
+              </a>
+            </CardTitle>
+            <CardDescription>
+              Script conversions and transforms with the same code in Node or a browser.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-3">
+            <CodeBlock code={LIBRARY_EXAMPLE} />
+            <PackageLinks
+              github="https://github.com/bhouston/mtlx/blob/main/packages/core/README.md"
+              npm="https://www.npmjs.com/package/mtlx-core"
+            />
+          </CardContent>
+        </Card>
       </div>
 
-      <LogPanel lines={logLines} />
+      <p className="text-sm text-muted-foreground">
+        The library design follows patterns from Don McCurdy's{' '}
+        <a href="https://gltf-transform.dev" className="underline underline-offset-4">
+          glTF Transform
+        </a>
+        .
+      </p>
     </main>
   );
 }

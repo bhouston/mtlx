@@ -1,5 +1,5 @@
 /**
- * Filesystem entry points for Node.js: read and write `.mtlx`, `.mtlz`, and `.mtlx.zip` files.
+ * Filesystem entry points for Node.js: read and write `.mtlx` and `.mtlx.zip` files.
  *
  * Everything here is a thin wrapper that reads bytes with `node:fs` and hands them to the pure
  * functions in the root `mtlx-core` entry, which never touch a filesystem themselves.
@@ -9,7 +9,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { checkMaterialXZipArchive, createMaterialXZipArchive, inspectMaterialXZipArchive } from './mtlxzip.js';
-import { checkMaterialZArchive, createMaterialZArchive, inspectMaterialZArchive } from './mtlz.js';
 import {
   detectFormat,
   packageFromArchive,
@@ -40,14 +39,11 @@ export const readMaterialX = async (filePath: string): Promise<MaterialXDocument
 export const writeMaterialX = async (filePath: string, document: MaterialXDocument): Promise<void> =>
   writeFile(filePath, serializeMaterialX(document), 'utf8');
 
-const readArchive = async (inputPath: string) => {
-  const data = await readFile(inputPath);
-  return detectFormat(inputPath) === 'mtlz' ? inspectMaterialZArchive(data) : inspectMaterialXZipArchive(data);
-};
+const readArchive = async (inputPath: string) => inspectMaterialXZipArchive(await readFile(inputPath));
 
 /**
- * *Loads just the document out of a `.mtlx`, `.mtlz`, or `.mtlx.zip` path.* Use this when you
- * only need to read or summarize; use {@link loadMaterialXPackage} when you need the resources too.
+ * *Loads just the document out of a `.mtlx` or `.mtlx.zip` path.* Use this when you only need to
+ * read or summarize; use {@link loadMaterialXPackage} when you need the resources too.
  *
  * @category Packaging
  */
@@ -70,7 +66,7 @@ export const loadMaterialXDocument = async (
 };
 
 /**
- * *Loads a `.mtlx`, `.mtlz`, or `.mtlx.zip` file into an in-memory {@link MaterialXPackage}.*
+ * *Loads a `.mtlx` or `.mtlx.zip` file into an in-memory {@link MaterialXPackage}.*
  *
  * For a loose `.mtlx`, every referenced file is read from disk relative to the document and the
  * references are rewritten to archive paths. For archives, the entries become resources as-is.
@@ -80,7 +76,7 @@ export const loadMaterialXDocument = async (
  * ```ts
  * const pkg = await loadMaterialXPackage('material.mtlx');
  * await transform(pkg, resizeTextures({ maxImageSize: 1024 }));
- * await writeMaterialXPackage(pkg, 'material.mtlz');
+ * await writeMaterialXPackage(pkg, 'material.mtlx.zip');
  * ```
  *
  * @category Packaging
@@ -113,8 +109,8 @@ export interface WriteMaterialXPackageResult {
 /**
  * *Writes a package to disk in the format implied by `outputPath`'s extension.*
  *
- * `.mtlz` and `.mtlx.zip` produce a single archive file. Any other path is treated as the root
- * `.mtlx` document, with resources written beside it at their archive-relative paths.
+ * `.mtlx.zip` produces a single archive file. Any other path is treated as the root `.mtlx`
+ * document, with resources written beside it at their archive-relative paths.
  *
  * @category Packaging
  */
@@ -143,7 +139,7 @@ export const writeMaterialXPackage = async (
     };
   }
 
-  await writeFile(outputPath, format === 'mtlz' ? createMaterialZArchive(entries) : createMaterialXZipArchive(entries));
+  await writeFile(outputPath, createMaterialXZipArchive(entries));
   return { outputPath, rootPath: pkg.rootPath, format, entries: entries.map((entry) => entry.path) };
 };
 
@@ -159,33 +155,29 @@ export interface CheckMaterialXResult {
 }
 
 /**
- * *Validates a `.mtlx`, `.mtlz`, or `.mtlx.zip` file, returning issues rather than throwing.*
+ * *Validates a `.mtlx` or `.mtlx.zip` file, returning issues rather than throwing.*
  *
- * For archives this covers container-level spec checks as well as the document inside. An
- * unreadable file is reported as a single error issue.
+ * For archives this covers container-level checks as well as the document inside. An unreadable
+ * file is reported as a single error issue.
  *
  * Example:
  *
  * ```ts
- * const { issues } = await checkMaterialX('material.mtlz');
+ * const { issues } = await checkMaterialX('material.mtlx.zip');
  * process.exitCode = issues.some((issue) => issue.level === 'error') ? 1 : 0;
  * ```
  *
  * @category Validation
  */
 export const checkMaterialX = async (inputPath: string): Promise<CheckMaterialXResult> => {
-  const format = detectFormat(inputPath);
   try {
+    const format = detectFormat(inputPath);
     const data = await readFile(inputPath);
     const issues =
-      format === 'mtlx'
-        ? checkMaterialXText(textDecoder.decode(data), inputPath)
-        : format === 'mtlz'
-          ? checkMaterialZArchive(data)
-          : checkMaterialXZipArchive(data);
+      format === 'mtlx' ? checkMaterialXText(textDecoder.decode(data), inputPath) : checkMaterialXZipArchive(data);
     return { path: inputPath, format, issues };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return { path: inputPath, format, issues: [{ level: 'error', location: inputPath, message }] };
+    return { path: inputPath, format: 'mtlx', issues: [{ level: 'error', location: inputPath, message }] };
   }
 };

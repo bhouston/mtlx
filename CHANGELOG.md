@@ -14,6 +14,7 @@
 
 **Breaking:**
 
+- `.mtlz` support is removed. It was never a widely-adopted standard, and keeping a bespoke container format alongside `.mtlx.zip` added surface area and risk without enough upside. `.mtlx` and `.mtlx.zip` remain the two supported formats; `detectFormat` now throws a clear "unsupported format" error for `.mtlz` paths instead of misdetecting them.
 - `readMaterialX`, `writeMaterialX`, and `loadMaterialXDocument` moved from `mtlx-core` to `mtlx-core/node`
 - `packMaterialX`, `packMaterialXZip`, `unpackMaterialZ`, and `unpackMaterialXZip` are replaced by `loadMaterialXPackage` + `writeMaterialXPackage` (the output extension picks the format); `checkMaterialXPackage` and `checkMaterialXZipPackage` by `checkMaterialX`
 - `TransformResourceHook` is removed; use `transform(pkg, resizeTextures(options))`

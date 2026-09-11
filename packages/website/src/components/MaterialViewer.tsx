@@ -35,7 +35,7 @@ async function resolveSourceBytes(source: MaterialSource): Promise<{ data: Array
 }
 
 // three.js 0.186's MaterialXLoader (via mtlx-viewer's createMtlxScene) natively understands
-// .mtlx, .mtlz, and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
+// .mtlx and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
 // embedded in the archive itself, so this component doesn't need any zip handling of its own.
 export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -223,7 +223,7 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
       ) : null}
       {!source ? (
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/50">
-          Drag & drop a .mtlx, .mtlz, or .mtlx.zip file anywhere here, or pick a sample above
+          Drag & drop a .mtlx or .mtlx.zip file anywhere here, or pick a sample above
         </div>
       ) : null}
     </div>

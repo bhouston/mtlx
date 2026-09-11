@@ -28,11 +28,11 @@ const renderText = (result: CheckResult): string => {
 
 export const command = defineCommand({
   command: 'check <input>',
-  describe: 'Validate a .mtlx, .mtlz, or .mtlx.zip file',
+  describe: 'Validate a .mtlx or .mtlx.zip file',
   builder: (yargs) =>
     yargs
       .positional('input', {
-        describe: 'Path to .mtlx, .mtlz, or .mtlx.zip file',
+        describe: 'Path to .mtlx or .mtlx.zip file',
         type: 'string',
         demandOption: true,
       })

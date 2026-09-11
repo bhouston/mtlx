@@ -45,7 +45,7 @@ const makePackFixture = async () => {
   const texturePath = path.join(tempDir, 'textures/albedo.png');
   writeFileSync(materialPath, fixtureXml, 'utf8');
   writeFileSync(texturePath, new Uint8Array([137, 80, 78, 71]));
-  return { tempDir, materialPath, archivePath: path.join(tempDir, 'material.mtlz') };
+  return { tempDir, materialPath, archivePath: path.join(tempDir, 'material.mtlx.zip') };
 };
 
 describe('mtlx', () => {
@@ -124,7 +124,7 @@ describe('mtlx', () => {
     }
   });
 
-  it('transform packs to .mtlz, check passes, and transform unpacks back to loose files', async () => {
+  it('transform packs to .mtlx.zip, check passes, and transform unpacks back to loose files', async () => {
     const fixture = await makePackFixture();
     const outputDir = path.join(fixture.tempDir, 'out');
     try {
@@ -228,11 +228,11 @@ describe('mtlx', () => {
       }
     });
 
-    it('transform to .mtlz with texture flags resizes textures inside the archive', async () => {
+    it('transform to .mtlx.zip with texture flags resizes textures inside the archive', async () => {
       const tempDir = await copyFixture('wood_grain');
       try {
         const materialPath = path.join(tempDir, 'wood_grain.mtlx');
-        const archivePath = path.join(tempDir, 'wood_grain.mtlz');
+        const archivePath = path.join(tempDir, 'wood_grain.mtlx.zip');
         const packResult = await cli.run(
           ['transform', materialPath, archivePath, '--max-image-size', '32', '--image-format', 'webp'],
           { timeout: 15_000 },

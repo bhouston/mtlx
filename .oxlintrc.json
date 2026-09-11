@@ -4,7 +4,8 @@
     "**/routeTree.gen.ts",
     "packages/core/src/generated/node-registry.generated.ts",
     "packages/vscode-extension/dist/**",
-    "packages/vscode-extension/media/**"
+    "packages/vscode-extension/media/**",
+    "packages/cli/media/**"
   ],
   "categories": {
     "correctness": "error",

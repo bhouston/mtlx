@@ -5,16 +5,16 @@ import { parseMaterialX, serializeMaterialX } from './xml.js';
  * *A MaterialX file format, detected from its file extension.*
  *
  * - `mtlx` — a loose XML document with resources referenced by relative path.
- * - `mtlz` — the spec-compliant single-file container (STORE-only ZIP32, root `.mtlx` first).
  * - `mtlx.zip` — a relaxed, ordinary zip containing a `.mtlx` document plus resources.
  *
  * @category Packaging
  */
-export type MaterialXFormat = 'mtlx' | 'mtlz' | 'mtlx.zip';
+export type MaterialXFormat = 'mtlx' | 'mtlx.zip';
 
 /**
  * *Detects the {@link MaterialXFormat} of a path from its extension.* Anything that is not
- * `.mtlz` or `.mtlx.zip` is treated as a loose `.mtlx` document.
+ * `.mtlx.zip` is treated as a loose `.mtlx` document, except `.mtlz`, which is rejected: the
+ * bespoke `.mtlz` container format is no longer supported.
  *
  * @category Packaging
  */
@@ -24,7 +24,7 @@ export const detectFormat = (filePath: string): MaterialXFormat => {
     return 'mtlx.zip';
   }
   if (lower.endsWith('.mtlz')) {
-    return 'mtlz';
+    throw new Error(`Unsupported format: .mtlz is no longer supported, use .mtlx or .mtlx.zip: ${filePath}`);
   }
   return 'mtlx';
 };
@@ -59,7 +59,7 @@ export interface MaterialXResource {
  *
  * const pkg = await loadMaterialXPackage('material.mtlx');
  * await transform(pkg, resizeTextures({ maxImageSize: 1024, imageFormat: 'webp' }));
- * await writeMaterialXPackage(pkg, 'material.mtlz');
+ * await writeMaterialXPackage(pkg, 'material.mtlx.zip');
  * ```
  *
  * @category Packaging
@@ -72,8 +72,7 @@ export interface MaterialXPackage {
 }
 
 /**
- * *A `{ path, data }` pair, the input to {@link createMaterialZArchive} and
- * {@link createMaterialXZipArchive}.*
+ * *A `{ path, data }` pair, the input to {@link createMaterialXZipArchive}.*
  *
  * @category Packaging
  */
@@ -341,8 +340,8 @@ export const packageToEntries = (pkg: MaterialXPackage): MaterialXPackageEntry[]
 
 /**
  * *Builds a package from an inspected archive.* Accepts the result of
- * {@link inspectMaterialZArchive} or {@link inspectMaterialXZipArchive}; throws if the archive
- * reported errors or has no root document.
+ * {@link inspectMaterialXZipArchive}; throws if the archive reported errors or has no root
+ * document.
  *
  * @category Packaging
  */

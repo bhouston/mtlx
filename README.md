@@ -1,5 +1,7 @@
 # mtlx
 
+<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+
 [![npm version](https://img.shields.io/npm/v/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bhouston/mtlx/blob/main/LICENSE)
@@ -8,14 +10,12 @@
 _A pure TypeScript/JavaScript [MaterialX](https://materialx.org) SDK and viewer — no binary
 dependencies, runs the same on Node.js and in the browser, on Windows, macOS, and Linux._
 
-mtlx parses, validates, packages, and transforms MaterialX materials: loose `.mtlx` documents, the
-spec-compliant `.mtlz` container, and relaxed `.mtlx.zip` archives. It is the library behind the
+mtlx parses, validates, packages, and transforms MaterialX materials: loose `.mtlx` documents and
+relaxed `.mtlx.zip` archives. It is the library behind the
 [mtlx.ben3d.ca](https://mtlx.ben3d.ca) viewer and the "Mtlx Viewer" VS Code extension. Because it's
 pure TS/JS with zero native/binary dependencies, it installs and runs anywhere Node or a browser
 does — no native builds, no platform-specific binaries — making MaterialX easier to reach for
 everyday artists and developers.
-
-<!-- NOTICE: This README is rendered as the documentation homepage at https://mtlx.ben3d.ca/docs/ -->
 
 ## Packages
 
@@ -37,14 +37,14 @@ import { transform } from 'mtlx-core';
 import { loadMaterialXPackage, writeMaterialXPackage } from 'mtlx-core/node';
 import { resizeTextures } from 'mtlx-core/textures';
 
-// Load a .mtlx (with its textures), .mtlz, or .mtlx.zip into memory.
+// Load a .mtlx (with its textures) or .mtlx.zip into memory.
 const pkg = await loadMaterialXPackage('material.mtlx');
 
 // Apply transforms in order.
 await transform(pkg, resizeTextures({ maxImageSize: 2048, imageFormat: 'webp' }));
 
-// Write back out as any format.
-await writeMaterialXPackage(pkg, 'material.mtlz');
+// Write back out as either format.
+await writeMaterialXPackage(pkg, 'material.mtlx.zip');
 ```
 
 In the browser, the root entry works on bytes and text with no filesystem:
@@ -56,8 +56,7 @@ const issues = validateDocument(parseMaterialX(xmlText));
 const archiveIssues = checkMaterialXZipArchive(new Uint8Array(await file.arrayBuffer()));
 ```
 
-See [Concepts](https://mtlx.ben3d.ca/docs/documents/Concepts.html) and the
-[API reference](https://mtlx.ben3d.ca/docs/modules.html).
+See the [mtlx-core README](https://www.npmjs.com/package/mtlx-core) for the full API.
 
 ## Command line
 
@@ -67,13 +66,13 @@ npm install --global mtlx-cli
 
 ```sh
 mtlx check material.mtlx
-mtlx info material.mtlz --format json
-mtlx transform material.mtlx material.mtlz                    # pack
-mtlx transform material.mtlz out/material.mtlx                # unpack
-mtlx transform material.mtlx material.mtlz --max-image-size 2048 --image-format webp
+mtlx info material.mtlx.zip --format json
+mtlx transform material.mtlx material.mtlx.zip                    # pack
+mtlx transform material.mtlx.zip out/material.mtlx                # unpack
+mtlx transform material.mtlx material.mtlx.zip --max-image-size 2048 --image-format webp
 ```
 
-See the [command line guide](https://mtlx.ben3d.ca/docs/documents/Command_line.html).
+See the [mtlx-cli README](https://www.npmjs.com/package/mtlx-cli) for the full reference.
 
 ## Contributing
 

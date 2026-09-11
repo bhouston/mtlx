@@ -3,6 +3,6 @@
   "compilerOptions": {
     "composite": true
   },
-  "exclude": ["node_modules", "dist", "src/**/*.test.ts"],
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/view/viewerEntry.ts"],
   "references": [{ "path": "../core" }]
 }

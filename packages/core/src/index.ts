@@ -7,8 +7,6 @@
  */
 export { checkMaterialXZipArchive, createMaterialXZipArchive, inspectMaterialXZipArchive } from './mtlxzip.js';
 export type { MaterialXZipArchive, MaterialXZipEntry } from './mtlxzip.js';
-export { checkMaterialZArchive, createMaterialZArchive, inspectMaterialZArchive } from './mtlz.js';
-export type { MaterialZArchive, MaterialZArchiveEntry } from './mtlz.js';
 export {
   detectFormat,
   packageFromArchive,

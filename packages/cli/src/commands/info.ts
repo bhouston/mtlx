@@ -18,11 +18,11 @@ const renderText = (info: MaterialXSummary): string =>
 
 export const command = defineCommand({
   command: 'info <input>',
-  describe: 'Print information about a .mtlx, .mtlz, or .mtlx.zip file',
+  describe: 'Print information about a .mtlx or .mtlx.zip file',
   builder: (yargs) =>
     yargs
       .positional('input', {
-        describe: 'Path to .mtlx, .mtlz, or .mtlx.zip file',
+        describe: 'Path to .mtlx or .mtlx.zip file',
         type: 'string',
         demandOption: true,
       })

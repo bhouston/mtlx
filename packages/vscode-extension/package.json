@@ -2,7 +2,7 @@
   "name": "mtlx-vscode-extension",
   "displayName": "Mtlx Viewer",
   "version": "0.3.0",
-  "description": "Preview, inspect, and convert MaterialX files (.mtlx, .mtlz, .mtlx.zip) with a 3D viewer built on three.js",
+  "description": "Preview, inspect, and convert MaterialX files (.mtlx, .mtlx.zip) with a 3D viewer built on three.js",
   "categories": [
     "Other",
     "Visualization"
@@ -12,11 +12,10 @@
     "material",
     "materialx",
     "mtlx",
-    "mtlz",
     "preview",
     "shader"
   ],
-  "homepage": "https://github.com/bhouston/mtlx#readme",
+  "homepage": "https://mtlx.ben3d.ca",
   "bugs": {
     "url": "https://github.com/bhouston/mtlx/issues"
   },
@@ -59,10 +58,6 @@
         "title": "Convert to .mtlx"
       },
       {
-        "command": "mtlx.convertToMtlz",
-        "title": "Convert to .mtlz"
-      },
-      {
         "command": "mtlx.convertToMtlxZip",
         "title": "Convert to .mtlx.zip"
       },
@@ -71,32 +66,17 @@
         "title": "Open with Mtlx Viewer"
       }
     ],
-    "submenus": [
-      {
-        "id": "mtlx.convertMaterialX",
-        "label": "Convert MaterialX File"
-      }
-    ],
     "menus": {
       "explorer/context": [
         {
-          "submenu": "mtlx.convertMaterialX",
-          "when": "resourceFilename =~ /\\.(mtlx|mtlz|mtlx\\.zip)$/i",
-          "group": "7_modification"
-        }
-      ],
-      "mtlx.convertMaterialX": [
-        {
           "command": "mtlx.convertToMtlx",
-          "when": "(resourceFilename =~ /\\.(mtlz|mtlx\\.zip)$/i) || (listMultiSelection && resourceFilename =~ /\\.(mtlx|mtlz|mtlx\\.zip)$/i)"
-        },
-        {
-          "command": "mtlx.convertToMtlz",
-          "when": "(resourceFilename =~ /\\.(mtlx|mtlx\\.zip)$/i && resourceExtname != '.mtlz') || (listMultiSelection && resourceFilename =~ /\\.(mtlx|mtlz|mtlx\\.zip)$/i)"
+          "when": "(resourceFilename =~ /\\.mtlx\\.zip$/i) || (listMultiSelection && resourceFilename =~ /\\.(mtlx|mtlx\\.zip)$/i)",
+          "group": "7_modification"
         },
         {
           "command": "mtlx.convertToMtlxZip",
-          "when": "(resourceFilename =~ /\\.(mtlx|mtlz)$/i) || (listMultiSelection && resourceFilename =~ /\\.(mtlx|mtlz|mtlx\\.zip)$/i)"
+          "when": "(resourceFilename =~ /\\.mtlx$/i) || (listMultiSelection && resourceFilename =~ /\\.(mtlx|mtlx\\.zip)$/i)",
+          "group": "7_modification"
         }
       ]
     },
@@ -107,9 +87,6 @@
         "selector": [
           {
             "filenamePattern": "*.mtlx"
-          },
-          {
-            "filenamePattern": "*.mtlz"
           },
           {
             "filenamePattern": "*.mtlx.zip"

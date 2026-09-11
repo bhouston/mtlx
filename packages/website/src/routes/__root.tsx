@@ -1,22 +1,12 @@
 import { createRootRoute, HeadContent, Link, Outlet, Scripts, useLocation } from '@tanstack/react-router';
-import { GithubIcon, HeartIcon } from 'lucide-react';
+import { HeartIcon } from 'lucide-react';
 import { ThemeProvider } from 'next-themes';
 import { GoogleAnalytics } from 'tanstack-router-ga4';
 
 import { Toaster } from '@/components/ui/sonner';
 import appCss from '@/app.css?url';
 
-const GITHUB_URL = 'https://github.com/bhouston/mtlx';
-const NPM_URL = 'https://www.npmjs.com/package/mtlx-core';
 const GA_MEASUREMENT_ID = 'G-L71KL9N7XM';
-
-function NpmIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
-      <path d="M0 0v24h24V0H0zm19.2 19.2h-4.8V8.4H9.6v10.8H4.8V4.8h14.4v14.4z" />
-    </svg>
-  );
-}
 
 export const Route = createRootRoute({
   head: () => ({
@@ -51,29 +41,26 @@ function RootLayout() {
     <div className="flex min-h-svh flex-col">
       <header className="flex items-center justify-between gap-4 border-b border-border px-6 py-3">
         <div className="flex items-center gap-4">
-          <Link to="/" className="font-semibold">
-            mtlx
+          <Link to="/" className="flex items-center gap-4 font-semibold text-primary underline underline-offset-4">
+            <img src="/logo.webp" alt="mtlx" className="h-9 w-auto" />
+            Home
           </Link>
           <nav className="flex gap-4 text-sm">
             <Link
-              to="/"
+              to="/viewer"
               className="text-primary underline underline-offset-4"
               activeProps={{ className: 'font-semibold' }}
             >
               Viewer
             </Link>
-            <a href="/docs/" className="text-primary underline underline-offset-4">
-              Docs
-            </a>
+            <Link
+              to="/extension"
+              className="text-primary underline underline-offset-4"
+              activeProps={{ className: 'font-semibold' }}
+            >
+              Extension
+            </Link>
           </nav>
-        </div>
-        <div className="flex items-center gap-3 text-muted-foreground">
-          <a href={GITHUB_URL} aria-label="GitHub" className="hover:text-foreground">
-            <GithubIcon className="size-5" aria-hidden />
-          </a>
-          <a href={NPM_URL} aria-label="npm" className="hover:text-foreground">
-            <NpmIcon className="size-5" />
-          </a>
         </div>
       </header>
       <div className="flex min-h-0 flex-1 flex-col">
@@ -97,11 +84,26 @@ function RootLayout() {
   );
 }
 
+const JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'mtlx',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Web, Windows, macOS, Linux',
+  description:
+    'Pure TypeScript/JavaScript MaterialX tools — parse, validate, package, and transform .mtlx and .mtlx.zip files. No binary dependencies.',
+  url: 'https://mtlx.ben3d.ca',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  author: { '@type': 'Person', name: 'Ben Houston', url: 'https://ben3d.ca' },
+};
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* eslint-disable-next-line react/no-danger -- static, trusted JSON-LD constant */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
       </head>
       <body className="bg-background text-foreground antialiased">
         {import.meta.env.PROD ? <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} /> : null}

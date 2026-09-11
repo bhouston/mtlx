@@ -35,10 +35,9 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
   );
 
-  const targets: TargetFormat[] = ['mtlx', 'mtlz', 'mtlx.zip'];
+  const targets: TargetFormat[] = ['mtlx', 'mtlx.zip'];
   const commandForTarget: Record<TargetFormat, string> = {
     mtlx: 'mtlx.convertToMtlx',
-    mtlz: 'mtlx.convertToMtlz',
     'mtlx.zip': 'mtlx.convertToMtlxZip',
   };
   for (const target of targets) {
@@ -49,7 +48,7 @@ export function activate(context: vscode.ExtensionContext): void {
           const all = normalizeUris(uri, selectedResources);
           if (!all.length) {
             vscode.window.showErrorMessage(
-              'Mtlx: No file selected. Right-click a .mtlx/.mtlz/.mtlx.zip file in the Explorer.',
+              'Mtlx: No file selected. Right-click a .mtlx/.mtlx.zip file in the Explorer.',
             );
             return;
           }

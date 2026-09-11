@@ -2,6 +2,7 @@
   "name": "mtlx-viewer",
   "version": "0.1.0",
   "description": "Shared three.js IBL environment assets and loader for the MaterialX website and VS Code viewers.",
+  "homepage": "https://mtlx.ben3d.ca",
   "license": "MIT",
   "repository": {
     "type": "git",

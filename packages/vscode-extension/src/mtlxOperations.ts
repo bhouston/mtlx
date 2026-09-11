@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 export { convertMaterialXFile, type TargetFormat } from './mtlxConvert.js';
 
-const SUPPORTED_EXTENSIONS_PATTERN = /\.(mtlx|mtlz|mtlx\.zip)$/i;
+const SUPPORTED_EXTENSIONS_PATTERN = /\.(mtlx|mtlx\.zip)$/i;
 
 export const filterMtlxUris = (uris: vscode.Uri[]): vscode.Uri[] =>
   uris.filter((uri) => SUPPORTED_EXTENSIONS_PATTERN.test(uri.fsPath));

@@ -6,9 +6,10 @@ publish
 .tanstack
 routeTree.gen.ts
 packages/vscode-extension/media
+packages/cli/media
 .DS_Store
 *.tsbuildinfo
 coverage
 .vscode/*
 !.vscode/extensions.json
-packages/website/public/docs
+packages/website/src/generated/api-docs

@@ -1,9 +1,10 @@
 {
   "name": "website",
   "private": true,
+  "homepage": "https://mtlx.ben3d.ca",
   "type": "module",
   "scripts": {
-    "build": "pnpm -w run docs && vite build",
+    "build": "vite build",
     "tsc": "tsc --noEmit",
     "dev": "vite dev --port 3000",
     "start": "node .output/server/index.mjs",

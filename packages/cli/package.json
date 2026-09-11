@@ -1,7 +1,8 @@
 {
   "name": "mtlx-cli",
   "version": "0.1.0",
-  "description": "mtlx: validate, inspect, convert, and transform MaterialX (.mtlx, .mtlz, .mtlx.zip) files.",
+  "description": "mtlx: validate, inspect, convert, and transform MaterialX (.mtlx, .mtlx.zip) files.",
+  "homepage": "https://mtlx.ben3d.ca",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -13,19 +14,21 @@
   },
   "files": [
     "dist",
-    "bin"
+    "bin",
+    "media"
   ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && node scripts/build-viewer.mjs",
     "dev": "tsc -b -w --preserveWatchOutput --noEmitOnError",
     "start": "node bin/cli.js",
     "test": "vitest run"
   },
   "dependencies": {
     "mtlx-core": "workspace:*",
+    "mtlx-viewer": "workspace:*",
     "type-fest": "^5.1.0",
     "yaml": "^2.7.0",
     "yargs": "^18.0.0",
@@ -33,10 +36,13 @@
   },
   "devDependencies": {
     "@types/node": "^22.20.0",
+    "@types/three": "^0.180.0",
     "@types/yargs": "^17.0.35",
+    "esbuild": "^0.27.3",
     "fflate": "^0.8.3",
     "sharp": "^0.35.4",
     "source-map-support": "^0.5.21",
+    "three": "^0.186.0",
     "vitest-command-line": "^0.9.0"
   }
 }

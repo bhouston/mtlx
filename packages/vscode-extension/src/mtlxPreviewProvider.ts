@@ -2,10 +2,8 @@ import * as path from 'node:path';
 import {
   checkMaterialXText,
   checkMaterialXZipArchive,
-  checkMaterialZArchive,
   detectFormat,
   inspectMaterialXZipArchive,
-  inspectMaterialZArchive,
   parseMaterialX,
   summarizeMaterialX,
   type MaterialXSummary,
@@ -30,8 +28,8 @@ function analyze(
       const document = parseMaterialX(text);
       return { issues: checkMaterialXText(text, fsPath), summary: summarizeMaterialX(fsPath, document) };
     }
-    const archive = format === 'mtlz' ? inspectMaterialZArchive(raw) : inspectMaterialXZipArchive(raw);
-    const issues = format === 'mtlz' ? checkMaterialZArchive(raw) : checkMaterialXZipArchive(raw);
+    const archive = inspectMaterialXZipArchive(raw);
+    const issues = checkMaterialXZipArchive(raw);
     if (!archive.rootEntry) {
       throw new Error(`No root .mtlx entry found in ${fsPath}`);
     }
@@ -57,8 +55,8 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
 
   // For a loose .mtlx, the document's `file` attributes point at sibling texture files on disk
   // that the webview (no real filesystem/network access) can't fetch itself — read them here and
-  // ship their bytes over. A no-op for self-contained .mtlz/.mtlx.zip archives, since those paths
-  // won't exist next to the archive; three.js's MaterialXLoader resolves textures from inside the
+  // ship their bytes over. A no-op for self-contained .mtlx.zip archives, since those paths won't
+  // exist next to the archive; three.js's MaterialXLoader resolves textures from inside the
   // archive on its own, so a miss here is expected and harmless.
   private async _readReferencedTextures(
     uri: vscode.Uri,
@@ -110,8 +108,8 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       summary: document.summary,
       parseError: document.parseError,
       // Raw original bytes — three.js's MaterialXLoader.parseBuffer() natively understands
-      // plain .mtlx, .mtlz, AND .mtlx.zip (it sniffs the zip magic bytes), so the webview needs
-      // no zip-handling code of its own.
+      // plain .mtlx AND .mtlx.zip (it sniffs the zip magic bytes), so the webview needs no
+      // zip-handling code of its own.
       data: document.raw.buffer,
       // Sibling texture files for a loose .mtlx (see _readReferencedTextures) — the webview turns
       // these into blob: URLs and rewrites the loader's texture requests to them.

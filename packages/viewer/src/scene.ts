@@ -23,7 +23,7 @@ export type GeometryKind = 'totem' | 'sphere' | 'plane';
  * @category Viewer
  */
 export interface MtlxSceneOptions {
-  /** Raw .mtlx / .mtlz / .mtlx.zip bytes. */
+  /** Raw .mtlx / .mtlx.zip bytes. */
   data: ArrayBuffer;
   /** Passed through to MaterialXLoader for resource-path resolution and archive sniffing. */
   fileName: string;
@@ -65,7 +65,7 @@ interface MaterialXParseResult {
 }
 
 function parseMaterialX(manager: THREE.LoadingManager, data: ArrayBuffer, fileName: string): MaterialXParseResult {
-  // @types/three lags three's addon source: parseBuffer (native .mtlz/.mtlx.zip support) isn't
+  // @types/three lags three's addon source: parseBuffer (native .mtlx.zip archive support) isn't
   // in its MaterialXLoader typings yet.
   const loader = new MaterialXLoader(manager) as unknown as {
     parseBuffer: (data: ArrayBuffer, url?: string) => MaterialXParseResult;

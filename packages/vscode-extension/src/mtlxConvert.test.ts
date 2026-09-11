@@ -22,9 +22,7 @@ afterEach(async () => {
 
 describe('outputPathFor', () => {
   it('swaps the extension for each target format', () => {
-    expect(outputPathFor('/a/b/material.mtlx', 'mtlz')).toBe('/a/b/material.mtlz');
     expect(outputPathFor('/a/b/material.mtlx', 'mtlx.zip')).toBe('/a/b/material.mtlx.zip');
-    expect(outputPathFor('/a/b/material.mtlz', 'mtlx')).toBe('/a/b/material.mtlx');
     expect(outputPathFor('/a/b/material.mtlx.zip', 'mtlx')).toBe('/a/b/material.mtlx');
   });
 });
@@ -34,15 +32,15 @@ describe('convertMaterialXFile', () => {
     await expect(convertMaterialXFile('/a/b/material.mtlx', 'mtlx')).rejects.toThrow(/already mtlx/);
   });
 
-  it('mtlx -> mtlz -> mtlx round-trips the procedural copper fixture', async () => {
+  it('mtlx -> mtlx.zip -> mtlx round-trips the procedural copper fixture', async () => {
     cpSync(path.join(fixturesDir, 'copper'), dir, { recursive: true });
     const materialPath = path.join(dir, 'copper.mtlx');
 
-    const mtlzPath = await convertMaterialXFile(materialPath, 'mtlz');
-    expect(mtlzPath).toBe(path.join(dir, 'copper.mtlz'));
-    expect(existsSync(mtlzPath)).toBe(true);
+    const zipPath = await convertMaterialXFile(materialPath, 'mtlx.zip');
+    expect(zipPath).toBe(path.join(dir, 'copper.mtlx.zip'));
+    expect(existsSync(zipPath)).toBe(true);
 
-    const backToMtlxPath = await convertMaterialXFile(mtlzPath, 'mtlx');
+    const backToMtlxPath = await convertMaterialXFile(zipPath, 'mtlx');
     expect(existsSync(backToMtlxPath)).toBe(true);
   });
 
@@ -55,13 +53,12 @@ describe('convertMaterialXFile', () => {
     expect(existsSync(zipPath)).toBe(true);
   });
 
-  it('mtlz -> mtlx.zip converts without leaving a temp dir behind', async () => {
+  it('mtlx.zip -> mtlx converts without leaving a temp dir behind', async () => {
     cpSync(path.join(fixturesDir, 'wood_grain'), dir, { recursive: true });
-    const mtlzPath = await convertMaterialXFile(path.join(dir, 'wood_grain.mtlx'), 'mtlz');
+    const zipPath = await convertMaterialXFile(path.join(dir, 'wood_grain.mtlx'), 'mtlx.zip');
 
-    const zipPath = await convertMaterialXFile(mtlzPath, 'mtlx.zip');
-    expect(zipPath).toBe(path.join(dir, 'wood_grain.mtlx.zip'));
-    expect(existsSync(zipPath)).toBe(true);
+    const backToMtlxPath = await convertMaterialXFile(zipPath, 'mtlx');
+    expect(existsSync(backToMtlxPath)).toBe(true);
 
     const tmpEntries = await readdir(tmpdir());
     expect(tmpEntries.some((entry) => entry.startsWith('mtlx-convert-'))).toBe(false);
