@@ -56,8 +56,8 @@ async function resolveSourceBytes(
 // .mtlx and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
 // embedded in the archive itself, so this component doesn't need any zip handling of its own.
 export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialViewerProps) {
-  const [environmentKind, setEnvironmentKind] = useState<EnvironmentKind>('studio');
-  const environmentKindRef = useRef<EnvironmentKind>('studio');
+  const [environmentKind, setEnvironmentKind] = useState<EnvironmentKind>('default');
+  const environmentKindRef = useRef<EnvironmentKind>('default');
   const switchEnvironmentRef = useRef<((kind: EnvironmentKind) => Promise<void>) | null>(null);
   const [environmentMessage, setEnvironmentMessage] = useState('');
   const [exposure, setExposure] = useState(0);
@@ -175,7 +175,10 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       own(() => pmremGenerator.dispose());
       const environments = createEnvironmentSwitcher(
         async (kind) =>
-          parseEnvironment(kind, await fetchBytes(kind === 'studio' ? studioEnvironmentUrl : defaultEnvironmentUrl)),
+          parseEnvironment(
+            kind as EnvironmentKind,
+            await fetchBytes(kind === 'studio' ? studioEnvironmentUrl : defaultEnvironmentUrl),
+          ),
         (texture) => pmremGenerator.fromEquirectangular(texture),
         (texture) => {
           scene.environment = texture;

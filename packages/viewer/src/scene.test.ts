@@ -42,3 +42,28 @@ it('Reset restores object orientation, camera position, target and zoom without 
   expect(scene.autoRotate).toBe(false);
   scene.dispose();
 });
+
+it('loads named geometry, applies the active material, resets it and releases original glTF resources', async () => {
+  const scene = await createMtlxScene(
+    new THREE.PerspectiveCamera(45, 1),
+    { target: new THREE.Vector3(), update: vi.fn() },
+    { data: new ArrayBuffer(0), fileName: 'a.mtlx', shaderBall: new ArrayBuffer(0) },
+  );
+  await scene.addGeometry('__proto__', new ArrayBuffer(0));
+  const object = scene.root.children.at(-1)!;
+  const mesh = object.children[0] as THREE.Mesh;
+  const originalMaterial = mesh.material as THREE.Material;
+  const disposeMaterial = vi.spyOn(originalMaterial, 'dispose');
+  const disposeGeometry = vi.spyOn(mesh.geometry, 'dispose');
+  scene.setGeometry('__proto__');
+  expect(mesh.material).not.toBe(originalMaterial);
+  scene.update(1);
+  scene.resetCamera();
+  expect(object.rotation.y).toBe(0);
+  await expect(scene.addGeometry('sphere', new ArrayBuffer(0))).rejects.toThrow('duplicate');
+  await expect(scene.addGeometry('bad name', new ArrayBuffer(0))).rejects.toThrow('Invalid');
+  scene.dispose();
+  scene.dispose();
+  expect(disposeMaterial).toHaveBeenCalledTimes(1);
+  expect(disposeGeometry).toHaveBeenCalledTimes(1);
+});

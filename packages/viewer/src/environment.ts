@@ -72,7 +72,7 @@ export async function parseEnvironment(kind: EnvironmentKind, data: ArrayBuffer)
 
 /** Owns the active filtered environment and discards superseded asynchronous loads. */
 export function createEnvironmentSwitcher(
-  load: (kind: EnvironmentKind) => Promise<Texture>,
+  load: (kind: string) => Promise<Texture>,
   prepare: (texture: Texture) => { texture: Texture; dispose(): void },
   apply: (texture: Texture) => void,
 ) {
@@ -80,7 +80,7 @@ export function createEnvironmentSwitcher(
   let disposed = false;
   let active: { dispose(): void } | undefined;
   return {
-    async set(kind: EnvironmentKind): Promise<boolean> {
+    async set(kind: string): Promise<boolean> {
       const request = ++generation;
       let source: Texture;
       try {
@@ -112,4 +112,26 @@ export function createEnvironmentSwitcher(
       active = undefined;
     },
   };
+}
+
+/** Parse an additional equirectangular IBL from its file extension. */
+export async function parseEnvironmentFile(data: ArrayBuffer, source: string): Promise<Texture> {
+  const path = source.split(/[?#]/)[0]!.toLowerCase();
+  if (path.endsWith('.hdr')) return parseDefaultEnvironment(data);
+  if (path.endsWith('.exr')) {
+    const { EXRLoader } = await import('three/addons/loaders/EXRLoader.js');
+    const loader = new EXRLoader() as unknown as { createDataTexture: (buffer: ArrayBuffer) => Texture };
+    const texture = loader.createDataTexture(data);
+    texture.mapping = EquirectangularReflectionMapping;
+    return texture;
+  }
+  if (!/\.(png|jpe?g)$/.test(path)) throw new Error('IBL must be an equirectangular .hdr, .exr, .png or .jpg file');
+  const bitmap = await createImageBitmap(new Blob([data]));
+  const texture = new Texture(bitmap);
+  texture.addEventListener('dispose', () => bitmap.close());
+  const { SRGBColorSpace } = await import('three');
+  texture.colorSpace = SRGBColorSpace;
+  texture.mapping = EquirectangularReflectionMapping;
+  texture.needsUpdate = true;
+  return texture;
 }

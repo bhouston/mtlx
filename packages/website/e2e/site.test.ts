@@ -84,6 +84,7 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await page.keyboard.press('Enter');
   expect(await page.getByRole('button', { name: 'Pause rotation' }).count()).toBe(1);
   await page.getByRole('combobox', { name: 'Geometry', exact: true }).selectOption('sphere');
+  expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('default');
   const canvas = await page.locator('canvas').elementHandle();
   await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('default');
   await expect
@@ -94,7 +95,7 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('studio');
   await expect
     .poll(async () => (await page.locator('main').innerText()).split('Environment ready: Studio.').length)
-    .toBe(3);
+    .toBe(2);
   await page.getByRole('button', { name: 'Reset' }).focus();
   await page.keyboard.press('Enter');
   expect(await page.getByRole('combobox', { name: 'Material', exact: true }).count()).toBe(1);

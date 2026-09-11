@@ -67,9 +67,20 @@ assets themselves and pass fetched bytes. The snippets assume the caller has cre
 `controls`, `threeScene`, and its animation loop. Loose materials also need a loading manager able
 to resolve referenced textures; packaged `.mtlx.zip` inputs can contain those resources.
 
+Additional glTF/GLB geometry can be loaded without rebuilding the material scene:
+
+```ts
+await preview.addGeometry('bust', gltfBytes, geometryLoadingManager);
+preview.setGeometry('bust');
+```
+
+Names must match `[a-zA-Z_][a-zA-Z0-9_]*` and cannot duplicate existing geometry names. The optional
+loading manager resolves glTF sidecars. The preview owns the added geometries, their original
+materials/textures, and their Reset orientations. `preview.dispose()` releases them too.
+
 ## Environments
 
-The studio and default IBL environments used by the preview scene are exposed separately in case
+The studio and bridge IBL environments used by the preview scene are exposed separately in case
 you want to build your own lighting rig.
 
 ```ts
@@ -88,7 +99,7 @@ threeScene.environment = texture;
 
 ## Inspection controls and capabilities
 
-The website and VS Code hosts provide pause/resume rotation, reduced-motion support, Reset,
+The bridge is the initial environment in both hosts. The website and VS Code hosts provide pause/resume rotation, reduced-motion support, Reset,
 fullscreen, exposure, and environment intensity controls. The bottom IBL dropdown selects Studio
 or San Giuseppe Bridge, using the same HDR asset as the three-ntc website. Switching IBLs retains
 the camera, geometry, material and exposure; superseded environment loads are disposed. Hosts should pass `autoRotate: false`
@@ -102,6 +113,9 @@ import { supportedMaterialXCategories } from 'mtlx-viewer/capabilities';
 
 if (!supportedMaterialXCategories.includes('standard_surface')) throw new Error('Missing renderer capability');
 ```
+
+`parseEnvironmentFile(bytes, sourceName)` loads additional equirectangular HDR, EXR, PNG and JPEG
+assets. `createEnvironmentSwitcher` also accepts custom names supplied by its host loader.
 
 The capability subpath is lightweight and can be imported in a host or worker without loading
 three.js. A test compares it to the installed three.js registries so upgrades cannot silently

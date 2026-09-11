@@ -16,7 +16,7 @@ import { MaterialXLoader } from 'three/addons/loaders/MaterialXLoader.js';
  *
  * @category Viewer
  */
-export type GeometryKind = 'totem' | 'sphere' | 'plane';
+export type GeometryKind = string;
 
 /**
  * *Options for {@link createMtlxScene}.*
@@ -56,6 +56,8 @@ export interface MtlxScene {
   dispose(): void;
   setMaterial(name: string): void;
   setGeometry(kind: GeometryKind): void;
+  /** Load an additional named glTF/GLB geometry; this scene owns its resources. */
+  addGeometry(name: string, data: ArrayBuffer, manager?: THREE.LoadingManager): Promise<void>;
   /** Restore the active geometry orientation and initial camera framing. */
   resetCamera(): void;
   /** Call every frame; advances the auto-rotation. */
@@ -171,11 +173,13 @@ export async function createMtlxScene(
     collectDisposables(Object.values(materials))();
     throw error;
   }
-  const geometries: Record<GeometryKind, THREE.Object3D> = {
+  const geometries: Record<string, THREE.Object3D> = Object.assign(Object.create(null), {
     totem,
     sphere: buildSphere(),
     plane: buildPlane(),
-  };
+  });
+  let disposed = false;
+  const additionalDisposers: Array<() => void> = [];
   // Capture original glTF/default materials before replacing them with MaterialX materials.
   const disposeResources = collectDisposables([...Object.values(geometries), ...Object.values(materials)]);
   const originalRotations = new Map(Object.values(geometries).map((object) => [object, object.rotation.clone()]));
@@ -189,6 +193,8 @@ export async function createMtlxScene(
   const scene: MtlxScene = {
     root,
     dispose() {
+      disposed = true;
+      for (const dispose of additionalDisposers.splice(0)) dispose();
       root.removeFromParent();
       disposeResources();
       root.clear();
@@ -196,18 +202,46 @@ export async function createMtlxScene(
     materialNames,
     activeMaterial:
       options.materialName && materials[options.materialName] ? options.materialName : materialNames.at(-1)!,
-    geometry: options.geometry ?? 'totem',
+    geometry: options.geometry && geometries[options.geometry] ? options.geometry : 'totem',
     autoRotate: options.autoRotate ?? true,
     setMaterial(name) {
       const material = materials[name];
       if (!material) return;
       scene.activeMaterial = name;
-      applyMaterial(geometries[scene.geometry], material);
+      applyMaterial(geometries[scene.geometry]!, material);
+    },
+    async addGeometry(name, data, geometryManager = new THREE.LoadingManager()) {
+      if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name) || geometries[name])
+        throw new Error(`Invalid or duplicate geometry name: ${name}`);
+      const object = await loadShaderBall(geometryManager, data);
+      const release = collectDisposables([object]);
+      if (disposed) {
+        release();
+        return;
+      }
+      if (geometries[name]) {
+        release();
+        throw new Error(`Duplicate geometry name: ${name}`);
+      }
+      let meshes = 0;
+      object.traverse((node) => {
+        if ((node as THREE.Mesh).isMesh) meshes++;
+      });
+      if (!meshes) {
+        release();
+        throw new Error('Geometry contains no meshes');
+      }
+      geometries[name] = object;
+      originalRotations.set(object, object.rotation.clone());
+      object.visible = false;
+      root.add(object);
+      additionalDisposers.push(release);
     },
     setGeometry(kind) {
+      if (!geometries[kind]) return;
       scene.geometry = kind;
       applyVisibility(kind);
-      applyMaterial(geometries[kind], materials[scene.activeMaterial]!);
+      applyMaterial(geometries[kind]!, materials[scene.activeMaterial]!);
       frameObject(camera, controls, geometries[kind]);
     },
     resetCamera() {
@@ -220,18 +254,18 @@ export async function createMtlxScene(
       }
       for (const [object, rotation] of originalRotations) object.rotation.copy(rotation);
       camera.zoom = 1;
-      frameObject(camera, controls, geometries[scene.geometry]);
+      frameObject(camera, controls, geometries[scene.geometry]!);
     },
     update(deltaSeconds) {
       if (scene.autoRotate) {
-        geometries[scene.geometry].rotation.y += ROTATION_RADIANS_PER_SECOND * deltaSeconds;
+        geometries[scene.geometry]!.rotation.y += ROTATION_RADIANS_PER_SECOND * deltaSeconds;
       }
     },
   };
 
   applyVisibility(scene.geometry);
-  applyMaterial(geometries[scene.geometry], materials[scene.activeMaterial]!);
-  frameObject(camera, controls, geometries[scene.geometry]);
+  applyMaterial(geometries[scene.geometry]!, materials[scene.activeMaterial]!);
+  frameObject(camera, controls, geometries[scene.geometry]!);
 
   return scene;
 }
