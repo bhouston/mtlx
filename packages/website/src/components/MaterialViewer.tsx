@@ -11,11 +11,18 @@ export type MaterialSource =
   | { kind: 'buffer'; data: ArrayBuffer; name: string }
   | { kind: 'url'; folderUrl: string; fileName: string };
 
+export interface PreviewReport {
+  state: 'idle' | 'loading' | 'ready' | 'error';
+  resources: 'unchecked' | 'loading' | 'loaded';
+  failedResources: string[];
+}
+
 export interface MaterialViewerProps {
   source: MaterialSource | null;
   onError: (message: string | null) => void;
   /** Diagnostics for the log panel — mirrors the VS Code extension's webview log. */
   onLog?: (message: string) => void;
+  onStatus?: (report: PreviewReport) => void;
 }
 
 const GEOMETRY_OPTIONS: { value: GeometryKind; label: string }[] = [
@@ -47,7 +54,30 @@ async function resolveSourceBytes(
 // three.js 0.186's MaterialXLoader (via mtlx-viewer's createMtlxScene) natively understands
 // .mtlx and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
 // embedded in the archive itself, so this component doesn't need any zip handling of its own.
-export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) {
+export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialViewerProps) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [rotating, setRotating] = useState(false);
+  const rotatingRef = useRef(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [controlMessage, setControlMessage] = useState('');
+  const statusCallback = useRef(onStatus);
+  statusCallback.current = onStatus;
+  useEffect(() => {
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const apply = () => {
+      rotatingRef.current = !preference.matches;
+      setRotating(!preference.matches);
+      if (mtlxSceneRef.current) mtlxSceneRef.current.autoRotate = !preference.matches;
+    };
+    apply();
+    preference.addEventListener('change', apply);
+    const changed = () => setFullscreen(document.fullscreenElement === frameRef.current);
+    document.addEventListener('fullscreenchange', changed);
+    return () => {
+      preference.removeEventListener('change', apply);
+      document.removeEventListener('fullscreenchange', changed);
+    };
+  }, []);
   const containerRef = useRef<HTMLDivElement>(null);
   const mtlxSceneRef = useRef<MtlxScene | null>(null);
   const [loading, setLoading] = useState(false);
@@ -61,7 +91,12 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
     mtlxSceneRef.current = null;
     setMaterialNames([]);
     setActiveMaterial('');
-    setPreviewState(source ? 'loading' : 'idle');
+    const report: PreviewReport = { state: source ? 'loading' : 'idle', resources: 'unchecked', failedResources: [] };
+    const publish = () => {
+      setPreviewState(report.state);
+      statusCallback.current?.({ ...report, failedResources: [...report.failedResources] });
+    };
+    publish();
     if (!container || !source) {
       setLoading(false);
       return;
@@ -137,13 +172,34 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
+      renderer.domElement.tabIndex = 0;
+      renderer.domElement.setAttribute(
+        'aria-label',
+        'Material preview. Arrow keys pan the camera; use Reset to restore the view.',
+      );
+      controls.listenToKeyEvents(renderer.domElement);
       own(() => controls.dispose());
 
       {
         onLog?.('Parsing MaterialX document...');
         const manager = new THREE.LoadingManager();
+        manager.onStart = () => {
+          if (disposed || scope.disposed) return;
+          report.resources = 'loading';
+          publish();
+        };
+        manager.onLoad = () => {
+          if (disposed || scope.disposed) return;
+          report.resources = 'loaded';
+          publish();
+        };
         manager.onProgress = (url, loaded, total) => onLog?.(`Loading ${url}: ${loaded}/${total}`);
-        manager.onError = (url) => onLog?.(`Failed to load resource: ${url}`);
+        manager.onError = (url) => {
+          if (disposed || scope.disposed) return;
+          if (!report.failedResources.includes(url)) report.failedResources.push(url);
+          publish();
+          onLog?.(`Failed to load resource: ${url}`);
+        };
 
         const [{ data, fileName }, shaderBall] = await Promise.all([
           resolveSourceBytes(source, abort.signal),
@@ -151,7 +207,13 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
         ]);
         if (disposed) return;
 
-        const mtlxScene = await createMtlxScene(camera, controls, { data, fileName, shaderBall, manager });
+        const mtlxScene = await createMtlxScene(camera, controls, {
+          data,
+          fileName,
+          shaderBall,
+          manager,
+          autoRotate: rotatingRef.current,
+        });
         own(() => mtlxScene.dispose());
         if (disposed) return;
         scene.add(mtlxScene.root);
@@ -184,7 +246,8 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
         void renderer.renderAsync(scene, camera).catch((error: unknown) => {
           if (disposed || scope.disposed) return;
           cleanup();
-          setPreviewState('error');
+          report.state = 'error';
+          publish();
           mtlxSceneRef.current = null;
           onError(error instanceof Error ? error.message : String(error));
         });
@@ -193,14 +256,16 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
       // A mounted canvas alone does not establish that shader compilation/rendering succeeded.
       await renderer.renderAsync(scene, camera);
       if (disposed) return;
-      setPreviewState('ready');
+      report.state = 'ready';
+      publish();
       setLoading(false);
       animate();
     })().catch((error: unknown) => {
       cleanup();
       if (disposed) return;
       setLoading(false);
-      setPreviewState('error');
+      report.state = 'error';
+      publish();
       const message = error instanceof Error ? error.message : String(error);
       onLog?.(`ERROR: ${message}`);
       onError(message);
@@ -216,13 +281,16 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
 
   return (
     <div
+      ref={frameRef}
       data-preview-state={previewState}
       className="relative aspect-square w-full overflow-hidden rounded-lg border border-border bg-black"
     >
       {materialNames.length > 0 ? (
-        <div className="absolute top-2 left-2 z-10 flex gap-2">
+        <div className="absolute top-2 right-2 left-2 z-10 flex flex-wrap gap-2 [&>button]:rounded [&>button]:border [&>button]:border-white/20 [&>button]:bg-black/70 [&>button]:px-2 [&>button]:py-1 [&>button]:text-xs [&>button]:text-white">
           <select
             className="rounded border border-white/20 bg-black/60 px-2 py-1 text-xs text-white"
+            aria-label="Material"
+            style={{ minWidth: 0, maxWidth: '100%' }}
             value={activeMaterial}
             onChange={(event) => {
               setActiveMaterial(event.target.value);
@@ -237,6 +305,7 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
           </select>
           <select
             className="rounded border border-white/20 bg-black/60 px-2 py-1 text-xs text-white"
+            aria-label="Geometry"
             value={geometry}
             onChange={(event) => {
               const kind = event.target.value as GeometryKind;
@@ -250,8 +319,39 @@ export function MaterialViewer({ source, onError, onLog }: MaterialViewerProps) 
               </option>
             ))}
           </select>
+          <button
+            type="button"
+            aria-pressed={!rotating}
+            onClick={() => {
+              rotatingRef.current = !rotating;
+              setRotating(!rotating);
+              if (mtlxSceneRef.current) mtlxSceneRef.current.autoRotate = !rotating;
+            }}
+          >
+            {rotating ? 'Pause rotation' : 'Resume rotation'}
+          </button>
+          <button type="button" onClick={() => mtlxSceneRef.current?.resetCamera()}>
+            Reset
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                if (document.fullscreenElement === frameRef.current) await document.exitFullscreen();
+                else await frameRef.current?.requestFullscreen();
+                setControlMessage('');
+              } catch {
+                setControlMessage('Fullscreen is unavailable in this browser or embed.');
+              }
+            }}
+          >
+            {fullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          </button>
         </div>
       ) : null}
+      <output className={controlMessage ? 'absolute bottom-2 z-10 bg-black/80 p-2 text-sm text-white' : 'sr-only'}>
+        {controlMessage || `Preview: ${previewState}`}
+      </output>
       <div ref={containerRef} className="h-full w-full" />
       {loading ? (
         <div className="absolute inset-0 flex items-center justify-center text-sm text-white/70">Loading…</div>

@@ -56,6 +56,8 @@ export interface MtlxScene {
   dispose(): void;
   setMaterial(name: string): void;
   setGeometry(kind: GeometryKind): void;
+  /** Restore the active geometry orientation and initial camera framing. */
+  resetCamera(): void;
   /** Call every frame; advances the auto-rotation. */
   update(deltaSeconds: number): void;
 }
@@ -206,6 +208,11 @@ export async function createMtlxScene(
       applyVisibility(kind);
       applyMaterial(geometries[kind], materials[scene.activeMaterial]!);
       frameObject(camera, controls, geometries[kind]);
+    },
+    resetCamera() {
+      geometries[scene.geometry].rotation.set(0, 0, 0);
+      camera.zoom = 1;
+      frameObject(camera, controls, geometries[scene.geometry]);
     },
     update(deltaSeconds) {
       if (scene.autoRotate) {

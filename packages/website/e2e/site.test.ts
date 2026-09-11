@@ -71,3 +71,30 @@ test('a failed replacement clears old details and repeated loads resize the canv
   }
   expect(pageErrors).toEqual([]);
 });
+
+test('inspection controls work with a keyboard, reduced motion and narrow screens', async () => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`http://localhost:${PORT}/viewer`);
+  await page.setInputFiles('input[type=file]', materialPath);
+  await expectReady();
+  const rotation = page.getByRole('button', { name: 'Resume rotation' });
+  expect(await rotation.getAttribute('aria-pressed')).toBe('true');
+  await rotation.focus();
+  await page.keyboard.press('Enter');
+  expect(await page.getByRole('button', { name: 'Pause rotation' }).count()).toBe(1);
+  await page.getByRole('combobox', { name: 'Geometry', exact: true }).selectOption('sphere');
+  await page.getByRole('button', { name: 'Reset' }).focus();
+  await page.keyboard.press('Enter');
+  expect(await page.getByRole('combobox', { name: 'Material', exact: true }).count()).toBe(1);
+  await page.getByRole('button', { name: 'Fullscreen', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => !!document.fullscreenElement)).toBe(true);
+  await page.getByRole('button', { name: 'Exit fullscreen' }).click();
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download diagnostics' }).click();
+  expect((await download).suggestedFilename()).toBe('mtlx-diagnostics.json');
+  await page.setViewportSize({ width: 375, height: 800 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+  await page.getByRole('button', { name: 'Hide details' }).click();
+  expect(await page.locator('#material-details').isVisible()).toBe(false);
+  expect(pageErrors).toEqual([]);
+});

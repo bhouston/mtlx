@@ -1,4 +1,5 @@
 import type { MaterialXSummary, MaterialXValidationIssue } from 'mtlx-core';
+import type { PreviewReport } from './MaterialViewer';
 
 export interface InfoPanelProps {
   fileName?: string;
@@ -6,8 +7,9 @@ export interface InfoPanelProps {
   summary?: MaterialXSummary;
   issues: MaterialXValidationIssue[];
   parseError?: string;
-  /** A 3D-render-time error (e.g. WebGPU init failure), separate from a document parse error. */
   viewerError?: string | null;
+  preview?: PreviewReport;
+  localFile?: boolean;
 }
 
 function formatFileSize(bytes: number): string {
@@ -18,85 +20,85 @@ function formatFileSize(bytes: number): string {
 
 function Section({ title, items }: { title: string; items: string[] }) {
   return (
-    <div>
+    <section>
       <h3 className="mt-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">{title}</h3>
       <ul className="mt-1 list-disc space-y-0.5 pl-4">
         {items.length ? (
           items.map((item, index) => <li key={index}>{item}</li>)
         ) : (
-          <li className="list-none pl-0 text-muted-foreground">(none)</li>
+          <li className="list-none text-muted-foreground">(none)</li>
         )}
       </ul>
-    </div>
+    </section>
   );
 }
 
-// Mirrors the VS Code extension's stats panel (src/preview/preview.ts renderStats()), both
-// driven by mtlx-core's shared summarizeMaterialX().
-export function InfoPanel({ fileName, fileSize, summary, issues, parseError, viewerError }: InfoPanelProps) {
-  if (!fileName && !parseError) {
+export function InfoPanel({
+  fileName,
+  fileSize,
+  summary,
+  issues,
+  parseError,
+  viewerError,
+  preview,
+  localFile,
+}: InfoPanelProps) {
+  if (!fileName && !parseError)
     return (
-      <div className="flex h-full min-h-40 items-center justify-center rounded-lg border border-border bg-card p-4 text-center text-sm text-muted-foreground">
+      <div className="flex min-h-40 items-center justify-center rounded-lg border border-border bg-card p-4 text-center text-sm text-muted-foreground">
         Load a material to see its details here.
       </div>
     );
-  }
-
   const warningCount = issues.filter((issue) => issue.level === 'warning').length;
   const valid = !parseError && !issues.some((issue) => issue.level === 'error');
-
+  const failed = preview?.failedResources ?? [];
   return (
-    <div className="flex h-full flex-col min-w-0 break-words overflow-auto rounded-lg border border-border bg-card p-4 text-sm">
-      <p className={valid ? 'font-semibold text-green-600 dark:text-green-400' : 'font-semibold text-destructive'}>
-        {valid ? '✓ Basic document checks passed' : '✗ Basic document checks failed'}
-      </p>
-      <p className="mt-1 text-xs text-muted-foreground">
+    <div className="min-w-0 overflow-auto rounded-lg border border-border bg-card p-4 text-sm [overflow-wrap:anywhere]">
+      <output aria-live="polite" aria-atomic="true" className="block space-y-2">
+        <p>
+          <strong>Document: </strong>
+          <span className={valid ? 'text-green-600 dark:text-green-400' : 'text-destructive'}>
+            {valid ? '✓ Basic document checks passed' : '✗ Basic document checks failed'}
+          </span>
+        </p>
+        <p>
+          <strong>Resources: </strong>
+          {failed.length
+            ? `${failed.length} failed to load`
+            : preview?.resources === 'loading'
+              ? 'Loading requested resources…'
+              : preview?.resources === 'loaded'
+                ? 'Requested resources loaded'
+                : 'Not checked'}
+        </p>
+        <p>
+          <strong>Preview: </strong>
+          {viewerError ? 'Failed' : (preview?.state ?? 'idle')}
+        </p>
+      </output>
+      <p className="mt-2 text-xs text-muted-foreground">
         {warningCount} warning{warningCount === 1 ? '' : 's'}. Parsing and selected structural checks only; resource
         completeness and shader compatibility are not established.
       </p>
-      {parseError ? <p className="mt-1 text-destructive">Parse error: {parseError}</p> : null}
-      {viewerError ? <p className="mt-1 text-destructive">3D preview error: {viewerError}</p> : null}
-
-      <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-        <dt className="font-medium text-muted-foreground">File</dt>
-        <dd className="break-words">{fileName}</dd>
-        {fileSize !== undefined ? (
-          <>
-            <dt className="font-medium text-muted-foreground">Size</dt>
-            <dd>{formatFileSize(fileSize)}</dd>
-          </>
-        ) : null}
-        {summary ? (
-          <>
-            <dt className="font-medium text-muted-foreground">Version</dt>
-            <dd>{summary.version ?? 'unknown'}</dd>
-            <dt className="font-medium text-muted-foreground">Colorspace</dt>
-            <dd>{summary.colorspace ?? 'unknown'}</dd>
-            <dt className="font-medium text-muted-foreground">Node graphs</dt>
-            <dd>{summary.nodeGraphCount}</dd>
-            <dt className="font-medium text-muted-foreground">Top-level nodes</dt>
-            <dd>{summary.topLevelNodeCount}</dd>
-          </>
-        ) : null}
-      </dl>
-
-      {summary ? (
+      {parseError ? <p className="mt-2 text-destructive">Parse error: {parseError}</p> : null}
+      {viewerError ? <p className="mt-2 text-destructive">3D preview error: {viewerError}</p> : null}
+      {failed.length ? (
         <>
-          <Section
-            title="Materials (surfaces/volumes)"
-            items={summary.materials.map((material) => `${material.name ?? '(unnamed)'} [${material.category}]`)}
-          />
-          <Section title="Referenced textures" items={summary.referencedTextures} />
-          <Section
-            title="Internal nodes"
-            items={summary.nodes.map((node) => `${node.name ?? '(unnamed)'} [${node.category}]`)}
-          />
+          <Section title="Failed resources" items={failed} />
+          <p className="mt-1">
+            Check the referenced paths and image formats. For remote files, check hosting and CORS permissions.
+          </p>
         </>
       ) : null}
-
-      {issues.length > 0 ? (
-        <div>
-          <h3 className="mt-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Issues</h3>
+      {localFile && summary?.referencedTextures.length ? (
+        <p className="mt-2">
+          A local .mtlx cannot access sibling textures in the browser. Open a self-contained .mtlx.zip, or host the
+          document and textures together.
+        </p>
+      ) : null}
+      {issues.length ? (
+        <section>
+          <h3 className="mt-3 font-semibold">Issues</h3>
           <ul className="mt-1 space-y-1">
             {issues.map((issue, index) => (
               <li
@@ -107,7 +109,47 @@ export function InfoPanel({ fileName, fileSize, summary, issues, parseError, vie
               </li>
             ))}
           </ul>
-        </div>
+        </section>
+      ) : null}
+      {summary ? (
+        <Section
+          title="Materials (surfaces/volumes)"
+          items={summary.materials.map((material) => `${material.name ?? '(unnamed)'} [${material.category}]`)}
+        />
+      ) : null}
+      <dl className="mt-3 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1">
+        <dt>File</dt>
+        <dd>{fileName}</dd>
+        {fileSize !== undefined ? (
+          <>
+            <dt>Size</dt>
+            <dd>{formatFileSize(fileSize)}</dd>
+          </>
+        ) : null}
+        {summary ? (
+          <>
+            <dt>Version</dt>
+            <dd>{summary.version ?? 'unknown'}</dd>
+            <dt>Colorspace</dt>
+            <dd>{summary.colorspace ?? 'unknown'}</dd>
+            <dt>Node graphs</dt>
+            <dd>{summary.nodeGraphCount}</dd>
+            <dt>Top-level nodes</dt>
+            <dd>{summary.topLevelNodeCount}</dd>
+          </>
+        ) : null}
+      </dl>
+      {summary ? (
+        <>
+          <Section title="Referenced textures" items={summary.referencedTextures} />
+          <details className="mt-3">
+            <summary className="cursor-pointer font-semibold">Internal nodes ({summary.nodes.length})</summary>
+            <Section
+              title="Nodes"
+              items={summary.nodes.map((node) => `${node.name ?? '(unnamed)'} [${node.category}]`)}
+            />
+          </details>
+        </>
       ) : null}
     </div>
   );
