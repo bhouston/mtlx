@@ -6,18 +6,17 @@ import { LogPanel } from '@/components/LogPanel';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MaterialLoadController } from '@/lib/material-load';
-import { PRESET_MATERIALS, presetId, resolveMaterialParam } from '@/lib/presets';
+import { PRESET_MATERIALS, presetUrl, materialSearch, resolveMaterialParam } from '@/lib/presets';
 import type { PreviewReport } from '@/components/MaterialViewer';
 import type { MaterialXAnalysis } from '@/lib/validate';
 
 export interface ViewerSearch {
-  material?: string;
+  materialUrl?: string;
 }
 
 export const Route = createFileRoute('/viewer')({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>): ViewerSearch =>
-    typeof search.material === 'string' ? { material: search.material } : {},
+  validateSearch: materialSearch,
   head: () => ({
     meta: [
       { title: 'MaterialX viewer — mtlx' },
@@ -31,7 +30,7 @@ export const Route = createFileRoute('/viewer')({
 });
 
 function ViewerPage() {
-  const { material } = Route.useSearch();
+  const { materialUrl } = Route.useSearch();
   const navigate = Route.useNavigate();
   const loader = useRef(new MaterialLoadController());
   useEffect(() => () => loader.current.cancel(), []);
@@ -62,7 +61,7 @@ function ViewerPage() {
     );
   const shareUrl = (route: 'viewer' | 'embed') => {
     const url = new URL(`/${route}`, window.location.origin);
-    if (material) url.searchParams.set('material', material);
+    if (materialUrl) url.searchParams.set('materialUrl', materialUrl);
     return url.href;
   };
   const [dragActive, setDragActive] = useState(false);
@@ -110,22 +109,23 @@ function ViewerPage() {
     await load(file);
   };
 
-  // Drive the viewer entirely from the `material` query param, so a link can be shared and reloaded.
+  // Drive the viewer entirely from the `materialUrl` query param, so a link can be shared and reloaded.
   useEffect(() => {
-    if (!material) return;
-    const resolved = resolveMaterialParam(material);
+    setUrlInput(materialUrl ?? '');
+    if (!materialUrl) return;
+    const resolved = resolveMaterialParam(materialUrl);
     if (!resolved) {
       loader.current.cancel();
       setSource(null);
       setFileMeta(null);
       setAnalysis(null);
-      setFileError(`Unknown material "${material}"`);
-      appendLog(`ERROR: Unknown material "${material}"`);
+      setFileError(`Unknown material "${materialUrl}"`);
+      appendLog(`ERROR: Unknown material "${materialUrl}"`);
       return;
     }
     void load({ url: `${resolved.folderUrl}${resolved.fileName}`, name: resolved.fileName });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [material]);
+  }, [materialUrl]);
 
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-6 p-6">
@@ -139,21 +139,6 @@ function ViewerPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Select
-          value={material ?? ''}
-          onValueChange={(value) => void navigate({ to: '.', search: { material: value } })}
-        >
-          <SelectTrigger aria-label="Sample material" className="w-[260px] max-w-full" size="sm">
-            <SelectValue placeholder="Load a sample material…" />
-          </SelectTrigger>
-          <SelectContent>
-            {PRESET_MATERIALS.map((preset) => (
-              <SelectItem key={presetId(preset)} value={presetId(preset)}>
-                {preset.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
         <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
           Choose File…
         </Button>
@@ -193,13 +178,28 @@ function ViewerPage() {
             if (!['https:', 'http:'].includes(url.protocol) || !resolveMaterialParam(url.href))
               throw new Error('Use an HTTP(S) URL ending in .mtlx or .mtlx.zip.');
             setShareMessage('');
-            void navigate({ to: '.', search: { material: url.href } });
-            if (material === url.href) void load({ url: url.href, name: url.pathname.split('/').at(-1)! });
+            void navigate({ to: '.', search: { materialUrl: url.href } });
+            if (materialUrl === url.href) void load({ url: url.href, name: url.pathname.split('/').at(-1)! });
           } catch {
             setShareMessage('Use an HTTP(S) URL ending in .mtlx or .mtlx.zip.');
           }
         }}
       >
+        <Select
+          value={PRESET_MATERIALS.some((preset) => presetUrl(preset) === materialUrl) ? materialUrl : ''}
+          onValueChange={(value) => void navigate({ to: '.', search: { materialUrl: value } })}
+        >
+          <SelectTrigger aria-label="Sample material" className="w-[260px] max-w-full" size="sm">
+            <SelectValue placeholder="Load a sample material…" />
+          </SelectTrigger>
+          <SelectContent>
+            {PRESET_MATERIALS.map((preset) => (
+              <SelectItem key={presetUrl(preset)} value={presetUrl(preset)}>
+                {preset.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
           Material URL
           <input
@@ -214,12 +214,12 @@ function ViewerPage() {
         <Button type="submit" variant="outline">
           Load URL
         </Button>
-        <Button variant="outline" disabled={!material} onClick={() => void copy(shareUrl('viewer'))}>
+        <Button variant="outline" disabled={!materialUrl} onClick={() => void copy(shareUrl('viewer'))}>
           Copy link
         </Button>
         <Button
           variant="outline"
-          disabled={!material}
+          disabled={!materialUrl}
           onClick={() =>
             void copy(
               `<iframe src="${shareUrl('embed').replaceAll('&', '&amp;').replaceAll('"', '&quot;')}" title="MaterialX preview" width="640" height="640" allow="fullscreen" allowfullscreen></iframe>`,
@@ -229,10 +229,6 @@ function ViewerPage() {
           Copy embed code
         </Button>
       </form>
-      <p className="text-sm text-muted-foreground">
-        Remote URLs must allow browser access (CORS). Local files stay on your device; to share them publicly, host the
-        document and its textures or a .mtlx.zip first.
-      </p>
       <output className="text-sm">{shareMessage}</output>
 
       <div

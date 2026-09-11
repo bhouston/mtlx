@@ -52,3 +52,14 @@ describe('extractMaterialXText', () => {
     expect(() => extractMaterialXText(zipped.buffer as ArrayBuffer)).toThrow(/does not contain a \.mtlx/);
   });
 });
+
+it('unifies legacy sample links and URL links, preserving query strings containing slashes', async () => {
+  const { materialSearch, presetUrl } = await import('./presets.js');
+  expect(materialSearch({ material: presetId(PRESET_MATERIALS[0]!) })).toEqual({
+    materialUrl: presetUrl(PRESET_MATERIALS[0]!),
+  });
+  const url = 'https://example.com/a.mtlx?token=a/b';
+  expect(materialSearch({ materialUrl: url })).toEqual({ materialUrl: url });
+  expect(resolveMaterialParam(url)).toEqual({ folderUrl: 'https://example.com/', fileName: 'a.mtlx?token=a/b' });
+  expect(resolveMaterialParam('https://example.com/page.html')).toBeUndefined();
+});

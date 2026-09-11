@@ -98,3 +98,30 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   expect(await page.locator('#material-details').isVisible()).toBe(false);
   expect(pageErrors).toEqual([]);
 });
+
+test('sample selection and URL input share one query parameter through navigation', async () => {
+  const copper =
+    'https://raw.githubusercontent.com/bhouston/material-samples/main/materials/showcase/standard_surface/copper/copper.mtlx';
+  await page.route('https://raw.githubusercontent.com/**', (route) =>
+    route.fulfill({ path: materialPath, contentType: 'application/xml' }),
+  );
+  await page.goto(`http://localhost:${PORT}/viewer?materialUrl=${encodeURIComponent(copper)}`);
+  await expect.poll(() => page.getByLabel('Material URL', { exact: true }).inputValue()).toBe(copper);
+  expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toContain('copper');
+  await page.getByRole('combobox', { name: 'Sample material' }).click();
+  await page.getByRole('option', { name: 'chrome', exact: true }).click();
+  await expect
+    .poll(() => page.getByLabel('Material URL', { exact: true }).inputValue())
+    .toContain('/chrome/chrome.mtlx');
+  expect(new URL(page.url()).searchParams.has('material')).toBe(false);
+  await page.goBack();
+  await expect.poll(() => page.getByLabel('Material URL', { exact: true }).inputValue()).toBe(copper);
+  await page.getByLabel('Material URL', { exact: true }).fill('https://raw.githubusercontent.com/custom/material.mtlx');
+  await page.getByRole('button', { name: 'Load URL' }).click();
+  await expect
+    .poll(() => page.getByRole('combobox', { name: 'Sample material' }).innerText())
+    .toBe('Load a sample material…');
+  await page.getByLabel('Material URL', { exact: true }).fill(copper);
+  await page.getByRole('button', { name: 'Load URL' }).click();
+  await expect.poll(() => page.getByRole('combobox', { name: 'Sample material' }).innerText()).toContain('copper');
+});

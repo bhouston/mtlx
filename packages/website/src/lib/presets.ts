@@ -40,9 +40,32 @@ export const findPresetById = (id: string): PresetMaterial | undefined =>
 export const resolveMaterialParam = (value: string): { folderUrl: string; fileName: string } | undefined => {
   const preset = findPresetById(value);
   if (preset) return { folderUrl: presetFolderUrl(preset), fileName: presetFileName(preset) };
-  if (/^https?:\/\//.test(value)) {
-    const lastSlash = value.lastIndexOf('/');
-    return { folderUrl: value.slice(0, lastSlash + 1), fileName: value.slice(lastSlash + 1) };
+  try {
+    const url = new URL(value);
+    if (!['http:', 'https:'].includes(url.protocol) || !/\.mtlx(\.zip)?$/i.test(url.pathname)) return undefined;
+    const lastSlash = url.pathname.lastIndexOf('/');
+    const fileName = url.pathname.slice(lastSlash + 1) + url.search + url.hash;
+    url.pathname = url.pathname.slice(0, lastSlash + 1);
+    url.search = '';
+    url.hash = '';
+    return { folderUrl: url.href, fileName };
+  } catch {
+    return undefined;
   }
-  return undefined;
+};
+
+/** Canonical URL used for both presets and external materials. */
+export const presetUrl = (preset: PresetMaterial): string => presetFolderUrl(preset) + presetFileName(preset);
+
+/** Accept old shared preset-id links while exposing one canonical URL to the UI. */
+export const materialSearch = (search: Record<string, unknown>): { materialUrl?: string } => {
+  const value =
+    typeof search.materialUrl === 'string'
+      ? search.materialUrl
+      : typeof search.material === 'string'
+        ? search.material
+        : undefined;
+  if (!value) return {};
+  const resolved = resolveMaterialParam(value);
+  return { materialUrl: resolved ? resolved.folderUrl + resolved.fileName : value };
 };
