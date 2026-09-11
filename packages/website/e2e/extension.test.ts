@@ -3,7 +3,6 @@ import { resolve } from 'node:path';
 import { chromium } from 'playwright';
 import { expect, test } from 'vitest';
 import { getPreviewHtml } from '../../vscode-extension/src/previewHtml';
-import type * as vscode from 'vscode';
 import { PORT } from './globalSetup';
 
 test.each([false, true])(
@@ -15,9 +14,9 @@ test.each([false, true])(
     page.on('pageerror', (error) => errors.push(error.message));
     try {
       const html = getPreviewHtml(
-        { cspSource: "'self'" } as vscode.Webview,
-        '/__extension-test__/preview.js' as unknown as vscode.Uri,
-        '/__extension-test__/default-environment.hdr' as unknown as vscode.Uri,
+        { cspSource: "'self'" } as Parameters<typeof getPreviewHtml>[0],
+        '/__extension-test__/preview.js' as unknown as Parameters<typeof getPreviewHtml>[1],
+        '/__extension-test__/default-environment.hdr' as unknown as Parameters<typeof getPreviewHtml>[1],
       );
       await page.route('**/__extension-test__/index.html', (route) =>
         route.fulfill({ body: html, contentType: 'text/html' }),
