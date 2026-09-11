@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mergeMaterialXPackages, type MaterialXPackage } from './package.js';
+import { mergeMaterialXPackages, relocateTextureResources, type MaterialXPackage } from './package.js';
 import { parseMaterialX, serializeMaterialX } from './xml.js';
 
 const nodegraphWithTexture = (nodeName: string) => `<materialx version="1.39">
@@ -59,5 +59,55 @@ describe('mergeMaterialXPackages', () => {
       'textures/albedo-2.png',
     ]);
     expect(serializeMaterialX(merged.document)).toContain('textures/albedo-2.png');
+  });
+});
+
+describe('relocateTextureResources', () => {
+  it('moves image resources into the given directory and rewrites references', () => {
+    const data = new Uint8Array([1, 2, 3]);
+    const pkg = makePackage('a', nodegraphWithTexture('NG_a'), [
+      { archivePath: 'textures/albedo.png', sourcePath: 'albedo.png', data },
+    ]);
+
+    relocateTextureResources(pkg, 'assets/shared');
+
+    expect(pkg.resources[0]!.archivePath).toBe('assets/shared/albedo.png');
+    expect(serializeMaterialX(pkg.document)).toContain('assets/shared/albedo.png');
+    expect(serializeMaterialX(pkg.document)).not.toContain('textures/albedo.png');
+  });
+
+  it('leaves non-image resources alone', () => {
+    const data = new Uint8Array([1, 2, 3]);
+    const pkg = makePackage('a', nodegraphWithTexture('NG_a'), [
+      { archivePath: 'libraries/shared.mtlx', sourcePath: 'shared.mtlx', data },
+    ]);
+
+    relocateTextureResources(pkg, 'assets/shared');
+
+    expect(pkg.resources[0]!.archivePath).toBe('libraries/shared.mtlx');
+  });
+
+  it('accepts a parent-relative directory', () => {
+    const data = new Uint8Array([1, 2, 3]);
+    const pkg = makePackage('a', nodegraphWithTexture('NG_a'), [
+      { archivePath: 'textures/albedo.png', sourcePath: 'albedo.png', data },
+    ]);
+
+    relocateTextureResources(pkg, '../shared-textures');
+
+    expect(pkg.resources[0]!.archivePath).toBe('../shared-textures/albedo.png');
+    expect(serializeMaterialX(pkg.document)).toContain('../shared-textures/albedo.png');
+  });
+
+  it('accepts an absolute directory', () => {
+    const data = new Uint8Array([1, 2, 3]);
+    const pkg = makePackage('a', nodegraphWithTexture('NG_a'), [
+      { archivePath: 'textures/albedo.png', sourcePath: 'albedo.png', data },
+    ]);
+
+    relocateTextureResources(pkg, '/data/shared-textures');
+
+    expect(pkg.resources[0]!.archivePath).toBe('/data/shared-textures/albedo.png');
+    expect(serializeMaterialX(pkg.document)).toContain('/data/shared-textures/albedo.png');
   });
 });

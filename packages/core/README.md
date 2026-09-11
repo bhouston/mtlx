@@ -133,6 +133,11 @@ await transform(pkg, resizeTextures({ maxImageSize: 2048, imageFormat: 'webp' })
 // unpacking are just a load followed by a write to the other extension.
 await writeMaterialXPackage(pkg, 'material.mtlx.zip');
 
+// Loose .mtlx output only: put textures under a chosen directory (relative — '../' allowed — or
+// absolute) instead of the default textures/ bucket. Ignored for .mtlx.zip, which always uses
+// textures/.
+await writeMaterialXPackage(pkg, 'out/material.mtlx', { textureLibrary: '../shared-textures' });
+
 // Validate a file on disk without throwing; works as a CI gate.
 const { issues } = await checkMaterialX('material.mtlx.zip');
 process.exitCode = issues.some((issue) => issue.level === 'error') ? 1 : 0;

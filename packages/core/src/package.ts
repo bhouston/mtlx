@@ -108,7 +108,7 @@ export const transform = async (pkg: MaterialXPackage, ...transforms: Transform[
 
 // --- pure POSIX path helpers (no node:path so this module stays browser-safe) ---
 
-const posixBasename = (filePath: string): string => filePath.slice(filePath.lastIndexOf('/') + 1);
+export const posixBasename = (filePath: string): string => filePath.slice(filePath.lastIndexOf('/') + 1);
 
 /** `.png` for `textures/a.png`, `''` when there is no extension. */
 export const posixExtname = (filePath: string): string => {
@@ -319,20 +319,52 @@ export const rewriteResourcePath = (document: MaterialXDocument, from: string, t
 };
 
 /**
- * *Flattens a package into `{ path, data }` entries, root document first.* Throws on unsafe
- * archive paths so nothing downstream can write outside its target directory.
+ * *Moves every image resource's archive path under `libraryPath`, rewriting document references
+ * to match.* Used for loose `.mtlx` output when `--texture-library` is given; irrelevant to
+ * `.mtlx.zip`, which always uses `textures/` per the archive spec. Non-image resources (other
+ * `.mtlx` libraries, misc files) are left where they are.
  *
  * @category Packaging
  */
-export const packageToEntries = (pkg: MaterialXPackage): MaterialXPackageEntry[] => {
+export const relocateTextureResources = (pkg: MaterialXPackage, libraryPath: string): void => {
+  const directory = libraryPath.replace(/\\/g, '/').replace(/\/+$/, '') || '.';
+  const used = new Set(pkg.resources.map((resource) => resource.archivePath));
+  for (const resource of pkg.resources) {
+    if (!isImagePath(resource.archivePath)) {
+      continue;
+    }
+    used.delete(resource.archivePath);
+    const archivePath = uniqueArchivePath(directory, posixBasename(resource.archivePath), used);
+    if (archivePath !== resource.archivePath) {
+      rewriteResourcePath(pkg.document, resource.archivePath, archivePath);
+      resource.archivePath = archivePath;
+    }
+  }
+};
+
+/**
+ * *Flattens a package into `{ path, data }` entries, root document first.* By default throws on
+ * unsafe archive paths so nothing downstream can write outside its target directory — pass
+ * `{ validate: false }` only for loose `.mtlx` output whose resources were deliberately relocated
+ * (e.g. via {@link relocateTextureResources}) to an absolute or `..`-relative disk path, which is
+ * not a valid *archive* path but is a valid write target on a real filesystem.
+ *
+ * @category Packaging
+ */
+export const packageToEntries = (
+  pkg: MaterialXPackage,
+  options: { validate?: boolean } = {},
+): MaterialXPackageEntry[] => {
   const entries = [
     { path: pkg.rootPath, data: new TextEncoder().encode(serializeMaterialX(pkg.document)) },
     ...pkg.resources.map((resource) => ({ path: resource.archivePath, data: resource.data })),
   ];
-  for (const entry of entries) {
-    const issue = validateArchivePath(entry.path);
-    if (issue) {
-      throw new Error(`${issue}: ${entry.path}`);
+  if (options.validate ?? true) {
+    for (const entry of entries) {
+      const issue = validateArchivePath(entry.path);
+      if (issue) {
+        throw new Error(`${issue}: ${entry.path}`);
+      }
     }
   }
   return entries;

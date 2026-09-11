@@ -23,8 +23,11 @@ mtlx x material.mtlx.zip -o out/material.mtlx
 # convert while packing: resize textures and switch their format
 mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
 
-# combine multiple materials into a single .mtlx.zip
-mtlx x metal.mtlx wood.mtlx glass.mtlx -o combined.mtlx.zip
+# combine multiple materials (a glob or an explicit list) into a single .mtlx.zip
+mtlx x "materials/*.mtlx" -o combined.mtlx.zip
+
+# batch mode: an output directory converts each input separately, one file per input
+mtlx x "materials/*.mtlx" -o out/ --max-image-size 2048 --image-format webp
 
 # open a 3D preview in your browser (local only, nothing is uploaded)
 mtlx view material.mtlx`;

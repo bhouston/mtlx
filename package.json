@@ -40,7 +40,7 @@
     "*.{json,jsonc,md,mdx,css,html,yml,yaml}": "oxfmt"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "packageManager": "pnpm@11.1.3"
 }

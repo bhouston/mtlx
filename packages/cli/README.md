@@ -16,9 +16,16 @@ npm install --global mtlx-cli
 ```
 
 Every command accepts `--format text|json|yaml` (default `text`), so output can be piped into
-other tools. `transform` (aliased `x`) takes one or more `--input`/positional files and one
+other tools. `transform` (aliased `x`) takes one or more input files or glob patterns and one
 `--output`/`-o` (like ffmpeg): it reads any format and writes any format, so packing and unpacking
-are just a conversion with no options, and multiple inputs are combined into a single output.
+are just a conversion with no options.
+
+- **`-o` is a `.mtlx` or `.mtlx.zip` path** — every input is combined into that single file.
+- **`-o` is a directory** (it already exists, or its path has no `.mtlx`/`.mtlx.zip` extension) —
+  each input is converted separately into that directory, keeping its own basename and format
+  (batch mode).
+
+Quote glob patterns so `mtlx` expands them (with brace-list support), not your shell:
 
 ```sh
 # validate a file; exits non-zero on any error-level issue, so it works as a CI gate
@@ -36,12 +43,40 @@ mtlx x material.mtlx.zip -o out/material.mtlx
 # convert while packing: resize textures and switch their format
 mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
 
-# combine multiple materials into a single .mtlx.zip
+# combine an explicit list of materials into a single .mtlx.zip
 mtlx x metal.mtlx wood.mtlx glass.mtlx -o combined.mtlx.zip
+
+# ...or the same thing with a brace-expansion glob
+mtlx x "{metal,wood,glass}.mtlx" -o combined.mtlx.zip
+
+# combine every .mtlx in a directory
+mtlx x "materials/*.mtlx" -o combined.mtlx.zip
+
+# batch mode: resize+reformat every material's textures into its own file in out/
+mtlx x "materials/*.mtlx" -o out/ --max-image-size 2048 --image-format webp
 
 # open a 3D preview in your browser (local only, nothing is uploaded)
 mtlx view material.mtlx
 ```
+
+### `--texture-library`/`-tl`
+
+Loose `.mtlx` output normally keeps textures under `textures/` next to the document.
+`--texture-library <path>` copies them into a different directory instead — relative (resolved
+against `--output`'s directory, `../` allowed) or absolute:
+
+```sh
+# copy material.mtlx's textures into a sibling directory instead of ./textures
+mtlx x material.mtlx -o out/material.mtlx --texture-library ../shared-textures
+# writes out/material.mtlx; textures land in shared-textures/ (a sibling of out/)
+
+# or an absolute, machine-specific shared library
+mtlx x material.mtlx -o out/material.mtlx --texture-library /srv/shared-textures
+```
+
+It's a no-op for `.mtlx.zip` output: the archive format always stores textures at `./textures`
+inside the zip, so `--texture-library` is ignored there (with a warning) — use it only when
+writing loose `.mtlx` files.
 
 Run `mtlx <command> --help` for the full option list of any command.
 

@@ -209,13 +209,13 @@ describe('mtlx', () => {
     const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-combine-dup-'));
     try {
       const aPath = path.join(tempDir, 'a.mtlx');
-      writeFileSync(
-        aPath,
-        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_a" type="material" /></materialx>',
-        'utf8',
-      );
+      const bPath = path.join(tempDir, 'b.mtlx');
+      const xml =
+        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_a" type="material" /></materialx>';
+      writeFileSync(aPath, xml, 'utf8');
+      writeFileSync(bPath, xml, 'utf8');
 
-      const result = await cli.run(['transform', aPath, aPath, '-o', path.join(tempDir, 'out.mtlx')], {
+      const result = await cli.run(['transform', aPath, bPath, '-o', path.join(tempDir, 'out.mtlx')], {
         timeout: 8_000,
       });
       expect(result).toFail();
@@ -233,6 +233,154 @@ describe('mtlx', () => {
       expect(existsSync(fixture.archivePath)).toBe(true);
     } finally {
       await rm(fixture.tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('transform batch-converts each input into a directory when --output has no .mtlx(.zip) extension', async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-batch-'));
+    try {
+      const aPath = path.join(tempDir, 'a.mtlx');
+      const bPath = path.join(tempDir, 'b.mtlx');
+      writeFileSync(
+        aPath,
+        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_a" type="material" /></materialx>',
+        'utf8',
+      );
+      writeFileSync(
+        bPath,
+        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_b" type="material" /></materialx>',
+        'utf8',
+      );
+      const outDir = path.join(tempDir, 'batch-out'); // doesn't exist yet, no .mtlx(.zip) extension
+
+      const result = await cli.run(['transform', aPath, bPath, '-o', outDir], { timeout: 8_000 });
+      expect(result).toSucceed();
+      expect(existsSync(path.join(outDir, 'a.mtlx'))).toBe(true);
+      expect(existsSync(path.join(outDir, 'b.mtlx'))).toBe(true);
+
+      const infoA = await cli.run(['info', path.join(outDir, 'a.mtlx'), '--format', 'json'], { timeout: 8_000 });
+      expect(JSON.parse(infoA.stdout).materials).toEqual([{ name: 'M_a', category: 'surfacematerial' }]);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('transform batches into an already-existing directory', async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-batch-existing-'));
+    try {
+      const aPath = path.join(tempDir, 'a.mtlx');
+      writeFileSync(
+        aPath,
+        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_a" type="material" /></materialx>',
+        'utf8',
+      );
+      const outDir = path.join(tempDir, 'out');
+      await mkdir(outDir, { recursive: true });
+
+      const result = await cli.run(['transform', aPath, '-o', outDir], { timeout: 8_000 });
+      expect(result).toSucceed();
+      expect(existsSync(path.join(outDir, 'a.mtlx'))).toBe(true);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('transform batch mode fails when two inputs would write the same output filename', async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-batch-collide-'));
+    try {
+      await mkdir(path.join(tempDir, 'sub'), { recursive: true });
+      const aPath = path.join(tempDir, 'material.mtlx');
+      const bPath = path.join(tempDir, 'sub', 'material.mtlx');
+      writeFileSync(
+        aPath,
+        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_a" type="material" /></materialx>',
+        'utf8',
+      );
+      writeFileSync(
+        bPath,
+        '<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_b" type="material" /></materialx>',
+        'utf8',
+      );
+
+      const result = await cli.run(['transform', aPath, bPath, '-o', path.join(tempDir, 'out')], {
+        timeout: 8_000,
+      });
+      expect(result).toFail();
+      expect(result).toHaveStderr(/Two inputs would both write/);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('transform accepts a glob pattern as a single input', async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-glob-'));
+    try {
+      const names = ['metal', 'wood', 'glass'];
+      for (const name of names) {
+        writeFileSync(
+          path.join(tempDir, `${name}.mtlx`),
+          `<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_${name}" type="material" /></materialx>`,
+          'utf8',
+        );
+      }
+      const outputPath = path.join(tempDir, 'combined.mtlx.zip');
+
+      const result = await cli.run(['transform', path.join(tempDir, '*.mtlx'), '-o', outputPath], {
+        timeout: 8_000,
+      });
+      expect(result).toSucceed();
+
+      const info = await cli.run(['info', outputPath, '--format', 'json'], { timeout: 8_000 });
+      expect(
+        JSON.parse(info.stdout)
+          .materials.map((m: { name: string }) => m.name)
+          .toSorted(),
+      ).toEqual(['M_glass', 'M_metal', 'M_wood']);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('transform accepts a brace-expansion glob to pick an explicit list of files', async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-brace-'));
+    try {
+      const names = ['metal', 'wood', 'glass', 'skip'];
+      for (const name of names) {
+        writeFileSync(
+          path.join(tempDir, `${name}.mtlx`),
+          `<?xml version="1.0"?><materialx version="1.39"><surfacematerial name="M_${name}" type="material" /></materialx>`,
+          'utf8',
+        );
+      }
+      const outputPath = path.join(tempDir, 'combined.mtlx.zip');
+
+      const result = await cli.run(['transform', path.join(tempDir, '{metal,wood,glass}.mtlx'), '-o', outputPath], {
+        timeout: 8_000,
+      });
+      expect(result).toSucceed();
+
+      const info = await cli.run(['info', outputPath, '--format', 'json'], { timeout: 8_000 });
+      expect(
+        JSON.parse(info.stdout)
+          .materials.map((m: { name: string }) => m.name)
+          .toSorted(),
+      ).toEqual(['M_glass', 'M_metal', 'M_wood']);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('transform fails clearly when a glob matches nothing', async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-glob-empty-'));
+    try {
+      const result = await cli.run(
+        ['transform', path.join(tempDir, 'nope-*.mtlx'), '-o', path.join(tempDir, 'out.mtlx.zip')],
+        { timeout: 8_000 },
+      );
+      expect(result).toFail();
+      expect(result).toHaveStderr(/No files matched/);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
     }
   });
 
@@ -293,6 +441,114 @@ describe('mtlx', () => {
         const xmlText = await readFile(path.join(outputDir, 'wood_grain.mtlx'), 'utf8');
         expect(xmlText).toContain('textures/wood_color.webp');
         expect(xmlText).not.toContain('.jpg');
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('transform --texture-library places loose .mtlx textures in the given directory', async () => {
+      const tempDir = await copyFixture('wood_grain');
+      try {
+        const materialPath = path.join(tempDir, 'wood_grain.mtlx');
+        const outputDir = path.join(tempDir, 'wood_grain-relocated');
+        const result = await cli.run(
+          [
+            'transform',
+            materialPath,
+            '-o',
+            path.join(outputDir, 'wood_grain.mtlx'),
+            '--texture-library',
+            'assets/shared',
+          ],
+          { timeout: 8_000 },
+        );
+        expect(result).toSucceed();
+
+        expect(existsSync(path.join(outputDir, 'assets/shared/wood_color.jpg'))).toBe(true);
+        expect(existsSync(path.join(outputDir, 'assets/shared/wood_roughness.jpg'))).toBe(true);
+        expect(existsSync(path.join(outputDir, 'textures'))).toBe(false);
+
+        const xmlText = await readFile(path.join(outputDir, 'wood_grain.mtlx'), 'utf8');
+        expect(xmlText).toContain('assets/shared/wood_color.jpg');
+        expect(xmlText).not.toContain('textures/wood_color.jpg');
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('transform --texture-library accepts a parent-relative (../) directory', async () => {
+      const tempDir = await copyFixture('wood_grain');
+      try {
+        const materialPath = path.join(tempDir, 'wood_grain.mtlx');
+        const outputDir = path.join(tempDir, 'out', 'nested');
+        const sharedDir = path.join(tempDir, 'shared-textures');
+        const result = await cli.run(
+          [
+            'transform',
+            materialPath,
+            '-o',
+            path.join(outputDir, 'wood_grain.mtlx'),
+            '--texture-library',
+            '../../shared-textures',
+          ],
+          { timeout: 8_000 },
+        );
+        expect(result).toSucceed();
+
+        expect(existsSync(path.join(sharedDir, 'wood_color.jpg'))).toBe(true);
+        expect(existsSync(path.join(sharedDir, 'wood_roughness.jpg'))).toBe(true);
+
+        const xmlText = await readFile(path.join(outputDir, 'wood_grain.mtlx'), 'utf8');
+        expect(xmlText).toContain('../../shared-textures/wood_color.jpg');
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('transform --texture-library accepts an absolute directory', async () => {
+      const tempDir = await copyFixture('wood_grain');
+      const sharedDir = await mkdtemp(path.join(os.tmpdir(), 'mtlx-cli-shared-'));
+      try {
+        const materialPath = path.join(tempDir, 'wood_grain.mtlx');
+        const outputDir = path.join(tempDir, 'out');
+        const result = await cli.run(
+          ['transform', materialPath, '-o', path.join(outputDir, 'wood_grain.mtlx'), '--texture-library', sharedDir],
+          { timeout: 8_000 },
+        );
+        expect(result).toSucceed();
+
+        expect(existsSync(path.join(sharedDir, 'wood_color.jpg'))).toBe(true);
+        expect(existsSync(path.join(sharedDir, 'wood_roughness.jpg'))).toBe(true);
+
+        const xmlText = await readFile(path.join(outputDir, 'wood_grain.mtlx'), 'utf8');
+        expect(xmlText).toContain(`${sharedDir.replace(/\\/g, '/')}/wood_color.jpg`);
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+        await rm(sharedDir, { recursive: true, force: true });
+      }
+    });
+
+    it('transform --texture-library is ignored for .mtlx.zip output (always ./textures)', async () => {
+      const tempDir = await copyFixture('wood_grain');
+      try {
+        const materialPath = path.join(tempDir, 'wood_grain.mtlx');
+        const archivePath = path.join(tempDir, 'wood_grain.mtlx.zip');
+        const result = await cli.run(
+          ['transform', materialPath, '-o', archivePath, '--texture-library', 'assets/shared'],
+          { timeout: 8_000 },
+        );
+        expect(result).toSucceed();
+        expect(result.stderr).toContain('--texture-library is ignored for .mtlx.zip output');
+
+        const unpackResult = await cli.run(
+          ['transform', archivePath, '-o', path.join(tempDir, 'out', 'wood_grain.mtlx'), '--format', 'json'],
+          { timeout: 8_000 },
+        );
+        expect(unpackResult).toSucceed();
+        const unpacked = JSON.parse(unpackResult.stdout);
+        expect(unpacked.entries.toSorted()).toEqual(
+          ['wood_grain.mtlx', 'textures/wood_color.jpg', 'textures/wood_roughness.jpg'].toSorted(),
+        );
       } finally {
         await rm(tempDir, { recursive: true, force: true });
       }

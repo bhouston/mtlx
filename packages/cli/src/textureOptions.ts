@@ -18,6 +18,13 @@ export const textureTransformOptions = {
     type: 'number',
     default: 95,
   },
+  'texture-library': {
+    alias: 'tl',
+    describe:
+      'Loose .mtlx output only: copy textures into this directory (relative to --output) instead of ./textures. ' +
+      'Ignored for .mtlx.zip output, which always uses ./textures.',
+    type: 'string',
+  },
 } as const;
 
 export const TEXTURE_OPTION_KEYS = Object.keys(textureTransformOptions);

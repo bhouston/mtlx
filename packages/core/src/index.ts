@@ -12,6 +12,7 @@ export {
   mergeMaterialXPackages,
   packageFromArchive,
   packageToEntries,
+  relocateTextureResources,
   resolveMaterialXResources,
   rewriteResourcePath,
   transform,

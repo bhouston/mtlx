@@ -13,6 +13,7 @@ import {
   detectFormat,
   packageFromArchive,
   packageToEntries,
+  relocateTextureResources,
   resolveMaterialXResources,
   type MaterialXFormat,
   type MaterialXPackage,
@@ -107,19 +108,42 @@ export interface WriteMaterialXPackageResult {
 }
 
 /**
+ * *Options for {@link writeMaterialXPackage}.*
+ *
+ * @category Packaging
+ */
+export interface WriteMaterialXPackageOptions {
+  /**
+   * Loose `.mtlx` output only: directory that texture images are copied into instead of the
+   * default `textures/` bucket next to the document. Relative (`../` allowed) resolves against
+   * the output file's directory; absolute is used as-is. Ignored for `.mtlx.zip`, which always
+   * uses `textures/` per the archive spec.
+   */
+  textureLibrary?: string;
+}
+
+/**
  * *Writes a package to disk in the format implied by `outputPath`'s extension.*
  *
- * `.mtlx.zip` produces a single archive file. Any other path is treated as the root `.mtlx`
- * document, with resources written beside it at their archive-relative paths.
+ * `.mtlx.zip` produces a single archive file, always with textures under `textures/` inside it.
+ * Any other path is treated as the root `.mtlx` document, with resources written beside it at
+ * their archive-relative paths — `textures/` by default, or `options.textureLibrary` if given.
  *
  * @category Packaging
  */
 export const writeMaterialXPackage = async (
   pkg: MaterialXPackage,
   outputPath: string,
+  options: WriteMaterialXPackageOptions = {},
 ): Promise<WriteMaterialXPackageResult> => {
   const format = detectFormat(outputPath);
-  const entries = packageToEntries(pkg);
+  const relocated = Boolean(options.textureLibrary) && format === 'mtlx';
+  if (relocated) {
+    relocateTextureResources(pkg, options.textureLibrary!);
+  }
+  // Relocated resources may carry an absolute or `..`-relative disk path, which is a valid write
+  // target here but not a valid *archive* path, so archive-path validation is skipped for them.
+  const entries = packageToEntries(pkg, { validate: !relocated });
   await mkdir(path.dirname(outputPath), { recursive: true });
 
   if (format === 'mtlx') {
@@ -127,7 +151,9 @@ export const writeMaterialXPackage = async (
     const [root, ...resources] = entries;
     await writeFile(outputPath, root!.data);
     for (const entry of resources) {
-      const target = path.join(outputDir, ...entry.path.split('/'));
+      const target = path.isAbsolute(entry.path)
+        ? path.resolve(entry.path)
+        : path.join(outputDir, ...entry.path.split('/'));
       await mkdir(path.dirname(target), { recursive: true });
       await writeFile(target, entry.data);
     }
