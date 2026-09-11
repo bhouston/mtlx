@@ -1,8 +1,8 @@
-import * as path from 'node:path';
-import type { MaterialXSummary } from 'mtlx-core';
+import { DEFAULT_MATERIALX_READ_LIMITS } from 'mtlx-core';
+import { getPreviewHtml } from './previewHtml.js';
 import { analyze } from './mtlxAnalyze.js';
 import * as vscode from 'vscode';
-import { MtlxPreviewDocument, type MtlxPreviewTexture } from './mtlxPreviewDocument.js';
+import { MtlxPreviewDocument } from './mtlxPreviewDocument.js';
 
 export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<MtlxPreviewDocument> {
   private readonly _output = vscode.window.createOutputChannel('Mtlx Viewer');
@@ -14,33 +14,30 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
   }
 
   async openCustomDocument(uri: vscode.Uri): Promise<MtlxPreviewDocument> {
+    const limit = /\.mtlx\.zip$/i.test(uri.path)
+      ? DEFAULT_MATERIALX_READ_LIMITS.maxArchiveBytes
+      : DEFAULT_MATERIALX_READ_LIMITS.maxXmlBytes;
+    if ((await vscode.workspace.fs.stat(uri)).size > limit) throw new Error('Material file byte limit exceeded');
     const raw = await vscode.workspace.fs.readFile(uri);
-    const fileName = path.basename(uri.fsPath);
-    const { issues, summary, parseError } = analyze(uri.fsPath, raw);
-    const textures = await this._readReferencedTextures(uri, summary);
-    return new MtlxPreviewDocument(uri, raw.length, fileName, raw, issues, summary, parseError, textures);
-  }
-
-  // For a loose .mtlx, the document's `file` attributes point at sibling texture files on disk
-  // that the webview (no real filesystem/network access) can't fetch itself — read them here and
-  // ship their bytes over. A no-op for self-contained .mtlx.zip archives, since those paths won't
-  // exist next to the archive; three.js's MaterialXLoader resolves textures from inside the
-  // archive on its own, so a miss here is expected and harmless.
-  private async _readReferencedTextures(
-    uri: vscode.Uri,
-    summary: MaterialXSummary | undefined,
-  ): Promise<MtlxPreviewTexture[]> {
-    const dir = path.dirname(uri.fsPath);
-    const textures: MtlxPreviewTexture[] = [];
-    for (const texturePath of summary?.referencedTextures ?? []) {
-      try {
-        const data = await vscode.workspace.fs.readFile(vscode.Uri.joinPath(vscode.Uri.file(dir), texturePath));
-        textures.push({ path: texturePath, data });
-      } catch {
-        // Missing here is expected for zip-packaged documents (see doc comment above).
-      }
-    }
-    return textures;
+    const fileName = uri.path.split('/').at(-1)!;
+    const result = await analyze(fileName, raw, async (resourcePath) => {
+      const resourceUri = resolveResourceUri(uri, resourcePath);
+      const stat = await vscode.workspace.fs.stat(resourceUri);
+      if (stat.size > DEFAULT_MATERIALX_READ_LIMITS.maxEntryBytes) throw new Error('Resource byte limit exceeded');
+      return vscode.workspace.fs.readFile(resourceUri);
+    });
+    return new MtlxPreviewDocument(
+      uri,
+      raw.length,
+      fileName,
+      raw,
+      result.issues,
+      result.summary,
+      result.parseError,
+      result.resources.map((resource) => ({ path: resource.sourcePath, data: resource.data })),
+      result.resourcesChecked,
+      result.resourcePaths,
+    );
   }
 
   async resolveCustomEditor(document: MtlxPreviewDocument, webviewPanel: vscode.WebviewPanel): Promise<void> {
@@ -57,13 +54,47 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
     );
     let disposed = false;
     let generation = 0;
+    let ready = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let resourceSubscriptions: vscode.Disposable[] = [];
+    const scheduleRefresh = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (!disposed && ready && webviewPanel.visible) void refresh();
+      }, 100);
+    };
+    const watchResources = (current: MtlxPreviewDocument) => {
+      for (const subscription of resourceSubscriptions) subscription.dispose();
+      resourceSubscriptions = [];
+      const uris = [
+        document.uri,
+        ...current.resourcePaths.flatMap((resourcePath) => {
+          try {
+            return [resolveResourceUri(document.uri, resourcePath)];
+          } catch {
+            return [];
+          }
+        }),
+      ];
+      for (const uri of new Map(uris.map((resourceUri) => [resourceUri.toString(), resourceUri])).values()) {
+        const watcher = vscode.workspace.createFileSystemWatcher(
+          new vscode.RelativePattern(vscode.Uri.joinPath(uri, '..'), uri.path.split('/').at(-1)!),
+        );
+        resourceSubscriptions.push(
+          watcher,
+          watcher.onDidChange(scheduleRefresh),
+          watcher.onDidCreate(scheduleRefresh),
+          watcher.onDidDelete(scheduleRefresh),
+        );
+      }
+    };
     /* oxlint-disable unicorn/require-post-message-target-origin */
     const refresh = async () => {
       const request = ++generation;
       try {
         const current = await this.openCustomDocument(document.uri);
         if (disposed || request !== generation) return;
-        // oxlint-disable-next-line unicorn/require-post-message-target-origin
+        watchResources(current);
         await webviewPanel.webview.postMessage({
           fileName: current.fileName,
           fileSize: current.fileSize,
@@ -71,9 +102,11 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
           issues: current.issues,
           summary: current.summary,
           parseError: current.parseError,
-          data: current.raw.buffer,
-          textures: current.textures.map((texture) => ({ path: texture.path, data: texture.data.buffer })),
-          shaderBall: shaderBall.buffer,
+          resourcesChecked: current.resourcesChecked,
+          resourcePaths: current.resourcePaths,
+          data: current.raw.slice().buffer,
+          textures: current.textures.map((texture) => ({ path: texture.path, data: texture.data.slice().buffer })),
+          shaderBall: shaderBall.slice().buffer,
         });
       } catch (error) {
         if (disposed || request !== generation) return;
@@ -90,135 +123,45 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       }
     };
     /* oxlint-enable unicorn/require-post-message-target-origin */
-    const listener = webviewPanel.webview.onDidReceiveMessage((message: { type?: string; message?: string }) => {
-      if (message.type === 'ready' || message.type === 'refresh') void refresh();
-      else if (message.type === 'log' && message.message) this._output.appendLine(message.message);
-    });
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const scheduleRefresh = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        if (!disposed && webviewPanel.visible) void refresh();
-      }, 100);
-    };
-    // A fresh ready request restores hidden tabs. Watch sibling resources so saved edits and
-    // texture replacements update visible previews as well.
-    const watcher = vscode.workspace.createFileSystemWatcher(
-      new vscode.RelativePattern(vscode.Uri.joinPath(document.uri, '..'), '**/*'),
+    const listener = webviewPanel.webview.onDidReceiveMessage(
+      async (message: { type?: string; message?: string; diagnostics?: string }) => {
+        if (message.type === 'ready' || message.type === 'refresh') {
+          ready = true;
+          void refresh();
+        } else if (message.type === 'log' && message.message) this._output.appendLine(message.message);
+        else if (message.type === 'copyDiagnostics' && typeof message.diagnostics === 'string') {
+          await vscode.env.clipboard.writeText(message.diagnostics);
+        } else if (message.type === 'downloadDiagnostics' && typeof message.diagnostics === 'string') {
+          const destination = await vscode.window.showSaveDialog({
+            defaultUri: vscode.Uri.joinPath(document.uri, '..', 'mtlx-diagnostics.json'),
+            filters: { JSON: ['json'] },
+          });
+          if (destination)
+            await vscode.workspace.fs.writeFile(destination, new TextEncoder().encode(message.diagnostics));
+        }
+      },
     );
+    watchResources(document);
     const subscriptions = [
       listener,
-      watcher,
-      watcher.onDidChange(scheduleRefresh),
-      watcher.onDidCreate(scheduleRefresh),
-      watcher.onDidDelete(scheduleRefresh),
+      webviewPanel.onDidChangeViewState(() => {
+        if (ready && webviewPanel.visible) void refresh();
+      }),
     ];
     webviewPanel.onDidDispose(() => {
       disposed = true;
       generation++;
       clearTimeout(timer);
-      for (const subscription of subscriptions) subscription.dispose();
+      for (const subscription of [...subscriptions, ...resourceSubscriptions]) subscription.dispose();
     });
     // The handler must be registered before the script can announce readiness.
     webviewPanel.webview.html = getPreviewHtml(webviewPanel.webview, scriptUri);
   }
 }
 
-function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string {
-  const csp = [
-    "default-src 'none'",
-    `script-src ${webview.cspSource}`,
-    `style-src ${webview.cspSource} 'unsafe-inline'`,
-    'worker-src blob:',
-    'img-src data: blob:',
-    // ImageBitmapLoader (three.js) fetches texture blob: URLs via fetch(), governed by
-    // connect-src rather than img-src.
-    'connect-src blob:',
-  ].join('; ');
-
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="${csp}">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mtlx Viewer</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 12px;
-      font-family: var(--vscode-font-family);
-      font-size: var(--vscode-font-size);
-      color: var(--vscode-foreground);
-      background: var(--vscode-editor-background);
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
-    .layout { display: flex; gap: 12px; flex: 1; min-height: 0; }
-    .viewport-wrap { flex: 3; min-width: 0; position: relative; display: flex; flex-direction: column; }
-    .toolbar { display: flex; gap: 8px; padding-bottom: 12px; flex: none; }
-    .toolbar select {
-      background: var(--vscode-dropdown-background);
-      color: var(--vscode-dropdown-foreground);
-      border: 1px solid var(--vscode-dropdown-border);
-      font-size: 12px;
-      padding: 2px 4px;
-    }
-    #viewport { width: 100%; flex: 1; min-height: 0; }
-    .stats { flex: 1; min-width: 220px; overflow: auto; font-size: 12px; }
-    .stats dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
-    .stats dt { font-weight: 600; color: var(--vscode-foreground); }
-    .stats dd { margin: 0; word-break: break-word; }
-    .valid { color: var(--vscode-testing-iconPassed, #4caf50); font-weight: 600; }
-    .invalid { color: var(--vscode-errorForeground); font-weight: 600; }
-    .issue-error { color: var(--vscode-errorForeground); }
-    .issue-warning { color: var(--vscode-editorWarning-foreground, #cca700); }
-    .error { color: var(--vscode-errorForeground); padding: 8px 16px; white-space: pre-wrap; }
-    h2 { font-size: 13px; margin: 12px 0 4px; }
-    ul { margin: 4px 0; padding-left: 18px; }
-    #log {
-      flex: none;
-      height: 90px;
-      overflow: auto;
-      font-family: var(--vscode-editor-font-family, monospace);
-      font-size: 11px;
-      color: var(--vscode-descriptionForeground);
-      background: var(--vscode-textCodeBlock-background, rgba(128, 128, 128, 0.1));
-      padding: 4px 8px;
-      margin-top: 12px;
-      border-top: 1px solid var(--vscode-panel-border, transparent);
-    }
-    /* Narrow editor pane (e.g. side-by-side split): stack the info panel under the viewport
-       instead of squeezing both into a too-thin row. */
-    @media (max-width: 600px) {
-      .layout { flex-direction: column; }
-      .viewport-wrap { flex: none; height: 60vh; }
-      .stats { flex: 1; min-width: 0; }
-    }
-  </style>
-</head>
-<body>
-  <div class="layout">
-    <div class="viewport-wrap">
-      <div class="toolbar">
-        <button id="refresh" type="button" title="Reload document and textures">Refresh</button>
-        <select id="material-select" title="Material"></select>
-        <select id="geometry-select" title="Geometry">
-          <option value="totem">Totem</option>
-          <option value="sphere">Sphere</option>
-          <option value="plane">Plane</option>
-        </select>
-      </div>
-      <canvas id="viewport"></canvas>
-    </div>
-    <div class="stats" id="stats"></div>
-  </div>
-  <div class="error" id="error" style="display:none"></div>
-  <div id="log"></div>
-  <script src="${scriptUri}"></script>
-</body>
-</html>`;
+/** Resolve sibling paths without losing remote/virtual schemes or authority. */
+export function resolveResourceUri(documentUri: vscode.Uri, resourcePath: string): vscode.Uri {
+  if (/^[a-z][a-z0-9+.-]*:/i.test(resourcePath)) return vscode.Uri.parse(resourcePath);
+  if (resourcePath.startsWith('/')) return documentUri.with({ path: resourcePath });
+  return vscode.Uri.joinPath(documentUri, '..', resourcePath);
 }

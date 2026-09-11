@@ -19,6 +19,8 @@ export class MtlxPreviewDocument implements CustomDocument {
     // Sibling texture files referenced by a loose (unzipped) .mtlx, read up front so the webview
     // (which has no real filesystem/HTTP access) can serve them as blob: URLs instead.
     public readonly textures: MtlxPreviewTexture[] = [],
+    public readonly resourcesChecked = false,
+    public readonly resourcePaths: string[] = [],
   ) {}
 
   dispose(): void {

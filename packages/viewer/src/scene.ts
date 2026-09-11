@@ -122,7 +122,7 @@ function applyMaterial(object: THREE.Object3D, material: THREE.Material): void {
 /** Frames the camera above and back from `object`, looking down at it, sized to its bounding box. */
 function frameObject(
   camera: THREE.PerspectiveCamera,
-  controls: { target: THREE.Vector3; update: () => void },
+  controls: { target: THREE.Vector3; update: () => void; enableDamping?: boolean },
   object: THREE.Object3D,
 ): void {
   const box = new THREE.Box3().setFromObject(object);
@@ -154,7 +154,7 @@ function frameObject(
  */
 export async function createMtlxScene(
   camera: THREE.PerspectiveCamera,
-  controls: { target: THREE.Vector3; update: () => void },
+  controls: { target: THREE.Vector3; update: () => void; enableDamping?: boolean },
   options: MtlxSceneOptions,
 ): Promise<MtlxScene> {
   const manager = options.manager ?? new THREE.LoadingManager();
@@ -178,6 +178,7 @@ export async function createMtlxScene(
   };
   // Capture original glTF/default materials before replacing them with MaterialX materials.
   const disposeResources = collectDisposables([...Object.values(geometries), ...Object.values(materials)]);
+  const originalRotations = new Map(Object.values(geometries).map((object) => [object, object.rotation.clone()]));
   const root = new THREE.Group();
   for (const object of Object.values(geometries)) root.add(object);
 
@@ -210,7 +211,14 @@ export async function createMtlxScene(
       frameObject(camera, controls, geometries[kind]);
     },
     resetCamera() {
-      geometries[scene.geometry].rotation.set(0, 0, 0);
+      // Drain pending orbit/pan damping before restoring framing, so Reset remains still.
+      const damping = controls.enableDamping;
+      if (damping !== undefined) {
+        controls.enableDamping = false;
+        controls.update();
+        controls.enableDamping = damping;
+      }
+      for (const [object, rotation] of originalRotations) object.rotation.copy(rotation);
       camera.zoom = 1;
       frameObject(camera, controls, geometries[scene.geometry]);
     },

@@ -55,6 +55,12 @@ async function resolveSourceBytes(
 // .mtlx and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
 // embedded in the archive itself, so this component doesn't need any zip handling of its own.
 export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialViewerProps) {
+  const [exposure, setExposure] = useState(0);
+  const [environmentIntensity, setEnvironmentIntensity] = useState(1);
+  const settingsRef = useRef({ exposure, environmentIntensity });
+  settingsRef.current = { exposure, environmentIntensity };
+  const applySettingsRef = useRef<(() => void) | null>(null);
+  useEffect(() => applySettingsRef.current?.(), [exposure, environmentIntensity]);
   const frameRef = useRef<HTMLDivElement>(null);
   const [rotating, setRotating] = useState(false);
   const rotatingRef = useRef(false);
@@ -146,6 +152,15 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       container.replaceChildren(renderer.domElement);
 
       const scene = new THREE.Scene();
+      const applySettings = () => {
+        renderer.toneMappingExposure = 2 ** settingsRef.current.exposure;
+        scene.environmentIntensity = settingsRef.current.environmentIntensity;
+      };
+      applySettingsRef.current = applySettings;
+      applySettings();
+      own(() => {
+        if (applySettingsRef.current === applySettings) applySettingsRef.current = null;
+      });
       const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
 
       // Shared studio IBL (packages/viewer), baked once from RoomEnvironment, so the website and
@@ -353,6 +368,36 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
         {controlMessage || `Preview: ${previewState}`}
       </output>
       <div ref={containerRef} className="h-full w-full" />
+      {materialNames.length ? (
+        <div className="absolute right-2 bottom-2 left-2 flex flex-wrap gap-3 rounded bg-black/70 p-2 text-xs text-white">
+          <label className="flex items-center gap-2">
+            Exposure ({exposure.toFixed(1)} EV)
+            <input
+              aria-label="Exposure"
+              type="range"
+              min="-2"
+              max="2"
+              step="0.1"
+              value={exposure}
+              onChange={(event) => setExposure(Number(event.target.value))}
+              className="w-24"
+            />
+          </label>
+          <label className="flex items-center gap-2">
+            Environment
+            <input
+              aria-label="Environment intensity"
+              type="range"
+              min="0"
+              max="2"
+              step="0.1"
+              value={environmentIntensity}
+              onChange={(event) => setEnvironmentIntensity(Number(event.target.value))}
+              className="w-24"
+            />
+          </label>
+        </div>
+      ) : null}
       {loading ? (
         <div className="absolute inset-0 flex items-center justify-center text-sm text-white/70">Loading…</div>
       ) : null}
