@@ -45,15 +45,15 @@ export interface MaterialXNodeGraph {
 /**
  * *The in-memory form of a `.mtlx` file, mirroring its XML structure.*
  *
- * `nodes` and `nodeGraphs` are typed views; `elements` is the lossless raw tree that
+ * `nodes` and `nodeGraphs` are derived read-only snapshots; `elements` is the canonical tree that
  * {@link serializeMaterialX} writes back out.
  *
  * @category Parsing
  */
 export interface MaterialXDocument {
   attributes: Record<string, string>;
-  nodes: MaterialXNode[];
-  nodeGraphs: MaterialXNodeGraph[];
+  readonly nodes: readonly MaterialXNode[];
+  readonly nodeGraphs: readonly MaterialXNodeGraph[];
   elements: MaterialXElement[];
 }
 

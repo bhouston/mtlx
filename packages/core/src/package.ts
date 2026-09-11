@@ -1,5 +1,5 @@
 import type { MaterialXDocument, MaterialXElement } from './types.js';
-import { parseMaterialX, serializeMaterialX } from './xml.js';
+import { cloneMaterialXDocument, parseMaterialX, serializeMaterialX } from './xml.js';
 
 /**
  * *A MaterialX file format, detected from its file extension.*
@@ -406,7 +406,7 @@ export const mergeMaterialXPackages = (packages: MaterialXPackage[]): MaterialXP
 
   const merged: MaterialXPackage = {
     rootPath: first.rootPath,
-    document: { ...first.document, elements: [...first.document.elements] },
+    document: cloneMaterialXDocument(first.document),
     resources: [...first.resources],
   };
 

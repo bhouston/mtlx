@@ -42,4 +42,4 @@ export type {
   MaterialXValueType,
 } from './types.js';
 export { checkMaterialXText, validateDocument } from './validate.js';
-export { parseMaterialX, serializeMaterialX } from './xml.js';
+export { createMaterialXDocument, cloneMaterialXDocument, parseMaterialX, serializeMaterialX } from './xml.js';

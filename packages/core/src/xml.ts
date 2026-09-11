@@ -161,38 +161,26 @@ const parseNodeGraphFromElement = (element: MaterialXElement): MaterialXNodeGrap
   };
 };
 
-const nodeToXml = (node: MaterialXNode): XmlRecord => {
-  const output: XmlRecord = { ...node.attributes };
-  if (node.inputs.length > 0) {
-    output.input = node.inputs.map((entry) => ({ ...entry.attributes }));
-  }
-  if (node.outputs.length > 0) {
-    output.output = node.outputs.map((entry) => ({ ...entry.attributes }));
-  }
-  if (node.parameters.length > 0) {
-    output.parameter = node.parameters.map((entry) => ({ ...entry.attributes }));
-  }
-  return output;
-};
+/** Creates a document whose typed views are always derived from its canonical element tree.
+ * Edit `attributes` and `elements`; typed views are read-only snapshots of the current tree. */
+export const createMaterialXDocument = (
+  attributes: Record<string, string> = {},
+  elements: MaterialXElement[] = [],
+): MaterialXDocument => ({
+  attributes,
+  elements,
+  get nodes() {
+    return this.elements
+      .filter((entry) => entry.name !== 'nodegraph' && !entry.name.startsWith('#'))
+      .map(parseNodeFromElement);
+  },
+  get nodeGraphs() {
+    return this.elements.filter((entry) => entry.name === 'nodegraph').map(parseNodeGraphFromElement);
+  },
+});
 
-const nodeGraphToXml = (nodeGraph: MaterialXNodeGraph): XmlRecord => {
-  const output: XmlRecord = { ...nodeGraph.attributes };
-  if (nodeGraph.inputs.length > 0) {
-    output.input = nodeGraph.inputs.map((entry) => ({ ...entry.attributes }));
-  }
-  if (nodeGraph.parameters.length > 0) {
-    output.parameter = nodeGraph.parameters.map((entry) => ({ ...entry.attributes }));
-  }
-  if (nodeGraph.outputs.length > 0) {
-    output.output = nodeGraph.outputs.map((entry) => ({ ...entry.attributes }));
-  }
-  for (const node of nodeGraph.nodes) {
-    const existing = output[node.category];
-    const next = nodeToXml(node);
-    output[node.category] = existing ? [...toArray(existing), next] : [next];
-  }
-  return output;
-};
+export const cloneMaterialXDocument = (document: MaterialXDocument): MaterialXDocument =>
+  createMaterialXDocument({ ...document.attributes }, structuredClone(document.elements));
 
 /**
  * *Parses MaterialX XML text into a {@link MaterialXDocument}.*
@@ -245,17 +233,7 @@ export const parseMaterialX = (xml: string): MaterialXDocument => {
       elements.push(parseElement(tag, entry));
     }
   }
-  const nodeGraphs = elements
-    .filter((entry) => entry.name === 'nodegraph')
-    .map((entry) => parseNodeGraphFromElement(entry));
-  const nodes = elements.filter((entry) => entry.name !== 'nodegraph').map((entry) => parseNodeFromElement(entry));
-
-  return {
-    attributes,
-    nodes,
-    nodeGraphs,
-    elements,
-  };
+  return createMaterialXDocument(attributes, elements);
 };
 
 /**
@@ -277,16 +255,6 @@ export const serializeMaterialX = (document: MaterialXDocument): string => {
       root[element.name] = existing ? [...toArray(existing), xmlElement] : [xmlElement];
     }
     return builder.build({ materialx: root });
-  }
-
-  if (document.nodeGraphs.length > 0) {
-    root.nodegraph = document.nodeGraphs.map((entry) => nodeGraphToXml(entry));
-  }
-
-  for (const node of document.nodes) {
-    const xmlNode = nodeToXml(node);
-    const existing = root[node.category];
-    root[node.category] = existing ? [...toArray(existing), xmlNode] : [xmlNode];
   }
 
   return builder.build({ materialx: root });
