@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as vscode from 'vscode';
 
 const mocked = vi.hoisted(() => {
+  // oxlint-disable-next-line unicorn/consistent-function-scoping -- the mock must exist inside the hoisted factory
   const uri = (value: string): vscode.Uri => {
     const url = new URL(value);
     return {
@@ -81,9 +82,9 @@ async function setup() {
     extensionUri: mocked.uri('file:///extension'),
   } as vscode.ExtensionContext);
   const document = await provider.openCustomDocument(rootUri);
-  let receive: (message: { type: string; diagnostics?: string }) => void = () => {};
-  let dispose = () => {};
-  let viewState = () => {};
+  let receive: (message: { type: string; diagnostics?: string }) => void = vi.fn();
+  let dispose: () => void = vi.fn();
+  let viewState: () => void = vi.fn();
   const postMessage = vi.fn().mockResolvedValue(true);
   const panel = {
     visible: true,

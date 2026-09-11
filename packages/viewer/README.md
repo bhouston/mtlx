@@ -46,6 +46,8 @@ preview.update(deltaSeconds);
 const otherMaterial = preview.materialNames[1];
 if (otherMaterial) preview.setMaterial(otherMaterial);
 preview.setGeometry('plane');
+preview.autoRotate = false;
+preview.resetCamera(); // Restore the object's orientation, camera position, target, and zoom.
 
 // Before replacing the preview or removing its host:
 threeScene.remove(preview.root);
@@ -83,6 +85,25 @@ threeScene.environment = texture;
 
 // ENVIRONMENT_ASSET_FILES maps each kind to its asset file name under mtlx-viewer/assets.
 ```
+
+## Inspection controls and capabilities
+
+The website and VS Code hosts provide pause/resume rotation, reduced-motion support, Reset,
+fullscreen, exposure, and environment intensity controls. Hosts should pass `autoRotate: false`
+when the user's reduced-motion preference is active. Reset retains material, geometry, and
+lighting choices. The renderer and its `THREE.Scene` own exposure and environment intensity.
+
+<!-- test:capabilities -->
+
+```ts
+import { supportedMaterialXCategories } from 'mtlx-viewer/capabilities';
+
+if (!supportedMaterialXCategories.includes('standard_surface')) throw new Error('Missing renderer capability');
+```
+
+The capability subpath is lightweight and can be imported in a host or worker without loading
+three.js. A test compares it to the installed three.js registries so upgrades cannot silently
+leave the inventory stale. Categories do not guarantee every input/type combination will render.
 
 ## License
 

@@ -27,6 +27,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Verify generated CLI documentation
+        run: pnpm docs:cli --check
+
       - name: Type check
         run: pnpm tsc
 

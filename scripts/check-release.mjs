@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Exercise the actual tarballs in a clean production consumer, outside the workspace.
 import assert from 'node:assert/strict';
+import { checkReadmeExamples } from './check-readme.mjs';
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -63,6 +64,7 @@ try {
 `;
   writeFileSync(join(directory, 'check.mjs'), consumer);
   execFileSync(process.execPath, ['check.mjs'], { cwd: directory, stdio: 'inherit' });
+  checkReadmeExamples(directory);
   console.log('Clean production tarball checks passed: help, check, transform, viewer routes, and exported assets.');
 } finally {
   rmSync(directory, { recursive: true, force: true });

@@ -86,7 +86,7 @@ and reserves planned shared texture names across inputs without writing files.
 or select additional groups explicitly:
 
 ```sh
-mtlx check material.mtlx --strict --rules basic structure types resources renderer-support
+mtlx check material.mtlx --strict --rules basic structure types resources
 ```
 
 | Rule group         | Scope                                                                                |

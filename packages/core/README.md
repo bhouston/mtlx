@@ -119,6 +119,25 @@ const stripComments: Transform = (pkg) => {
 };
 ```
 
+## Complete inspection
+
+`inspectMaterialX` runs all five rule groups. ZIP inputs supply their own resource inventory;
+for loose XML, pass a `readResource(path)` callback to check recursive dependencies. Missing
+resources are collected independently. `resourcesChecked` records whether dependency checks
+could run, and `resourcePaths` includes failed reads. Pass `supportedCategories` from your renderer
+for category coverage; shader compilation remains the renderer's job.
+
+<!-- test:inspection -->
+
+```ts
+import { inspectMaterialX } from 'mtlx-core';
+
+const bytes = new TextEncoder().encode('<materialx version="1.39"/>');
+const report = await inspectMaterialX(bytes, 'material.mtlx', { supportedCategories: [] });
+if (report.issues.some((issue) => issue.level === 'error')) throw new Error('Material checks failed');
+console.log(report.resourcesChecked); // true: no dependencies to resolve
+```
+
 ## `mtlx-core/node` (filesystem helpers)
 
 Filesystem loading, dependency resolution, and staged output commits. Reads support parent-relative
@@ -171,13 +190,25 @@ process.exitCode = issues.some((issue) => issue.level === 'error') ? 1 : 0;
 Backed by [sharp](https://sharp.pixelplumbing.com/); never pulled into a browser bundle.
 
 ```ts
-import { resizeTextures, transformImage, TRANSFORM_IMAGE_DEFAULTS } from 'mtlx-core/textures';
+import { transform } from 'mtlx-core';
+import { resizeTextures } from 'mtlx-core/textures';
 
-// A Transform that resizes/reformats every texture resource in a package.
 await transform(pkg, resizeTextures({ maxImageSize: 2048, imageFormat: 'webp', imageQuality: 90 }));
+```
 
-// Or transform a single image's bytes directly.
-const { data, extension } = await transformImage(pngBytes, '.png', { maxImageSize: 1024, imageFormat: 'avif' });
+This standalone Node example converts a one-pixel PNG to WebP:
+
+<!-- test:texture -->
+
+```ts
+import { transformImage } from 'mtlx-core/textures';
+
+const pngBytes = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADUlEQVQImWP4////fwAJ+wP9CNHoHgAAAABJRU5ErkJggg==',
+  'base64',
+);
+const { data, extension } = await transformImage(pngBytes, '.png', { imageFormat: 'webp' });
+if (extension !== '.webp' || data.byteLength === 0) throw new Error('Image conversion failed');
 ```
 
 See [Processing pipelines](https://github.com/bhouston/mtlx/blob/main/packages/core/PROCESSING.md) for `processMaterialX`, staged results, and dry-run planning.

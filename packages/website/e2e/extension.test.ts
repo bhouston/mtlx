@@ -46,17 +46,17 @@ test('built extension webview requests data, renders, and restores controls afte
         ),
       );
       await page.evaluate(
-        ({ raw, shaderBall }) =>
+        ({ raw: fileBytes, shaderBall: ballBytes }) =>
           window.postMessage(
             {
               fileName: 'copper.mtlx',
-              fileSize: raw.length,
+              fileSize: fileBytes.length,
               valid: true,
               issues: [],
               resourcesChecked: true,
               textures: [],
-              data: new Uint8Array(raw).buffer,
-              shaderBall: new Uint8Array(shaderBall).buffer,
+              data: new Uint8Array(fileBytes).buffer,
+              shaderBall: new Uint8Array(ballBytes).buffer,
             },
             '*',
           ),

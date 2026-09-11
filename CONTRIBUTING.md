@@ -57,6 +57,7 @@ on npm. Keep them current when you change an export's signature or behavior.
   `Textures`. `@internal` hides a symbol from the type declarations.
 
 ```sh
+pnpm docs:cli --check # fail if generated CLI help is stale (also runs in CI)
 pnpm docs:cli    # splice `mtlx --help` output into packages/cli/README.md (commit the result)
 ```
 
@@ -74,11 +75,14 @@ build and pack into the root `publish/` directory. They never publish. Packing u
 workspace-aware packer, preserving each package's declared files and resolving workspace versions.
 The check installs all three tarballs with production dependencies in a temporary consumer,
 then exercises CLI help, validation, packing/unpacking, preview HTTP assets, and viewer exports.
+Marked standalone README examples are compiled and executed in that installed consumer too.
 It requires registry access for external dependencies and never opens a browser.
 
 After reviewing the artifacts, publish the exact checked tarballs explicitly with
 `npm publish publish/<package>-<version>.tgz --access public`, in dependency order:
 `mtlx-core`, `mtlx-viewer`, then `mtlx-cli`. Do not rebuild between verification and publication.
+The extension build creates a bundled host entry; `pnpm tsc` can replace it with unbundled
+compiler output, so always use the package script (which rebuilds) when preparing a VSIX.
 Build the extension separately with `pnpm --filter mtlx-vscode-extension package`; test that VSIX
 in VS Code before publishing it through the extension Marketplace workflow.
 

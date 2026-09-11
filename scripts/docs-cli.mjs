@@ -23,13 +23,22 @@ const sections = [top, ...commands.map((command) => help([command]))]
   .join('\n\n');
 
 const doc = readFileSync(docPath, 'utf8');
-if (!/<!-- begin:cli_help -->[\s\S]*<!-- end:cli_help -->/.test(doc)) {
+if (
+  (doc.match(/<!-- begin:cli_help -->/g) ?? []).length !== 1 ||
+  (doc.match(/<!-- end:cli_help -->/g) ?? []).length !== 1 ||
+  !/<!-- begin:cli_help -->[\s\S]*<!-- end:cli_help -->/.test(doc)
+) {
   throw new Error('CLI README must contain begin:cli_help and end:cli_help markers');
 }
 if (!commands.length) throw new Error('No commands found in CLI help output');
 const updated = doc.replace(
   /<!-- begin:cli_help -->[\s\S]*<!-- end:cli_help -->/,
-  `<!-- begin:cli_help -->\n${sections}\n<!-- end:cli_help -->`,
+  `<!-- begin:cli_help -->\n\n${sections}\n\n<!-- end:cli_help -->`,
 );
-writeFileSync(docPath, updated);
-console.log(`Updated ${docPath} with ${commands.length} commands`);
+if (process.argv.includes('--check')) {
+  if (updated !== doc) throw new Error('CLI README help is stale; run pnpm docs:cli and commit the result');
+  console.log('CLI README help is current');
+} else {
+  writeFileSync(docPath, updated);
+  console.log(`Updated ${docPath} with ${commands.length} commands`);
+}

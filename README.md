@@ -20,6 +20,25 @@ Preview rendering uses three.js's MaterialX support. Validation checks selected 
 neither a successful check nor a preview guarantees full MaterialX conformance or identical
 rendering in another application. Node tools target Node.js 22 or later.
 
+[Open the copper sample](https://mtlx.ben3d.ca/viewer?materialUrl=https%3A%2F%2Fraw.githubusercontent.com%2Fbhouston%2Fmaterial-samples%2Fmain%2Fmaterials%2Fshowcase%2Fstandard_surface%2Fcopper%2Fcopper.mtlx)
+to try the inspector immediately.
+
+<img src="assets/viewer-inspection.png" alt="Copper material in the website inspector with preview controls, separate document and resource checks, material details and diagnostic export" width="720">
+
+## Support
+
+| Host              | Input and resources                                                               | Validation and preview                                                                             |
+| ----------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Browser inspector | Local XML/ZIP and HTTP(S) URLs; archives or remote URLs provide dependency access | All core rule groups; three.js preview with WebGPU or WebGL2 fallback                              |
+| Desktop VS Code   | Saved XML/ZIP; dependencies through the workspace URI provider                    | All core rule groups; automatic saved-source/resource refresh; same three.js scene                 |
+| Node CLI          | XML/ZIP and filesystem dependencies; Node.js 22+                                  | Selectable validation rule groups, packaging, Sharp texture optimization and local browser preview |
+| Browser library   | Caller-supplied bytes and resource reader                                         | Browser-safe parsing, packaging and validation; GPU rendering via `mtlx-viewer`                    |
+
+The viewers check node/port names, structure, types, dependencies and renderer categories.
+Local loose files in the browser cannot provide sibling resources. Shader compilation runs in
+the preview and may fail independently. Automated rendering coverage uses Chromium's WebGL2
+fallback, including the extension's bundled webview; real editor/GPU combinations vary.
+
 ## Packages
 
 | Package                                                                                         | Description                                                                                                                                                   |

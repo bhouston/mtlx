@@ -4,6 +4,20 @@
 
 These changes are in the repository and have not been published as a new package release.
 
+- Website inspector: separate Document, Resources and Preview status; accessible material/geometry
+  controls, pause/resume, reduced-motion support, Reset, fullscreen, exposure and environment
+  intensity, collapsible details/nodes, and copy/download diagnostics.
+- Samples and remote URLs share `materialUrl`; the URL field and sample picker stay synchronized.
+  Existing `material` links remain supported. New links and iframe code use the canonical URL.
+- Both viewers run all validation rule groups, including recursive dependency and archive checks,
+  with a renderer category inventory checked against three.js. Inaccessible resources are explicit.
+- VS Code: preserve remote/virtual URI schemes, watch referenced and missing resources, restore
+  inspection state on webview recreation, and export diagnostics through the host.
+- Batch JSON/YAML now returns a versioned object with counts, processing results and all failures,
+  replacing the previous bare results array. Partial failures still exit nonzero and keep successful outputs.
+- CI checks generated CLI help and compiles/runs representative README examples in a tarball consumer.
+  Added website setup/deployment documentation and an inspector screenshot.
+
 - Preserve XML element order, explicit attributes, comments, and mixed text during semantic round trips.
 - Make `document.elements` canonical and expose node/graph inspection as readonly derived snapshots.
 - Bound XML and archive processing and strengthen package resource-path handling.

@@ -43,6 +43,7 @@ test('viewer renders a dropped .mtlx through the first completed frame and valid
   await page.setInputFiles('input[type=file]', materialPath);
   // Wait for a completed render, including shader compilation in the WebGL2 fallback.
   await expectReady();
+  if (process.env.MTLX_SCREENSHOT) await page.screenshot({ path: process.env.MTLX_SCREENSHOT, fullPage: true });
 });
 
 test('a failed replacement clears old details and repeated loads resize the canvas correctly', async () => {
