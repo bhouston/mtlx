@@ -2,7 +2,7 @@
 // Exercise the actual tarballs in a clean production consumer, outside the workspace.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,6 +19,13 @@ try {
     cwd: directory,
     stdio: 'inherit',
   });
+  for (const name of ['core', 'viewer', 'cli']) {
+    const files = readdirSync(join(directory, 'node_modules', `mtlx-${name}`, 'dist'), { recursive: true });
+    assert.ok(
+      files.every((file) => !String(file).includes('.test.') && !String(file).endsWith('.tsbuildinfo')),
+      `${name} must not ship tests or incremental metadata`,
+    );
+  }
   const cli = join(directory, 'node_modules/mtlx-cli/bin/cli.js');
   const run = (args) => execFileSync(process.execPath, [cli, ...args], { cwd: directory, encoding: 'utf8' });
   assert.match(run(['--help']), /check/);
@@ -27,6 +34,12 @@ try {
     '<materialx version="1.39"><constant name="value" type="float"><input name="value" type="float" value="1" /></constant></materialx>',
   );
   run(['check', 'sample.mtlx']);
+  const dryRun = JSON.parse(
+    run(['x', 'sample.mtlx', '-o', 'dry-run/output.mtlx.zip', '--dry-run', '--format', 'json']),
+  );
+  assert.equal(dryRun.success, true);
+  assert.equal(dryRun.bytesWritten, 0);
+  assert.equal(existsSync(join(directory, 'dry-run')), false);
   run(['x', 'sample.mtlx', '-o', 'sample.mtlx.zip']);
   run(['check', 'sample.mtlx.zip']);
   run(['x', 'sample.mtlx.zip', '-o', 'unpacked.mtlx']);

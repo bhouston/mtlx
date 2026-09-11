@@ -18,7 +18,8 @@
     "directory": "packages/core"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/*.tsbuildinfo"
   ],
   "type": "module",
   "sideEffects": false,
