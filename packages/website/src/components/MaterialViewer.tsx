@@ -3,8 +3,9 @@ import { materialByteLimit, readBoundedResponse } from '@/lib/material-bytes';
 import { CleanupScope } from '@/lib/cleanup-scope';
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
-import type { GeometryKind, MtlxScene } from 'mtlx-viewer';
+import type { EnvironmentKind, GeometryKind, MtlxScene } from 'mtlx-viewer';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
+import defaultEnvironmentUrl from 'mtlx-viewer/assets/default-environment.hdr?url';
 import shaderBallUrl from 'mtlx-viewer/assets/shaderball.glb?url';
 
 export type MaterialSource =
@@ -55,6 +56,10 @@ async function resolveSourceBytes(
 // .mtlx and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
 // embedded in the archive itself, so this component doesn't need any zip handling of its own.
 export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialViewerProps) {
+  const [environmentKind, setEnvironmentKind] = useState<EnvironmentKind>('studio');
+  const environmentKindRef = useRef<EnvironmentKind>('studio');
+  const switchEnvironmentRef = useRef<((kind: EnvironmentKind) => Promise<void>) | null>(null);
+  const [environmentMessage, setEnvironmentMessage] = useState('');
   const [exposure, setExposure] = useState(0);
   const [environmentIntensity, setEnvironmentIntensity] = useState(1);
   const settingsRef = useRef({ exposure, environmentIntensity });
@@ -125,7 +130,7 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
     (async () => {
       const THREE: typeof ThreeNS = await import('three/webgpu');
       const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
-      const { createMtlxScene, parseStudioEnvironment } = await import('mtlx-viewer');
+      const { createMtlxScene, parseEnvironment, createEnvironmentSwitcher } = await import('mtlx-viewer');
       if (disposed) return;
 
       const width = container.clientWidth || 512;
@@ -163,27 +168,41 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       });
       const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
 
-      // Shared studio IBL (packages/viewer), baked once from RoomEnvironment, so the website and
-      // VS Code preview render the same lighting.
-      onLog?.('Loading studio environment...');
-      const envBytes = await fetchBytes(studioEnvironmentUrl);
-      if (disposed) return;
-      const studioTexture = await parseStudioEnvironment(envBytes);
-      own(() => studioTexture.dispose());
-      if (disposed) return;
-      // @types/three lags three's addon source: fromEquirectangular() isn't in its
-      // PMREMGenerator typings yet.
       const pmremGenerator = new THREE.PMREMGenerator(renderer) as unknown as {
         fromEquirectangular: (texture: ThreeNS.Texture) => { texture: ThreeNS.Texture; dispose(): void };
         dispose(): void;
       };
       own(() => pmremGenerator.dispose());
-      const environmentTarget = pmremGenerator.fromEquirectangular(studioTexture);
-      own(() => environmentTarget.dispose());
-      const environment = environmentTarget.texture;
-      scene.environment = environment;
-      scene.background = environment;
-      onLog?.('Environment ready.');
+      const environments = createEnvironmentSwitcher(
+        async (kind) =>
+          parseEnvironment(kind, await fetchBytes(kind === 'studio' ? studioEnvironmentUrl : defaultEnvironmentUrl)),
+        (texture) => pmremGenerator.fromEquirectangular(texture),
+        (texture) => {
+          scene.environment = texture;
+          scene.background = texture;
+        },
+      );
+      own(() => environments.dispose());
+      const switchEnvironment = async (kind: EnvironmentKind) => {
+        setEnvironmentMessage('Loading environment…');
+        try {
+          if (await environments.set(kind)) {
+            setEnvironmentMessage('');
+            onLog?.(`Environment ready: ${kind === 'studio' ? 'Studio' : 'San Giuseppe Bridge'}.`);
+          }
+        } catch (error) {
+          if (disposed || scope.disposed || kind !== environmentKindRef.current) return;
+          setEnvironmentMessage(
+            `Environment failed to load: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
+      };
+      switchEnvironmentRef.current = switchEnvironment;
+      own(() => {
+        if (switchEnvironmentRef.current === switchEnvironment) switchEnvironmentRef.current = null;
+      });
+      await switchEnvironment(environmentKindRef.current);
+      if (disposed) return;
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
@@ -370,6 +389,23 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       <div ref={containerRef} className="h-full w-full" />
       {materialNames.length ? (
         <div className="absolute right-2 bottom-2 left-2 flex flex-wrap gap-3 rounded bg-black/70 p-2 text-xs text-white">
+          <label className="flex min-w-0 items-center gap-2">
+            IBL
+            <select
+              aria-label="IBL environment"
+              value={environmentKind}
+              className="min-w-0 rounded border border-white/20 bg-black/70 px-1 py-1"
+              onChange={(event) => {
+                const kind = event.target.value as EnvironmentKind;
+                environmentKindRef.current = kind;
+                setEnvironmentKind(kind);
+                void switchEnvironmentRef.current?.(kind);
+              }}
+            >
+              <option value="studio">Studio</option>
+              <option value="default">San Giuseppe Bridge</option>
+            </select>
+          </label>
           <label className="flex items-center gap-2">
             Exposure ({exposure.toFixed(1)} EV)
             <input
@@ -384,7 +420,7 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
             />
           </label>
           <label className="flex items-center gap-2">
-            Environment
+            Intensity
             <input
               aria-label="Environment intensity"
               type="range"
@@ -398,6 +434,13 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
           </label>
         </div>
       ) : null}
+      <output
+        className={
+          environmentMessage ? 'absolute bottom-16 left-2 rounded bg-black/80 p-2 text-xs text-white' : 'sr-only'
+        }
+      >
+        {environmentMessage}
+      </output>
       {loading ? (
         <div className="absolute inset-0 flex items-center justify-center text-sm text-white/70">Loading…</div>
       ) : null}

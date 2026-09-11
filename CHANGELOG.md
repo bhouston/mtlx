@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add Studio / San Giuseppe Bridge IBL selection along the bottom of the website and extension
+  viewers, preserving inspection settings and restoring the extension selection across tabs.
+
 These changes are in the repository and have not been published as a new package release.
 
 - Website inspector: separate Document, Resources and Preview status; accessible material/geometry

@@ -76,7 +76,7 @@ you want to build your own lighting rig.
 import { ENVIRONMENT_ASSET_FILES, parseEnvironment, type EnvironmentKind } from 'mtlx-viewer';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
 
-const kind: EnvironmentKind = 'studio'; // or 'default'
+const kind: EnvironmentKind = 'studio'; // 'default' is San Giuseppe Bridge (the three-ntc website IBL)
 const texture = await parseEnvironment(kind, await (await fetch(studioEnvironmentUrl)).arrayBuffer());
 threeScene.environment = texture;
 // Clear the environment and dispose its texture when the caller no longer needs it.
@@ -89,7 +89,9 @@ threeScene.environment = texture;
 ## Inspection controls and capabilities
 
 The website and VS Code hosts provide pause/resume rotation, reduced-motion support, Reset,
-fullscreen, exposure, and environment intensity controls. Hosts should pass `autoRotate: false`
+fullscreen, exposure, and environment intensity controls. The bottom IBL dropdown selects Studio
+or San Giuseppe Bridge, using the same HDR asset as the three-ntc website. Switching IBLs retains
+the camera, geometry, material and exposure; superseded environment loads are disposed. Hosts should pass `autoRotate: false`
 when the user's reduced-motion preference is active. Reset retains material, geometry, and
 lighting choices. The renderer and its `THREE.Scene` own exposure and environment intensity.
 

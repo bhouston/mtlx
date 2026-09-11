@@ -1,6 +1,6 @@
 import type * as vscode from 'vscode';
 
-export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): string {
+export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri, environmentUri: vscode.Uri): string {
   const csp = [
     "default-src 'none'",
     `script-src ${webview.cspSource}`,
@@ -9,7 +9,7 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): 
     'img-src data: blob:',
     // ImageBitmapLoader (three.js) fetches texture blob: URLs via fetch(), governed by
     // connect-src rather than img-src.
-    'connect-src blob:',
+    `connect-src ${webview.cspSource} blob:`,
   ].join('; ');
 
   return `<!DOCTYPE html>
@@ -79,7 +79,7 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): 
     }
   </style>
 </head>
-<body>
+<body data-hdr-url="${environmentUri}">
   <div class="layout">
     <div class="viewport-wrap">
       <div class="toolbar">
@@ -97,11 +97,13 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri): 
         <button id="fullscreen" type="button">Fullscreen</button>
         <button id="details" type="button" aria-expanded="true" aria-controls="stats">Hide details</button>
       </div>
-      <div class="toolbar">
-        <label>Exposure <input id="exposure" type="range" min="-2" max="2" step="0.1" value="0" aria-label="Exposure"></label>
-        <label>Environment <input id="environment" type="range" min="0" max="2" step="0.1" value="1" aria-label="Environment intensity"></label>
-      </div>
       <canvas id="viewport" tabindex="0" aria-label="Material preview. Arrow keys pan; Reset restores object and camera."></canvas>
+      <div class="toolbar">
+        <label>IBL <select id="environment-select" aria-label="IBL environment"><option value="studio">Studio</option><option value="default">San Giuseppe Bridge</option></select></label>
+        <label>Exposure <input id="exposure" type="range" min="-2" max="2" step="0.1" value="0" aria-label="Exposure"></label>
+        <label>Intensity <input id="environment" type="range" min="0" max="2" step="0.1" value="1" aria-label="Environment intensity"></label>
+      </div>
+      <output id="environment-status" aria-live="polite"></output>
       <output id="preview-status" aria-live="polite">Preview: waiting for document</output>
     </div>
     <div class="stats" id="stats"></div>

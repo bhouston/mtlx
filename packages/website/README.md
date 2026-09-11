@@ -20,7 +20,8 @@ Local loose documents cannot read neighboring files through the browser file pic
 provide an inventory for archive and recursive dependency checks.
 
 `/viewer?materialUrl=<encoded HTTP(S) URL>` and `/embed?materialUrl=<encoded HTTP(S) URL>` use the
-same source. Selecting a sample populates the URL input; a matching URL selects its sample.
+same source. The bottom IBL dropdown selects Studio or San Giuseppe Bridge (the three-ntc
+website environment) without resetting the camera or material. Selecting a sample populates the URL input; a matching URL selects its sample.
 Legacy `material=<preset id or URL>` links remain readable. New shared links use `materialUrl`.
 
 ## Production and tests

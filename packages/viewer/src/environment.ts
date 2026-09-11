@@ -69,3 +69,47 @@ export function parseDefaultEnvironment(data: ArrayBuffer): Texture {
 export async function parseEnvironment(kind: EnvironmentKind, data: ArrayBuffer): Promise<Texture> {
   return kind === 'studio' ? parseStudioEnvironment(data) : parseDefaultEnvironment(data);
 }
+
+/** Owns the active filtered environment and discards superseded asynchronous loads. */
+export function createEnvironmentSwitcher(
+  load: (kind: EnvironmentKind) => Promise<Texture>,
+  prepare: (texture: Texture) => { texture: Texture; dispose(): void },
+  apply: (texture: Texture) => void,
+) {
+  let generation = 0;
+  let disposed = false;
+  let active: { dispose(): void } | undefined;
+  return {
+    async set(kind: EnvironmentKind): Promise<boolean> {
+      const request = ++generation;
+      let source: Texture;
+      try {
+        source = await load(kind);
+      } catch (error) {
+        if (disposed || request !== generation) return false;
+        throw error;
+      }
+      try {
+        if (disposed || request !== generation) return false;
+        const next = prepare(source);
+        try {
+          apply(next.texture);
+        } catch (error) {
+          next.dispose();
+          throw error;
+        }
+        active?.dispose();
+        active = next;
+        return true;
+      } finally {
+        source.dispose();
+      }
+    },
+    dispose() {
+      disposed = true;
+      generation++;
+      active?.dispose();
+      active = undefined;
+    },
+  };
+}

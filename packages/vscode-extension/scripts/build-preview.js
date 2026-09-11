@@ -39,3 +39,8 @@ await esbuild.build({
 copyFileSync(fileURLToPath(import.meta.resolve('mtlx-viewer/assets/shaderball.glb')), join(outDir, 'shaderball.glb'));
 
 console.log('Built preview.js');
+
+copyFileSync(
+  fileURLToPath(import.meta.resolve('mtlx-viewer/assets/default-environment.hdr')),
+  join(outDir, 'default-environment.hdr'),
+);

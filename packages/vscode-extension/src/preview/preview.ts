@@ -5,7 +5,14 @@
  */
 import * as THREE from 'three/webgpu';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createMtlxScene, parseStudioEnvironment, type GeometryKind, type MtlxScene } from 'mtlx-viewer';
+import {
+  createMtlxScene,
+  parseEnvironment,
+  createEnvironmentSwitcher,
+  type EnvironmentKind,
+  type GeometryKind,
+  type MtlxScene,
+} from 'mtlx-viewer';
 // esbuild's dataurl loader (see build-preview.js) inlines this as a base64 data: URL string.
 import studioEnvironmentDataUrl from 'mtlx-viewer/assets/studio-environment.png';
 
@@ -16,6 +23,7 @@ interface PreviewState {
   detailsOpen?: boolean;
   exposure?: number;
   environmentIntensity?: number;
+  environmentKind?: EnvironmentKind;
   camera?: { position: number[]; target: number[]; zoom: number; rotation: number[] };
 }
 declare const acquireVsCodeApi:
@@ -237,26 +245,50 @@ async function renderScene(
   const backend = (renderer as unknown as { backend?: { isWebGPUBackend?: boolean } }).backend;
   log(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);
 
-  log('Loading studio environment...');
-  // @types/three lags three's addon source: fromEquirectangular() isn't in its PMREMGenerator
-  // typings yet.
   const pmremGenerator = new THREE.PMREMGenerator(renderer) as unknown as {
     fromEquirectangular: (texture: THREE.Texture) => { texture: THREE.Texture; dispose(): void };
     dispose(): void;
   };
   own(() => pmremGenerator.dispose());
-  const envTexture = await parseStudioEnvironment(dataUrlToArrayBuffer(studioEnvironmentDataUrl));
-  if (disposed) {
-    envTexture.dispose();
-    return;
-  }
-  const environmentTarget = pmremGenerator.fromEquirectangular(envTexture);
-  own(() => environmentTarget.dispose());
-  const environment = environmentTarget.texture;
-  envTexture.dispose();
-  scene.environment = environment;
-  scene.background = environment;
-  log('Environment ready.');
+  const environmentAbort = new AbortController();
+  own(() => environmentAbort.abort());
+  const environments = createEnvironmentSwitcher(
+    async (kind) => {
+      if (kind === 'studio') return parseEnvironment(kind, dataUrlToArrayBuffer(studioEnvironmentDataUrl));
+      const response = await fetch(document.body.dataset.hdrUrl!, { signal: environmentAbort.signal });
+      if (!response.ok) throw new Error(`HTTP ${response.status} loading IBL`);
+      return parseEnvironment(kind, await response.arrayBuffer());
+    },
+    (texture) => pmremGenerator.fromEquirectangular(texture),
+    (texture) => {
+      scene.environment = texture;
+      scene.background = texture;
+    },
+  );
+  own(() => environments.dispose());
+  const environmentSelect = document.getElementById('environment-select') as HTMLSelectElement;
+  environmentSelect.value = previewState.environmentKind === 'default' ? 'default' : 'studio';
+  const environmentStatus = document.getElementById('environment-status') as HTMLOutputElement;
+  const changeEnvironment = async () => {
+    const kind = environmentSelect.value as EnvironmentKind;
+    previewState.environmentKind = kind;
+    vscode?.setState(previewState);
+    environmentStatus.textContent = 'Loading environment…';
+    try {
+      if (await environments.set(kind)) {
+        environmentStatus.textContent = '';
+        log(`Environment ready: ${kind === 'studio' ? 'Studio' : 'San Giuseppe Bridge'}.`);
+      }
+    } catch (error) {
+      if (disposed || kind !== previewState.environmentKind) return;
+      environmentStatus.textContent = `Environment failed to load: ${error instanceof Error ? error.message : String(error)}`;
+      log(environmentStatus.textContent);
+    }
+  };
+  environmentSelect.addEventListener('change', changeEnvironment);
+  own(() => environmentSelect.removeEventListener('change', changeEnvironment));
+  await changeEnvironment();
+  if (disposed) return;
 
   const exposureEl = document.getElementById('exposure') as HTMLInputElement;
   const environmentEl = document.getElementById('environment') as HTMLInputElement;

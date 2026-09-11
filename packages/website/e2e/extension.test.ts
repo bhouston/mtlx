@@ -15,6 +15,7 @@ test('built extension webview requests data, renders, and restores controls afte
     const html = getPreviewHtml(
       { cspSource: "'self'" } as vscode.Webview,
       '/__extension-test__/preview.js' as unknown as vscode.Uri,
+      '/__extension-test__/default-environment.hdr' as unknown as vscode.Uri,
     );
     await page.route('**/__extension-test__/index.html', (route) =>
       route.fulfill({ body: html, contentType: 'text/html' }),
@@ -24,6 +25,9 @@ test('built extension webview requests data, renders, and restores controls afte
         path: resolve(import.meta.dirname, '../../vscode-extension/media/preview.js'),
         contentType: 'text/javascript',
       }),
+    );
+    await page.route('**/__extension-test__/default-environment.hdr', (route) =>
+      route.fulfill({ path: resolve(import.meta.dirname, '../../viewer/assets/default-environment.hdr') }),
     );
     await page.addInitScript(() => {
       const host = window as unknown as { acquireVsCodeApi: () => unknown; messages: Array<{ type: string }> };
@@ -70,6 +74,10 @@ test('built extension webview requests data, renders, and restores controls afte
     await send();
     expect(await page.getByRole('button', { name: 'Resume rotation' }).count()).toBe(1);
     await page.getByRole('combobox', { name: 'Geometry' }).selectOption('sphere');
+    await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('default');
+    await expect
+      .poll(() => page.locator('#log').innerText(), { timeout: 30_000 })
+      .toContain('Environment ready: San Giuseppe Bridge.');
     await page.getByRole('button', { name: 'Reset', exact: true }).click();
     await page.getByRole('button', { name: 'Copy diagnostics' }).click();
     expect(
@@ -90,6 +98,8 @@ test('built extension webview requests data, renders, and restores controls afte
     await page.reload();
     await send();
     expect(await page.getByRole('combobox', { name: 'Geometry' }).inputValue()).toBe('sphere');
+    expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('default');
+    expect(await page.locator('#log').innerText()).toContain('Environment ready: San Giuseppe Bridge.');
     expect(await page.getByRole('button', { name: 'Resume rotation' }).count()).toBe(1);
     await page.setViewportSize({ width: 375, height: 800 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);

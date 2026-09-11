@@ -22,7 +22,8 @@ Use **Pause rotation** to hold the object still, or **Reset** to restore its ori
 the camera's position, target and zoom. Reduced-motion preferences pause rotation automatically.
 Arrow keys pan when the canvas is focused. **Fullscreen** requests webview fullscreen; if the
 editor blocks it, use VS Code's **Toggle Full Screen** command. Exposure and environment intensity
-adjust the inspection lighting. Details stack below the preview in narrow panes and can be hidden;
+adjust the inspection lighting. The bottom **IBL** dropdown switches between **Studio** and
+**San Giuseppe Bridge** (the three-ntc website environment); its selection survives tab switching. Details stack below the preview in narrow panes and can be hidden;
 internal nodes are collapsed initially. **Copy diagnostics** and **Download diagnostics** include
 validation issues, resource failures and renderer logs for bug reports.
 

@@ -155,7 +155,13 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       for (const subscription of [...subscriptions, ...resourceSubscriptions]) subscription.dispose();
     });
     // The handler must be registered before the script can announce readiness.
-    webviewPanel.webview.html = getPreviewHtml(webviewPanel.webview, scriptUri);
+    webviewPanel.webview.html = getPreviewHtml(
+      webviewPanel.webview,
+      scriptUri,
+      webviewPanel.webview.asWebviewUri(
+        vscode.Uri.joinPath(this._context.extensionUri, 'media', 'default-environment.hdr'),
+      ),
+    );
   }
 }
 
