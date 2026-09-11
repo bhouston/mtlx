@@ -13,10 +13,13 @@ it('commits only the latest request and uses the same bytes for preview and anal
   const controller = new MaterialLoadController();
   const commit = vi.fn();
   const fail = vi.fn();
-  const a = controller.load({ url: 'https://example.com/a.mtlx', name: 'a.mtlx' }, commit, fail);
+  const oldProgress = vi.fn();
+  const a = controller.load({ url: 'https://example.com/a.mtlx', name: 'a.mtlx' }, commit, fail, oldProgress);
+  const oldProgressCount = oldProgress.mock.calls.length;
   await controller.load({ url: 'https://example.com/b.mtlx', name: 'b.mtlx' }, commit, fail);
   finish(new Response(xml));
   await a;
+  expect(oldProgress).toHaveBeenCalledTimes(oldProgressCount);
   expect(commit).toHaveBeenCalledTimes(1);
   const result = commit.mock.calls[0]![0];
   expect(result.fileMeta.name).toBe('b.mtlx');
@@ -63,4 +66,25 @@ it('rejects oversized local files before reading their bytes', async () => {
   await new MaterialLoadController().load(file, vi.fn(), fail);
   expect(arrayBuffer).not.toHaveBeenCalled();
   expect(fail).toHaveBeenCalledWith(expect.stringContaining('file byte limit'));
+});
+
+it('reports download and analysis stages before committing a material', async () => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue(new Response(xml, { headers: { 'content-length': String(xml.length) } })),
+  );
+  const stages: string[] = [];
+  await new MaterialLoadController().load(
+    { url: 'https://example.com/a.mtlx', name: 'a.mtlx' },
+    () => stages.push('committed'),
+    vi.fn(),
+    (progress) => stages.push(`${progress.value}: ${progress.label}`),
+  );
+  expect(stages).toEqual([
+    '5: Downloading material…',
+    '60: Downloading material… (1 KB)',
+    '65: Checking material and resources…',
+    '80: Preparing preview…',
+    'committed',
+  ]);
 });

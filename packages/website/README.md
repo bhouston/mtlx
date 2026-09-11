@@ -16,6 +16,9 @@ pnpm --filter website dev
 
 Open `http://localhost:3000/viewer`. The website uses Vite's `?url` asset imports. Large material
 analysis runs in a worker; loose remote materials resolve dependencies relative to their URL.
+A blue-on-white progress overlay appears immediately while loading, advances with streamed bytes
+when a download size is available, and shows the checking and rendering stages before the preview.
+Unknown-size downloads show received bytes; phase milestones do not estimate elapsed time.
 Local loose documents cannot read neighboring files through the browser file picker. ZIP inputs
 provide an inventory for archive and recursive dependency checks.
 

@@ -5,7 +5,7 @@ import { InfoPanel } from '@/components/InfoPanel';
 import { LogPanel } from '@/components/LogPanel';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MaterialLoadController } from '@/lib/material-load';
+import { MaterialLoadController, type MaterialLoadProgress } from '@/lib/material-load';
 import { PRESET_MATERIALS, presetUrl, materialSearch, resolveMaterialParam } from '@/lib/presets';
 import type { PreviewReport } from '@/components/MaterialViewer';
 import type { MaterialXAnalysis } from '@/lib/validate';
@@ -35,6 +35,7 @@ function ViewerPage() {
   const loader = useRef(new MaterialLoadController());
   useEffect(() => () => loader.current.cancel(), []);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loadProgress, setLoadProgress] = useState<MaterialLoadProgress | null>(null);
   const [source, setSource] = useState<MaterialSource | null>(null);
   const [fileMeta, setFileMeta] = useState<{ name: string; size: number } | null>(null);
   const [analysis, setAnalysis] = useState<MaterialXAnalysis | null>(null);
@@ -84,20 +85,24 @@ function ViewerPage() {
     await loader.current.load(
       input,
       (result) => {
+        setLoadProgress(null);
         setSource(result.source);
         setFileMeta(result.fileMeta);
         setAnalysis(result.analysis);
         appendLog(`Parsed ${input.name}.`);
       },
       (message) => {
+        setLoadProgress(null);
         setFileError(message);
         appendLog(`ERROR: ${message}`);
       },
+      setLoadProgress,
     );
   };
 
   const loadFromFile = async (file: File) => {
     loader.current.cancel();
+    setLoadProgress(null);
     if (!/\.mtlx(\.zip)?$/i.test(file.name)) {
       setSource(null);
       setFileMeta(null);
@@ -116,6 +121,7 @@ function ViewerPage() {
     const resolved = resolveMaterialParam(materialUrl);
     if (!resolved) {
       loader.current.cancel();
+      setLoadProgress(null);
       setSource(null);
       setFileMeta(null);
       setAnalysis(null);
@@ -254,7 +260,13 @@ function ViewerPage() {
           if (file) void loadFromFile(file);
         }}
       >
-        <MaterialViewer source={source} onError={handleViewerError} onLog={appendLog} onStatus={setPreview} />
+        <MaterialViewer
+          source={source}
+          loadProgress={loadProgress}
+          onError={handleViewerError}
+          onLog={appendLog}
+          onStatus={setPreview}
+        />
         <aside id="material-details" hidden={!detailsOpen} className="min-w-0">
           <InfoPanel
             fileName={fileMeta?.name}

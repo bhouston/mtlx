@@ -10,6 +10,7 @@ export async function readBoundedResponse(
   response: Response,
   limit: number,
   signal: AbortSignal,
+  onProgress?: (loaded: number, total?: number) => void,
 ): Promise<ArrayBuffer> {
   const declared = Number(response.headers.get('content-length'));
   if (declared > limit) {
@@ -33,6 +34,9 @@ export async function readBoundedResponse(
       size += value.byteLength;
       if (size > limit) throw new Error(`Material exceeds download byte limit (${limit})`);
       chunks.push(value);
+      // Fetch exposes decoded bytes, which cannot be compared to a compressed Content-Length.
+      const total = declared > 0 && !response.headers.get('content-encoding') ? declared : undefined;
+      onProgress?.(size, total);
     }
     const bytes = new Uint8Array(size);
     let offset = 0;

@@ -1,3 +1,5 @@
+import { MaterialLoadingOverlay } from './MaterialLoadingOverlay';
+import type { MaterialLoadProgress } from '@/lib/material-load';
 import { analyzeInWorker } from '@/lib/analyze-in-worker';
 import { materialByteLimit, readBoundedResponse } from '@/lib/material-bytes';
 import { CleanupScope } from '@/lib/cleanup-scope';
@@ -21,6 +23,7 @@ export interface PreviewReport {
 
 export interface MaterialViewerProps {
   source: MaterialSource | null;
+  loadProgress?: MaterialLoadProgress | null;
   onError: (message: string | null) => void;
   /** Diagnostics for the log panel — mirrors the VS Code extension's webview log. */
   onLog?: (message: string) => void;
@@ -58,7 +61,11 @@ async function resolveSourceBytes(
 // three.js 0.186's MaterialXLoader (via mtlx-viewer's createMtlxScene) natively understands
 // .mtlx and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
 // embedded in the archive itself, so this component doesn't need any zip handling of its own.
-export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialViewerProps) {
+export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus }: MaterialViewerProps) {
+  const [renderProgress, setRenderProgress] = useState<MaterialLoadProgress>({
+    value: 80,
+    label: 'Preparing preview…',
+  });
   const [environmentKind, setEnvironmentName] = useState<EnvironmentName>('bridge');
   const environmentKindRef = useRef<EnvironmentName>('bridge');
   const switchEnvironmentRef = useRef<((kind: EnvironmentName) => Promise<void>) | null>(null);
@@ -128,6 +135,7 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
       return response.arrayBuffer();
     };
+    setRenderProgress({ value: 80, label: 'Preparing preview…' });
     setLoading(true);
     onError(null);
 
@@ -161,6 +169,7 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       onLog?.(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);
       container.replaceChildren(renderer.domElement);
 
+      setRenderProgress({ value: 85, label: 'Loading lighting…' });
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
       const rendering = createViewerRendering(renderer, scene, camera, settingsRef.current.renderingSettings);
@@ -225,6 +234,7 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       own(() => controls.dispose());
 
       {
+        setRenderProgress({ value: 90, label: 'Loading materials and textures…' });
         onLog?.('Parsing MaterialX document...');
         const manager = new THREE.LoadingManager();
         manager.onStart = () => {
@@ -298,8 +308,10 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
         frameId = requestAnimationFrame(animate);
       };
       // A mounted canvas alone does not establish that shader compilation/rendering succeeded.
+      setRenderProgress({ value: 95, label: 'Rendering preview…' });
       await rendering.render();
       if (disposed) return;
+      setRenderProgress({ value: 100, label: 'Preview ready' });
       report.state = 'ready';
       publish();
       setLoading(false);
@@ -323,9 +335,14 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
     // eslint-disable-next-line react-hooks/exhaustive-deps -- source is compared by identity intentionally
   }, [source]);
 
+  const progress =
+    loadProgress ??
+    (source && (loading || previewState === 'idle' || previewState === 'loading') ? renderProgress : null);
+
   return (
     <div
       ref={frameRef}
+      aria-busy={!!progress}
       data-preview-state={previewState}
       className="relative aspect-square w-full overflow-hidden rounded-lg border border-border bg-black"
     >
@@ -484,10 +501,8 @@ export function MaterialViewer({ source, onError, onLog, onStatus }: MaterialVie
       >
         {environmentMessage}
       </output>
-      {loading ? (
-        <div className="absolute inset-0 flex items-center justify-center text-sm text-white/70">Loading…</div>
-      ) : null}
-      {!source ? (
+      {progress ? <MaterialLoadingOverlay progress={progress} /> : null}
+      {!source && !progress ? (
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/50">
           Drag & drop a .mtlx or .mtlx.zip file anywhere here, or pick a sample above
         </div>

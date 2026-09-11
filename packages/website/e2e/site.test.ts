@@ -1,3 +1,5 @@
+import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { type Browser, type Page, chromium } from 'playwright';
 import { afterAll, afterEach, beforeAll, beforeEach, expect, test } from 'vitest';
@@ -247,4 +249,53 @@ test('CLI ZIP sample renders both materials from bundled textures and restores i
   await expectReady();
   expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toBe('compound_zip');
   expect(externalTextures).toEqual([]);
+});
+
+test('material loading overlays a streamed progress bar and clears it on success or failure', async () => {
+  const bytes = await readFile(materialPath);
+  const midpoint = Math.floor(bytes.length / 2);
+  let finishDownload: (() => void) | undefined;
+  const server = createServer((request, response) => {
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    if (request.url !== '/slow.mtlx') {
+      response.writeHead(404);
+      response.end();
+      return;
+    }
+    response.writeHead(200, { 'Content-Type': 'application/xml', 'Content-Length': bytes.length });
+    response.write(bytes.subarray(0, midpoint));
+    finishDownload = () => {
+      if (!response.writableEnded) response.end(bytes.subarray(midpoint));
+    };
+  });
+  await new Promise<void>((listening) => server.listen(0, '127.0.0.1', listening));
+  const address = server.address() as { port: number };
+  const origin = `http://127.0.0.1:${address.port}`;
+  try {
+    await page.setViewportSize({ width: 375, height: 800 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(`http://localhost:${PORT}/viewer?materialUrl=${encodeURIComponent(`${origin}/slow.mtlx`)}`);
+    const progress = page.getByRole('progressbar', { name: 'Loading material' });
+    await expect.poll(async () => Number(await progress.getAttribute('aria-valuenow'))).toBeGreaterThan(30);
+    expect(Number(await progress.getAttribute('aria-valuenow'))).toBeLessThan(40);
+    expect(
+      await page.getByText('Drag & drop a .mtlx or .mtlx.zip file anywhere here, or pick a sample above').count(),
+    ).toBe(0);
+    expect(await progress.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(255, 255, 255)');
+    expect(await page.locator('[data-preview-state]').getAttribute('aria-busy')).toBe('true');
+    if (process.env.MTLX_PROGRESS_SCREENSHOT)
+      await page.screenshot({ path: process.env.MTLX_PROGRESS_SCREENSHOT, fullPage: true });
+    finishDownload?.();
+    await expectReady();
+    await expect.poll(() => progress.count()).toBe(0);
+    await page.getByRole('textbox', { name: 'Material URL' }).fill(`${origin}/missing.mtlx`);
+    await page.getByRole('button', { name: 'Load URL', exact: true }).click();
+    await expect.poll(() => page.locator('main').innerText()).toContain('HTTP 404');
+    await expect.poll(() => progress.count()).toBe(0);
+    expect(await page.locator('[data-preview-state]').getAttribute('aria-busy')).toBe('false');
+  } finally {
+    finishDownload?.();
+    server.closeAllConnections();
+    await new Promise<void>((closed) => server.close(() => closed()));
+  }
 });
