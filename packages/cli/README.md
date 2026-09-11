@@ -30,6 +30,70 @@ are just a conversion with no options.
 
 Quote glob patterns so `mtlx` expands them (including brace lists).
 
+## Common workflows
+
+### Collect materials into one library archive
+
+Bundle a collection into one `.mtlx.zip` so it is easy to distribute or load as a material
+library. The output contains a merged document and its resources. Material, nodegraph, and
+other top-level names must be unique across inputs. Colliding resource paths are renamed;
+archive merging does not deduplicate identical textures.
+
+```sh
+mtlx x "materials/**/*.mtlx" -o dist/library.mtlx.zip
+```
+
+### Share textures across a local material library
+
+Keep materials as separate documents while collecting their textures in one directory. This
+is useful when several materials use the same texture: an existing texture with the same
+filename and identical bytes is reused, while different content gets a new filename. This
+reuse does not search for identical content under unrelated filenames.
+
+```sh
+mtlx x "materials/*.mtlx" -o dist/materials/ --texture-library ../textures
+```
+
+For this flat input collection, documents go into `dist/materials/` and reference textures
+under `dist/textures/`. `--texture-library` applies only to loose `.mtlx` output.
+
+### Package a material during a build
+
+Check a source material before producing a portable artifact for a website or asset release.
+The `&&` runs packaging only if the selected checks pass; `--strict` treats warnings as
+failures too. The web profile resizes oversized textures and converts non-web image formats.
+
+```sh
+mtlx check materials/wood.mtlx --rules basic structure types resources --strict &&
+  mtlx x materials/wood.mtlx -o dist/wood.mtlx.zip --profile web
+```
+
+Repeat this command for each build input that needs its own archive. A directory output
+preserves each input's format, so writing loose inputs to `dist/` alone does not create ZIPs.
+
+### Optimize a collection for the web
+
+Prepare an entire collection while keeping one output document per input. The web profile
+caps textures at 2048 pixels on their longest edge and preserves compatible image formats;
+compatible textures already within the limit pass through untouched. Nested input paths
+are preserved relative to the inputs' common directory.
+
+```sh
+mtlx x "materials/**/*.mtlx" -o dist/materials/ --profile web
+```
+
+### Review changes before writing outputs
+
+Use a dry run to inspect planned output paths and texture changes before committing a
+conversion. JSON output makes the report easy to save or consume in build tooling. Inputs
+are loaded, checked, and transformed in memory, but output files are not written.
+
+```sh
+mtlx x material.mtlx -o dist/material.mtlx.zip --profile web --dry-run --format json > plan.json
+```
+
+## Command examples and options
+
 ### Inspect and preview
 
 ```sh
