@@ -7,24 +7,28 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bhouston/mtlx/blob/main/LICENSE)
 [![Live demo](https://img.shields.io/badge/viewer-mtlx.ben3d.ca-blue)](https://mtlx.ben3d.ca)
 
-_A pure TypeScript/JavaScript [MaterialX](https://materialx.org) SDK and viewer — runs the same
-on Node.js and in the browser, on Windows, macOS, and Linux._
+_A TypeScript/JavaScript [MaterialX](https://materialx.org) toolkit for inspecting,
+packaging, transforming, and previewing materials._
 
-mtlx parses, validates, packages, and transforms MaterialX materials: loose `.mtlx` documents and
-relaxed `.mtlx.zip` archives. It is the library behind the
-[mtlx.ben3d.ca](https://mtlx.ben3d.ca) viewer and the "Mtlx Viewer" VS Code extension. Because it's
-pure TS/JS with zero native/binary dependencies, it installs and runs anywhere Node or a browser
-does — no native builds, no platform-specific binaries — making MaterialX easier to reach for
-everyday artists and developers.
+mtlx works with loose `.mtlx` documents and `.mtlx.zip` archives. Try the
+[web viewer](https://mtlx.ben3d.ca), automate material preparation with the CLI, or embed the
+library in your application. The root `mtlx-core` API is browser-safe and has no filesystem or
+native imports. Node texture transforms use [sharp](https://sharp.pixelplumbing.com/), a native
+image-processing dependency installed with the package.
+
+Preview rendering uses three.js's MaterialX support. Validation checks selected document rules;
+neither a successful check nor a preview guarantees full MaterialX conformance or identical
+rendering in another application. Node tools target Node.js 22 or later.
 
 ## Packages
 
 | Package                                                                                         | Description                                                                                                                                                   |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`mtlx-core`](https://github.com/bhouston/mtlx/tree/main/packages/core)                         | Parse, validate, package, and transform MaterialX. Pure and browser-safe; Node helpers under `mtlx-core/node`, texture processing under `mtlx-core/textures`. |
-| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command: `check`, `info`, and `transform`/`x` (convert, pack, unpack, combine, resize textures).                                                   |
+| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command: `check`, `info`, `view`, and `transform`/`x` (convert, pack, unpack, combine, resize textures).                                           |
 | [`website`](https://github.com/bhouston/mtlx/tree/main/packages/website)                        | Drag-and-drop viewer and validator at [mtlx.ben3d.ca](https://mtlx.ben3d.ca), plus these docs.                                                                |
 | [`mtlx-vscode-extension`](https://github.com/bhouston/mtlx/tree/main/packages/vscode-extension) | "Mtlx Viewer": preview, inspect, and convert MaterialX files inside VS Code.                                                                                  |
+| [`mtlx-viewer`](https://github.com/bhouston/mtlx/tree/main/packages/viewer)                     | Shared three.js preview scenes and environment assets for applications.                                                                                       |
 
 ## Scripting
 
@@ -66,11 +70,12 @@ npm install --global mtlx-cli
 
 ```sh
 mtlx check material.mtlx
+mtlx view material.mtlx                                        # local browser preview
 mtlx info material.mtlx.zip --format json
 mtlx x material.mtlx -o material.mtlx.zip                         # pack
 mtlx x material.mtlx.zip -o out/material.mtlx                     # unpack
 mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
-mtlx x material.mtlx -o material.mtlx.zip --profile web           # same, via a named preset
+mtlx x material.mtlx -o material.mtlx.zip --profile web           # resize; preserve compatible texture formats
 mtlx x "{metal,wood,glass}.mtlx" -o combined.mtlx.zip             # combine
 mtlx x "materials/*.mtlx" -o out/                                 # batch: one output file per input
 ```

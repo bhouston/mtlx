@@ -23,6 +23,10 @@ const sections = [top, ...commands.map((command) => help([command]))]
   .join('\n\n');
 
 const doc = readFileSync(docPath, 'utf8');
+if (!/<!-- begin:cli_help -->[\s\S]*<!-- end:cli_help -->/.test(doc)) {
+  throw new Error('CLI README must contain begin:cli_help and end:cli_help markers');
+}
+if (!commands.length) throw new Error('No commands found in CLI help output');
 const updated = doc.replace(
   /<!-- begin:cli_help -->[\s\S]*<!-- end:cli_help -->/,
   `<!-- begin:cli_help -->\n${sections}\n<!-- end:cli_help -->`,

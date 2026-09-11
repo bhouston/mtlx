@@ -6,11 +6,10 @@
 [![npm downloads](https://img.shields.io/npm/dm/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 
-Part of the [mtlx](https://github.com/bhouston/mtlx) suite: a pure TypeScript/JavaScript
-MaterialX toolkit with no binary dependencies, working out of the box on Node, browsers, Windows,
-macOS, and Linux. This package holds the shared three.js MaterialX preview scene and IBL
-(image-based lighting) environment assets, used by both the [mtlx.ben3d.ca](https://mtlx.ben3d.ca)
-website and the VS Code extension so neither reimplements this from scratch.
+The shared browser preview layer of the [mtlx](https://github.com/bhouston/mtlx) suite:
+three.js MaterialX scenes and IBL environment assets used by the website, CLI preview, and VS Code
+extension. The caller supplies a compatible three.js renderer and owns its rendering lifecycle.
+Preview support follows three.js's MaterialX loader; it is not a full reference MaterialX renderer.
 
 ```sh
 npm install mtlx-viewer three
@@ -27,7 +26,7 @@ MaterialX-to-three.js parsing and the shared preview geometry/environments.
 import { createMtlxScene, type MtlxScene } from 'mtlx-viewer';
 import shaderBallUrl from 'mtlx-viewer/assets/shaderball.glb?url';
 
-const scene: MtlxScene = await createMtlxScene(camera, controls, {
+const preview: MtlxScene = await createMtlxScene(camera, controls, {
   data: mtlxBytes, // ArrayBuffer of the .mtlx or .mtlx.zip
   fileName: 'material.mtlx', // used for resource-path resolution and archive sniffing
   shaderBall: await (await fetch(shaderBallUrl)).arrayBuffer(),
@@ -38,18 +37,33 @@ const scene: MtlxScene = await createMtlxScene(camera, controls, {
   manager: myLoadingManager, // supply your own for setURLModifier/onProgress/onError
 });
 
-threeScene.add(scene.root);
+threeScene.add(preview.root);
 
 // each frame:
-scene.update(deltaSeconds);
+preview.update(deltaSeconds);
 
 // switch materials/geometry without reparsing:
-scene.setMaterial(scene.materialNames[1]!);
-scene.setGeometry('plane');
+const otherMaterial = preview.materialNames[1];
+if (otherMaterial) preview.setMaterial(otherMaterial);
+preview.setGeometry('plane');
+
+// Before replacing the preview or removing its host:
+threeScene.remove(preview.root);
+preview.dispose();
 ```
 
 `MtlxScene` also exposes `materialNames: string[]`, `activeMaterial: string`,
 `geometry: GeometryKind`, and `autoRotate: boolean` for driving your own UI.
+
+`preview.dispose()` releases the loaded geometries, materials, and their textures. The caller
+still disposes its renderer, controls, environments/PMREM targets, animation loop, and any blob URLs
+it created. If an asynchronous load completes after cancellation, dispose the returned preview
+immediately instead of attaching it to an abandoned scene.
+
+The `?url` imports above assume a bundler such as Vite. Other integrations should serve the exported
+assets themselves and pass fetched bytes. The snippets assume the caller has created `camera`,
+`controls`, `threeScene`, and its animation loop. Loose materials also need a loading manager able
+to resolve referenced textures; packaged `.mtlx.zip` inputs can contain those resources.
 
 ## Environments
 
@@ -62,7 +76,10 @@ import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url'
 
 const kind: EnvironmentKind = 'studio'; // or 'default'
 const texture = await parseEnvironment(kind, await (await fetch(studioEnvironmentUrl)).arrayBuffer());
-scene.environment = texture;
+threeScene.environment = texture;
+// Clear the environment and dispose its texture when the caller no longer needs it.
+// threeScene.environment = null;
+// texture.dispose();
 
 // ENVIRONMENT_ASSET_FILES maps each kind to its asset file name under mtlx-viewer/assets.
 ```

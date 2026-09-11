@@ -61,7 +61,7 @@ export interface MaterialXResource {
  * *A MaterialX document together with every resource it references, held in memory.*
  *
  * This is the unit that {@link transform} pipelines operate on and that the Node entry point
- * (`mtlx-core/node`) reads from and writes to any of the three {@link MaterialXFormat}s. The
+ * (`mtlx-core/node`) reads from and writes to either {@link MaterialXFormat}. The
  * document's file references always point at `resources[i].archivePath`.
  *
  * Example:
@@ -285,7 +285,7 @@ export const resolveMaterialXResources = async (
 };
 
 /**
- * *Rewrites every attribute equal to `from` to `to`, returning how many were changed.* Use this
+ * *Rewrites resource-reference attributes equal to `from`, returning how many were changed.* Use this
  * when a transform renames a resource (e.g. `textures/a.png` → `textures/a.webp`).
  *
  * @category Transforms
@@ -303,7 +303,7 @@ export const rewriteResourcePath = (document: MaterialXDocument, from: string, t
 /**
  * *Moves every image resource's archive path under `libraryPath`, rewriting document references
  * to match.* Used for loose `.mtlx` output when `--texture-library` is given; irrelevant to
- * `.mtlx.zip`, which always uses `textures/` per the archive spec. Non-image resources (other
+ * `.mtlx.zip`, which retains archive-relative resources. Non-image resources (other
  * `.mtlx` libraries, misc files) are left where they are.
  *
  * @category Packaging
