@@ -79,8 +79,8 @@ function HomePage() {
           <a href="https://materialx.org" className="underline underline-offset-4">
             MaterialX
           </a>{' '}
-          toolkit — no binary dependencies, runs the same on Node.js and in the browser, on Windows, macOS, and Linux.
-          Parse, validate, package, and transform <code>.mtlx</code> and <code>.mtlx.zip</code> files.
+          toolkit — runs the same on Node.js and in the browser, on Windows, macOS, and Linux. Parse, validate, package,
+          and transform <code>.mtlx</code> and <code>.mtlx.zip</code> files.
         </p>
       </div>
 
@@ -168,7 +168,7 @@ function HomePage() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        The library design follows patterns from Don McCurdy's{' '}
+        The library design inspired by Don McCurdy's{' '}
         <a href="https://gltf-transform.dev" className="underline underline-offset-4">
           glTF Transform
         </a>

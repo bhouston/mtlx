@@ -7,8 +7,8 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bhouston/mtlx/blob/main/LICENSE)
 [![Live demo](https://img.shields.io/badge/viewer-mtlx.ben3d.ca-blue)](https://mtlx.ben3d.ca)
 
-_A pure TypeScript/JavaScript [MaterialX](https://materialx.org) SDK and viewer — no binary
-dependencies, runs the same on Node.js and in the browser, on Windows, macOS, and Linux._
+_A pure TypeScript/JavaScript [MaterialX](https://materialx.org) SDK and viewer — runs the same
+on Node.js and in the browser, on Windows, macOS, and Linux._
 
 mtlx parses, validates, packages, and transforms MaterialX materials: loose `.mtlx` documents and
 relaxed `.mtlx.zip` archives. It is the library behind the
@@ -83,8 +83,8 @@ for what has changed.
 ## Credits
 
 Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
-The library design follows patterns from Don McCurdy's [glTF Transform](https://gltf-transform.dev).
-Sample materials come from [material-samples.com](https://material-samples.com).
+
+The library design inspired by Don McCurdy's [glTF Transform](https://gltf-transform.dev).
 
 ## License
 

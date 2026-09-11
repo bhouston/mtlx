@@ -105,8 +105,8 @@ function ViewerPage() {
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold">MaterialX viewer</h1>
         <p className="text-sm text-muted-foreground">
-          A pure TypeScript/JavaScript MaterialX toolkit — no binary dependencies, works out of the box on Node,
-          browsers, Windows, macOS, and Linux.
+          A pure TypeScript/JavaScript MaterialX toolkit — works out of the box on Node, browsers, Windows, macOS, and
+          Linux.
         </p>
         <p className="text-sm text-muted-foreground">Drag and drop a MaterialX file, or pick a sample below.</p>
       </div>

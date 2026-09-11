@@ -17,7 +17,7 @@ export const Route = createRootRoute({
       {
         name: 'description',
         content:
-          'Pure TypeScript/JavaScript MaterialX tools — no binary dependencies, runs on Node, browsers, Windows, macOS, and Linux. Drag and drop a MaterialX file to view and validate it.',
+          'Pure TypeScript/JavaScript MaterialX tools — runs on Node, browsers, Windows, macOS, and Linux. Drag and drop a MaterialX file to view and validate it.',
       },
     ],
     links: [{ rel: 'stylesheet', href: appCss }],
@@ -91,7 +91,7 @@ const JSON_LD = {
   applicationCategory: 'DeveloperApplication',
   operatingSystem: 'Web, Windows, macOS, Linux',
   description:
-    'Pure TypeScript/JavaScript MaterialX tools — parse, validate, package, and transform .mtlx and .mtlx.zip files. No binary dependencies.',
+    'Pure TypeScript/JavaScript MaterialX tools — parse, validate, package, and transform .mtlx and .mtlx.zip files.',
   url: 'https://mtlx.ben3d.ca',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   author: { '@type': 'Person', name: 'Ben Houston', url: 'https://ben3d.ca' },
