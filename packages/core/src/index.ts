@@ -41,7 +41,8 @@ export type {
   MaterialXValidationIssue,
   MaterialXValueType,
 } from './types.js';
-export { checkMaterialXText, validateDocument } from './validate.js';
+export type { MaterialXValidationOptions, MaterialXValidationRule } from './validate.js';
+export { MATERIALX_VALIDATION_RULES, checkMaterialXText, validateDocument } from './validate.js';
 export { createMaterialXDocument, cloneMaterialXDocument, parseMaterialX, serializeMaterialX } from './xml.js';
 
 export {

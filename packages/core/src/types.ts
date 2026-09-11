@@ -82,6 +82,9 @@ export interface MaterialXNodeSpec {
  * @category Validation
  */
 export interface MaterialXValidationIssue {
+  /** Stable machine-readable identifier when supplied by the producing rule. */
+  code?: string;
+  rule?: string;
   level: 'error' | 'warning';
   message: string;
   location: string;
