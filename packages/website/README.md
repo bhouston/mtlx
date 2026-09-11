@@ -24,6 +24,24 @@ same source. The bottom IBL dropdown defaults to San Giuseppe Bridge and also of
 website environment) without resetting the camera or material. Selecting a sample populates the URL input; a matching URL selects its sample.
 Legacy `material=<preset id or URL>` links remain readable. New shared links use `materialUrl`.
 
+## Compound sample
+
+Choose `compound` in the sample picker to load a document containing `Copper` and `Tiled_Wood`.
+Use the viewer's bottom Material dropdown to switch between them. The document and both wood
+textures are hosted in `public/materials/compound/`, so this sample works without GitHub access.
+A portable direct link is `/viewer?materialUrl=/materials/compound/compound.mtlx`.
+
+Regenerate the fixture from the repository root using the CLI:
+
+```sh
+pnpm --filter mtlx-cli build
+node packages/cli/bin/cli.js transform assets/copper/copper.mtlx assets/wood_grain/wood_grain.mtlx --output packages/website/public/materials/compound/compound.mtlx
+node packages/cli/bin/cli.js check packages/website/public/materials/compound/compound.mtlx --rules basic structure types resources --strict
+```
+
+The browser regression test checks both material choices, texture requests, a rendered change
+when switching materials, and sample selection after reloading the shared URL.
+
 ## Production and tests
 
 ```sh

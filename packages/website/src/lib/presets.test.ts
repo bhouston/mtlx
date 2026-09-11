@@ -63,3 +63,16 @@ it('unifies legacy sample links and URL links, preserving query strings containi
   expect(resolveMaterialParam(url)).toEqual({ folderUrl: 'https://example.com/', fileName: 'a.mtlx?token=a/b' });
   expect(resolveMaterialParam('https://example.com/page.html')).toBeUndefined();
 });
+
+it('resolves locally hosted samples and makes their URLs portable across deployments', async () => {
+  const { presetUrl, materialSearch } = await import('./presets.js');
+  const compound = PRESET_MATERIALS.find((preset) => preset.name === 'compound')!;
+  expect(presetUrl(compound)).toBe('/materials/compound/compound.mtlx');
+  expect(presetUrl(compound, 'http://localhost:3123')).toBe('http://localhost:3123/materials/compound/compound.mtlx');
+  expect(resolveMaterialParam(presetUrl(compound))).toEqual({
+    folderUrl: '/materials/compound/',
+    fileName: 'compound.mtlx',
+  });
+  expect(materialSearch({ material: 'local/compound' })).toEqual({ materialUrl: presetUrl(compound) });
+  expect(resolveMaterialParam('//example.com/material.mtlx')).toBeUndefined();
+});

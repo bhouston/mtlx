@@ -1,7 +1,7 @@
 // Hand-picked, non-overlapping subset of github.com/bhouston/material-samples' showcase
-// materials (that repo has 3 overlapping showcase categories; these names don't repeat).
+// materials, plus locally hosted viewer regression fixtures.
 export interface PresetMaterial {
-  category: 'standard_surface' | 'open_pbr_surface' | 'gltf_pbr';
+  category: 'standard_surface' | 'open_pbr_surface' | 'gltf_pbr' | 'local';
   name: string;
 }
 
@@ -17,12 +17,14 @@ export const PRESET_MATERIALS: PresetMaterial[] = [
   { category: 'open_pbr_surface', name: 'pearl' },
   { category: 'open_pbr_surface', name: 'soapbubble' },
   { category: 'gltf_pbr', name: 'glass_dispersion' },
+  { category: 'local', name: 'compound' },
 ];
 
 const RAW_BASE = 'https://raw.githubusercontent.com/bhouston/material-samples/main/materials/showcase';
 
 /** Folder URL containing `${name}.mtlx` plus any textures it references relatively. */
-export const presetFolderUrl = (preset: PresetMaterial): string => `${RAW_BASE}/${preset.category}/${preset.name}/`;
+export const presetFolderUrl = (preset: PresetMaterial): string =>
+  preset.category === 'local' ? `/materials/${preset.name}/` : `${RAW_BASE}/${preset.category}/${preset.name}/`;
 
 export const presetFileName = (preset: PresetMaterial): string => `${preset.name}.mtlx`;
 
@@ -34,28 +36,32 @@ export const findPresetById = (id: string): PresetMaterial | undefined =>
 
 /**
  * Resolves a `material` query param value to a folder/file URL pair.
- * Accepts either a known preset id (`category/name`) or an externally-hosted
+ * Accepts a known preset id (`category/name`), a same-origin absolute path, or an externally-hosted
  * `.mtlx` file URL (http/https), so a shared link can point at any material.
  */
 export const resolveMaterialParam = (value: string): { folderUrl: string; fileName: string } | undefined => {
   const preset = findPresetById(value);
   if (preset) return { folderUrl: presetFolderUrl(preset), fileName: presetFileName(preset) };
   try {
-    const url = new URL(value);
+    const local = value.startsWith('/') && !value.startsWith('//');
+    const url = local ? new URL(value, 'https://mtlx.invalid') : new URL(value);
     if (!['http:', 'https:'].includes(url.protocol) || !/\.mtlx(\.zip)?$/i.test(url.pathname)) return undefined;
     const lastSlash = url.pathname.lastIndexOf('/');
     const fileName = url.pathname.slice(lastSlash + 1) + url.search + url.hash;
     url.pathname = url.pathname.slice(0, lastSlash + 1);
     url.search = '';
     url.hash = '';
-    return { folderUrl: url.href, fileName };
+    return { folderUrl: local ? url.pathname : url.href, fileName };
   } catch {
     return undefined;
   }
 };
 
 /** Canonical URL used for both presets and external materials. */
-export const presetUrl = (preset: PresetMaterial): string => presetFolderUrl(preset) + presetFileName(preset);
+export const presetUrl = (preset: PresetMaterial, origin?: string): string => {
+  const url = presetFolderUrl(preset) + presetFileName(preset);
+  return origin ? new URL(url, origin).href : url;
+};
 
 /** Accept old shared preset-id links while exposing one canonical URL to the UI. */
 export const materialSearch = (search: Record<string, unknown>): { materialUrl?: string } => {

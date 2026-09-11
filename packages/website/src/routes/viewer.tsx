@@ -123,9 +123,15 @@ function ViewerPage() {
       appendLog(`ERROR: Unknown material "${materialUrl}"`);
       return;
     }
-    void load({ url: `${resolved.folderUrl}${resolved.fileName}`, name: resolved.fileName });
+    const url = new URL(`${resolved.folderUrl}${resolved.fileName}`, window.location.origin).href;
+    setUrlInput(url);
+    void load({ url, name: resolved.fileName });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materialUrl]);
+
+  const selectedPreset = PRESET_MATERIALS.find(
+    (preset) => presetUrl(preset, window.location.origin) === materialUrl || presetUrl(preset) === materialUrl,
+  );
 
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-6 p-6">
@@ -174,7 +180,7 @@ function ViewerPage() {
         onSubmit={(event) => {
           event.preventDefault();
           try {
-            const url = new URL(urlInput);
+            const url = new URL(urlInput, window.location.origin);
             if (!['https:', 'http:'].includes(url.protocol) || !resolveMaterialParam(url.href))
               throw new Error('Use an HTTP(S) URL ending in .mtlx or .mtlx.zip.');
             setShareMessage('');
@@ -186,7 +192,7 @@ function ViewerPage() {
         }}
       >
         <Select
-          value={PRESET_MATERIALS.some((preset) => presetUrl(preset) === materialUrl) ? materialUrl : ''}
+          value={selectedPreset ? presetUrl(selectedPreset, window.location.origin) : ''}
           onValueChange={(value) => void navigate({ to: '.', search: { materialUrl: value } })}
         >
           <SelectTrigger aria-label="Sample material" className="w-[260px] max-w-full" size="sm">
@@ -194,7 +200,10 @@ function ViewerPage() {
           </SelectTrigger>
           <SelectContent>
             {PRESET_MATERIALS.map((preset) => (
-              <SelectItem key={presetUrl(preset)} value={presetUrl(preset)}>
+              <SelectItem
+                key={presetUrl(preset, window.location.origin)}
+                value={presetUrl(preset, window.location.origin)}
+              >
                 {preset.name}
               </SelectItem>
             ))}

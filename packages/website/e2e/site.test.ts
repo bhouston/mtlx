@@ -138,3 +138,35 @@ test('sample selection and URL input share one query parameter through navigatio
   await page.getByRole('button', { name: 'Load URL' }).click();
   await expect.poll(() => page.getByRole('combobox', { name: 'Sample material' }).innerText()).toContain('copper');
 });
+
+test('locally hosted CLI compound sample validates, switches materials, and survives shared-link reload', async () => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const textures = new Set<string>();
+  page.on('response', (response) => {
+    if (response.ok() && response.url().includes('/materials/compound/textures/')) textures.add(response.url());
+  });
+  await page.goto(`http://localhost:${PORT}/viewer`);
+  await page.getByRole('combobox', { name: 'Sample material' }).click();
+  await page.getByRole('option', { name: 'compound', exact: true }).click();
+  await expectReady();
+  const url = `http://localhost:${PORT}/materials/compound/compound.mtlx`;
+  expect(new URL(page.url()).searchParams.get('materialUrl')).toBe(url);
+  expect(await page.getByRole('textbox', { name: 'Material URL' }).inputValue()).toBe(url);
+  const material = page.getByRole('combobox', { name: 'Material', exact: true });
+  expect(await material.locator('option').allTextContents()).toEqual(['Copper', 'Tiled_Wood']);
+  await expect.poll(() => textures.size).toBe(2);
+  await material.selectOption('Tiled_Wood');
+  const wood = await page.locator('canvas').screenshot();
+  await material.selectOption('Copper');
+  await expect.poll(async () => (await page.locator('canvas').screenshot()).equals(wood)).toBe(false);
+  await material.selectOption('Tiled_Wood');
+  await expectReady();
+  await page.reload();
+  await expectReady();
+  expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toBe('compound');
+  expect(await material.locator('option').count()).toBe(2);
+  await page.goto(`http://localhost:${PORT}/viewer?materialUrl=/materials/compound/compound.mtlx`);
+  await expectReady();
+  expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toBe('compound');
+  expect(await page.getByRole('textbox', { name: 'Material URL' }).inputValue()).toBe(url);
+});
