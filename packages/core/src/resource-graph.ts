@@ -37,17 +37,36 @@ export interface ResourceReference {
   element: MaterialXElement;
   attribute: string;
   value: string;
+  /** Effective filename after the nearest inherited fileprefix is applied. */
+  resolvedValue: string;
 }
 export const documentResourceReferences = (document: MaterialXDocument): ResourceReference[] => {
   const refs: ResourceReference[] = [];
-  const visit = (element: MaterialXElement) => {
+  const visit = (element: MaterialXElement, inheritedPrefix: string) => {
+    const prefix = element.attributes.fileprefix ?? inheritedPrefix;
     for (const [attribute, value] of Object.entries(element.attributes)) {
-      if (value.trim() && isResourceReference(element, attribute)) refs.push({ element, attribute, value });
+      if (value.trim() && isResourceReference(element, attribute))
+        refs.push({
+          element,
+          attribute,
+          value,
+          resolvedValue: attribute === 'value' && element.attributes.type === 'filename' ? prefix + value : value,
+        });
     }
+    element.children.forEach((child) => visit(child, prefix));
+  };
+  document.elements.forEach((element) => visit(element, document.attributes.fileprefix ?? ''));
+  return refs;
+};
+
+/** Call only after materializing every filename reference in this document. */
+export const clearFilePrefixes = (document: MaterialXDocument): void => {
+  delete document.attributes.fileprefix;
+  const visit = (element: MaterialXElement) => {
+    delete element.attributes.fileprefix;
     element.children.forEach(visit);
   };
   document.elements.forEach(visit);
-  return refs;
 };
 
 export interface MaterialXDependencyEdge extends ResourceReference {
@@ -76,7 +95,7 @@ export const buildResourceGraph = (pkg: MaterialXPackage): MaterialXResourceGrap
     resources,
     edges: documents.flatMap(({ path, document }) =>
       documentResourceReferences(document).map((ref) => {
-        const targetPath = resolveResourcePath(path, ref.value);
+        const targetPath = resolveResourcePath(path, ref.resolvedValue);
         return { ...ref, documentPath: path, targetPath, resourceId: byPath.get(targetPath) };
       }),
     ),
@@ -137,4 +156,6 @@ export const applyResourceDestinations = (
   for (const resource of pkg.resources)
     resource.archivePath = destinations.get(resource.archivePath) ?? resource.archivePath;
   pkg.rootPath = rootPath;
+  clearFilePrefixes(pkg.document);
+  for (const resource of pkg.resources) if (resource.document) clearFilePrefixes(resource.document);
 };

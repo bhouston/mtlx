@@ -233,12 +233,10 @@ export const planMaterialXPackageWrite = async (
       }
       used.set(target, bytes);
       choices.push({ target, existing: old });
-      destinations.set(
-        resource.archivePath,
-        options.textureLibrary && path.isAbsolute(options.textureLibrary) && isImagePath(resource.archivePath)
-          ? target.split(path.sep).join('/')
-          : path.relative(outputDir, target).split(path.sep).join('/'),
-      );
+      const relative = path.relative(outputDir, target);
+      if (path.isAbsolute(relative))
+        throw new Error('Texture library must share the output drive for relative references');
+      destinations.set(resource.archivePath, relative.split(path.sep).join('/'));
     }
     applyResourceDestinations(pkg, destinations, path.basename(output));
     for (const [index, resource] of pkg.resources.entries()) {

@@ -649,7 +649,7 @@ describe('mtlx', () => {
         expect(existsSync(path.join(sharedDir, 'wood_roughness.jpg'))).toBe(true);
 
         const xmlText = await readFile(path.join(outputDir, 'wood_grain.mtlx'), 'utf8');
-        expect(xmlText).toContain(`${sharedDir.replace(/\\/g, '/')}/wood_color.jpg`);
+        expect(xmlText).toContain(`${path.relative(outputDir, sharedDir).split(path.sep).join('/')}/wood_color.jpg`);
       } finally {
         await rm(tempDir, { recursive: true, force: true });
         await rm(sharedDir, { recursive: true, force: true });

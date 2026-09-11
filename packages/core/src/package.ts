@@ -1,6 +1,7 @@
 import {
   applyResourceDestinations,
   cloneMaterialXPackage,
+  clearFilePrefixes,
   documentResourceReferences,
   planResourceDestinations,
   relativeResourcePath,
@@ -234,7 +235,7 @@ export const resolveMaterialXResources = async (
     [];
   const visit = async (owner: string, doc: MaterialXDocument): Promise<void> => {
     for (const ref of documentResourceReferences(doc)) {
-      const value = ref.value.trim();
+      const value = ref.resolvedValue.trim();
       if (isAbsoluteReference(value)) throw new Error(`Absolute references cannot be packaged: ${value}`);
       if (isExternalReference(value)) throw new Error(`External references cannot be packaged: ${value}`);
       const target = resolveResourcePath(owner, value);
@@ -274,7 +275,9 @@ export const resolveMaterialXResources = async (
       resources.get(edge.target)!.archivePath,
     );
   }
+  clearFilePrefixes(document);
   for (const resource of resources.values()) {
+    if (resource.document) clearFilePrefixes(resource.document);
     if (resource.document) resource.data = new TextEncoder().encode(serializeMaterialX(resource.document));
   }
   return [...resources.values()].toSorted((a, b) => a.archivePath.localeCompare(b.archivePath));
@@ -289,11 +292,10 @@ export const resolveMaterialXResources = async (
 export const rewriteResourcePath = (document: MaterialXDocument, from: string, to: string): number => {
   let count = 0;
   for (const ref of documentResourceReferences(document)) {
-    if (ref.value === from) {
-      ref.element.attributes[ref.attribute] = to;
-      count++;
-    }
+    ref.element.attributes[ref.attribute] = ref.resolvedValue === from ? to : ref.resolvedValue;
+    if (ref.resolvedValue === from) count++;
   }
+  clearFilePrefixes(document);
   return count;
 };
 
