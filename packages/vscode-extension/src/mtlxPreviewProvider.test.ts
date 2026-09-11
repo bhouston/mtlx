@@ -237,23 +237,6 @@ it('preserves virtual schemes and authority for relative and absolute sibling pa
   );
 });
 
-it('exports diagnostics through the host clipboard and chosen save URI', async () => {
-  mocked.readFile.mockResolvedValue(encode('<materialx version="1.39"/>'));
-  mocked.saveDialog.mockResolvedValue(mocked.uri('file:///reports/diagnostics.json'));
-  const host = await setup();
-  const diagnostics = JSON.stringify({ issues: [] });
-  host.receive('copyDiagnostics', diagnostics);
-  await vi.waitFor(() => expect(mocked.clipboard).toHaveBeenCalledWith(diagnostics));
-  host.receive('downloadDiagnostics', diagnostics);
-  await vi.waitFor(() =>
-    expect(mocked.writeFile).toHaveBeenCalledWith(
-      expect.objectContaining({ path: '/reports/diagnostics.json' }),
-      encode(diagnostics),
-    ),
-  );
-  host.dispose();
-});
-
 it('delivers defaults, reloads changed settings, and only serves configured asset names', async () => {
   mocked.readFile.mockResolvedValue(encode('<materialx version="1.39"/>'));
   const host = await setup();

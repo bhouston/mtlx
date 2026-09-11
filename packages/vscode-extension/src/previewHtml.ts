@@ -46,16 +46,20 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri, e
     }
     #viewport { width: 100%; flex: 1; min-height: 0; }
     .stats { flex: 1; min-width: 0; overflow-wrap: anywhere; overflow: auto; font-size: 12px; }
-    .stats dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; }
-    .stats dt { font-weight: 600; color: var(--vscode-foreground); }
+    .stats details { margin: 10px 0; }
+    .stats summary { cursor: pointer; user-select: none; font-weight: 600; }
+    .stats dl { margin: 8px 0 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; }
+    .stats dt { font-weight: 600; }
     .stats dd { margin: 0; word-break: break-word; }
-    .valid { color: var(--vscode-testing-iconPassed, #4caf50); font-weight: 600; }
-    .invalid { color: var(--vscode-errorForeground); font-weight: 600; }
-    .issue-error { color: var(--vscode-errorForeground); }
-    .issue-warning { color: var(--vscode-editorWarning-foreground, #cca700); }
+    .stats ul { margin: 4px 0 0; padding-left: 18px; }
+    .stats .none { list-style: none; margin-left: -18px; color: var(--vscode-descriptionForeground); }
+    .check-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .check-messages { margin-top: 2px; font-size: 11px; color: var(--vscode-descriptionForeground); }
+    .check-passed { color: var(--vscode-testing-iconPassed, #4caf50); }
+    .check-failed { color: var(--vscode-errorForeground); }
+    .check-warning { color: var(--vscode-editorWarning-foreground, #cca700); }
+    .check-pending, .check-unchecked { color: var(--vscode-descriptionForeground); }
     .error { color: var(--vscode-errorForeground); padding: 8px 16px; white-space: pre-wrap; }
-    h2 { font-size: 13px; margin: 12px 0 4px; }
-    ul { margin: 4px 0; padding-left: 18px; }
     :focus-visible { outline: 2px solid var(--vscode-focusBorder, #70aaff); outline-offset: 2px; }
     [hidden] { display: none !important; }
     #log {
@@ -83,22 +87,17 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri, e
   <div class="layout">
     <div class="viewport-wrap">
       <div class="toolbar">
-        <button id="refresh" type="button" title="Reload document and textures">Refresh</button>
         <select id="material-select" aria-label="Material"></select>
-        <select id="geometry-select" aria-label="Geometry">
-          <option value="totem">Totem</option>
-          <option value="sphere">Sphere</option>
-          <option value="plane">Plane</option>
-        </select>
-      </div>
-      <div class="toolbar">
-        <button id="rotation" type="button" disabled>Pause rotation</button>
-        <button id="reset" type="button" disabled>Reset</button>
-        <button id="fullscreen" type="button">Fullscreen</button>
-        <button id="details" type="button" aria-expanded="true" aria-controls="stats">Hide details</button>
       </div>
       <canvas id="viewport" tabindex="0" aria-label="Material preview. Arrow keys pan; Reset restores object and camera."></canvas>
       <div class="toolbar">
+        <label>Geometry <select id="geometry-select" aria-label="Geometry">
+          <option value="totem">Totem</option>
+          <option value="sphere">Sphere</option>
+          <option value="plane">Plane</option>
+        </select></label>
+        <button id="reset" type="button" disabled>Reset</button>
+        <label><input id="rotation" type="checkbox" disabled aria-label="Rotate"> Rotate</label>
         <label>IBL <select id="environment-select" aria-label="IBL environment"><option value="studio">Studio</option><option value="bridge" selected>San Giuseppe Bridge</option></select></label>
         <label>Tone mapping <select id="tone-mapping" aria-label="Tone mapping"></select></label>
         <label><input id="bloom" type="checkbox" checked aria-label="Bloom"> Bloom</label>
@@ -109,15 +108,10 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri, e
       <output id="geometry-status" aria-live="polite"></output>
       <output id="settings-status" aria-live="polite"></output>
       <output id="environment-status" aria-live="polite"></output>
-      <output id="preview-status" aria-live="polite">Preview: waiting for document</output>
     </div>
     <div class="stats" id="stats"></div>
   </div>
   <div class="error" id="error" style="display:none"></div>
-  <div class="toolbar">
-    <button id="copy-diagnostics" type="button">Copy diagnostics</button>
-    <button id="download-diagnostics" type="button">Download diagnostics</button>
-  </div>
   <div id="log"></div>
   <script src="${scriptUri}"></script>
 </body>

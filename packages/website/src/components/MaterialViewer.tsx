@@ -80,8 +80,6 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
   const frameRef = useRef<HTMLDivElement>(null);
   const [rotating, setRotating] = useState(false);
   const rotatingRef = useRef(false);
-  const [fullscreen, setFullscreen] = useState(false);
-  const [controlMessage, setControlMessage] = useState('');
   const statusCallback = useRef(onStatus);
   statusCallback.current = onStatus;
   useEffect(() => {
@@ -93,12 +91,7 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
     };
     apply();
     preference.addEventListener('change', apply);
-    const changed = () => setFullscreen(document.fullscreenElement === frameRef.current);
-    document.addEventListener('fullscreenchange', changed);
-    return () => {
-      preference.removeEventListener('change', apply);
-      document.removeEventListener('fullscreenchange', changed);
-    };
+    return () => preference.removeEventListener('change', apply);
   }, []);
   const containerRef = useRef<HTMLDivElement>(null);
   const mtlxSceneRef = useRef<MtlxScene | null>(null);
@@ -364,58 +357,52 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
               </option>
             ))}
           </select>
-          <select
-            className="rounded border border-white/20 bg-black/60 px-2 py-1 text-xs text-white"
-            aria-label="Geometry"
-            value={geometry}
-            onChange={(event) => {
-              const kind = event.target.value as GeometryKind;
-              setGeometry(kind);
-              mtlxSceneRef.current?.setGeometry(kind);
-            }}
-          >
-            {GEOMETRY_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <button
-            type="button"
-            aria-pressed={!rotating}
-            onClick={() => {
-              rotatingRef.current = !rotating;
-              setRotating(!rotating);
-              if (mtlxSceneRef.current) mtlxSceneRef.current.autoRotate = !rotating;
-            }}
-          >
-            {rotating ? 'Pause rotation' : 'Resume rotation'}
-          </button>
-          <button type="button" onClick={() => mtlxSceneRef.current?.resetCamera()}>
-            Reset
-          </button>
-          <button
-            type="button"
-            onClick={async () => {
-              try {
-                if (document.fullscreenElement === frameRef.current) await document.exitFullscreen();
-                else await frameRef.current?.requestFullscreen();
-                setControlMessage('');
-              } catch {
-                setControlMessage('Fullscreen is unavailable in this browser or embed.');
-              }
-            }}
-          >
-            {fullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-          </button>
         </div>
       ) : null}
-      <output className={controlMessage ? 'absolute bottom-2 z-10 bg-black/80 p-2 text-sm text-white' : 'sr-only'}>
-        {controlMessage || `Preview: ${previewState}`}
-      </output>
+      <output className="sr-only">Preview: {previewState}</output>
       <div ref={containerRef} className="h-full w-full" />
       {materialNames.length ? (
         <div className="absolute right-2 bottom-2 left-2 flex flex-wrap gap-3 rounded bg-black/70 p-2 text-xs text-white">
+          <label className="flex min-w-0 items-center gap-2">
+            Geometry
+            <select
+              aria-label="Geometry"
+              className="min-w-0 rounded border border-white/20 bg-black/70 px-1 py-1"
+              value={geometry}
+              onChange={(event) => {
+                const kind = event.target.value as GeometryKind;
+                setGeometry(kind);
+                mtlxSceneRef.current?.setGeometry(kind);
+              }}
+            >
+              {GEOMETRY_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            className="rounded border border-white/20 bg-black/70 px-2 py-1"
+            onClick={() => mtlxSceneRef.current?.resetCamera()}
+          >
+            Reset
+          </button>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={rotating}
+              aria-label="Rotate"
+              onChange={(event) => {
+                const next = event.target.checked;
+                rotatingRef.current = next;
+                setRotating(next);
+                if (mtlxSceneRef.current) mtlxSceneRef.current.autoRotate = next;
+              }}
+            />
+            Rotate
+          </label>
           <label className="flex min-w-0 items-center gap-2">
             IBL
             <select

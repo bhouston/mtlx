@@ -141,7 +141,6 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       async (message: {
         type?: string;
         message?: string;
-        diagnostics?: string;
         requestId?: number;
         kind?: 'ibl' | 'geometry';
         name?: string;
@@ -173,16 +172,6 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
           ready = true;
           void refresh();
         } else if (message.type === 'log' && message.message) this._output.appendLine(message.message);
-        else if (message.type === 'copyDiagnostics' && typeof message.diagnostics === 'string') {
-          await vscode.env.clipboard.writeText(message.diagnostics);
-        } else if (message.type === 'downloadDiagnostics' && typeof message.diagnostics === 'string') {
-          const destination = await vscode.window.showSaveDialog({
-            defaultUri: vscode.Uri.joinPath(document.uri, '..', 'mtlx-diagnostics.json'),
-            filters: { JSON: ['json'] },
-          });
-          if (destination)
-            await vscode.workspace.fs.writeFile(destination, new TextEncoder().encode(message.diagnostics));
-        }
       },
     );
     watchResources(document);

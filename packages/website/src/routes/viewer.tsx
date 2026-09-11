@@ -51,15 +51,9 @@ function ViewerPage() {
       await navigator.clipboard.writeText(text);
       setShareMessage('Copied to clipboard.');
     } catch {
-      setShareMessage('Clipboard unavailable. Use Download diagnostics or copy the URL from the address bar.');
+      setShareMessage('Clipboard unavailable. Copy the URL from the address bar.');
     }
   };
-  const diagnostics = () =>
-    JSON.stringify(
-      { file: fileMeta, analysis, preview, previewError: viewerError, loadError: fileError, log: logLines },
-      null,
-      2,
-    );
   const shareUrl = (route: 'viewer' | 'embed') => {
     const url = new URL(`/${route}`, window.location.origin);
     if (materialUrl) url.searchParams.set('materialUrl', materialUrl);
@@ -90,6 +84,16 @@ function ViewerPage() {
         setFileMeta(result.fileMeta);
         setAnalysis(result.analysis);
         appendLog(`Parsed ${input.name}.`);
+        const { issues } = result.analysis;
+        if (issues.length === 0) {
+          appendLog('Validation: no issues found.');
+        } else {
+          const errors = issues.filter((issue) => issue.level === 'error').length;
+          appendLog(`Validation: ${errors} error(s), ${issues.length - errors} warning(s).`);
+          for (const issue of issues) {
+            appendLog(`${issue.level === 'error' ? 'ERROR' : 'WARNING'}: ${issue.location}: ${issue.message}`);
+          }
+        }
       },
       (message, failedAnalysis) => {
         setAnalysis(failedAnalysis ?? null);
@@ -283,24 +287,6 @@ function ViewerPage() {
         </aside>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Button variant="outline" onClick={() => void copy(diagnostics())}>
-          Copy diagnostics
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => {
-            const url = URL.createObjectURL(new Blob([diagnostics()], { type: 'application/json' }));
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'mtlx-diagnostics.json';
-            link.click();
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-          }}
-        >
-          Download diagnostics
-        </Button>
-      </div>
       <LogPanel lines={logLines} />
     </main>
   );

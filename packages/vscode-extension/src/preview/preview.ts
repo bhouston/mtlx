@@ -25,7 +25,6 @@ interface PreviewState extends Partial<RenderingSettings> {
   material?: string;
   geometry?: GeometryKind;
   rotating?: boolean;
-  detailsOpen?: boolean;
   exposure?: number;
   environmentIntensity?: number;
   environmentKind?: string;
@@ -133,14 +132,15 @@ const errorEl = document.getElementById('error') as HTMLDivElement;
 const logEl = document.getElementById('log') as HTMLDivElement;
 const materialSelectEl = document.getElementById('material-select') as HTMLSelectElement;
 const geometrySelectEl = document.getElementById('geometry-select') as HTMLSelectElement;
-const previewStatusEl = document.getElementById('preview-status') as HTMLOutputElement;
-const rotationEl = document.getElementById('rotation') as HTMLButtonElement;
+const rotationEl = document.getElementById('rotation') as HTMLInputElement;
 const resetEl = document.getElementById('reset') as HTMLButtonElement;
 let lastPayload: PreviewPayload | undefined;
 let failedResources: string[] = [];
-const logLines: string[] = [];
-function setPreviewStatus(value: string) {
-  previewStatusEl.textContent = `Preview: ${value}`;
+type PreviewStatus = 'loading' | 'ready' | 'failed' | undefined;
+let previewStatus: PreviewStatus;
+function setPreviewStatus(value: PreviewStatus): void {
+  previewStatus = value;
+  if (lastPayload) renderStats(lastPayload);
 }
 
 // Diagnostics console: every step of renderer/loader setup is logged here (visible in the
@@ -149,7 +149,6 @@ function setPreviewStatus(value: string) {
 // trace — exactly what produced the "stuck progress bar, black canvas, no error" symptom.
 function log(message: string): void {
   console.log(`[mtlx-preview] ${message}`);
-  logLines.push(message);
   const line = document.createElement('div');
   line.textContent = message;
   logEl.append(line);
@@ -193,51 +192,172 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function renderSection(title: string, items: string[], expanded = false, count = items.length): string {
+  return `<details ${expanded ? 'open' : ''}>
+    <summary>${escapeHtml(title)} (${count})</summary>
+    <ul>${items.length ? items.map((item) => `<li>${item}</li>`).join('') : '<li class="none">(none)</li>'}</ul>
+  </details>`;
+}
+
+type CheckState = 'passed' | 'failed' | 'warning' | 'pending' | 'unchecked';
+const CHECK_SYMBOL: Record<CheckState, string> = {
+  passed: '✓',
+  failed: '✗',
+  warning: '⚠',
+  pending: '…',
+  unchecked: '–',
+};
+
+interface Check {
+  name: string;
+  state: CheckState;
+  messages: string[];
+}
+
+function computeChecks(payload: PreviewPayload): { checks: Check[]; overall: CheckState } {
+  const checks: Check[] = [
+    {
+      name: 'XML',
+      state: payload.parseError ? 'failed' : 'passed',
+      messages: payload.parseError ? [payload.parseError] : [],
+    },
+  ];
+  const groups: [string, string][] = [
+    ['basic', 'Nodes'],
+    ['structure', 'Structure'],
+    ['types', 'Types'],
+    ['resources', 'Dependencies'],
+    ['renderer-support', 'Renderer support'],
+  ];
+  for (const [rule, name] of groups) {
+    const findings = payload.issues.filter((issue) => issue.rule === rule);
+    const messages = findings.map((issue) => `${issue.location}: ${issue.message}`);
+    let state: CheckState = payload.parseError ? 'unchecked' : 'passed';
+    if (rule === 'resources' && !payload.parseError) {
+      state = previewStatus === 'loading' ? 'pending' : payload.resourcesChecked ? 'passed' : 'unchecked';
+      if (!payload.resourcesChecked) messages.push('Dependencies could not be checked.');
+      if (failedResources.length) {
+        state = 'failed';
+        messages.push(...failedResources.map((url) => `Failed to load: ${url}`));
+      }
+    }
+    if (findings.some((issue) => issue.level === 'error')) state = 'failed';
+    else if (findings.length && state !== 'failed') state = 'warning';
+    checks.push({ name, state, messages });
+  }
+  const remaining = payload.issues.filter(
+    (issue) => issue.code !== 'PARSE_ERROR' && !groups.some(([rule]) => rule === issue.rule),
+  );
+  if (remaining.length)
+    checks.push({
+      name: 'Document',
+      state: remaining.some((issue) => issue.level === 'error') ? 'failed' : 'warning',
+      messages: remaining.map((issue) => `${issue.location}: ${issue.message}`),
+    });
+  checks.push({
+    name: 'Preview',
+    state:
+      previewStatus === 'failed'
+        ? 'failed'
+        : payload.parseError
+          ? 'unchecked'
+          : previewStatus === 'ready'
+            ? 'passed'
+            : previewStatus === 'loading'
+              ? 'pending'
+              : 'unchecked',
+    messages: [],
+  });
+  const overall =
+    (['failed', 'warning', 'pending', 'unchecked'] as const).find((candidate) =>
+      checks.some((check) => check.state === candidate),
+    ) ?? 'passed';
+  return { checks, overall };
+}
+
+function renderValidityChecks(checks: Check[], overall: CheckState): string {
+  const open = checks.some((check) => check.state === 'failed' || check.state === 'warning');
+  return `<details ${open ? 'open' : ''}>
+    <summary>Validity Checks <span class="check-${overall}">${CHECK_SYMBOL[overall]}</span></summary>
+    <ul>${checks
+      .map(
+        (check) => `<li>
+        <div class="check-row"><span>${escapeHtml(check.name)}</span><span class="check-${check.state}">${CHECK_SYMBOL[check.state]}</span></div>
+        ${check.messages.length ? `<ul class="check-messages">${check.messages.map((message) => `<li>${escapeHtml(message)}</li>`).join('')}</ul>` : ''}
+      </li>`,
+      )
+      .join('')}</ul>
+  </details>`;
+}
+
+// Mirrors renderValidityChecks as plain text in the log panel, so the whole validity report can
+// be selected and shared without leaving the webview. Only logged when the checks actually
+// change, since renderStats re-runs on every preview status transition.
+let lastLoggedChecks = '';
+function logValidityChecks(checks: Check[], overall: CheckState): void {
+  const key = JSON.stringify({ checks, overall });
+  if (key === lastLoggedChecks) return;
+  lastLoggedChecks = key;
+  log(`Validity Checks: ${overall} (${CHECK_SYMBOL[overall]})`);
+  for (const check of checks) {
+    log(`  ${check.name}: ${check.state} (${CHECK_SYMBOL[check.state]})`);
+    for (const message of check.messages) log(`    - ${message}`);
+  }
+}
+
 function renderStats(payload: PreviewPayload): void {
-  const documentValid =
-    !payload.parseError &&
-    !payload.issues.some(
-      (issue) => issue.level === 'error' && issue.rule !== 'resources' && issue.rule !== 'renderer-support',
-    );
-  const resourceErrors = payload.issues.filter((issue) => issue.level === 'error' && issue.rule === 'resources').length;
-  const validityHtml = `<output aria-live="polite"><p>Document: <span class="${documentValid ? 'valid' : 'invalid'}">${documentValid ? 'Document checks passed' : 'Document checks failed'}</span></p><p>Resources: ${resourceErrors ? `${resourceErrors} issues` : failedResources.length ? `${failedResources.length} failed to load` : payload.resourcesChecked ? 'Dependency checks passed' : 'Unavailable for checking'}</p></output><p>${payload.issues.filter((issue) => issue.level === 'warning').length} warnings. Checks: XML, structure, types, dependencies and renderer categories. Shader compilation is checked by the preview.</p>`;
-
-  const issuesHtml = payload.issues.length
-    ? `<h2>Issues</h2><ul>${payload.issues
-        .map(
-          (issue) =>
-            `<li class="issue-${issue.level}">${issue.level.toUpperCase()} ${escapeHtml(issue.location)}: ${escapeHtml(issue.message)}</li>`,
-        )
-        .join('')}</ul>`
-    : '';
-
   const summary = payload.summary;
-  const summaryHtml = summary
-    ? `
+  const fileDetailsHtml = `<details open>
+    <summary>File details</summary>
     <dl>
-      <dt>File</dt><dd>${escapeHtml(payload.fileName)}</dd>
       <dt>Size</dt><dd>${formatFileSize(payload.fileSize)}</dd>
-      <dt>Version</dt><dd>${escapeHtml(summary.version ?? 'unknown')}</dd>
+      ${
+        summary
+          ? `<dt>Version</dt><dd>${escapeHtml(summary.version ?? 'unknown')}</dd>
       <dt>Colorspace</dt><dd>${escapeHtml(summary.colorspace ?? 'unknown')}</dd>
       <dt>Node graphs</dt><dd>${summary.nodeGraphCount}</dd>
-      <dt>Top-level nodes</dt><dd>${summary.topLevelNodeCount}</dd>
+      <dt>Top-level nodes</dt><dd>${summary.topLevelNodeCount}</dd>`
+          : ''
+      }
     </dl>
-    <h2>Materials (surfaces/volumes)</h2>
-    <ul>${summary.materials.map((m) => `<li>${escapeHtml(m.name ?? '(unnamed)')} [${escapeHtml(m.category)}]</li>`).join('') || '<li>(none)</li>'}</ul>
-    <h2>Referenced textures</h2>
-    <ul>${summary.referencedTextures.map((t) => `<li>${escapeHtml(t)}</li>`).join('') || '<li>(none)</li>'}</ul>
-    <details><summary>Internal nodes (${summary.nodes.length})</summary>
-    <ul>${summary.nodes.map((n) => `<li>${escapeHtml(n.name ?? '(unnamed)')} [${escapeHtml(n.category)}]</li>`).join('') || '<li>(none)</li>'}</ul></details>
-  `
-    : `<dl><dt>File</dt><dd>${escapeHtml(payload.fileName)}</dd></dl>`;
+  </details>`;
 
-  statsEl.innerHTML =
-    validityHtml +
-    issuesHtml +
-    (failedResources.length
-      ? `<h2>Failed resources</h2><ul>${failedResources.map((url) => `<li>${escapeHtml(url)}</li>`).join('')}</ul>`
-      : '') +
-    summaryHtml;
+  let summaryHtml = '';
+  if (summary) {
+    const materialCategories = new Set(summary.materials.map((material) => material.category));
+    const nodeTypeCounts = new Map<string, number>();
+    for (const node of summary.nodes) {
+      if (
+        materialCategories.has(node.category) ||
+        ['surfacematerial', 'volumematerial'].includes(node.category.toLowerCase())
+      )
+        continue;
+      nodeTypeCounts.set(node.category, (nodeTypeCounts.get(node.category) ?? 0) + 1);
+    }
+    const internalNodeCount = [...nodeTypeCounts.values()].reduce((total, count) => total + count, 0);
+    summaryHtml =
+      renderSection(
+        'Materials',
+        summary.materials.map((m) => `${escapeHtml(m.name ?? '(unnamed)')} [${escapeHtml(m.category)}]`),
+        summary.materials.length > 1,
+      ) +
+      renderSection(
+        'References',
+        summary.referencedTextures.map((t) => escapeHtml(t)),
+      ) +
+      renderSection(
+        'Internal Nodes',
+        [...nodeTypeCounts]
+          .sort(([left], [right]) => left.localeCompare(right))
+          .map(([type, count]) => `${escapeHtml(type)} (${count})`),
+        false,
+        internalNodeCount,
+      );
+  }
+
+  const { checks, overall } = computeChecks(payload);
+  statsEl.innerHTML = fileDetailsHtml + summaryHtml + renderValidityChecks(checks, overall);
+  logValidityChecks(checks, overall);
 }
 
 function populateMaterialSelect(scene: MtlxScene): void {
@@ -505,8 +625,7 @@ async function renderScene(
 
   const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
   const updateRotation = () => {
-    rotationEl.textContent = mtlxScene?.autoRotate ? 'Pause rotation' : 'Resume rotation';
-    rotationEl.setAttribute('aria-pressed', String(!mtlxScene?.autoRotate));
+    rotationEl.checked = mtlxScene?.autoRotate ?? false;
   };
   const motionChanged = () => {
     if (mtlxScene) mtlxScene.autoRotate = !preference.matches && (previewState.rotating ?? settings.autoRotate);
@@ -542,19 +661,18 @@ async function renderScene(
     controls.removeEventListener('end', saveCamera);
   });
   const toggleRotation = () => {
-    if (mtlxScene) mtlxScene.autoRotate = !mtlxScene.autoRotate;
+    if (mtlxScene) mtlxScene.autoRotate = rotationEl.checked;
     previewState.rotating = mtlxScene?.autoRotate;
-    updateRotation();
     saveCamera();
   };
   const reset = () => {
     mtlxScene?.resetCamera();
     saveCamera();
   };
-  rotationEl.addEventListener('click', toggleRotation);
+  rotationEl.addEventListener('change', toggleRotation);
   resetEl.addEventListener('click', reset);
   own(() => {
-    rotationEl.removeEventListener('click', toggleRotation);
+    rotationEl.removeEventListener('change', toggleRotation);
     resetEl.removeEventListener('click', reset);
   });
   await rendering.render();
@@ -632,13 +750,13 @@ function onMessage(
   }
   lastPayload = payload;
   failedResources = [];
-  logLines.length = 0;
+  lastLoggedChecks = '';
   logEl.replaceChildren();
   for (const warning of settings.warnings) log(`Settings: ${warning}`);
   const settingsStatus = document.getElementById('settings-status');
   if (settingsStatus) settingsStatus.textContent = settings.warnings.join(' ');
   errorEl.style.display = 'none';
-  setPreviewStatus(payload.parseError ? 'unavailable: document could not be parsed' : 'loading');
+  setPreviewStatus(payload.parseError ? undefined : 'loading');
 
   if (payload.parseError) {
     disposeCurrent();
@@ -665,56 +783,3 @@ window.addEventListener('message', onMessage);
 // Register before requesting data, including when VS Code recreates a hidden webview.
 // oxlint-disable-next-line unicorn/require-post-message-target-origin
 vscode?.postMessage({ type: 'ready' });
-document.getElementById('refresh')?.addEventListener('click', () => {
-  // oxlint-disable-next-line unicorn/require-post-message-target-origin
-  vscode?.postMessage({ type: 'refresh' });
-});
-
-const detailsEl = document.getElementById('details') as HTMLButtonElement;
-const updateDetails = () => {
-  statsEl.hidden = previewState.detailsOpen === false;
-  detailsEl.textContent = statsEl.hidden ? 'Show details' : 'Hide details';
-  detailsEl.setAttribute('aria-expanded', String(!statsEl.hidden));
-};
-updateDetails();
-detailsEl.addEventListener('click', () => {
-  previewState.detailsOpen = statsEl.hidden;
-  updateDetails();
-  vscode?.setState(previewState);
-});
-const fullscreenEl = document.getElementById('fullscreen') as HTMLButtonElement;
-fullscreenEl.addEventListener('click', async () => {
-  try {
-    if (document.fullscreenElement) await document.exitFullscreen();
-    else await document.documentElement.requestFullscreen();
-  } catch {
-    log('Fullscreen is unavailable in this editor. Use VS Code: Toggle Full Screen.');
-  }
-});
-document.addEventListener('fullscreenchange', () => {
-  fullscreenEl.textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Fullscreen';
-});
-const diagnostics = () =>
-  JSON.stringify(
-    {
-      fileName: lastPayload?.fileName,
-      fileSize: lastPayload?.fileSize,
-      issues: lastPayload?.issues,
-      summary: lastPayload?.summary,
-      resourcesChecked: lastPayload?.resourcesChecked,
-      failedResources,
-      preview: previewStatusEl.textContent,
-      log: logLines,
-    },
-    null,
-    2,
-  );
-for (const [id, type] of [
-  ['copy-diagnostics', 'copyDiagnostics'],
-  ['download-diagnostics', 'downloadDiagnostics'],
-]) {
-  document.getElementById(id!)?.addEventListener('click', () => {
-    // oxlint-disable-next-line unicorn/require-post-message-target-origin
-    vscode?.postMessage({ type, diagnostics: diagnostics() });
-  });
-}

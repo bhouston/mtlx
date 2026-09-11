@@ -78,8 +78,6 @@ export function InfoPanel({
         <details open>
           <summary className="cursor-pointer select-none font-semibold">File details</summary>
           <dl className="mt-3 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1">
-            <dt>File</dt>
-            <dd>{fileName}</dd>
             {fileSize !== undefined ? (
               <>
                 <dt>Size</dt>
