@@ -22,6 +22,41 @@ const makePackage = (name: string, xml: string, resources: MaterialXPackage['res
 });
 
 describe('resolveMaterialXResources', () => {
+  it('resolves and rebases recursive libraries relative to each source document', async () => {
+    const root = parseMaterialX('<materialx><xi:include href="lib/one.mtlx"/></materialx>');
+    const files: Record<string, string> = {
+      'lib/one.mtlx': '<materialx><xi:include href="sub/two.mtlx"/></materialx>',
+      'lib/sub/two.mtlx':
+        '<materialx><image name="i"><input name="file" type="filename" value="../../images/a.png"/></image></materialx>',
+      'images/a.png': 'texture',
+    };
+    const reads: string[] = [];
+    const resources = await resolveMaterialXResources(root, async (name) => {
+      reads.push(name);
+      if (!(name in files)) throw new Error('missing');
+      return new TextEncoder().encode(files[name]);
+    });
+    expect(reads).toEqual(['lib/one.mtlx', 'lib/sub/two.mtlx', 'images/a.png']);
+    expect(new TextDecoder().decode(resources.find((r) => r.archivePath === 'libraries/two.mtlx')!.data)).toContain(
+      '../textures/a.png',
+    );
+    expect(new TextDecoder().decode(resources.find((r) => r.archivePath === 'libraries/one.mtlx')!.data)).toContain(
+      'two.mtlx',
+    );
+    expect(serializeMaterialX(root)).toContain('libraries/one.mtlx');
+  });
+
+  it('reports include cycles without partially rewriting the root', async () => {
+    const root = parseMaterialX('<materialx><xi:include href="a.mtlx"/></materialx>');
+    const before = serializeMaterialX(root);
+    await expect(
+      resolveMaterialXResources(root, async () =>
+        new TextEncoder().encode('<materialx><xi:include href="a.mtlx"/></materialx>'),
+      ),
+    ).rejects.toThrow(/include cycle/);
+    expect(serializeMaterialX(root)).toBe(before);
+  });
+
   it("allows a relative reference that escapes the document's own directory", async () => {
     const document = parseMaterialX(nodegraphWithTexture('NG'));
     document.elements[0]!.children[0]!.children[0]!.attributes.value = '../../shared/textures/albedo.png';

@@ -3,8 +3,10 @@ import {
   cloneMaterialXPackage,
   documentResourceReferences,
   planResourceDestinations,
+  relativeResourcePath,
+  resolveResourcePath,
 } from './resource-graph.js';
-import type { MaterialXDocument, MaterialXElement } from './types.js';
+import type { MaterialXDocument } from './types.js';
 import { parseMaterialX, serializeMaterialX } from './xml.js';
 
 /**
@@ -165,54 +167,10 @@ const imageExtensions = new Set([
   '.webp',
 ]);
 
-const resourceExtensions = new Set([...imageExtensions, '.mtlx', '.json', '.bin', '.txt']);
-
 export const isImagePath = (filePath: string): boolean => imageExtensions.has(posixExtname(filePath).toLowerCase());
 
 const isExternalReference = (value: string): boolean => /^[a-z][a-z0-9+.-]*:/i.test(value);
 const isAbsoluteReference = (value: string): boolean => value.startsWith('/') || /^[a-z]:[\\/]/i.test(value);
-
-/**
- * Normalizes `./a/../b/c.png` to `b/c.png`. A `..` that runs past the start (`../textures/x.png`)
- * is kept rather than rejected: nothing in the MaterialX spec confines a relative reference to the
- * document's own directory, and real content legitimately shares files across sibling directories
- * this way — the caller's {@link ResourceReader} resolves it exactly like any other relative disk
- * path. This is distinct from {@link validateArchivePath}, which does reject `..` because it
- * guards *archive* entries (extracting a `.mtlx.zip` can't be allowed to write outside its target
- * directory, a classic zip-slip).
- */
-const normalizeReference = (value: string): string => {
-  const segments: string[] = [];
-  for (const segment of value.split('/')) {
-    if (segment === '' || segment === '.') {
-      continue;
-    }
-    if (segment === '..') {
-      if (segments.length > 0 && segments[segments.length - 1] !== '..') {
-        segments.pop();
-      } else {
-        segments.push('..');
-      }
-      continue;
-    }
-    segments.push(segment);
-  }
-  return segments.join('/');
-};
-
-const shouldConsiderReference = (element: MaterialXElement, attributeName: string, value: string): boolean => {
-  const name = attributeName.toLowerCase();
-  if (element.attributes.type === 'filename' && name === 'value') {
-    return true;
-  }
-  if (['file', 'filename', 'href', 'uri', 'source'].includes(name)) {
-    return true;
-  }
-  if (name === 'value') {
-    return value.includes('/') || resourceExtensions.has(posixExtname(value).toLowerCase());
-  }
-  return false;
-};
 
 const resourceDirectoryFor = (sourcePath: string): string => {
   if (isImagePath(sourcePath)) {
@@ -266,54 +224,60 @@ export type ResourceReader = (relativePath: string) => Promise<Uint8Array>;
 export const resolveMaterialXResources = async (
   document: MaterialXDocument,
   readResource: ResourceReader,
+  options: { rootPath?: string } = {},
 ): Promise<MaterialXResource[]> => {
-  const refs: Array<{ element: MaterialXElement; attributeName: string; sourcePath: string }> = [];
-  const sourcePaths: string[] = [];
-
-  const collectElement = (element: MaterialXElement) => {
-    for (const [attributeName, rawValue] of Object.entries(element.attributes)) {
-      const value = rawValue.trim();
-      if (!value || !shouldConsiderReference(element, attributeName, value)) {
-        continue;
+  const rootSource = options.rootPath ?? 'material.mtlx';
+  const rootDestination = posixBasename(rootSource);
+  const resources = new Map<string, MaterialXResource>();
+  const visiting = new Set<string>([rootSource]);
+  const edges: Array<{ owner: string; ref: ReturnType<typeof documentResourceReferences>[number]; target: string }> =
+    [];
+  const visit = async (owner: string, doc: MaterialXDocument): Promise<void> => {
+    for (const ref of documentResourceReferences(doc)) {
+      const value = ref.value.trim();
+      if (isAbsoluteReference(value)) throw new Error(`Absolute references cannot be packaged: ${value}`);
+      if (isExternalReference(value)) throw new Error(`External references cannot be packaged: ${value}`);
+      const target = resolveResourcePath(owner, value);
+      edges.push({ owner, ref, target });
+      if (visiting.has(target)) throw new Error(`MaterialX include cycle: ${[...visiting, target].join(' -> ')}`);
+      if (resources.has(target)) continue;
+      let data: Uint8Array;
+      try {
+        data = await readResource(target);
+      } catch {
+        throw new Error(`Referenced file does not exist: ${target}`);
       }
-      if (isAbsoluteReference(value)) {
-        throw new Error(`Absolute references cannot be packaged: ${value}`);
+      const resource: MaterialXResource = { id: target, archivePath: '', sourcePath: target, data };
+      resources.set(target, resource);
+      if (posixExtname(target).toLowerCase() === '.mtlx') {
+        resource.document = parseMaterialX(new TextDecoder().decode(data));
+        visiting.add(target);
+        await visit(target, resource.document);
+        visiting.delete(target);
       }
-      if (isExternalReference(value)) {
-        throw new Error(`External references cannot be packaged: ${value}`);
-      }
-      const sourcePath = normalizeReference(value);
-      refs.push({ element, attributeName, sourcePath });
-      if (!sourcePaths.includes(sourcePath)) {
-        sourcePaths.push(sourcePath);
-      }
-    }
-    for (const child of element.children) {
-      collectElement(child);
     }
   };
-  for (const element of document.elements) {
-    collectElement(element);
+  await visit(rootSource, document);
+  const used = new Set([rootDestination]);
+  for (const resource of resources.values()) {
+    resource.archivePath = uniqueArchivePath(
+      resourceDirectoryFor(resource.sourcePath),
+      safeBasename(resource.sourcePath),
+      used,
+    );
   }
-
-  const used = new Set<string>();
-  const bySourcePath = new Map<string, MaterialXResource>();
-  for (const sourcePath of sourcePaths) {
-    let data: Uint8Array;
-    try {
-      data = await readResource(sourcePath);
-    } catch {
-      throw new Error(`Referenced file does not exist: ${sourcePath}`);
-    }
-    const archivePath = uniqueArchivePath(resourceDirectoryFor(sourcePath), safeBasename(sourcePath), used);
-    bySourcePath.set(sourcePath, { archivePath, sourcePath, data });
+  // No mutation until dependency closure and every destination have been computed successfully.
+  for (const edge of edges) {
+    const owner = edge.owner === rootSource ? rootDestination : resources.get(edge.owner)!.archivePath;
+    edge.ref.element.attributes[edge.ref.attribute] = relativeResourcePath(
+      owner,
+      resources.get(edge.target)!.archivePath,
+    );
   }
-
-  for (const ref of refs) {
-    ref.element.attributes[ref.attributeName] = bySourcePath.get(ref.sourcePath)!.archivePath;
+  for (const resource of resources.values()) {
+    if (resource.document) resource.data = new TextEncoder().encode(serializeMaterialX(resource.document));
   }
-
-  return [...bySourcePath.values()].toSorted((left, right) => left.archivePath.localeCompare(right.archivePath));
+  return [...resources.values()].toSorted((a, b) => a.archivePath.localeCompare(b.archivePath));
 };
 
 /**
@@ -343,18 +307,10 @@ export const rewriteResourcePath = (document: MaterialXDocument, from: string, t
  */
 export const relocateTextureResources = (pkg: MaterialXPackage, libraryPath: string): void => {
   const directory = libraryPath.replace(/\\/g, '/').replace(/\/+$/, '') || '.';
-  const used = new Set(pkg.resources.map((resource) => resource.archivePath));
-  for (const resource of pkg.resources) {
-    if (!isImagePath(resource.archivePath)) {
-      continue;
-    }
-    used.delete(resource.archivePath);
-    const archivePath = uniqueArchivePath(directory, posixBasename(resource.archivePath), used);
-    if (archivePath !== resource.archivePath) {
-      rewriteResourcePath(pkg.document, resource.archivePath, archivePath);
-      resource.archivePath = archivePath;
-    }
-  }
+  const destinations = planResourceDestinations(pkg, (resource) =>
+    isImagePath(resource.archivePath) ? `${directory}/${posixBasename(resource.archivePath)}` : resource.archivePath,
+  );
+  applyResourceDestinations(pkg, destinations);
 };
 
 /**
@@ -372,7 +328,10 @@ export const packageToEntries = (
 ): MaterialXPackageEntry[] => {
   const entries = [
     { path: pkg.rootPath, data: new TextEncoder().encode(serializeMaterialX(pkg.document)) },
-    ...pkg.resources.map((resource) => ({ path: resource.archivePath, data: resource.data })),
+    ...pkg.resources.map((resource) => ({
+      path: resource.archivePath,
+      data: resource.document ? new TextEncoder().encode(serializeMaterialX(resource.document)) : resource.data,
+    })),
   ];
   if (options.validate ?? true) {
     for (const entry of entries) {
@@ -455,14 +414,26 @@ export const packageFromArchive = (archive: {
   if (!archive.rootEntry) {
     throw new Error('Archive does not contain a root .mtlx file');
   }
+  const paths = archive.entries.filter((entry) => !entry.isDirectory).map((entry) => entry.path);
+  if (new Set(paths).size !== paths.length) throw new Error('Duplicate package entry path');
+  const rootIssue = validateArchivePath(archive.rootEntry.path);
+  if (rootIssue) throw new Error(`${rootIssue}: ${archive.rootEntry.path}`);
   const resources = archive.entries
-    .filter((entry) => !entry.isDirectory && entry !== archive.rootEntry)
+    .filter((entry) => !entry.isDirectory && entry.path !== archive.rootEntry!.path)
     .map((entry) => {
       const issue = validateArchivePath(entry.path);
       if (issue) {
         throw new Error(`${issue}: ${entry.path}`);
       }
-      return { archivePath: entry.path, sourcePath: entry.path, data: entry.data };
+      return {
+        id: entry.path,
+        archivePath: entry.path,
+        sourcePath: entry.path,
+        data: entry.data,
+        ...(entry.path.toLowerCase().endsWith('.mtlx')
+          ? { document: parseMaterialX(new TextDecoder().decode(entry.data)) }
+          : {}),
+      };
     });
   return {
     rootPath: archive.rootEntry.path,
