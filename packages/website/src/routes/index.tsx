@@ -89,6 +89,15 @@ function HomePage() {
           toolkit — runs the same on Node.js and in the browser, on Windows, macOS, and Linux. Parse, validate, package,
           and transform <code>.mtlx</code> and <code>.mtlx.zip</code> files.
         </p>
+        <p className="text-sm text-muted-foreground">
+          <a
+            href="https://ben3d.ca/blog/mtlx-javascript-utilities-for-materialx"
+            className="text-primary underline underline-offset-4"
+          >
+            Read the explainer
+          </a>{' '}
+          for why mtlx exists and what you can do with it.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
