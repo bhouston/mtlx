@@ -158,20 +158,25 @@ export const validateDocument = (
           if (
             rules.has('structure') &&
             attributes.output &&
-            (target.name === 'nodegraph' || outputs.length > 0) &&
+            outputs.length !== 1 &&
+            (target.name === 'nodegraph' || outputs.length > 1) &&
             !outputs.some((output) => output.attributes.name === attributes.output)
           ) {
             issue('structure', 'UNRESOLVED_OUTPUT', path, `Cannot resolve output "${attributes.output}"`);
           }
-          const connectedType = attributes.output
-            ? outputs.find((output) => output.attributes.name === attributes.output)?.attributes.type
-            : target.attributes.type;
+          const connectedType =
+            outputs.length === 1
+              ? outputs[0]!.attributes.type
+              : attributes.output && outputs.length > 1
+                ? outputs.find((output) => output.attributes.name === attributes.output)?.attributes.type
+                : target.attributes.type;
           if (
             rules.has('types') &&
             connectedType &&
             connectedType !== 'multioutput' &&
             attributes.type &&
-            connectedType !== attributes.type
+            connectedType !== attributes.type &&
+            !(connectedType === 'string' && attributes.type === 'filename')
           ) {
             issue(
               'types',

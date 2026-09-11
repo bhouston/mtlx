@@ -1,12 +1,19 @@
+import { checkMaterialXText, validateDocument } from './validate.js';
 import { expect, it } from 'vitest';
 import { parseMaterialX } from './xml.js';
-import { checkMaterialXText, validateDocument } from './validate.js';
+
+it('accepts the MaterialX single-output and string-to-filename connection rules', () => {
+  const document = parseMaterialX(
+    '<materialx><nodegraph name="g"><constant name="s" type="string"/><output name="only" type="string" nodename="s"/></nodegraph><image name="i"><input name="file" type="filename" nodegraph="g" output="ignored_for_single_output"/></image></materialx>',
+  );
+  expect(validateDocument(document, { rules: ['structure', 'types'] })).toEqual([]);
+});
 
 const doc = (body: string) => parseMaterialX(`<materialx version="1.39">${body}</materialx>`);
 it('checks scoped connections, outputs and duplicate names independently of basic rules', () => {
   const issues = validateDocument(
     doc(
-      '<constant name="same" type="float"/><constant name="same" type="float"/><nodegraph name="g"><output name="out" type="float" nodename="missing"/></nodegraph><add name="sum" type="float"><input name="in1" type="float" nodegraph="g" output="bad"/></add>',
+      '<constant name="same" type="float"/><constant name="same" type="float"/><nodegraph name="g"><output name="out" type="float" nodename="missing"/><output name="second" type="float"/></nodegraph><add name="sum" type="float"><input name="in1" type="float" nodegraph="g" output="bad"/></add>',
     ),
     { rules: ['structure'] },
   );
