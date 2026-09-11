@@ -53,3 +53,13 @@ archive inspection times were approximately 0.04 ms and 0.16 ms; XML preflight m
 production throughput, browser responsiveness, or large texture/UDIM workloads. No performance
 guarantee is implied. Regression tests additionally exercise compressed resources, forged output
 lengths, streaming ZIP descriptors, duplicate paths, and each resource budget.
+
+A larger synthetic resource check used four independent 2,048 × 2,048 RGBA byte
+payloads (64 MiB total), approximating the resource-byte workload of a multi-map
+material. Its ZIP was 67,123,065 bytes and median inspection time was 61.7 ms over
+five local Node iterations. A highly compressible 64 MiB repeated-byte resource
+produced a 65,773-byte ZIP and took 136.9 ms median over five iterations. Both
+passed the defaults. These are synthetic raw resource payloads, not an image
+decode or GPU benchmark; production encoded texture collections and constrained
+browser devices still need measurement. The longer synchronous decompression
+time reinforces using the cancellable browser worker.
