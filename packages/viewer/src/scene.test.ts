@@ -1,9 +1,14 @@
 import { expect, it, vi } from 'vitest';
 import * as THREE from 'three/webgpu';
 import { createMtlxScene } from './scene.js';
+const loaderCalls = vi.hoisted(() => ({ parse: vi.fn(), dispose: vi.fn() }));
 vi.mock('three/addons/loaders/MaterialXLoader.js', () => ({
   MaterialXLoader: class {
-    parseBuffer() {
+    dispose() {
+      loaderCalls.dispose();
+    }
+    parseBuffer(data: ArrayBuffer, url: string) {
+      loaderCalls.parse(data, url);
       return { materials: { sample: new THREE.MeshStandardMaterial() } };
     }
   },
@@ -72,4 +77,20 @@ it('loads named geometry, applies the active material, resets it and releases or
   scene.dispose();
   expect(disposeMaterial).toHaveBeenCalledTimes(1);
   expect(disposeGeometry).toHaveBeenCalledTimes(1);
+});
+
+it('uses archive-local texture URLs and releases their blob resolver on disposal', async () => {
+  loaderCalls.parse.mockClear();
+  loaderCalls.dispose.mockClear();
+  const data = new Uint8Array([0x50, 0x4b, 3, 4]).buffer;
+  const scene = await createMtlxScene(
+    new THREE.PerspectiveCamera(45, 1),
+    { target: new THREE.Vector3(), update: vi.fn() },
+    { data, fileName: 'https://example.com/materials/compound.mtlx.zip', shaderBall: new ArrayBuffer(0) },
+  );
+  expect(loaderCalls.parse).toHaveBeenCalledWith(data, '');
+  expect(loaderCalls.dispose).not.toHaveBeenCalled();
+  scene.dispose();
+  scene.dispose();
+  expect(loaderCalls.dispose).toHaveBeenCalledTimes(1);
 });

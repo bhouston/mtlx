@@ -69,15 +69,27 @@ const ROTATION_RADIANS_PER_SECOND = (2 * Math.PI) / 40;
 
 interface MaterialXParseResult {
   materials: Record<string, THREE.Material>;
+  dispose(): void;
 }
 
 function parseMaterialX(manager: THREE.LoadingManager, data: ArrayBuffer, fileName: string): MaterialXParseResult {
   // @types/three lags three's addon source: parseBuffer (native .mtlx.zip archive support) isn't
   // in its MaterialXLoader typings yet.
   const loader = new MaterialXLoader(manager) as unknown as {
-    parseBuffer: (data: ArrayBuffer, url?: string) => MaterialXParseResult;
+    parseBuffer: (data: ArrayBuffer, url?: string) => Pick<MaterialXParseResult, 'materials'>;
+    dispose(): void;
   };
-  return loader.parseBuffer(data, fileName);
+  const signature = new Uint8Array(data, 0, Math.min(4, data.byteLength));
+  const archive = signature[0] === 0x50 && signature[1] === 0x4b && signature[2] === 3 && signature[3] === 4;
+  try {
+    // Archive textures resolve to blob URLs. ImageBitmapLoader prepends its path even to
+    // absolute URLs, so an archive must not inherit the document's HTTP/filesystem folder.
+    const result = loader.parseBuffer(data, archive ? '' : fileName);
+    return { ...result, dispose: () => loader.dispose() };
+  } catch (error) {
+    loader.dispose();
+    throw error;
+  }
 }
 
 // MaterialX documents that build their normal via a <normalmap> node graph (procedural bump ->
@@ -160,9 +172,10 @@ export async function createMtlxScene(
   options: MtlxSceneOptions,
 ): Promise<MtlxScene> {
   const manager = options.manager ?? new THREE.LoadingManager();
-  const { materials } = parseMaterialX(manager, options.data, options.fileName);
+  const { materials, dispose: disposeDocument } = parseMaterialX(manager, options.data, options.fileName);
   const materialNames = Object.keys(materials);
   if (materialNames.length === 0) {
+    disposeDocument();
     throw new Error('No materials found in this MaterialX document');
   }
 
@@ -173,6 +186,7 @@ export async function createMtlxScene(
     totem.rotateY(Math.PI / 4);
   } catch (error) {
     collectDisposables(Object.values(materials))();
+    disposeDocument();
     throw error;
   }
   const geometries: Record<string, THREE.Object3D> = Object.assign(Object.create(null), {
@@ -195,7 +209,9 @@ export async function createMtlxScene(
   const scene: MtlxScene = {
     root,
     dispose() {
+      if (disposed) return;
       disposed = true;
+      disposeDocument();
       for (const dispose of additionalDisposers.splice(0)) dispose();
       root.removeFromParent();
       disposeResources();
