@@ -89,6 +89,8 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await page.goto(`http://localhost:${PORT}/viewer`);
   await page.setInputFiles('input[type=file]', materialPath);
   await expectReady();
+  expect(await page.getByLabel('Rotate', { exact: true }).isVisible()).toBe(false);
+  await page.getByText('Viewer settings', { exact: true }).click();
   const rotation = page.getByRole('checkbox', { name: 'Rotate' });
   expect(await rotation.isChecked()).toBe(false);
   await rotation.focus();
@@ -113,41 +115,45 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
       timeout: 30_000,
     })
     .toBe(2);
-  await page.getByRole('button', { name: 'Reset' }).focus();
-  await page.keyboard.press('Enter');
   expect(await page.getByRole('combobox', { name: 'Material', exact: true }).count()).toBe(1);
   await page.setViewportSize({ width: 375, height: 800 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
-  await page.getByRole('button', { name: 'Hide details' }).click();
-  expect(await page.locator('#material-details').isVisible()).toBe(false);
+  expect(await page.getByRole('button', { name: 'Hide details' }).count()).toBe(0);
+  expect(await page.locator('#material-details').isVisible()).toBe(true);
   expect(pageErrors).toEqual([]);
 });
 
-test('sample selection and URL input share one query parameter through navigation', async () => {
+test('sample menu and URL dialog preserve rendering settings through navigation', async () => {
   const copper =
     'https://raw.githubusercontent.com/bhouston/material-samples/main/materials/showcase/standard_surface/copper/copper.mtlx';
   await page.route('https://raw.githubusercontent.com/**', (route) =>
     route.fulfill({ path: materialPath, contentType: 'application/xml' }),
   );
-  await page.goto(`http://localhost:${PORT}/viewer?materialUrl=${encodeURIComponent(copper)}`);
-  await expect.poll(() => page.getByLabel('Material URL', { exact: true }).inputValue()).toBe(copper);
-  expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toContain('copper');
-  await page.getByRole('combobox', { name: 'Sample material' }).click();
-  await page.getByRole('option', { name: 'chrome', exact: true }).click();
-  await expect
-    .poll(() => page.getByLabel('Material URL', { exact: true }).inputValue())
-    .toContain('/chrome/chrome.mtlx');
-  expect(new URL(page.url()).searchParams.has('material')).toBe(false);
+  await page.goto(
+    `http://localhost:${PORT}/viewer?materialUrl=${encodeURIComponent(copper)}&bloom=false&geometry=sphere`,
+  );
+  expect(await page.getByLabel('Material URL', { exact: true }).count()).toBe(0);
+  await page.getByRole('button', { name: 'Sample materials' }).click();
+  await page.getByRole('menuitem', { name: 'chrome', exact: true }).click();
+  await expect.poll(() => new URL(page.url()).searchParams.get('materialUrl')).toContain('/chrome/chrome.mtlx');
+  expect(new URL(page.url()).searchParams.get('bloom')).toBe('false');
   await page.goBack();
+  await expect.poll(() => new URL(page.url()).searchParams.get('materialUrl')).toBe(copper);
+  await page.getByRole('button', { name: 'Load URL', exact: true }).click();
   await expect.poll(() => page.getByLabel('Material URL', { exact: true }).inputValue()).toBe(copper);
   await page.getByLabel('Material URL', { exact: true }).fill('https://raw.githubusercontent.com/custom/material.mtlx');
-  await page.getByRole('button', { name: 'Load URL' }).click();
+  await page.getByRole('button', { name: 'Load material', exact: true }).click();
+  await expect.poll(() => page.getByRole('dialog').count()).toBe(0);
+  expect(new URL(page.url()).searchParams.get('geometry')).toBe('sphere');
+  await page.getByRole('button', { name: 'Load URL', exact: true }).click();
+  await page.keyboard.press('Escape');
   await expect
-    .poll(() => page.getByRole('combobox', { name: 'Sample material' }).innerText())
-    .toBe('Load a sample material…');
-  await page.getByLabel('Material URL', { exact: true }).fill(copper);
-  await page.getByRole('button', { name: 'Load URL' }).click();
-  await expect.poll(() => page.getByRole('combobox', { name: 'Sample material' }).innerText()).toContain('copper');
+    .poll(() =>
+      page
+        .getByRole('button', { name: 'Load URL', exact: true })
+        .evaluate((element) => element === document.activeElement),
+    )
+    .toBe(true);
 });
 
 test('locally hosted CLI compound sample validates, switches materials, and survives shared-link reload', async () => {
@@ -157,8 +163,8 @@ test('locally hosted CLI compound sample validates, switches materials, and surv
     if (response.ok() && response.url().includes('/materials/compound/textures/')) textures.add(response.url());
   });
   await page.goto(`http://localhost:${PORT}/viewer`);
-  await page.getByRole('combobox', { name: 'Sample material' }).click();
-  await page.getByRole('option', { name: 'compound', exact: true }).click();
+  await page.getByRole('button', { name: 'Sample materials' }).click();
+  await page.getByRole('menuitem', { name: 'compound', exact: true }).click();
   await expectReady();
   const materialsSection = page
     .locator('#material-details details')
@@ -166,7 +172,7 @@ test('locally hosted CLI compound sample validates, switches materials, and surv
   expect(await materialsSection.evaluate((element) => (element as HTMLDetailsElement).open)).toBe(true);
   const url = `http://localhost:${PORT}/materials/compound/compound.mtlx`;
   expect(new URL(page.url()).searchParams.get('materialUrl')).toBe(url);
-  expect(await page.getByRole('textbox', { name: 'Material URL' }).inputValue()).toBe(url);
+  expect(await page.getByRole('textbox', { name: 'Material URL' }).count()).toBe(0);
   const material = page.getByRole('combobox', { name: 'Material', exact: true });
   expect(await material.locator('option').allTextContents()).toEqual(['Copper', 'Tiled_Wood']);
   await expect.poll(() => textures.size).toBe(2);
@@ -178,12 +184,12 @@ test('locally hosted CLI compound sample validates, switches materials, and surv
   await expectReady();
   await page.reload();
   await expectReady();
-  expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toBe('compound');
+  expect(await page.getByRole('button', { name: 'Sample materials' }).count()).toBe(1);
   expect(await material.locator('option').count()).toBe(2);
   await page.goto(`http://localhost:${PORT}/viewer?materialUrl=/materials/compound/compound.mtlx`);
   await expectReady();
-  expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toBe('compound');
-  expect(await page.getByRole('textbox', { name: 'Material URL' }).inputValue()).toBe(url);
+  expect(await page.getByRole('button', { name: 'Sample materials' }).count()).toBe(1);
+  expect(await page.getByRole('textbox', { name: 'Material URL' }).count()).toBe(0);
 });
 
 test('rendering effects default on and toggle without replacing the scene', async () => {
@@ -198,6 +204,7 @@ test('rendering effects default on and toggle without replacing the scene', asyn
   await expectReady();
   if (process.env.MTLX_WEBGPU) expect(await page.locator('main').innerText()).toContain('backend: WebGPU');
   const canvas = await page.locator('canvas').elementHandle();
+  await page.getByText('Viewer settings', { exact: true }).click();
   const toneMapping = page.getByRole('combobox', { name: 'Tone mapping' });
   const bloom = page.getByRole('checkbox', { name: 'Bloom', exact: true });
   const ao = page.getByRole('checkbox', { name: 'Ambient occlusion' });
@@ -235,12 +242,12 @@ test('CLI ZIP sample renders both materials from bundled textures and restores i
     return route.abort();
   });
   await page.goto(`http://localhost:${PORT}/viewer`);
-  await page.getByRole('combobox', { name: 'Sample material' }).click();
-  await page.getByRole('option', { name: 'compound_zip', exact: true }).click();
+  await page.getByRole('button', { name: 'Sample materials' }).click();
+  await page.getByRole('menuitem', { name: 'compound zip', exact: true }).click();
   await expectReady();
   const url = `http://localhost:${PORT}/materials/compound_zip/compound_zip.mtlx.zip`;
   expect(new URL(page.url()).searchParams.get('materialUrl')).toBe(url);
-  expect(await page.getByRole('textbox', { name: 'Material URL' }).inputValue()).toBe(url);
+  expect(await page.getByRole('textbox', { name: 'Material URL' }).count()).toBe(0);
   await expect
     .poll(() => page.locator('[data-check=Dependencies]').getAttribute('data-check-state'), { timeout: 30_000 })
     .toBe('passed');
@@ -252,7 +259,7 @@ test('CLI ZIP sample renders both materials from bundled textures and restores i
   await expect.poll(async () => (await page.locator('canvas').screenshot()).equals(wood)).toBe(false);
   await page.reload();
   await expectReady();
-  expect(await page.getByRole('combobox', { name: 'Sample material' }).innerText()).toBe('compound_zip');
+  expect(await page.getByRole('button', { name: 'Sample materials' }).count()).toBe(1);
   expect(externalTextures).toEqual([]);
 });
 
@@ -293,8 +300,9 @@ test('material loading overlays a streamed progress bar and clears it on success
     finishDownload?.();
     await expectReady();
     await expect.poll(() => progress.count()).toBe(0);
-    await page.getByRole('textbox', { name: 'Material URL' }).fill(`${origin}/missing.mtlx`);
     await page.getByRole('button', { name: 'Load URL', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Material URL' }).fill(`${origin}/missing.mtlx`);
+    await page.getByRole('button', { name: 'Load material', exact: true }).click();
     await expect.poll(() => page.locator('main').innerText()).toContain('HTTP 404');
     await expect.poll(() => progress.count()).toBe(0);
     expect(await page.locator('[data-preview-state]').getAttribute('aria-busy')).toBe('false');
@@ -345,4 +353,69 @@ test('validity checks collapse successes, expand failures, and remain keyboard a
   await page.setInputFiles('input[type=file]', materialPath);
   await expectReady();
   expect(await checks.evaluate((element) => (element as HTMLDetailsElement).open)).toBe(false);
+});
+
+test('shared embed restores rendering state and controls update without rebuilding the canvas', async () => {
+  await page.setViewportSize({ width: 375, height: 900 });
+  const params = new URLSearchParams({
+    materialUrl: '/materials/compound/compound.mtlx',
+    ibl: 'studio',
+    bloom: 'false',
+    ao: 'false',
+    intensity: '0.7',
+    toneMapping: 'agx',
+    exposure: '-0.5',
+    rotate: 'false',
+    geometry: 'sphere',
+    materialName: 'Copper',
+  });
+  await page.goto(`http://localhost:${PORT}/embed?${params}`);
+  await expect
+    .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
+    .toBe('ready');
+  expect(await page.getByLabel('Rotate', { exact: true }).isVisible()).toBe(false);
+  await page.getByText('Viewer settings', { exact: true }).click();
+  expect(await page.getByLabel('IBL environment').inputValue()).toBe('studio');
+  expect(await page.getByLabel('Bloom', { exact: true }).isChecked()).toBe(false);
+  expect(await page.getByLabel('Ambient occlusion').isChecked()).toBe(false);
+  expect(await page.getByLabel('Environment intensity').inputValue()).toBe('0.7');
+  expect(await page.getByLabel('Exposure', { exact: true }).inputValue()).toBe('-0.5');
+  expect(await page.getByLabel('Tone mapping').inputValue()).toBe('agx');
+  expect(await page.getByLabel('Geometry', { exact: true }).inputValue()).toBe('sphere');
+  expect(await page.getByLabel('Material', { exact: true }).inputValue()).toBe('Copper');
+  const canvas = await page.locator('canvas').elementHandle();
+  await page.getByLabel('Bloom', { exact: true }).check();
+  await expect.poll(() => new URL(page.url()).searchParams.get('bloom')).toBe('true');
+  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
+  await page.reload();
+  await expect
+    .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
+    .toBe('ready');
+  expect(await page.getByLabel('Bloom', { exact: true }).isChecked()).toBe(true);
+  expect(await page.getByLabel('Geometry', { exact: true }).inputValue()).toBe('sphere');
+  expect(pageErrors).toEqual([]);
+});
+
+test('Share copies matching viewer, embed, and iframe state', async () => {
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto(
+    `http://localhost:${PORT}/viewer?materialUrl=/materials/compound/compound.mtlx&ibl=studio&geometry=plane&bloom=false&exposure=1&materialName=Copper`,
+  );
+  const copy = async (name: string) => {
+    await page.getByRole('button', { name: 'Share', exact: true }).click();
+    await page.getByRole('menuitem', { name, exact: true }).click();
+    await expect.poll(() => page.getByText('Copied to clipboard.', { exact: true }).count()).toBe(1);
+    return page.evaluate(() => navigator.clipboard.readText());
+  };
+  const viewer = new URL(await copy('Copy viewer link'));
+  const embed = new URL(await copy('Copy embed link'));
+  expect(viewer.pathname).toBe('/viewer');
+  expect(embed.pathname).toBe('/embed');
+  expect(embed.search).toBe(viewer.search);
+  expect(embed.searchParams.get('ibl')).toBe('studio');
+  expect(embed.searchParams.get('geometry')).toBe('plane');
+  expect(embed.searchParams.get('bloom')).toBe('false');
+  expect(embed.searchParams.get('materialName')).toBe('Copper');
+  const code = await copy('Copy embed code');
+  expect(code).toContain(`src="${embed.href.replaceAll('&', '&amp;')}"`);
 });

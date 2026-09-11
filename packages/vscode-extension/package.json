@@ -1,7 +1,7 @@
 {
   "name": "mtlx-vscode-extension",
   "displayName": "Mtlx Viewer",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Preview, inspect, and convert MaterialX files (.mtlx, .mtlx.zip) with a 3D viewer built on three.js",
   "categories": [
     "Other",

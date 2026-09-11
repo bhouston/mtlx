@@ -128,12 +128,12 @@ test.each([false, true])(
           { raw: [...raw], shaderBall: [...shaderBall], settings },
         );
         await expect
-          .poll(() => page.locator('#preview-status').textContent(), { timeout: 30_000 })
-          .toBe('Preview: ready');
+          .poll(() => page.locator('body').getAttribute('data-preview-state'), { timeout: 30_000 })
+          .toBe('ready');
       };
       await page.goto(`http://localhost:${PORT}/__extension-test__/index.html`);
       await send();
-      expect(await page.getByRole('button', { name: 'Resume rotation' }).count()).toBe(1);
+      expect(await page.getByRole('checkbox', { name: 'Rotate', exact: true }).isChecked()).toBe(false);
       expect(await page.getByRole('combobox', { name: 'Geometry' }).inputValue()).toBe(custom ? 'bust' : 'totem');
       expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe(
         custom ? 'gallery' : 'bridge',
@@ -156,39 +156,32 @@ test.each([false, true])(
         await page.getByRole('combobox', { name: 'Geometry' }).selectOption('broken');
         await expect.poll(() => page.locator('#geometry-status').textContent()).toContain('Configured file not found');
         expect(await page.getByRole('combobox', { name: 'Geometry' }).inputValue()).toBe('bust');
-        expect(await page.locator('#preview-status').textContent()).toBe('Preview: ready');
+        expect(await page.locator('body').getAttribute('data-preview-state')).toBe('ready');
       }
       await page.getByRole('combobox', { name: 'Geometry' }).selectOption('sphere');
       await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('bridge');
       await expect
         .poll(() => page.locator('#log').innerText(), { timeout: 30_000 })
         .toContain('Environment ready: San Giuseppe Bridge.');
-      await page.getByRole('button', { name: 'Reset', exact: true }).click();
-      await page.getByRole('button', { name: 'Copy diagnostics' }).click();
-      expect(
-        await page.evaluate(() =>
-          (window as unknown as { messages: Array<{ type: string }> }).messages.some(
-            (message) => message.type === 'copyDiagnostics',
-          ),
-        ),
-      ).toBe(true);
-      await page.getByRole('button', { name: 'Refresh', exact: true }).click();
-      expect(
-        await page.evaluate(() =>
-          (window as unknown as { messages: Array<{ type: string }> }).messages.some(
-            (message) => message.type === 'refresh',
-          ),
-        ),
-      ).toBe(true);
+      // Camera state must survive disposal/recreation alongside the settings.
+      const canvas = page.locator('#viewport');
+      const bounds = (await canvas.boundingBox())!;
+      await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(bounds.x + bounds.width / 2 + 50, bounds.y + bounds.height / 2 + 20, { steps: 5 });
+      await page.mouse.up();
+      const savedCamera = await page.evaluate(() => JSON.parse(localStorage.getItem('preview-state')!).camera);
+      expect(savedCamera.position).toHaveLength(3);
       await page.reload();
       await send();
+      expect(await page.evaluate(() => JSON.parse(localStorage.getItem('preview-state')!).camera)).toEqual(savedCamera);
       expect(await page.getByRole('checkbox', { name: 'Bloom', exact: true }).isChecked()).toBe(custom);
       expect(await page.getByRole('checkbox', { name: 'Ambient occlusion' }).isChecked()).toBe(custom);
       expect(await page.getByRole('combobox', { name: 'Tone mapping' }).inputValue()).toBe('reinhard');
       expect(await page.getByRole('combobox', { name: 'Geometry' }).inputValue()).toBe('sphere');
       expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('bridge');
       expect(await page.locator('#log').innerText()).toContain('Environment ready: San Giuseppe Bridge.');
-      expect(await page.getByRole('button', { name: 'Resume rotation' }).count()).toBe(1);
+      expect(await page.getByRole('checkbox', { name: 'Rotate', exact: true }).isChecked()).toBe(false);
       await page.setViewportSize({ width: 375, height: 800 });
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
       expect(errors).toEqual([]);

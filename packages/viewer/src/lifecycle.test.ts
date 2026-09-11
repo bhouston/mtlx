@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { CleanupScope } from './cleanup-scope';
+import { CleanupScope } from './lifecycle';
 
 it('releases in reverse allocation order exactly once and releases late async allocations', () => {
   const scope = new CleanupScope();

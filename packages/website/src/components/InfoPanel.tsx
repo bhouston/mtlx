@@ -1,3 +1,4 @@
+import { formatFileSize, summarizeInternalNodes } from 'mtlx-viewer/diagnostics';
 import { ValidityChecks } from './ValidityChecks';
 import type { MaterialXSummary, MaterialXValidationIssue } from 'mtlx-core';
 import type { PreviewReport } from './MaterialViewer';
@@ -12,12 +13,6 @@ export interface InfoPanelProps {
   preview?: PreviewReport;
   localFile?: boolean;
   resourcesChecked?: boolean;
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function Section({
@@ -64,14 +59,7 @@ export function InfoPanel({
         Load a material to see its details here.
       </div>
     );
-  const materialTypes = new Set(summary?.materials.map((material) => material.category));
-  const nodeTypes = new Map<string, number>();
-  for (const node of summary?.nodes ?? []) {
-    if (materialTypes.has(node.category) || ['surfacematerial', 'volumematerial'].includes(node.category.toLowerCase()))
-      continue;
-    nodeTypes.set(node.category, (nodeTypes.get(node.category) ?? 0) + 1);
-  }
-  const internalNodeCount = [...nodeTypes.values()].reduce((total, count) => total + count, 0);
+  const { types: nodeTypes, count: internalNodeCount } = summarizeInternalNodes(summary);
   return (
     <div className="min-w-0 space-y-3 overflow-auto rounded-lg border border-border bg-card p-4 text-sm [overflow-wrap:anywhere]">
       {fileName || summary ? (
@@ -110,9 +98,7 @@ export function InfoPanel({
           <Section
             title="Internal Nodes"
             count={internalNodeCount}
-            items={[...nodeTypes]
-              .sort(([left], [right]) => left.localeCompare(right))
-              .map(([type, count]) => `${type} (${count})`)}
+            items={nodeTypes.map(([type, count]) => `${type} (${count})`)}
           />
         </>
       ) : null}

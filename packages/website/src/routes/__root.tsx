@@ -1,3 +1,5 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
 import { createRootRoute, HeadContent, Link, Outlet, Scripts, useLocation } from '@tanstack/react-router';
 import { HeartIcon } from 'lucide-react';
 import { ThemeProvider } from 'next-themes';
@@ -27,6 +29,15 @@ export const Route = createRootRoute({
 });
 
 function RootLayout() {
+  const [queryClient] = useState(() => new QueryClient());
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SiteLayout />
+    </QueryClientProvider>
+  );
+}
+
+function SiteLayout() {
   // Embed mode is chromeless (for iframe embedding), so skip the site header/footer for it.
   const isEmbed = useLocation({ select: (location) => location.pathname === '/embed' });
   if (isEmbed) {

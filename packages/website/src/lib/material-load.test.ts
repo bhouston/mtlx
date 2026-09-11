@@ -1,46 +1,43 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import { MaterialLoadController } from './material-load';
+import { loadMaterial, MaterialLoadError } from './material-load';
 
 const xml = '<materialx version="1.39"/>';
 afterEach(() => vi.unstubAllGlobals());
-it('commits only the latest request and uses the same bytes for preview and analysis', async () => {
+
+it('uses the same bytes for preview and analysis and stops progress after cancellation', async () => {
   let finish!: (value: Response) => void;
   const old = new Promise<Response>((resolve) => {
     finish = resolve;
   });
   const fetcher = vi.fn().mockReturnValueOnce(old).mockResolvedValueOnce(new Response(xml));
   vi.stubGlobal('fetch', fetcher);
-  const controller = new MaterialLoadController();
-  const commit = vi.fn();
-  const fail = vi.fn();
+  const controller = new AbortController();
   const oldProgress = vi.fn();
-  const a = controller.load({ url: 'https://example.com/a.mtlx', name: 'a.mtlx' }, commit, fail, oldProgress);
-  const oldProgressCount = oldProgress.mock.calls.length;
-  await controller.load({ url: 'https://example.com/b.mtlx', name: 'b.mtlx' }, commit, fail);
+  const pending = loadMaterial({ url: 'https://example.com/a.mtlx', name: 'a.mtlx' }, controller.signal, oldProgress);
+  const rejected = expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+  const count = oldProgress.mock.calls.length;
+  controller.abort();
+  const result = await loadMaterial(
+    { url: 'https://example.com/b.mtlx', name: 'b.mtlx' },
+    new AbortController().signal,
+  );
   finish(new Response(xml));
-  await a;
-  expect(oldProgress).toHaveBeenCalledTimes(oldProgressCount);
-  expect(commit).toHaveBeenCalledTimes(1);
-  const result = commit.mock.calls[0]![0];
+  await rejected;
+  expect(oldProgress).toHaveBeenCalledTimes(count);
   expect(result.fileMeta.name).toBe('b.mtlx');
   expect(result.source.name).toBe('https://example.com/b.mtlx');
   expect(new TextDecoder().decode(result.source.data)).toBe(xml);
   expect(fetcher.mock.calls[0]![1].signal.aborted).toBe(true);
-  expect(fail).not.toHaveBeenCalled();
 });
-it('reports HTTP failures without committing an error page as a material', async () => {
+
+it('rejects HTTP errors rather than treating an error page as a material', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('missing', { status: 404 })));
-  const commit = vi.fn();
-  const fail = vi.fn();
-  await new MaterialLoadController().load(
-    { url: 'https://example.com/missing.mtlx', name: 'missing.mtlx' },
-    commit,
-    fail,
-  );
-  expect(commit).not.toHaveBeenCalled();
-  expect(fail).toHaveBeenCalledWith(expect.stringContaining('HTTP 404'));
+  await expect(
+    loadMaterial({ url: 'https://example.com/missing.mtlx', name: 'missing.mtlx' }, new AbortController().signal),
+  ).rejects.toThrow('HTTP 404');
 });
-it('suppresses results and errors from cancelled file reads', async () => {
+
+it('reports cancellation instead of stale file read failures', async () => {
   let reject!: (error: Error) => void;
   const input = {
     name: 'old.mtlx',
@@ -49,55 +46,45 @@ it('suppresses results and errors from cancelled file reads', async () => {
         reject = fail;
       }),
   } as File;
-  const controller = new MaterialLoadController();
-  const commit = vi.fn();
-  const fail = vi.fn();
-  const pending = controller.load(input, commit, fail);
-  controller.cancel();
+  const controller = new AbortController();
+  const pending = loadMaterial(input, controller.signal);
+  const rejected = expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+  controller.abort();
   reject(new Error('read failed'));
-  await pending;
-  expect(commit).not.toHaveBeenCalled();
-  expect(fail).not.toHaveBeenCalled();
-});
-it('rejects oversized local files before reading their bytes', async () => {
-  const arrayBuffer = vi.fn();
-  const file = { name: 'huge.mtlx', size: 17 * 1024 * 1024, arrayBuffer } as unknown as File;
-  const fail = vi.fn();
-  await new MaterialLoadController().load(file, vi.fn(), fail);
-  expect(arrayBuffer).not.toHaveBeenCalled();
-  expect(fail).toHaveBeenCalledWith(expect.stringContaining('file byte limit'));
+  await rejected;
 });
 
-it('reports download and analysis stages before committing a material', async () => {
+it('rejects oversized and unsupported local files before reading bytes', async () => {
+  const arrayBuffer = vi.fn();
+  const file = { name: 'huge.mtlx', size: 17 * 1024 * 1024, arrayBuffer } as unknown as File;
+  await expect(loadMaterial(file, new AbortController().signal)).rejects.toThrow('file byte limit');
+  await expect(loadMaterial({ ...file, name: 'wrong.txt' } as File, new AbortController().signal)).rejects.toThrow(
+    'Unsupported file type',
+  );
+  expect(arrayBuffer).not.toHaveBeenCalled();
+});
+
+it('reports download and analysis stages before returning the material', async () => {
   vi.stubGlobal(
     'fetch',
     vi.fn().mockResolvedValue(new Response(xml, { headers: { 'content-length': String(xml.length) } })),
   );
   const stages: string[] = [];
-  await new MaterialLoadController().load(
-    { url: 'https://example.com/a.mtlx', name: 'a.mtlx' },
-    () => stages.push('committed'),
-    vi.fn(),
-    (progress) => stages.push(`${progress.value}: ${progress.label}`),
+  await loadMaterial({ url: 'https://example.com/a.mtlx', name: 'a.mtlx' }, new AbortController().signal, (progress) =>
+    stages.push(`${progress.value}: ${progress.label}`),
   );
   expect(stages).toEqual([
     '5: Downloading material…',
     '60: Downloading material… (1 KB)',
     '65: Checking material and resources…',
     '80: Preparing preview…',
-    'committed',
   ]);
 });
 
 it('preserves parse diagnostics so the failed XML check can be displayed', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('<broken>')));
-  const fail = vi.fn();
-  const commit = vi.fn();
-  await new MaterialLoadController().load(
-    { url: 'https://example.com/broken.mtlx', name: 'broken.mtlx' },
-    commit,
-    fail,
-  );
-  expect(commit).not.toHaveBeenCalled();
-  expect(fail).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ parseError: expect.any(String) }));
+  await expect(
+    loadMaterial({ url: 'https://example.com/broken.mtlx', name: 'broken.mtlx' }, new AbortController().signal),
+  ).rejects.toMatchObject({ name: 'MaterialLoadError', analysis: { parseError: expect.any(String) } });
+  expect(new MaterialLoadError('invalid')).toBeInstanceOf(Error);
 });

@@ -31,6 +31,14 @@
     "./settings": {
       "types": "./dist/renderingSettings.d.ts",
       "default": "./dist/renderingSettings.js"
+    },
+    "./diagnostics": {
+      "types": "./dist/diagnostics.d.ts",
+      "default": "./dist/diagnostics.js"
+    },
+    "./lifecycle": {
+      "types": "./dist/lifecycle.d.ts",
+      "default": "./dist/lifecycle.js"
     }
   },
   "scripts": {

@@ -1,22 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
-import { MaterialViewer, type MaterialSource } from '@/components/MaterialViewerLazy';
+import { MaterialViewer } from '@/components/MaterialViewerLazy';
 import { InfoPanel } from '@/components/InfoPanel';
 import { LogPanel } from '@/components/LogPanel';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MaterialLoadController, type MaterialLoadProgress } from '@/lib/material-load';
-import { PRESET_MATERIALS, presetUrl, materialSearch, resolveMaterialParam } from '@/lib/presets';
+import { ViewerToolbar } from '@/components/viewer/ViewerToolbar';
+import { MaterialDropZone } from '@/components/viewer/MaterialDropZone';
+import { useMaterialLoad } from '@/hooks/use-material-load';
+import { viewerSearch, viewerSettings } from '@/lib/viewer-search';
 import type { PreviewReport } from '@/components/MaterialViewer';
-import type { MaterialXAnalysis } from '@/lib/validate';
-
-export interface ViewerSearch {
-  materialUrl?: string;
-}
 
 export const Route = createFileRoute('/viewer')({
   ssr: false,
-  validateSearch: materialSearch,
+  validateSearch: viewerSearch,
   head: () => ({
     meta: [
       { title: 'MaterialX viewer — mtlx' },
@@ -30,263 +25,78 @@ export const Route = createFileRoute('/viewer')({
 });
 
 function ViewerPage() {
-  const { materialUrl } = Route.useSearch();
+  const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const loader = useRef(new MaterialLoadController());
-  useEffect(() => () => loader.current.cancel(), []);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [loadProgress, setLoadProgress] = useState<MaterialLoadProgress | null>(null);
-  const [source, setSource] = useState<MaterialSource | null>(null);
-  const [fileMeta, setFileMeta] = useState<{ name: string; size: number } | null>(null);
-  const [analysis, setAnalysis] = useState<MaterialXAnalysis | null>(null);
+  const { load, clear, source, fileMeta, analysis, fileError, loadProgress, logLines, appendLog } = useMaterialLoad();
+  const localFile = useRef(false);
   const [viewerError, setViewerError] = useState<string | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
-  const [logLines, setLogLines] = useState<string[]>([]);
   const [preview, setPreview] = useState<PreviewReport>({ state: 'idle', resources: 'unchecked', failedResources: [] });
-  const [urlInput, setUrlInput] = useState('');
-  const [shareMessage, setShareMessage] = useState('');
-  const [detailsOpen, setDetailsOpen] = useState(true);
-  const copy = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setShareMessage('Copied to clipboard.');
-    } catch {
-      setShareMessage('Clipboard unavailable. Copy the URL from the address bar.');
-    }
-  };
-  const shareUrl = (route: 'viewer' | 'embed') => {
-    const url = new URL(`/${route}`, window.location.origin);
-    if (materialUrl) url.searchParams.set('materialUrl', materialUrl);
-    return url.href;
-  };
-  const [dragActive, setDragActive] = useState(false);
 
-  const appendLog = (message: string) => setLogLines((prev) => [...prev, message]);
-
-  const handleViewerError = (message: string | null) => {
-    setViewerError(message);
-    if (message) appendLog(`ERROR: ${message}`);
-  };
-
-  const load = async (input: File | { url: string; name: string }) => {
-    setSource(null);
-    setFileMeta(null);
-    setAnalysis(null);
-    setViewerError(null);
-    setFileError(null);
-    setLogLines([`Loading ${input.name}...`]);
-    setShareMessage('');
-    await loader.current.load(
-      input,
-      (result) => {
-        setLoadProgress(null);
-        setSource(result.source);
-        setFileMeta(result.fileMeta);
-        setAnalysis(result.analysis);
-        appendLog(`Parsed ${input.name}.`);
-        const { issues } = result.analysis;
-        if (issues.length === 0) {
-          appendLog('Validation: no issues found.');
-        } else {
-          const errors = issues.filter((issue) => issue.level === 'error').length;
-          appendLog(`Validation: ${errors} error(s), ${issues.length - errors} warning(s).`);
-          for (const issue of issues) {
-            appendLog(`${issue.level === 'error' ? 'ERROR' : 'WARNING'}: ${issue.location}: ${issue.message}`);
-          }
-        }
-      },
-      (message, failedAnalysis) => {
-        setAnalysis(failedAnalysis ?? null);
-        setLoadProgress(null);
-        setFileError(message);
-        appendLog(`ERROR: ${message}`);
-      },
-      setLoadProgress,
-    );
-  };
-
-  const loadFromFile = async (file: File) => {
-    loader.current.cancel();
-    setLoadProgress(null);
-    if (!/\.mtlx(\.zip)?$/i.test(file.name)) {
-      setSource(null);
-      setFileMeta(null);
-      setAnalysis(null);
-      setFileError('Unsupported file type — drop a .mtlx or .mtlx.zip file.');
-      return;
-    }
-    void navigate({ to: '.', search: {} });
-    await load(file);
-  };
-
-  // Drive the viewer entirely from the `materialUrl` query param, so a link can be shared and reloaded.
   useEffect(() => {
-    setUrlInput(materialUrl ?? '');
-    if (!materialUrl) return;
-    const resolved = resolveMaterialParam(materialUrl);
-    if (!resolved) {
-      loader.current.cancel();
-      setLoadProgress(null);
-      setSource(null);
-      setFileMeta(null);
-      setAnalysis(null);
-      setFileError(`Unknown material "${materialUrl}"`);
-      appendLog(`ERROR: Unknown material "${materialUrl}"`);
-      return;
+    if (search.materialUrl) {
+      localFile.current = false;
+      load(search.materialUrl);
+    } else if (!localFile.current) {
+      clear();
     }
-    const url = new URL(`${resolved.folderUrl}${resolved.fileName}`, window.location.origin).href;
-    setUrlInput(url);
-    void load({ url, name: resolved.fileName });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [materialUrl]);
+  }, [search.materialUrl, load, clear]);
 
-  const selectedPreset = PRESET_MATERIALS.find(
-    (preset) => presetUrl(preset, window.location.origin) === materialUrl || presetUrl(preset) === materialUrl,
-  );
+  const loadFromFile = (file: File) => {
+    localFile.current = true;
+    void navigate({ to: '.', search: (previous) => ({ ...previous, materialUrl: undefined }) });
+    load(file);
+  };
+  const loadFromUrl = (url: string) => {
+    if (search.materialUrl === url) load(url);
+    else void navigate({ to: '.', search: (previous) => ({ ...previous, materialUrl: url }) });
+  };
 
   return (
     <main className="mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6 p-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold">MaterialX viewer</h1>
-        <p className="text-sm text-muted-foreground">
-          A pure TypeScript/JavaScript MaterialX toolkit — works out of the box on Node, browsers, Windows, macOS, and
-          Linux.
+      <header className="flex flex-col gap-2">
+        <h1 className="text-3xl font-semibold tracking-tight">MaterialX viewer</h1>
+        <p className="text-sm text-muted-foreground">Preview and validate .mtlx and .mtlx.zip files in your browser.</p>
+      </header>
+      <ViewerToolbar search={search} onLoadFile={loadFromFile} onLoadUrl={loadFromUrl} />
+      {fileError && !analysis?.parseError ? (
+        <p role="alert" className="text-sm text-destructive [overflow-wrap:anywhere]">
+          {fileError}
         </p>
-        <p className="text-sm text-muted-foreground">Drag and drop a MaterialX file, or pick a sample below.</p>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-          Choose File…
-        </Button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".mtlx,.zip"
-          className="hidden"
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (file) void loadFromFile(file);
-            event.target.value = '';
-          }}
-        />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setDetailsOpen(!detailsOpen)}
-          aria-expanded={detailsOpen}
-          aria-controls="material-details"
-        >
-          {detailsOpen ? 'Hide details' : 'Show details'}
-        </Button>
-        {fileError && !analysis?.parseError ? (
-          <p role="alert" className="min-w-0 text-sm text-destructive [overflow-wrap:anywhere]">
-            {fileError}
-          </p>
-        ) : null}
-      </div>
-
-      <form
-        className="flex min-w-0 flex-wrap items-end gap-2"
-        onSubmit={(event) => {
-          event.preventDefault();
-          try {
-            const url = new URL(urlInput, window.location.origin);
-            if (!['https:', 'http:'].includes(url.protocol) || !resolveMaterialParam(url.href))
-              throw new Error('Use an HTTP(S) URL ending in .mtlx or .mtlx.zip.');
-            setShareMessage('');
-            void navigate({ to: '.', search: { materialUrl: url.href } });
-            if (materialUrl === url.href) void load({ url: url.href, name: url.pathname.split('/').at(-1)! });
-          } catch {
-            setShareMessage('Use an HTTP(S) URL ending in .mtlx or .mtlx.zip.');
-          }
-        }}
-      >
-        <Select
-          value={selectedPreset ? presetUrl(selectedPreset, window.location.origin) : ''}
-          onValueChange={(value) => void navigate({ to: '.', search: { materialUrl: value } })}
-        >
-          <SelectTrigger aria-label="Sample material" className="w-[260px] max-w-full" size="sm">
-            <SelectValue placeholder="Load a sample material…" />
-          </SelectTrigger>
-          <SelectContent>
-            {PRESET_MATERIALS.map((preset) => (
-              <SelectItem
-                key={presetUrl(preset, window.location.origin)}
-                value={presetUrl(preset, window.location.origin)}
-              >
-                {preset.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
-          Material URL
-          <input
-            type="url"
-            required
-            value={urlInput}
-            onChange={(event) => setUrlInput(event.target.value)}
-            placeholder="https://example.com/material.mtlx.zip"
-            className="min-w-0 rounded border border-border bg-background px-3 py-2"
-          />
-        </label>
-        <Button type="submit" variant="outline">
-          Load URL
-        </Button>
-        <Button variant="outline" disabled={!materialUrl} onClick={() => void copy(shareUrl('viewer'))}>
-          Copy link
-        </Button>
-        <Button
-          variant="outline"
-          disabled={!materialUrl}
-          onClick={() =>
-            void copy(
-              `<iframe src="${shareUrl('embed').replaceAll('&', '&amp;').replaceAll('"', '&quot;')}" title="MaterialX preview" width="640" height="640" allow="fullscreen" allowfullscreen></iframe>`,
-            )
-          }
-        >
-          Copy embed code
-        </Button>
-      </form>
-      <output className="text-sm">{shareMessage}</output>
-
-      <div
-        className={`grid min-w-0 gap-6 rounded-lg ${detailsOpen ? 'md:grid-cols-[minmax(0,3fr)_minmax(260px,1fr)]' : ''} ${dragActive ? 'outline-2 outline-offset-4 outline-primary' : ''}`}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setDragActive(true);
-        }}
-        onDragLeave={() => setDragActive(false)}
-        onDrop={(event) => {
-          event.preventDefault();
-          setDragActive(false);
-          const file = event.dataTransfer.files[0];
-          if (file) void loadFromFile(file);
-        }}
-      >
+      ) : null}
+      <MaterialDropZone onLoadFile={loadFromFile} className="grid gap-6 md:grid-cols-[minmax(0,3fr)_minmax(260px,1fr)]">
         <MaterialViewer
           source={source}
+          settings={viewerSettings(search)}
+          onSettingsChange={(patch) =>
+            void navigate({
+              to: '.',
+              search: (previous) => ({ ...previous, ...patch }),
+              replace: true,
+              resetScroll: false,
+            })
+          }
           loadProgress={loadProgress}
-          onError={handleViewerError}
+          onError={(message) => {
+            setViewerError(message);
+            if (message) appendLog(`ERROR: ${message}`);
+          }}
           onLog={appendLog}
           onStatus={setPreview}
         />
-        <aside id="material-details" hidden={!detailsOpen} className="min-w-0">
+        <aside id="material-details" className="min-w-0">
           <InfoPanel
             fileName={fileMeta?.name}
             fileSize={fileMeta?.size}
             summary={analysis?.summary}
             issues={analysis?.issues ?? []}
             parseError={analysis?.parseError}
-            viewerError={viewerError}
+            viewerError={source ? viewerError : null}
             preview={preview}
             resourcesChecked={analysis?.resourcesChecked}
-            localFile={source?.kind === 'buffer' && !/^https?:/.test(source.name) && !source.name.endsWith('.zip')}
+            localFile={!!source && !/^https?:/.test(source.name) && !source.name.endsWith('.zip')}
           />
         </aside>
-      </div>
-
+      </MaterialDropZone>
       <LogPanel lines={logLines} />
     </main>
   );

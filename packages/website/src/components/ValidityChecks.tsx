@@ -1,21 +1,7 @@
 import { useState } from 'react';
-import type { MaterialXValidationIssue } from 'mtlx-core';
-import type { PreviewReport } from './MaterialViewer';
+import { computeChecks, type CheckState, type DiagnosticInput } from 'mtlx-viewer/diagnostics';
 
-type CheckState = 'passed' | 'failed' | 'warning' | 'pending' | 'unchecked';
-interface Check {
-  name: string;
-  state: CheckState;
-  messages: string[];
-}
-export interface ValidityChecksProps {
-  issues: MaterialXValidationIssue[];
-  parseError?: string;
-  viewerError?: string | null;
-  preview?: PreviewReport;
-  resourcesChecked?: boolean;
-  dependencyHint?: string;
-}
+export type ValidityChecksProps = DiagnosticInput;
 const STATES: Record<CheckState, { symbol: string; label: string; color: string }> = {
   passed: { symbol: '✓', label: 'Passed', color: 'text-green-600 dark:text-green-400' },
   failed: { symbol: '✗', label: 'Failed', color: 'text-destructive' },
@@ -41,59 +27,14 @@ export function ValidityChecks({
   resourcesChecked,
   dependencyHint,
 }: ValidityChecksProps) {
-  const checks: Check[] = [
-    { name: 'XML', state: parseError ? 'failed' : 'passed', messages: parseError ? [parseError] : [] },
-  ];
-  const groups = [
-    ['basic', 'Nodes'],
-    ['structure', 'Structure'],
-    ['types', 'Types'],
-    ['resources', 'Dependencies'],
-    ['renderer-support', 'Renderer support'],
-  ];
-  for (const [rule, name] of groups) {
-    const findings = issues.filter((issue) => issue.rule === rule);
-    const messages = findings.map((issue) => `${issue.location}: ${issue.message}`);
-    let state: CheckState = parseError ? 'unchecked' : 'passed';
-    if (rule === 'resources' && !parseError) {
-      state = preview?.resources === 'loading' ? 'pending' : resourcesChecked ? 'passed' : 'unchecked';
-      if (!resourcesChecked) messages.push(dependencyHint ?? 'Dependencies could not be checked.');
-      if (preview?.failedResources.length) {
-        state = 'failed';
-        messages.push(...preview.failedResources.map((url) => `Failed to load: ${url}`));
-      }
-    }
-    if (findings.some((issue) => issue.level === 'error')) state = 'failed';
-    else if (findings.length && state !== 'failed') state = 'warning';
-    checks.push({ name: name!, state, messages });
-  }
-  const remaining = issues.filter(
-    (issue) => issue.code !== 'PARSE_ERROR' && !groups.some(([rule]) => rule === issue.rule),
-  );
-  if (remaining.length)
-    checks.push({
-      name: 'Document',
-      state: remaining.some((issue) => issue.level === 'error') ? 'failed' : 'warning',
-      messages: remaining.map((issue) => `${issue.location}: ${issue.message}`),
-    });
-  checks.push({
-    name: 'Preview',
-    state:
-      viewerError || preview?.state === 'error'
-        ? 'failed'
-        : parseError
-          ? 'unchecked'
-          : preview?.state === 'ready'
-            ? 'passed'
-            : preview?.state === 'loading'
-              ? 'pending'
-              : 'unchecked',
-    messages: viewerError ? [viewerError] : [],
+  const { checks, overall: state } = computeChecks({
+    issues,
+    parseError,
+    viewerError,
+    preview,
+    resourcesChecked,
+    dependencyHint,
   });
-  const state =
-    (['failed', 'warning', 'pending', 'unchecked'] as const).find((candidate) =>
-      checks.some((check) => check.state === candidate),
-    ) ?? 'passed';
   const problems = checks.filter((check) => check.state === 'failed' || check.state === 'warning');
   const problemKey = JSON.stringify(problems);
   const [disclosure, setDisclosure] = useState({ problemKey, open: problems.length > 0 });

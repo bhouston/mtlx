@@ -1,11 +1,13 @@
+import { ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { DEFAULT_VIEWER_SETTINGS, type ViewerSettings } from '@/lib/viewer-search';
 import { MaterialLoadingOverlay } from './MaterialLoadingOverlay';
 import type { MaterialLoadProgress } from '@/lib/material-load';
 import { analyzeInWorker } from '@/lib/analyze-in-worker';
 import { materialByteLimit, readBoundedResponse } from '@/lib/material-bytes';
-import { CleanupScope } from '@/lib/cleanup-scope';
+import { CleanupScope } from 'mtlx-viewer/lifecycle';
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
-import { DEFAULT_RENDERING_SETTINGS, TONE_MAPPING_OPTIONS, type RenderingSettings } from 'mtlx-viewer/settings';
+import { TONE_MAPPING_OPTIONS, type RenderingSettings } from 'mtlx-viewer/settings';
 import type { GeometryKind, MtlxScene } from 'mtlx-viewer';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
 import defaultEnvironmentUrl from 'mtlx-viewer/assets/default-environment.hdr?url';
@@ -15,14 +17,13 @@ export type MaterialSource =
   | { kind: 'buffer'; data: ArrayBuffer; name: string }
   | { kind: 'url'; folderUrl: string; fileName: string };
 
-export interface PreviewReport {
-  state: 'idle' | 'loading' | 'ready' | 'error';
-  resources: 'unchecked' | 'loading' | 'loaded';
-  failedResources: string[];
-}
+import type { PreviewReport } from 'mtlx-viewer/diagnostics';
+export type { PreviewReport } from 'mtlx-viewer/diagnostics';
 
 export interface MaterialViewerProps {
   source: MaterialSource | null;
+  settings?: ViewerSettings;
+  onSettingsChange?: (patch: Partial<ViewerSettings>) => void;
   loadProgress?: MaterialLoadProgress | null;
   onError: (message: string | null) => void;
   /** Diagnostics for the log panel — mirrors the VS Code extension's webview log. */
@@ -61,45 +62,77 @@ async function resolveSourceBytes(
 // three.js 0.186's MaterialXLoader (via mtlx-viewer's createMtlxScene) natively understands
 // .mtlx and .mtlx.zip (it sniffs the zip magic bytes / filename) and resolves textures
 // embedded in the archive itself, so this component doesn't need any zip handling of its own.
-export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus }: MaterialViewerProps) {
+export function MaterialViewer({
+  source,
+  loadProgress,
+  onError,
+  onLog,
+  onStatus,
+  settings,
+  onSettingsChange,
+}: MaterialViewerProps) {
   const [renderProgress, setRenderProgress] = useState<MaterialLoadProgress>({
     value: 80,
     label: 'Preparing preview…',
   });
-  const [environmentKind, setEnvironmentName] = useState<EnvironmentName>('bridge');
-  const environmentKindRef = useRef<EnvironmentName>('bridge');
+  const [localSettings, setLocalSettings] = useState(DEFAULT_VIEWER_SETTINGS);
+  const currentSettings = settings ?? localSettings;
+  const updateSettings = (patch: Partial<ViewerSettings>) => {
+    if (onSettingsChange) onSettingsChange(patch);
+    else setLocalSettings((current) => ({ ...current, ...patch }));
+  };
+  const {
+    ibl: environmentKind,
+    exposure,
+    intensity: environmentIntensity,
+    rotate: rotating,
+    geometry,
+    materialName,
+  } = currentSettings;
+  const { bloom, ao, toneMapping } = currentSettings;
+  const renderingSettings = { bloom, ao, toneMapping };
+  const setRenderingSettings = (update: (current: RenderingSettings) => RenderingSettings) =>
+    updateSettings(update(renderingSettings));
+  const setExposure = (value: number) => updateSettings({ exposure: value });
+  const setEnvironmentIntensity = (intensity: number) => updateSettings({ intensity });
+  const setGeometry = (value: ViewerSettings['geometry']) => updateSettings({ geometry: value });
+  const setRotating = (rotate: boolean) => updateSettings({ rotate });
+  const setEnvironmentName = (ibl: EnvironmentName) => updateSettings({ ibl });
+  const environmentKindRef = useRef(environmentKind);
+  environmentKindRef.current = environmentKind;
   const switchEnvironmentRef = useRef<((kind: EnvironmentName) => Promise<void>) | null>(null);
   const [environmentMessage, setEnvironmentMessage] = useState('');
-  const [renderingSettings, setRenderingSettings] = useState<RenderingSettings>({ ...DEFAULT_RENDERING_SETTINGS });
-  const [exposure, setExposure] = useState(0);
-  const [environmentIntensity, setEnvironmentIntensity] = useState(1);
-  const settingsRef = useRef({ exposure, environmentIntensity, renderingSettings });
-  settingsRef.current = { exposure, environmentIntensity, renderingSettings };
+  const settingsRef = useRef({ exposure, environmentIntensity, renderingSettings, geometry, materialName });
+  settingsRef.current = { exposure, environmentIntensity, renderingSettings, geometry, materialName };
   const applySettingsRef = useRef<(() => void) | null>(null);
-  useEffect(() => applySettingsRef.current?.(), [exposure, environmentIntensity, renderingSettings]);
+  useEffect(() => applySettingsRef.current?.(), [exposure, environmentIntensity, bloom, ao, toneMapping]);
+  useEffect(() => {
+    void switchEnvironmentRef.current?.(environmentKind);
+  }, [environmentKind]);
+  useEffect(() => {
+    mtlxSceneRef.current?.setGeometry(geometry);
+  }, [geometry]);
   const frameRef = useRef<HTMLDivElement>(null);
-  const [rotating, setRotating] = useState(false);
-  const rotatingRef = useRef(false);
+  const rotatingRef = useRef(rotating);
+  rotatingRef.current = rotating;
+  useEffect(() => {
+    if (mtlxSceneRef.current) mtlxSceneRef.current.autoRotate = rotating;
+  }, [rotating]);
   const statusCallback = useRef(onStatus);
   statusCallback.current = onStatus;
-  useEffect(() => {
-    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const apply = () => {
-      rotatingRef.current = !preference.matches;
-      setRotating(!preference.matches);
-      if (mtlxSceneRef.current) mtlxSceneRef.current.autoRotate = !preference.matches;
-    };
-    apply();
-    preference.addEventListener('change', apply);
-    return () => preference.removeEventListener('change', apply);
-  }, []);
   const containerRef = useRef<HTMLDivElement>(null);
   const mtlxSceneRef = useRef<MtlxScene | null>(null);
   const [loading, setLoading] = useState(false);
   const [previewState, setPreviewState] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [materialNames, setMaterialNames] = useState<string[]>([]);
   const [activeMaterial, setActiveMaterial] = useState('');
-  const [geometry, setGeometry] = useState<GeometryKind>('totem');
+  useEffect(() => {
+    const scene = mtlxSceneRef.current;
+    if (scene && materialName && scene.materialNames.includes(materialName)) {
+      scene.setMaterial(materialName);
+      setActiveMaterial(materialName);
+    }
+  }, [materialName]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -135,28 +168,22 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
     (async () => {
       const THREE: typeof ThreeNS = await import('three/webgpu');
       const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
-      const { createMtlxScene, parseEnvironment, createEnvironmentSwitcher, createViewerRendering } =
-        await import('mtlx-viewer');
+      const {
+        createMtlxScene,
+        parseEnvironment,
+        createEnvironmentSwitcher,
+        createViewerRendering,
+        createViewerRenderer,
+        observeViewerResize,
+        applyViewerRenderingSettings,
+      } = await import('mtlx-viewer');
       if (disposed) return;
 
       const width = container.clientWidth || 512;
       const height = container.clientHeight || 512;
 
       onLog?.('Creating WebGPURenderer...');
-      const renderer = new THREE.WebGPURenderer({ antialias: true });
-      own(() => {
-        renderer.dispose();
-        renderer.domElement.remove();
-      });
-      // Leave updateStyle at its default (true) — this also sets the canvas's CSS size to
-      // width/height, not just its pixel buffer. With `false` the canvas kept its devicePixelRatio-
-      // scaled buffer size as its CSS size too, rendering ~2x too big and getting cropped by the
-      // container's overflow-hidden to just the top-left corner.
-      renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.toneMapping = THREE.NeutralToneMapping;
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      await renderer.init();
+      const renderer = await createViewerRenderer(scope, { width, height });
       if (disposed) return;
       const backend = (renderer as unknown as { backend?: { isWebGPUBackend?: boolean } }).backend;
       onLog?.(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);
@@ -168,9 +195,11 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
       const rendering = createViewerRendering(renderer, scene, camera, settingsRef.current.renderingSettings);
       own(() => rendering.dispose());
       const applySettings = () => {
-        rendering.configure(settingsRef.current.renderingSettings);
-        renderer.toneMappingExposure = 2 ** settingsRef.current.exposure;
-        scene.environmentIntensity = settingsRef.current.environmentIntensity;
+        applyViewerRenderingSettings(renderer, scene, rendering, {
+          ...settingsRef.current.renderingSettings,
+          exposure: settingsRef.current.exposure,
+          intensity: settingsRef.current.environmentIntensity,
+        });
       };
       applySettingsRef.current = applySettings;
       applySettings();
@@ -219,10 +248,7 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       renderer.domElement.tabIndex = 0;
-      renderer.domElement.setAttribute(
-        'aria-label',
-        'Material preview. Arrow keys pan the camera; use Reset to restore the view.',
-      );
+      renderer.domElement.setAttribute('aria-label', 'Material preview. Arrow keys pan the camera.');
       controls.listenToKeyEvents(renderer.domElement);
       own(() => controls.dispose());
 
@@ -266,22 +292,16 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
         scene.add(mtlxScene.root);
         mtlxSceneRef.current = mtlxScene;
         setMaterialNames(mtlxScene.materialNames);
+        if (mtlxScene.materialNames.includes(settingsRef.current.materialName))
+          mtlxScene.setMaterial(settingsRef.current.materialName);
         setActiveMaterial(mtlxScene.activeMaterial);
-        setGeometry(mtlxScene.geometry);
+        mtlxScene.setGeometry(settingsRef.current.geometry);
+        mtlxScene.autoRotate = rotatingRef.current;
         onLog?.(`Material applied (${mtlxScene.materialNames.length} available).`);
       }
 
       let frameId = 0;
-      const resize = () => {
-        const w = container.clientWidth || 512;
-        const h = container.clientHeight || 512;
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
-      };
-      const resizeObserver = new ResizeObserver(resize);
-      resizeObserver.observe(container);
-      own(() => resizeObserver.disconnect());
+      observeViewerResize(scope, container, renderer, camera);
       own(() => cancelAnimationFrame(frameId));
 
       let clock = performance.now();
@@ -337,7 +357,7 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
       ref={frameRef}
       aria-busy={!!progress}
       data-preview-state={previewState}
-      className="relative aspect-square w-full overflow-hidden rounded-lg border border-border bg-black"
+      className="viewer-frame relative flex w-full flex-col sm:aspect-square overflow-hidden rounded-xl border border-border bg-zinc-950 shadow-sm"
     >
       {materialNames.length > 0 ? (
         <div className="absolute top-2 right-2 left-2 z-10 flex flex-wrap gap-2 [&>button]:rounded [&>button]:border [&>button]:border-white/20 [&>button]:bg-black/70 [&>button]:px-2 [&>button]:py-1 [&>button]:text-xs [&>button]:text-white">
@@ -348,6 +368,7 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
             value={activeMaterial}
             onChange={(event) => {
               setActiveMaterial(event.target.value);
+              updateSettings({ materialName: event.target.value });
               mtlxSceneRef.current?.setMaterial(event.target.value);
             }}
           >
@@ -360,126 +381,124 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
         </div>
       ) : null}
       <output className="sr-only">Preview: {previewState}</output>
-      <div ref={containerRef} className="h-full w-full" />
+      <div
+        ref={containerRef}
+        className="relative aspect-square w-full shrink-0 overflow-hidden sm:h-full [&>canvas]:absolute [&>canvas]:inset-0"
+      />
       {materialNames.length ? (
-        <div className="absolute right-2 bottom-2 left-2 flex flex-wrap gap-3 rounded bg-black/70 p-2 text-xs text-white">
-          <label className="flex min-w-0 items-center gap-2">
-            Geometry
-            <select
-              aria-label="Geometry"
-              className="min-w-0 rounded border border-white/20 bg-black/70 px-1 py-1"
-              value={geometry}
-              onChange={(event) => {
-                const kind = event.target.value as GeometryKind;
-                setGeometry(kind);
-                mtlxSceneRef.current?.setGeometry(kind);
-              }}
-            >
-              {GEOMETRY_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            type="button"
-            className="rounded border border-white/20 bg-black/70 px-2 py-1"
-            onClick={() => mtlxSceneRef.current?.resetCamera()}
-          >
-            Reset
-          </button>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={rotating}
-              aria-label="Rotate"
-              onChange={(event) => {
-                const next = event.target.checked;
-                rotatingRef.current = next;
-                setRotating(next);
-                if (mtlxSceneRef.current) mtlxSceneRef.current.autoRotate = next;
-              }}
-            />
-            Rotate
-          </label>
-          <label className="flex min-w-0 items-center gap-2">
-            IBL
-            <select
-              aria-label="IBL environment"
-              value={environmentKind}
-              className="min-w-0 rounded border border-white/20 bg-black/70 px-1 py-1"
-              onChange={(event) => {
-                const kind = event.target.value as EnvironmentName;
-                environmentKindRef.current = kind;
-                setEnvironmentName(kind);
-                void switchEnvironmentRef.current?.(kind);
-              }}
-            >
-              <option value="studio">studio</option>
-              <option value="bridge">bridge</option>
-            </select>
-          </label>
-          <label className="flex items-center gap-2">
-            Tone mapping
-            <select
-              aria-label="Tone mapping"
-              value={renderingSettings.toneMapping}
-              className="rounded border border-white/20 bg-black/70 px-1 py-1"
-              onChange={(event) =>
-                setRenderingSettings((current) => ({
-                  ...current,
-                  toneMapping: event.target.value as RenderingSettings['toneMapping'],
-                }))
-              }
-            >
-              {TONE_MAPPING_OPTIONS.map(({ value, label }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          {(['bloom', 'ao'] as const).map((effect) => (
-            <label key={effect} className="flex items-center gap-2">
+        <details className="group/settings relative m-3 rounded-xl border border-white/15 bg-zinc-950/85 text-xs text-white shadow-lg backdrop-blur-xl sm:absolute sm:right-3 sm:bottom-3 sm:left-3 sm:m-0">
+          <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl px-4 py-3 font-medium focus-visible:outline-2 focus-visible:outline-ring [&::-webkit-details-marker]:hidden">
+            <SlidersHorizontal className="size-4 text-white/70" />
+            Viewer settings
+            <ChevronDown className="ml-auto size-4 text-white/70 transition-transform group-open/settings:rotate-180" />
+          </summary>
+          <div className="viewer-controls grid grid-cols-2 gap-x-4 gap-y-3 border-t border-white/10 p-4 sm:grid-cols-3">
+            <label className="flex min-w-0 items-center gap-2">
+              Geometry
+              <select
+                aria-label="Geometry"
+                className="min-w-0 rounded border border-white/20 bg-black/70 px-1 py-1"
+                value={geometry}
+                onChange={(event) => {
+                  const kind = event.target.value as ViewerSettings['geometry'];
+                  setGeometry(kind);
+                }}
+              >
+                {GEOMETRY_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={renderingSettings[effect]}
-                aria-label={effect === 'ao' ? 'Ambient occlusion' : 'Bloom'}
-                onChange={(event) =>
-                  setRenderingSettings((current) => ({ ...current, [effect]: event.target.checked }))
-                }
+                checked={rotating}
+                aria-label="Rotate"
+                onChange={(event) => {
+                  const next = event.target.checked;
+                  setRotating(next);
+                }}
               />
-              {effect === 'ao' ? 'AO' : 'Bloom'}
+              Rotate
             </label>
-          ))}
-          <label className="flex items-center gap-2">
-            Exposure ({exposure.toFixed(1)} EV)
-            <input
-              aria-label="Exposure"
-              type="range"
-              min="-2"
-              max="2"
-              step="0.1"
-              value={exposure}
-              onChange={(event) => setExposure(Number(event.target.value))}
-              className="w-24"
-            />
-          </label>
-          <label className="flex items-center gap-2">
-            Intensity
-            <input
-              aria-label="Environment intensity"
-              type="range"
-              min="0"
-              max="2"
-              step="0.1"
-              value={environmentIntensity}
-              onChange={(event) => setEnvironmentIntensity(Number(event.target.value))}
-              className="w-24"
-            />
-          </label>
-        </div>
+            <label className="flex min-w-0 items-center gap-2">
+              IBL
+              <select
+                aria-label="IBL environment"
+                value={environmentKind}
+                className="min-w-0 rounded border border-white/20 bg-black/70 px-1 py-1"
+                onChange={(event) => {
+                  const kind = event.target.value as EnvironmentName;
+                  setEnvironmentName(kind);
+                }}
+              >
+                <option value="studio">studio</option>
+                <option value="bridge">bridge</option>
+              </select>
+            </label>
+            <label className="flex items-center gap-2">
+              Tone mapping
+              <select
+                aria-label="Tone mapping"
+                value={renderingSettings.toneMapping}
+                className="rounded border border-white/20 bg-black/70 px-1 py-1"
+                onChange={(event) =>
+                  setRenderingSettings((current) => ({
+                    ...current,
+                    toneMapping: event.target.value as RenderingSettings['toneMapping'],
+                  }))
+                }
+              >
+                {TONE_MAPPING_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {(['bloom', 'ao'] as const).map((effect) => (
+              <label key={effect} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={renderingSettings[effect]}
+                  aria-label={effect === 'ao' ? 'Ambient occlusion' : 'Bloom'}
+                  onChange={(event) =>
+                    setRenderingSettings((current) => ({ ...current, [effect]: event.target.checked }))
+                  }
+                />
+                {effect === 'ao' ? 'AO' : 'Bloom'}
+              </label>
+            ))}
+            <label className="flex items-center gap-2">
+              Exposure ({exposure.toFixed(1)} EV)
+              <input
+                aria-label="Exposure"
+                type="range"
+                min="-2"
+                max="2"
+                step="0.1"
+                value={exposure}
+                onChange={(event) => setExposure(Number(event.target.value))}
+                className="w-24"
+              />
+            </label>
+            <label className="flex items-center gap-2">
+              Intensity
+              <input
+                aria-label="Environment intensity"
+                type="range"
+                min="0"
+                max="2"
+                step="0.1"
+                value={environmentIntensity}
+                onChange={(event) => setEnvironmentIntensity(Number(event.target.value))}
+                className="w-24"
+              />
+            </label>
+          </div>
+        </details>
       ) : null}
       <output
         className={
@@ -491,7 +510,7 @@ export function MaterialViewer({ source, loadProgress, onError, onLog, onStatus 
       {progress ? <MaterialLoadingOverlay progress={progress} /> : null}
       {!source && !progress ? (
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/50">
-          Drag & drop a .mtlx or .mtlx.zip file anywhere here, or pick a sample above
+          Drop a MaterialX file here, or choose a sample to get started.
         </div>
       ) : null}
     </div>

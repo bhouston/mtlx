@@ -31,17 +31,40 @@ with diagnostics beneath the affected check; unavailable checks are never marked
 Local loose documents cannot read neighboring files through the browser file picker. ZIP inputs
 provide an inventory for archive and recursive dependency checks.
 
-`/viewer?materialUrl=<encoded HTTP(S) URL>` and `/embed?materialUrl=<encoded HTTP(S) URL>` use the
-same source. The bottom IBL dropdown uses the extension's stub names: `bridge` (San Giuseppe Bridge,
-the default) and `studio` without resetting the camera or material. Selecting a sample populates the URL input; a matching URL selects its sample.
-Bottom controls toggle bloom and full-resolution, denoised GTAO and select tone mapping. Bloom and
-AO default on; tone mapping defaults to Neutral. Auto-rotation takes 40 seconds per turn.
+## Viewer controls and sharing
+
+The toolbar offers Choose file, a Load URL dialog, a Sample materials action menu, and Share.
+Share copies a viewer link, embed link, or iframe code with the current settings. Local uploads
+must be hosted at a URL before they can be shared. File details remain available beside the viewer.
+Viewer settings start collapsed on both routes; expand the panel to adjust lighting and rendering.
+On narrow screens the settings sit below the canvas.
+
+`/viewer` and `/embed` use the same validated query parameters through TanStack Router's native
+search APIs, defined in `src/lib/viewer-search.ts`:
+
+| Parameter      | Values                                                           | Default                     |
+| -------------- | ---------------------------------------------------------------- | --------------------------- |
+| `materialUrl`  | HTTP(S) .mtlx/.mtlx.zip URL or same-origin path                  | No material                 |
+| `ibl`          | `bridge`, `studio`                                               | `bridge`                    |
+| `bloom`, `ao`  | `true`, `false`                                                  | `true`                      |
+| `intensity`    | 0–2                                                              | 1                           |
+| `toneMapping`  | `neutral`, `aces`, `agx`, `reinhard`, `cineon`, `linear`, `none` | `neutral`                   |
+| `exposure`     | −2–2 EV                                                          | 0                           |
+| `rotate`       | `true`, `false` (40 seconds per turn)                            | `false`                     |
+| `geometry`     | `totem`, `sphere`, `plane`                                       | `totem`                     |
+| `materialName` | Material name within the document                                | Document's initial material |
+
+Setting changes replace the current history entry without resetting the scene or scrolling;
+loading a different material creates a history entry and retains rendering settings. Invalid values
+fall back to defaults and finite numeric values are clamped to the supported ranges.
 Legacy `material=<preset id or URL>` links remain readable. New shared links use `materialUrl`.
+
+Example: `/embed?materialUrl=/materials/compound/compound.mtlx&ibl=studio&geometry=sphere&bloom=false`.
 
 ## Compound sample
 
 Choose `compound` in the sample picker to load a document containing `Copper` and `Tiled_Wood`.
-Use the viewer's bottom Material dropdown to switch between them. The document and both wood
+Use the viewer's top Material dropdown to switch between them. The document and both wood
 textures are hosted in `public/materials/compound/`, so this sample works without GitHub access.
 The `compound_zip` sample contains the same document and textures in one `.mtlx.zip` archive.
 It is hosted at `/materials/compound_zip/compound_zip.mtlx.zip`.
@@ -94,7 +117,9 @@ root as context and `packages/website/Dockerfile`, exposes port 8080, and runs t
 
 - `src/routes/viewer.tsx`: source selection, share links and diagnostics.
 - `src/components/MaterialViewer.tsx`: renderer lifecycle and inspection controls.
-- `src/lib/material-load.ts`: cancellation and consistent source/analysis delivery.
+- `src/components/viewer/`: reusable toolbar, URL dialog, sample/share menus, and file drop zone.
+- `src/hooks/use-material-load.ts`: TanStack Query mutation state, progress, and cancellation on replacement/unmount.
+- `src/lib/material-load.ts`: abortable file/download and analysis promise with structured error diagnostics.
 - `src/lib/material-analysis.worker.ts`: all validation rules and recursive remote resources.
 - `../viewer/src/scene.ts`: shared geometry, material selection, rotation and Reset.
 - `../core/src/inspect.ts`: shared XML/archive/dependency inspection.

@@ -89,14 +89,13 @@ export function getPreviewHtml(webview: vscode.Webview, scriptUri: vscode.Uri, e
       <div class="toolbar">
         <select id="material-select" aria-label="Material"></select>
       </div>
-      <canvas id="viewport" tabindex="0" aria-label="Material preview. Arrow keys pan; Reset restores object and camera."></canvas>
+      <canvas id="viewport" tabindex="0" aria-label="Material preview. Arrow keys pan."></canvas>
       <div class="toolbar">
         <label>Geometry <select id="geometry-select" aria-label="Geometry">
           <option value="totem">Totem</option>
           <option value="sphere">Sphere</option>
           <option value="plane">Plane</option>
         </select></label>
-        <button id="reset" type="button" disabled>Reset</button>
         <label><input id="rotation" type="checkbox" disabled aria-label="Rotate"> Rotate</label>
         <label>IBL <select id="environment-select" aria-label="IBL environment"><option value="studio">Studio</option><option value="bridge" selected>San Giuseppe Bridge</option></select></label>
         <label>Tone mapping <select id="tone-mapping" aria-label="Tone mapping"></select></label>

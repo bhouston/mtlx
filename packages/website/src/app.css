@@ -79,3 +79,38 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
+
+.viewer-controls label {
+  min-width: 0;
+}
+.viewer-controls select {
+  width: 100%;
+  min-width: 0;
+  border-radius: 0.375rem;
+}
+.viewer-controls input[type='range'] {
+  min-width: 0;
+  width: 100%;
+  accent-color: #a5b4fc;
+}
+.viewer-controls input[type='checkbox'] {
+  accent-color: #a5b4fc;
+}
+.viewer-controls label:has(select),
+.viewer-controls label:has(input[type='range']) {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.375rem;
+}

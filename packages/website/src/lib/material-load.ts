@@ -13,68 +13,66 @@ export interface LoadedMaterial {
   analysis: MaterialXAnalysis;
 }
 
-/** One generation owns both the preview bytes and the analysis of those exact bytes. */
-export class MaterialLoadController {
-  private generation = 0;
-  private abort?: AbortController;
+export type MaterialLoadInput = File | { url: string; name: string };
 
-  cancel(): void {
-    this.generation++;
-    this.abort?.abort();
+export class MaterialLoadError extends Error {
+  constructor(
+    message: string,
+    public readonly analysis?: MaterialXAnalysis,
+  ) {
+    super(message);
+    this.name = 'MaterialLoadError';
   }
+}
 
-  async load(
-    input: { url: string; name: string } | File,
-    commit: (result: LoadedMaterial) => void,
-    fail: (message: string, analysis?: MaterialXAnalysis) => void,
-    onProgress?: (progress: MaterialLoadProgress) => void,
-  ): Promise<void> {
-    this.cancel();
-    const generation = this.generation;
-    const abort = new AbortController();
-    this.abort = abort;
-    const progress = (value: number, label: string) => {
-      if (generation === this.generation && !abort.signal.aborted) onProgress?.({ value, label });
-    };
-    progress(5, 'url' in input ? 'Downloading material…' : 'Reading material…');
-    try {
-      let data: ArrayBuffer;
-      let resourceName: string;
-      if ('url' in input) {
-        const response = await fetch(input.url, { signal: abort.signal });
-        if (!response.ok) throw new Error(`HTTP ${response.status} loading ${input.url}`);
-        data = await readBoundedResponse(response, materialByteLimit(input.name), abort.signal, (loaded, total) => {
-          progress(
-            total ? 5 + 55 * Math.min(loaded / total, 1) : 10,
-            `Downloading material… (${Math.ceil(loaded / 1024)} KB)`,
-          );
-        });
-        resourceName = response.url || input.url;
-      } else {
-        const limit = materialByteLimit(input.name);
-        if (input.size > limit) throw new Error(`Material exceeds file byte limit (${limit})`);
-        data = await input.arrayBuffer();
-        resourceName = input.name;
-      }
-      if (generation !== this.generation) return;
-      progress(65, 'Checking material and resources…');
-      const result = await analyzeInWorker(data, input.name, abort.signal, 'url' in input ? resourceName : undefined);
-      if (generation !== this.generation) return;
-      data = result.data;
-      const analysis = result.analysis;
-      if (analysis.parseError) {
-        fail(analysis.parseError, analysis);
-        return;
-      }
-      progress(80, 'Preparing preview…');
-      commit({
-        source: { kind: 'buffer', data, name: resourceName },
-        fileMeta: { name: input.name, size: data.byteLength },
-        analysis,
-      });
-    } catch (error) {
-      if (generation !== this.generation) return;
-      fail(error instanceof Error ? error.message : String(error));
+/** Read and analyze the same bytes for inspection and preview. The caller owns cancellation. */
+export async function loadMaterial(
+  input: MaterialLoadInput,
+  signal: AbortSignal,
+  onProgress?: (progress: MaterialLoadProgress) => void,
+): Promise<LoadedMaterial> {
+  const progress = (value: number, label: string) => {
+    signal.throwIfAborted();
+    onProgress?.({ value, label });
+  };
+  try {
+    signal.throwIfAborted();
+    if (!('url' in input) && !/\.mtlx(\.zip)?$/i.test(input.name)) {
+      throw new MaterialLoadError('Unsupported file type — drop a .mtlx or .mtlx.zip file.');
     }
+    progress(5, 'url' in input ? 'Downloading material…' : 'Reading material…');
+    let data: ArrayBuffer;
+    let resourceName: string;
+    if ('url' in input) {
+      const response = await fetch(input.url, { signal });
+      signal.throwIfAborted();
+      if (!response.ok) throw new Error(`HTTP ${response.status} loading ${input.url}`);
+      data = await readBoundedResponse(response, materialByteLimit(input.name), signal, (loaded, total) => {
+        progress(
+          total ? 5 + 55 * Math.min(loaded / total, 1) : 10,
+          `Downloading material… (${Math.ceil(loaded / 1024)} KB)`,
+        );
+      });
+      resourceName = response.url || input.url;
+    } else {
+      const limit = materialByteLimit(input.name);
+      if (input.size > limit) throw new Error(`Material exceeds file byte limit (${limit})`);
+      data = await input.arrayBuffer();
+      resourceName = input.name;
+    }
+    progress(65, 'Checking material and resources…');
+    const result = await analyzeInWorker(data, input.name, signal, 'url' in input ? resourceName : undefined);
+    signal.throwIfAborted();
+    if (result.analysis.parseError) throw new MaterialLoadError(result.analysis.parseError, result.analysis);
+    progress(80, 'Preparing preview…');
+    return {
+      source: { kind: 'buffer', data: result.data, name: resourceName },
+      fileMeta: { name: input.name, size: result.data.byteLength },
+      analysis: result.analysis,
+    };
+  } catch (error) {
+    signal.throwIfAborted();
+    if (error instanceof MaterialLoadError) throw error;
+    throw new MaterialLoadError(error instanceof Error ? error.message : String(error));
   }
 }
