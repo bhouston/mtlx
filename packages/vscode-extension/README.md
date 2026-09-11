@@ -30,7 +30,9 @@ validation issues, resource failures and renderer logs for bug reports.
 ## Viewer settings
 
 The bridge is the default IBL in both the website and extension. Configure the extension under
-**Settings → Mtlx Viewer**, or in user/workspace `settings.json`:
+**Settings → Mtlx Viewer**, or in user/workspace `settings.json`. The same reference is available
+on the [extension documentation webpage](https://mtlx.ben3d.ca/extension#settings). Each additional
+asset has a `name` and a `source` file path or HTTP(S) URL:
 
 ```json
 {
