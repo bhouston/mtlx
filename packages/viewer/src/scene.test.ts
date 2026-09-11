@@ -28,6 +28,7 @@ it('Reset restores object orientation, camera position, target and zoom without 
   const totem = scene.root.children.find((child) => child.visible)!;
   expect(totem.rotation.y).toBeCloseTo(Math.PI / 4);
   scene.update(5);
+  expect(totem.rotation.y).toBeCloseTo(Math.PI / 2);
   scene.resetCamera();
   expect(totem.rotation.y).toBeCloseTo(Math.PI / 4);
   scene.setGeometry('sphere');

@@ -64,8 +64,8 @@ export interface MtlxScene {
   update(deltaSeconds: number): void;
 }
 
-// One full turn every 20s - slow enough to inspect the material, still reads as "spinning".
-const ROTATION_RADIANS_PER_SECOND = (2 * Math.PI) / 20;
+// One full turn every 40s - slow enough to inspect the material, still reads as "spinning".
+const ROTATION_RADIANS_PER_SECOND = (2 * Math.PI) / 40;
 
 interface MaterialXParseResult {
   materials: Record<string, THREE.Material>;
