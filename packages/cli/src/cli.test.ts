@@ -73,7 +73,7 @@ const makeTextureFixture = async (textureFilename: string, textureData: Uint8Arr
 
 describe('mtlx', () => {
   beforeAll(() => {
-    execSync('pnpm --filter mtlx-core build && pnpm --filter mtlx build', {
+    execSync('pnpm --filter mtlx-core build && pnpm --filter mtlx-cli build', {
       cwd: repoRoot,
       stdio: 'inherit',
     });
@@ -129,7 +129,7 @@ describe('mtlx', () => {
     try {
       const result = await cli.run(['check', fixture.materialPath], { timeout: 8_000 });
       expect(result).toSucceed();
-      expect(result).toHaveStdout(/Check passed|WARNING/);
+      expect(result).toHaveStdout(/Selected document checks passed|WARNING/);
     } finally {
       await rm(fixture.tempDir, { recursive: true, force: true });
     }
@@ -177,7 +177,13 @@ describe('mtlx', () => {
     const zipPath = path.join(tempDir, 'material.mtlx.zip');
     const outputDir = path.join(tempDir, 'out');
     try {
-      const zipped = zipSync({ 'material.mtlx': new TextEncoder().encode(fixtureXml) }, { level: 6 });
+      const zipped = zipSync(
+        {
+          'material.mtlx': new TextEncoder().encode(fixtureXml),
+          'textures/albedo.png': new Uint8Array([137, 80, 78, 71]),
+        },
+        { level: 6 },
+      );
       writeFileSync(zipPath, zipped);
 
       const checkResult = await cli.run(['check', zipPath], { timeout: 8_000 });

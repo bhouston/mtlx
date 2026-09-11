@@ -417,3 +417,6 @@ export const checkMaterialX = async (
     };
   }
 };
+
+export { processMaterialX } from './processing.js';
+export type { MaterialXProcessingOptions, MaterialXProcessingResult } from './processing.js';

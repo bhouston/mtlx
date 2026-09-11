@@ -1,7 +1,6 @@
 import { glob, stat } from 'node:fs/promises';
 import path from 'node:path';
-import { mergeMaterialXPackages, transform } from 'mtlx-core';
-import { loadMaterialXPackage, writeMaterialXPackage } from 'mtlx-core/node';
+import { processMaterialX, type MaterialXProcessingResult } from 'mtlx-core/node';
 import { defineCommand } from 'yargs-file-commands';
 import { formatOption, printOutput } from '../output.js';
 import {
@@ -11,12 +10,22 @@ import {
   textureTransforms,
 } from '../textureOptions.js';
 
-const renderText = (result: { outputPath: string; rootPath: string; entries: string[] }): string =>
-  [`Wrote ${result.outputPath}`, `Root ${result.rootPath}`, `Entries ${result.entries.length}`].join('\n');
+const renderText = (result: MaterialXProcessingResult): string =>
+  [
+    `${result.success ? (result.dryRun ? 'Would write' : 'Wrote') : 'Failed'} ${result.outputPath}`,
+    ...(result.rootPath ? [`Root ${result.rootPath}`, `Entries ${result.entries.length}`] : []),
+    ...(result.dryRun
+      ? result.changes.map(
+          (change) => `${change.action === 'reuse' ? 'Reuse' : 'Write'} ${change.path} (${change.bytes} bytes)`,
+        )
+      : []),
+  ].join('\n');
 
 /** Batch mode's default (non-`--verbose`) text output: one line, not one per input. */
-const renderBatchSummary = (results: Array<{ outputPath: string }>, outputDir: string): string =>
-  `Wrote ${results.length} file${results.length === 1 ? '' : 's'} to ${outputDir}`;
+const renderBatchSummary = (results: MaterialXProcessingResult[], outputDir: string, dryRun: boolean): string => {
+  const count = results.filter((result) => result.success).length;
+  return `${dryRun ? 'Would write' : 'Wrote'} ${count} file${count === 1 ? '' : 's'} to ${outputDir}`;
+};
 
 /** Expands each token as a glob pattern (a plain path matches itself), preserving first-seen
  * order and dropping duplicates matched by more than one pattern. */
@@ -83,6 +92,11 @@ export const command = defineCommand({
         type: 'boolean',
         default: false,
       })
+      .option('dry-run', {
+        describe: 'Transform and validate in memory, report planned files, and create no output',
+        type: 'boolean',
+        default: false,
+      })
       .options(textureTransformOptions)
       .group(TEXTURE_OPTION_KEYS, TEXTURE_OPTION_GROUP)
       .options(formatOption),
@@ -112,7 +126,8 @@ export const command = defineCommand({
         const absoluteInputs = inputs.map((input) => path.resolve(input));
         const baseDir = commonAncestorDir(absoluteInputs);
         const usedOutputPaths = new Set<string>();
-        const results: Awaited<ReturnType<typeof writeMaterialXPackage>>[] = [];
+        const results: MaterialXProcessingResult[] = [];
+        const plannedFiles = argv.dryRun ? new Map<string, Uint8Array>() : undefined;
         const failures: Array<{ input: string; message: string }> = [];
         for (const [index, input] of inputs.entries()) {
           const outputPath = path.join(argv.output, path.relative(baseDir, absoluteInputs[index]!));
@@ -123,9 +138,15 @@ export const command = defineCommand({
             usedOutputPaths.add(outputPath);
             warnIfZip(outputPath);
 
-            const pkg = await loadMaterialXPackage(input);
-            await transform(pkg, ...textureTransforms(argv));
-            results.push(await writeMaterialXPackage(pkg, outputPath, writeOptions));
+            const result = await processMaterialX(input, outputPath, {
+              transforms: textureTransforms(argv),
+              dryRun: argv.dryRun,
+              writeOptions,
+              plannedFiles,
+            });
+            results.push(result);
+            if (!result.success)
+              failures.push({ input, message: result.errors.map((issue) => issue.message).join('; ') });
           } catch (error) {
             // One bad input (e.g. a reference escaping its own directory) shouldn't abort an
             // otherwise-good batch of hundreds of files; report it and keep going.
@@ -133,7 +154,7 @@ export const command = defineCommand({
           }
         }
         printOutput(results, argv.format, () =>
-          argv.verbose ? results.map(renderText).join('\n\n') : renderBatchSummary(results, argv.output),
+          argv.verbose ? results.map(renderText).join('\n\n') : renderBatchSummary(results, argv.output, argv.dryRun),
         );
         for (const failure of failures) {
           console.error(`ERROR ${failure.input}: ${failure.message}`);
@@ -146,13 +167,20 @@ export const command = defineCommand({
       }
 
       warnIfZip(argv.output);
-      const packages = await Promise.all(inputs.map((input) => loadMaterialXPackage(input)));
-      const pkg = mergeMaterialXPackages(packages);
-      await transform(pkg, ...textureTransforms(argv));
-      const result = await writeMaterialXPackage(pkg, argv.output, writeOptions);
+      const result = await processMaterialX(inputs, argv.output, {
+        transforms: textureTransforms(argv),
+        dryRun: argv.dryRun,
+        writeOptions,
+      });
       printOutput(result, argv.format, () => renderText(result));
+      if (!result.success) {
+        for (const issue of result.errors) console.error(`ERROR ${issue.stage}: ${issue.message}`);
+        process.exitCode = 1;
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      if (argv.format !== 'text')
+        printOutput({ success: false, errors: [{ stage: 'inputs', message }] }, argv.format, () => '');
       console.error(`ERROR ${message}`);
       process.exitCode = 1;
     }
