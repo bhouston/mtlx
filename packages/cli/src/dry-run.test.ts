@@ -65,7 +65,9 @@ describe('CLI dry runs', () => {
       '--format',
       'json',
     ]);
-    const results = JSON.parse(stdout);
+    const batch = JSON.parse(stdout);
+    expect(batch).toMatchObject({ kind: 'batch', success: true, total: 2, failed: 0 });
+    const results = batch.results;
     expect(results).toHaveLength(2);
     expect(results.every((result: { success: boolean }) => result.success)).toBe(true);
     const texturePaths = results
@@ -101,4 +103,24 @@ describe('CLI dry runs', () => {
     }
     expect(await readdir(dir)).toEqual(['input.mtlx']);
   });
+});
+
+it('reports every batch failure in JSON and still writes later valid inputs', async () => {
+  const bad = path.join(dir, 'broken.mtlx');
+  const good = path.join(dir, 'good.mtlx');
+  await writeFile(bad, '<materialx>');
+  await writeFile(good, '<materialx version="1.39"/>');
+  const output = path.join(dir, 'out');
+  const failure = await execute(process.execPath, [cli, 'x', bad, good, '-o', output, '--format', 'json']).then(
+    () => {
+      throw new Error('Expected nonzero exit');
+    },
+    (error) => error as { code: number; stdout: string },
+  );
+  expect(failure.code).toBe(1);
+  const batch = JSON.parse(failure.stdout);
+  expect(batch).toMatchObject({ schemaVersion: 1, kind: 'batch', success: false, total: 2, succeeded: 1, failed: 1 });
+  expect(batch.failures).toEqual([expect.objectContaining({ input: bad, message: expect.any(String) })]);
+  expect(batch.results.map((result: { success: boolean }) => result.success)).toEqual([false, true]);
+  expect(await readFile(path.join(output, 'good.mtlx'), 'utf8')).toContain('materialx');
 });

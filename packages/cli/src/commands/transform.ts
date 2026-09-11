@@ -153,7 +153,19 @@ export const command = defineCommand({
             failures.push({ input, message: error instanceof Error ? error.message : String(error) });
           }
         }
-        printOutput(results, argv.format, () =>
+        const batch = {
+          schemaVersion: 1,
+          kind: 'batch',
+          success: failures.length === 0,
+          dryRun: argv.dryRun,
+          outputDir: argv.output,
+          total: inputs.length,
+          succeeded: results.filter((result) => result.success).length,
+          failed: failures.length,
+          results,
+          failures,
+        };
+        printOutput(batch, argv.format, () =>
           argv.verbose ? results.map(renderText).join('\n\n') : renderBatchSummary(results, argv.output, argv.dryRun),
         );
         for (const failure of failures) {

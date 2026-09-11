@@ -28,42 +28,57 @@ are just a conversion with no options.
   aborting the rest of the batch; the command exits non-zero if any input failed. Prints a
   one-line summary by default — pass `--verbose` to list every file written.
 
-Quote glob patterns so `mtlx` expands them (with brace-list support), not your shell:
+Quote glob patterns so `mtlx` expands them (including brace lists).
+
+### Inspect and preview
 
 ```sh
-# validate a file; exits non-zero on any error-level issue, so it works as a CI gate
 mtlx check material.mtlx
-
-# print material/texture/document info
 mtlx info material.mtlx.zip --format json
-
-# pack a .mtlx (plus its textures) into a single .mtlx.zip
-mtlx x material.mtlx -o material.mtlx.zip
-
-# unpack a .mtlx.zip back into a .mtlx with textures alongside it
-mtlx x material.mtlx.zip -o out/material.mtlx
-
-# convert while packing: resize textures and switch their format
-mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
-
-# same result via a named preset: webp-preferred, 2048px max
-mtlx x material.mtlx -o material.mtlx.zip --profile web
-
-# combine an explicit list of materials into a single .mtlx.zip
-mtlx x metal.mtlx wood.mtlx glass.mtlx -o combined.mtlx.zip
-
-# ...or the same thing with a brace-expansion glob
-mtlx x "{metal,wood,glass}.mtlx" -o combined.mtlx.zip
-
-# combine every .mtlx in a directory
-mtlx x "materials/*.mtlx" -o combined.mtlx.zip
-
-# batch mode: resize+reformat every material's textures into its own file in out/
-mtlx x "materials/*.mtlx" -o out/ --max-image-size 2048 --image-format webp
-
-# open a 3D preview in your browser (local only, nothing is uploaded)
 mtlx view material.mtlx
 ```
+
+### Pack and unpack
+
+```sh
+mtlx x material.mtlx -o material.mtlx.zip
+mtlx x material.mtlx.zip -o out/material.mtlx
+```
+
+### Optimize textures
+
+```sh
+# Explicit format: re-encode textures as WebP and resize to 2048px.
+mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
+# Preset: resize to 2048px and preserve compatible image formats.
+mtlx x material.mtlx -o material.mtlx.zip --profile web
+```
+
+### Merge materials
+
+```sh
+mtlx x metal.mtlx wood.mtlx glass.mtlx -o combined.mtlx.zip
+mtlx x "{metal,wood,glass}.mtlx" -o combined.mtlx.zip
+```
+
+### Batch processing
+
+```sh
+mtlx x "materials/**/*.mtlx" -o out/ --max-image-size 2048 --image-format webp
+mtlx x "materials/**/*.mtlx" -o out/ --format json > batch.json
+```
+
+JSON and YAML batch output use a versioned object (previously a bare results array):
+`{ schemaVersion: 1, kind: "batch", success, dryRun, outputDir, total, succeeded, failed, results, failures }`.
+`results` contains per-input processing reports, including failed stages. `failures` lists every
+failed input and message, including errors before a processing report could be created. Counts
+cover all expanded inputs. Successful outputs remain available when another input fails; exit
+status is 1 if any failed. Inspect `failures`, fix those inputs, then rerun only those paths.
+An unmatched input pattern is an input-expansion error before processing begins.
+
+Text output retains the terse summary; `--verbose` prints per-input reports. Directory outputs
+preserve paths relative to the inputs' common directory. `--dry-run` uses the same result envelope
+and reserves planned shared texture names across inputs without writing files.
 
 ### Validation scope
 
