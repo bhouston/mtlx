@@ -1,5 +1,6 @@
-import { extractMaterialXText } from './materialx-zip';
-import { analyzeMaterialXText, type MaterialXAnalysis } from './validate';
+import { analyzeInWorker } from './analyze-in-worker';
+import { materialByteLimit, readBoundedResponse } from './material-bytes';
+import type { MaterialXAnalysis } from './validate';
 
 export interface LoadedMaterial {
   source: { kind: 'buffer'; data: ArrayBuffer; name: string };
@@ -32,17 +33,19 @@ export class MaterialLoadController {
       if ('url' in input) {
         const response = await fetch(input.url, { signal: abort.signal });
         if (!response.ok) throw new Error(`HTTP ${response.status} loading ${input.url}`);
-        data = await response.arrayBuffer();
-        resourceName = input.url;
+        data = await readBoundedResponse(response, materialByteLimit(input.name), abort.signal);
+        resourceName = response.url || input.url;
       } else {
+        const limit = materialByteLimit(input.name);
+        if (input.size > limit) throw new Error(`Material exceeds file byte limit (${limit})`);
         data = await input.arrayBuffer();
         resourceName = input.name;
       }
       if (generation !== this.generation) return;
-      const text = input.name.toLowerCase().endsWith('.mtlx.zip')
-        ? extractMaterialXText(data)
-        : new TextDecoder().decode(data);
-      const analysis = analyzeMaterialXText(input.name, text);
+      const result = await analyzeInWorker(data, input.name, abort.signal);
+      if (generation !== this.generation) return;
+      data = result.data;
+      const analysis = result.analysis;
       if (analysis.parseError) throw new Error(analysis.parseError);
       commit({
         source: { kind: 'buffer', data, name: resourceName },

@@ -4,6 +4,8 @@ import { inspectMaterialXZipArchive } from 'mtlx-core';
 // MaterialViewer.tsx), so this only pulls the raw .mtlx text back out for the validator.
 export const extractMaterialXText = (bytes: ArrayBuffer): string => {
   const archive = inspectMaterialXZipArchive(new Uint8Array(bytes));
+  const error = archive.issues.find((issue) => issue.level === 'error');
+  if (error) throw new Error(error.message);
   if (!archive.rootEntry) {
     throw new Error(archive.issues[0]?.message ?? 'Archive does not contain a .mtlx file');
   }

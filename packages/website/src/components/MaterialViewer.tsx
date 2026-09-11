@@ -1,3 +1,5 @@
+import { analyzeInWorker } from '@/lib/analyze-in-worker';
+import { materialByteLimit, readBoundedResponse } from '@/lib/material-bytes';
 import { CleanupScope } from '@/lib/cleanup-scope';
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
@@ -36,8 +38,10 @@ async function resolveSourceBytes(
   const url = `${source.folderUrl}${source.fileName}`;
   const response = await fetch(url, { signal });
   if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
-  const data = await response.arrayBuffer();
-  return { data, fileName: url };
+  const data = await readBoundedResponse(response, materialByteLimit(source.fileName), signal);
+  const result = await analyzeInWorker(data, source.fileName, signal);
+  if (result.analysis.parseError) throw new Error(result.analysis.parseError);
+  return { data: result.data, fileName: response.url || url };
 }
 
 // three.js 0.186's MaterialXLoader (via mtlx-viewer's createMtlxScene) natively understands

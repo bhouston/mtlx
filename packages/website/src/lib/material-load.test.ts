@@ -56,3 +56,11 @@ it('suppresses results and errors from cancelled file reads', async () => {
   expect(commit).not.toHaveBeenCalled();
   expect(fail).not.toHaveBeenCalled();
 });
+it('rejects oversized local files before reading their bytes', async () => {
+  const arrayBuffer = vi.fn();
+  const file = { name: 'huge.mtlx', size: 17 * 1024 * 1024, arrayBuffer } as unknown as File;
+  const fail = vi.fn();
+  await new MaterialLoadController().load(file, vi.fn(), fail);
+  expect(arrayBuffer).not.toHaveBeenCalled();
+  expect(fail).toHaveBeenCalledWith(expect.stringContaining('file byte limit'));
+});
