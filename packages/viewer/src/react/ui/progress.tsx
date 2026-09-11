@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Progress as ProgressPrimitive } from 'radix-ui';
-import { cn } from '@/lib/utils';
+import { cn } from '../utils.js';
 
 /** shadcn-style Radix progress primitive, styled for the material loading overlay. */
 function Progress({ className, value = 0, ...props }: React.ComponentProps<typeof ProgressPrimitive.Root>) {

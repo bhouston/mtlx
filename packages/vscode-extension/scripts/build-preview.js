@@ -3,8 +3,8 @@ import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 /**
- * Bundle the webview preview script with esbuild.
- * Includes three.js (WebGPURenderer, MaterialXLoader, GLTFLoader, OrbitControls).
+ * Bundle the webview preview script (React app + three.js) with esbuild. The Tailwind CSS is built
+ * separately by the build:preview script (tailwindcss CLI → media/preview.css).
  */
 import * as esbuild from 'esbuild';
 
@@ -18,7 +18,8 @@ if (!existsSync(outDir)) {
 }
 
 await esbuild.build({
-  entryPoints: [join(root, 'src', 'preview', 'preview.ts')],
+  entryPoints: [join(root, 'src', 'preview', 'preview.tsx')],
+  jsx: 'automatic',
   bundle: true,
   outfile: outFile,
   format: 'iife',

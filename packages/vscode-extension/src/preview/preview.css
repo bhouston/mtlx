@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+@import 'mtlx-viewer/styles/viewer.css';
+
+/* Map the shared theme tokens onto VS Code's editor colors so the webview follows the user's theme. */
+:root,
+.dark {
+  --background: var(--vscode-editor-background);
+  --foreground: var(--vscode-editor-foreground, var(--vscode-foreground));
+  --card: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  --card-foreground: var(--vscode-foreground);
+  --popover: var(--vscode-dropdown-background);
+  --popover-foreground: var(--vscode-dropdown-foreground);
+  --primary: var(--vscode-button-background);
+  --primary-foreground: var(--vscode-button-foreground);
+  --secondary: var(--vscode-button-secondaryBackground);
+  --secondary-foreground: var(--vscode-button-secondaryForeground);
+  --muted: var(--vscode-editorWidget-background);
+  --muted-foreground: var(--vscode-descriptionForeground);
+  --accent: var(--vscode-list-hoverBackground);
+  --accent-foreground: var(--vscode-foreground);
+  --destructive: var(--vscode-errorForeground);
+  --border: var(--vscode-panel-border, var(--vscode-widget-border, rgba(128, 128, 128, 0.35)));
+  --input: var(--vscode-input-background);
+  --ring: var(--vscode-focusBorder, #70aaff);
+  --radius: 0.375rem;
+}
+
+body {
+  font-family: var(--vscode-font-family, ui-sans-serif, system-ui, sans-serif);
+  font-size: var(--vscode-font-size, 13px);
+}
+a {
+  color: var(--vscode-textLink-foreground);
+}
+a:hover {
+  color: var(--vscode-textLink-activeForeground);
+}

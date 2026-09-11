@@ -135,6 +135,25 @@ MIT
 
 [Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com)
 
+## React UI
+
+`mtlx-viewer/react` ships the React + Tailwind CSS components shared by the website and the VS Code
+extension webview: `ViewerSettingsPanel` (collapsible geometry/IBL/tone-mapping/bloom/AO/exposure
+controls), `MaterialSelect`, `InfoPanel`, `ValidityChecks`, `LogPanel`, plus the shadcn/ui primitives
+they build on (`Button`, `Card`, `Select`, `Switch`, `Slider`, …) and the `cn` class helper. React is an
+optional peer dependency; the rest of the package works without it.
+
+Import the theme from your Tailwind v4 entry stylesheet, then override the `:root` tokens to re-theme:
+
+```css
+@import 'tailwindcss';
+@import 'mtlx-viewer/styles/viewer.css';
+```
+
+```tsx
+import { InfoPanel, ViewerSettingsPanel } from 'mtlx-viewer/react';
+```
+
 ## Rendering effects
 
 After initializing a `WebGPURenderer`, use `createViewerRendering(renderer, scene, camera)` and

@@ -1,7 +1,7 @@
 import { Dialog as Primitive } from 'radix-ui';
 import { X } from 'lucide-react';
 import type { ComponentProps } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from 'mtlx-viewer/react';
 
 export const Dialog = Primitive.Root;
 export const DialogTrigger = Primitive.Trigger;

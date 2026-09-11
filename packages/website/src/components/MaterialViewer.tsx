@@ -1,4 +1,3 @@
-import { ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { DEFAULT_VIEWER_SETTINGS, type ViewerSettings } from '@/lib/viewer-search';
 import { MaterialLoadingOverlay } from './MaterialLoadingOverlay';
 import type { MaterialLoadProgress } from '@/lib/material-load';
@@ -7,8 +6,8 @@ import { materialByteLimit, readBoundedResponse } from '@/lib/material-bytes';
 import { CleanupScope } from 'mtlx-viewer/lifecycle';
 import { useEffect, useRef, useState } from 'react';
 import type * as ThreeNS from 'three/webgpu';
-import { TONE_MAPPING_OPTIONS, type RenderingSettings } from 'mtlx-viewer/settings';
-import type { GeometryKind, MtlxScene } from 'mtlx-viewer';
+import { MaterialSelect, ViewerSettingsPanel } from 'mtlx-viewer/react';
+import type { MtlxScene } from 'mtlx-viewer';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
 import defaultEnvironmentUrl from 'mtlx-viewer/assets/default-environment.hdr?url';
 import shaderBallUrl from 'mtlx-viewer/assets/shaderball.glb?url';
@@ -30,14 +29,6 @@ export interface MaterialViewerProps {
   onLog?: (message: string) => void;
   onStatus?: (report: PreviewReport) => void;
 }
-
-type EnvironmentName = 'bridge' | 'studio';
-
-const GEOMETRY_OPTIONS: { value: GeometryKind; label: string }[] = [
-  { value: 'totem', label: 'Totem' },
-  { value: 'sphere', label: 'Sphere' },
-  { value: 'plane', label: 'Plane' },
-];
 
 async function resolveSourceBytes(
   source: MaterialSource,
@@ -75,7 +66,7 @@ export function MaterialViewer({
     value: 80,
     label: 'Preparing preview…',
   });
-  const [localSettings, setLocalSettings] = useState(DEFAULT_VIEWER_SETTINGS);
+  const [localSettings, setLocalSettings] = useState<ViewerSettings>(DEFAULT_VIEWER_SETTINGS);
   const currentSettings = settings ?? localSettings;
   const updateSettings = (patch: Partial<ViewerSettings>) => {
     if (onSettingsChange) onSettingsChange(patch);
@@ -91,16 +82,9 @@ export function MaterialViewer({
   } = currentSettings;
   const { bloom, ao, toneMapping } = currentSettings;
   const renderingSettings = { bloom, ao, toneMapping };
-  const setRenderingSettings = (update: (current: RenderingSettings) => RenderingSettings) =>
-    updateSettings(update(renderingSettings));
-  const setExposure = (value: number) => updateSettings({ exposure: value });
-  const setEnvironmentIntensity = (intensity: number) => updateSettings({ intensity });
-  const setGeometry = (value: ViewerSettings['geometry']) => updateSettings({ geometry: value });
-  const setRotating = (rotate: boolean) => updateSettings({ rotate });
-  const setEnvironmentName = (ibl: EnvironmentName) => updateSettings({ ibl });
   const environmentKindRef = useRef(environmentKind);
   environmentKindRef.current = environmentKind;
-  const switchEnvironmentRef = useRef<((kind: EnvironmentName) => Promise<void>) | null>(null);
+  const switchEnvironmentRef = useRef<((kind: string) => Promise<void>) | null>(null);
   const [environmentMessage, setEnvironmentMessage] = useState('');
   const settingsRef = useRef({ exposure, environmentIntensity, renderingSettings, geometry, materialName });
   settingsRef.current = { exposure, environmentIntensity, renderingSettings, geometry, materialName };
@@ -224,7 +208,7 @@ export function MaterialViewer({
         },
       );
       own(() => environments.dispose());
-      const switchEnvironment = async (kind: EnvironmentName) => {
+      const switchEnvironment = async (kind: string) => {
         setEnvironmentMessage('Loading environment…');
         try {
           if (await environments.set(kind)) {
@@ -359,146 +343,26 @@ export function MaterialViewer({
       data-preview-state={previewState}
       className="viewer-frame relative flex w-full flex-col sm:aspect-square overflow-hidden rounded-xl border border-border bg-zinc-950 shadow-sm"
     >
-      {materialNames.length > 0 ? (
-        <div className="absolute top-2 right-2 left-2 z-10 flex flex-wrap gap-2 [&>button]:rounded [&>button]:border [&>button]:border-white/20 [&>button]:bg-black/70 [&>button]:px-2 [&>button]:py-1 [&>button]:text-xs [&>button]:text-white">
-          <select
-            className="rounded border border-white/20 bg-black/60 px-2 py-1 text-xs text-white"
-            aria-label="Material"
-            style={{ minWidth: 0, maxWidth: '100%' }}
-            value={activeMaterial}
-            onChange={(event) => {
-              setActiveMaterial(event.target.value);
-              updateSettings({ materialName: event.target.value });
-              mtlxSceneRef.current?.setMaterial(event.target.value);
-            }}
-          >
-            {materialNames.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </div>
-      ) : null}
+      <MaterialSelect
+        names={materialNames}
+        value={activeMaterial}
+        onChange={(name) => {
+          setActiveMaterial(name);
+          updateSettings({ materialName: name });
+          mtlxSceneRef.current?.setMaterial(name);
+        }}
+      />
       <output className="sr-only">Preview: {previewState}</output>
       <div
         ref={containerRef}
         className="relative aspect-square w-full shrink-0 overflow-hidden sm:h-full [&>canvas]:absolute [&>canvas]:inset-0"
       />
       {materialNames.length ? (
-        <details className="group/settings relative m-3 rounded-xl border border-white/15 bg-zinc-950/85 text-xs text-white shadow-lg backdrop-blur-xl sm:absolute sm:right-3 sm:bottom-3 sm:left-3 sm:m-0">
-          <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl px-4 py-3 font-medium focus-visible:outline-2 focus-visible:outline-ring [&::-webkit-details-marker]:hidden">
-            <SlidersHorizontal className="size-4 text-white/70" />
-            Viewer settings
-            <ChevronDown className="ml-auto size-4 text-white/70 transition-transform group-open/settings:rotate-180" />
-          </summary>
-          <div className="viewer-controls grid grid-cols-2 gap-x-4 gap-y-3 border-t border-white/10 p-4 sm:grid-cols-3">
-            <label className="flex min-w-0 items-center gap-2">
-              Geometry
-              <select
-                aria-label="Geometry"
-                className="min-w-0 rounded border border-white/20 bg-black/70 px-1 py-1"
-                value={geometry}
-                onChange={(event) => {
-                  const kind = event.target.value as ViewerSettings['geometry'];
-                  setGeometry(kind);
-                }}
-              >
-                {GEOMETRY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={rotating}
-                aria-label="Rotate"
-                onChange={(event) => {
-                  const next = event.target.checked;
-                  setRotating(next);
-                }}
-              />
-              Rotate
-            </label>
-            <label className="flex min-w-0 items-center gap-2">
-              IBL
-              <select
-                aria-label="IBL environment"
-                value={environmentKind}
-                className="min-w-0 rounded border border-white/20 bg-black/70 px-1 py-1"
-                onChange={(event) => {
-                  const kind = event.target.value as EnvironmentName;
-                  setEnvironmentName(kind);
-                }}
-              >
-                <option value="studio">studio</option>
-                <option value="bridge">bridge</option>
-              </select>
-            </label>
-            <label className="flex items-center gap-2">
-              Tone mapping
-              <select
-                aria-label="Tone mapping"
-                value={renderingSettings.toneMapping}
-                className="rounded border border-white/20 bg-black/70 px-1 py-1"
-                onChange={(event) =>
-                  setRenderingSettings((current) => ({
-                    ...current,
-                    toneMapping: event.target.value as RenderingSettings['toneMapping'],
-                  }))
-                }
-              >
-                {TONE_MAPPING_OPTIONS.map(({ value, label }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            {(['bloom', 'ao'] as const).map((effect) => (
-              <label key={effect} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={renderingSettings[effect]}
-                  aria-label={effect === 'ao' ? 'Ambient occlusion' : 'Bloom'}
-                  onChange={(event) =>
-                    setRenderingSettings((current) => ({ ...current, [effect]: event.target.checked }))
-                  }
-                />
-                {effect === 'ao' ? 'AO' : 'Bloom'}
-              </label>
-            ))}
-            <label className="flex items-center gap-2">
-              Exposure ({exposure.toFixed(1)} EV)
-              <input
-                aria-label="Exposure"
-                type="range"
-                min="-2"
-                max="2"
-                step="0.1"
-                value={exposure}
-                onChange={(event) => setExposure(Number(event.target.value))}
-                className="w-24"
-              />
-            </label>
-            <label className="flex items-center gap-2">
-              Intensity
-              <input
-                aria-label="Environment intensity"
-                type="range"
-                min="0"
-                max="2"
-                step="0.1"
-                value={environmentIntensity}
-                onChange={(event) => setEnvironmentIntensity(Number(event.target.value))}
-                className="w-24"
-              />
-            </label>
-          </div>
-        </details>
+        <ViewerSettingsPanel
+          className="m-3 sm:absolute sm:right-3 sm:bottom-3 sm:left-3 sm:m-0"
+          settings={currentSettings}
+          onChange={updateSettings}
+        />
       ) : null}
       <output
         className={

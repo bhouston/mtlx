@@ -17,6 +17,7 @@ test.each([false, true])(
         { cspSource: "'self'" } as Parameters<typeof getPreviewHtml>[0],
         '/__extension-test__/preview.js' as unknown as Parameters<typeof getPreviewHtml>[1],
         '/__extension-test__/default-environment.hdr' as unknown as Parameters<typeof getPreviewHtml>[1],
+        '/__extension-test__/preview.css' as unknown as Parameters<typeof getPreviewHtml>[1],
       );
       await page.route('**/__extension-test__/index.html', (route) =>
         route.fulfill({ body: html, contentType: 'text/html' }),
@@ -25,6 +26,12 @@ test.each([false, true])(
         route.fulfill({
           path: resolve(import.meta.dirname, '../../vscode-extension/media/preview.js'),
           contentType: 'text/javascript',
+        }),
+      );
+      await page.route('**/__extension-test__/preview.css', (route) =>
+        route.fulfill({
+          path: resolve(import.meta.dirname, '../../vscode-extension/media/preview.css'),
+          contentType: 'text/css',
         }),
       );
       await page.route('**/__extension-test__/default-environment.hdr', (route) =>

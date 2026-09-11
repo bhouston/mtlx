@@ -198,6 +198,7 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       webviewPanel.webview.asWebviewUri(
         vscode.Uri.joinPath(this._context.extensionUri, 'media', 'default-environment.hdr'),
       ),
+      webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, 'media', 'preview.css')),
     );
   }
 }

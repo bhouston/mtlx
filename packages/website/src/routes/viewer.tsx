@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { MaterialViewer } from '@/components/MaterialViewerLazy';
-import { InfoPanel } from '@/components/InfoPanel';
-import { LogPanel } from '@/components/LogPanel';
+import { InfoPanel } from 'mtlx-viewer/react';
+import { LogPanel } from 'mtlx-viewer/react';
 import { ViewerToolbar } from '@/components/viewer/ViewerToolbar';
 import { MaterialDropZone } from '@/components/viewer/MaterialDropZone';
 import { useMaterialLoad } from '@/hooks/use-material-load';

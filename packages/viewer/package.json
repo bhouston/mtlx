@@ -1,7 +1,7 @@
 {
   "name": "mtlx-viewer",
   "version": "0.1.0",
-  "description": "Shared three.js IBL environment assets and loader for the MaterialX website and VS Code viewers.",
+  "description": "Shared three.js MaterialX preview scenes, IBL environment assets, and React/Tailwind viewer UI for the MaterialX website and VS Code viewers.",
   "homepage": "https://mtlx.ben3d.ca",
   "license": "MIT",
   "repository": {
@@ -12,7 +12,8 @@
   "files": [
     "dist",
     "!dist/**/*.tsbuildinfo",
-    "assets"
+    "assets",
+    "styles"
   ],
   "type": "module",
   "sideEffects": false,
@@ -39,19 +40,45 @@
     "./lifecycle": {
       "types": "./dist/lifecycle.d.ts",
       "default": "./dist/lifecycle.js"
-    }
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "default": "./dist/react/index.js"
+    },
+    "./styles/*": "./styles/*"
   },
   "scripts": {
     "build": "tsc -p .",
     "bake:studio-environment": "node scripts/bake-studio-environment.mjs"
   },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.544.0",
+    "radix-ui": "^1.4.2",
+    "tailwind-merge": "^3.0.2"
+  },
   "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
     "@types/three": "^0.180.0",
     "esbuild": "^0.27.3",
     "playwright": "^1.63.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "three": "^0.186.0"
   },
   "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "three": "^0.186.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   }
 }

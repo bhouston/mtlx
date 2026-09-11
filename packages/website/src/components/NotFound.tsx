@@ -1,7 +1,7 @@
 import { Link, useLocation } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { useGoogleAnalytics } from 'tanstack-router-ga4';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from 'mtlx-viewer/react';
 
 export function NotFound() {
   const location = useLocation();

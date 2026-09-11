@@ -6,7 +6,8 @@
     "incremental": false,
     "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx"
   },
   "include": ["src/preview/**/*"],
   "exclude": ["node_modules", "dist"]

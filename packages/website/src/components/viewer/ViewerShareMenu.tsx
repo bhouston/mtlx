@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Share2, Copy, Link2, Code } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from 'mtlx-viewer/react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,

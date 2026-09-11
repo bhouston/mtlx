@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, it } from 'vitest';
-import { InfoPanel, type InfoPanelProps } from '../components/InfoPanel';
+import { InfoPanel, type InfoPanelProps } from 'mtlx-viewer/react';
 
 function render(props: Partial<InfoPanelProps> = {}) {
   const html = renderToStaticMarkup(
@@ -57,10 +57,8 @@ it('distinguishes warnings, unchecked dependencies, pending rendering and previe
 it('summarizes internal node types and usage counts without material nodes or instance names', () => {
   const document = render({
     summary: {
-      path: 'test.mtlx',
       nodeGraphCount: 1,
       topLevelNodeCount: 3,
-      nodeCategories: [],
       referencedTextures: [],
       materials: [
         { name: 'surface', category: 'surfacematerial' },

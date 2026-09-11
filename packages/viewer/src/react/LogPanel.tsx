@@ -1,12 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ComponentProps } from 'react';
+import { cn } from './utils.js';
 
-export interface LogPanelProps {
+export interface LogPanelProps extends ComponentProps<'div'> {
   lines: string[];
 }
 
-// Mirrors the VS Code extension's #log bar (src/mtlxPreviewProvider.ts) — every loading step and
-// error surfaces here, not just in the browser devtools console.
-export function LogPanel({ lines }: LogPanelProps) {
+// Every loading step and error surfaces here, not just in the devtools console.
+export function LogPanel({ lines, className, ...props }: LogPanelProps) {
   const logRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -18,7 +18,11 @@ export function LogPanel({ lines }: LogPanelProps) {
   return (
     <div
       ref={logRef}
-      className="h-28 overflow-auto rounded-lg border border-border bg-card p-2 font-mono text-xs text-muted-foreground"
+      className={cn(
+        'h-28 overflow-auto rounded-lg border border-border bg-card p-2 font-mono text-xs text-muted-foreground',
+        className,
+      )}
+      {...props}
     >
       {lines.length === 0 ? (
         <p className="text-muted-foreground/60">No messages yet.</p>

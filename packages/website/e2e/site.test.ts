@@ -99,8 +99,8 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await page.getByRole('combobox', { name: 'Geometry', exact: true }).selectOption('sphere');
   expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('bridge');
   expect(await page.getByRole('combobox', { name: 'IBL environment' }).locator('option').allTextContents()).toEqual([
-    'studio',
-    'bridge',
+    'Studio',
+    'San Giuseppe Bridge',
   ]);
   const canvas = await page.locator('canvas').elementHandle();
   await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('bridge');

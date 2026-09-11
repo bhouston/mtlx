@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-import { cn } from '@/lib/utils';
+import { cn } from '../utils.js';
 
 // A pared-down port of shadcn's Field primitives - just the pieces the
 // trainer form actually uses (Field/FieldGroup/FieldLabel/FieldDescription/

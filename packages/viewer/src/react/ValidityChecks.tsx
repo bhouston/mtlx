@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { computeChecks, type CheckState, type DiagnosticInput } from 'mtlx-viewer/diagnostics';
+import { computeChecks, type CheckState, type DiagnosticInput } from '../diagnostics.js';
 
 export type ValidityChecksProps = DiagnosticInput;
 const STATES: Record<CheckState, { symbol: string; label: string; color: string }> = {

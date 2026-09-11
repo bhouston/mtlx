@@ -71,6 +71,12 @@ function SiteLayout() {
             >
               Extension
             </Link>
+            <a href="https://www.npmjs.com/package/mtlx-cli" className="text-primary underline underline-offset-4">
+              CLI
+            </a>
+            <a href="https://www.npmjs.com/package/mtlx-core" className="text-primary underline underline-offset-4">
+              Library
+            </a>
           </nav>
         </div>
       </header>

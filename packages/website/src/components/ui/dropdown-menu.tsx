@@ -1,6 +1,6 @@
 import { DropdownMenu as Primitive } from 'radix-ui';
 import type { ComponentProps } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from 'mtlx-viewer/react';
 
 export const DropdownMenu = Primitive.Root;
 export const DropdownMenuTrigger = Primitive.Trigger;

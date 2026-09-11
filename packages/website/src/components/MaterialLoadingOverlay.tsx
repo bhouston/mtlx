@@ -1,4 +1,4 @@
-import { Progress } from '@/components/ui/progress';
+import { Progress } from 'mtlx-viewer/react';
 import type { MaterialLoadProgress } from '@/lib/material-load';
 
 export function MaterialLoadingOverlay({ progress }: { progress: MaterialLoadProgress }) {

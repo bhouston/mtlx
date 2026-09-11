@@ -1,13 +1,23 @@
-import { formatFileSize, summarizeInternalNodes } from 'mtlx-viewer/diagnostics';
-import { ValidityChecks } from './ValidityChecks';
-import type { MaterialXSummary, MaterialXValidationIssue } from 'mtlx-core';
-import type { PreviewReport } from './MaterialViewer';
+import { formatFileSize, summarizeInternalNodes } from '../diagnostics.js';
+import { ValidityChecks } from './ValidityChecks.js';
+import type { PreviewReport, ValidationIssue } from '../diagnostics.js';
+
+/** Structural subset of mtlx-core's MaterialXSummary, so this package needs no mtlx-core dependency. */
+export interface MaterialSummary {
+  version?: string;
+  colorspace?: string;
+  nodeGraphCount: number;
+  topLevelNodeCount: number;
+  materials: { name?: string; category: string }[];
+  nodes: { name?: string; category: string }[];
+  referencedTextures: string[];
+}
 
 export interface InfoPanelProps {
   fileName?: string;
   fileSize?: number;
-  summary?: MaterialXSummary;
-  issues: MaterialXValidationIssue[];
+  summary?: MaterialSummary;
+  issues: ValidationIssue[];
   parseError?: string;
   viewerError?: string | null;
   preview?: PreviewReport;

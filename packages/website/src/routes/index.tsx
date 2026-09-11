@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { GithubIcon } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'mtlx-viewer/react';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -77,7 +77,7 @@ function PackageLinks({ github, npm }: { github: string; npm?: string }) {
 
 function HomePage() {
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-10 p-6 py-10">
+    <main className="mx-auto flex max-w-5xl flex-col gap-10 p-4 py-8 sm:p-6 sm:py-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-semibold">mtlx</h1>
         <p className="max-w-2xl text-muted-foreground">
@@ -91,7 +91,7 @@ function HomePage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card className="flex flex-col">
+        <Card className="flex min-w-0 flex-col">
           <CardHeader>
             <CardTitle>
               <Link to="/viewer" className="text-primary underline underline-offset-4">
@@ -113,7 +113,7 @@ function HomePage() {
           </CardContent>
         </Card>
 
-        <Card className="flex flex-col">
+        <Card className="flex min-w-0 flex-col">
           <CardHeader>
             <CardTitle>
               <Link to="/extension" className="text-primary underline underline-offset-4">
@@ -132,7 +132,7 @@ function HomePage() {
           </CardContent>
         </Card>
 
-        <Card className="flex flex-col sm:col-span-2">
+        <Card className="flex min-w-0 flex-col sm:col-span-2">
           <CardHeader>
             <CardTitle>
               <a href="https://www.npmjs.com/package/mtlx-cli" className="text-primary underline underline-offset-4">
@@ -152,7 +152,7 @@ function HomePage() {
           </CardContent>
         </Card>
 
-        <Card className="flex flex-col sm:col-span-2">
+        <Card className="flex min-w-0 flex-col sm:col-span-2">
           <CardHeader>
             <CardTitle>
               <a href="https://www.npmjs.com/package/mtlx-core" className="text-primary underline underline-offset-4">

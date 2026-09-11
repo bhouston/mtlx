@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Upload } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from 'mtlx-viewer/react';
 import type { ViewerSearch } from '@/lib/viewer-search';
 import { LoadMaterialUrlDialog } from './LoadMaterialUrlDialog';
 import { SampleMaterialsMenu } from './SampleMaterialsMenu';
