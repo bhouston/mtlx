@@ -165,15 +165,13 @@ function Graph({
     setQuickAdd({ at, position: screenToFlowPosition(client), from });
   };
   const nodeCount = projection.nodes.length;
-  // React Flow fits on init; a container sized later (hidden tabs, mobile) refits once it becomes visible.
+  // React Flow fits on init; any later container resize (hidden tabs, mobile, editor layout switch) refits.
   useEffect(() => {
     const element = canvas.current;
     if (!element || typeof ResizeObserver === 'undefined') return;
-    let sized = false;
     const observer = new ResizeObserver(([entry]) => {
-      const visible = !!entry && entry.contentRect.width > 0 && entry.contentRect.height > 0;
-      if (visible && !sized) requestAnimationFrame(() => void fitView({ padding: 0.15 }));
-      sized = visible;
+      if (entry && entry.contentRect.width > 0 && entry.contentRect.height > 0)
+        requestAnimationFrame(() => void fitView({ padding: 0.15 }));
     });
     observer.observe(element);
     return () => observer.disconnect();
