@@ -145,7 +145,7 @@ describe('parameter editing', () => {
     expect(container.querySelector('output')).toBeNull();
     act(() => render('out'));
     expect(container.querySelector('input')).toBeNull();
-    expect(container.querySelector('.mtlx-field')).toBeNull();
+    expect((container.querySelector('[aria-label="Port type"]') as HTMLSelectElement).value).toBe('float');
   });
 });
 

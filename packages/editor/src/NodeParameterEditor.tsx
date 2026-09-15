@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { createElement, useState } from 'react';
 import { NodeNameField } from './NodeNameField.js';
 import { ConnectedParameterEditor, GeometryParameterEditor, getParameterEditor } from './parameter-editors.js';
 import { nodeType, type MaterialXNodeSpec, type GraphNode, type GraphEdge } from './model.js';
 import type { EditorGraph } from 'mtlx-core/session';
+import { socketTypeNames } from './socket-colors.js';
 
 export interface NodeParameterEditorProps {
   graph: EditorGraph;
@@ -29,12 +30,45 @@ export function NodeParameterEditor({ graph, node, projection, editable, commit,
     );
     return varying.length ? `${type} (${varying.map((p) => `${p.name}: ${p.type}`).join(', ')})` : type;
   };
-  if (node.element.name === 'output')
+  // Interface ports of a node graph: the type is the port's contract, an input also carries its default.
+  if (node.element.name === 'input' || node.element.name === 'output') {
+    const type = node.element.attributes.type ?? 'float';
+    const value = node.element.attributes.value ?? '';
     return (
       <aside className="mtlx-inspector" aria-label="Node parameters">
-        <p>Select a node to edit its parameters.</p>
+        <h2>{editable && onRename ? <NodeNameField key={node.id} name={node.id} onRename={onRename} /> : node.id}</h2>
+        <p>{node.element.name === 'input' ? 'Graph input' : 'Graph output'}</p>
+        <div className="mtlx-field">
+          <label>
+            Type
+            <select
+              aria-label="Port type"
+              disabled={!editable}
+              value={type}
+              onChange={(event) => commit(() => graph.setInterfacePort(node.id, { type: event.target.value }))}
+            >
+              {[...new Set([type, ...socketTypeNames])].map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        {node.element.name === 'input' && (
+          <div className="mtlx-field" key={type}>
+            {createElement(getParameterEditor({ name: 'value', type }), {
+              parameter: { name: 'value', type },
+              value,
+              ariaLabel: `${node.id} default value`,
+              disabled: !editable,
+              onChange: (next) => commit(() => graph.setInterfacePort(node.id, { value: next })),
+            })}
+          </div>
+        )}
       </aside>
     );
+  }
   return (
     <aside className="mtlx-inspector" aria-label="Node parameters">
       <h2>

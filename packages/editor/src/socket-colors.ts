@@ -27,6 +27,8 @@ const colors: Record<string, string> = {
   material: '#4d9e99',
 };
 
+/** Types offered when retyping an interface port. */
+export const socketTypeNames: readonly string[] = Object.keys(colors);
 export function socketColor(type?: string): string {
   return colors[type?.replace(/array$/, '') ?? ''] ?? '#a1a1a1';
 }

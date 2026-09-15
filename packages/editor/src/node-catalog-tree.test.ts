@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 import { getNodeCatalog, getNodeFamilies } from './model.js';
 import { buildNodeCatalogTree, nodeCatalogLeaves } from './node-catalog-tree.js';
+import { structuralSpecs } from 'mtlx-core/session';
 
 test('collapses type variants to one family in catalog order', () => {
   const catalog = getNodeCatalog();
@@ -46,4 +47,15 @@ test('lists tiledimage once and excludes core category-only placeholders', () =>
   expect(leaves.filter((entry) => entry.label === 'tiledimage')).toHaveLength(1);
   expect(leaves.every((entry) => entry.kind === 'node' && !!entry.node.nodeDefName)).toBe(true);
   expect(getNodeFamilies(getNodeCatalog()).find((f) => f.label === 'tiledimage')?.variants).toHaveLength(6);
+});
+
+test('structural graph entries form their own group', () => {
+  const tree = buildNodeCatalogTree([...structuralSpecs]);
+  expect(tree).toMatchObject([
+    {
+      kind: 'group',
+      label: 'Graph',
+      children: [{ label: 'nodegraph' }, { label: 'input' }, { label: 'output' }],
+    },
+  ]);
 });

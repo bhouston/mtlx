@@ -190,12 +190,41 @@ function inputElement(
   }
   return input;
 }
+/** Compound-graph structure the editor adds without a nodedef: a node graph and its interface ports. Ports are untyped until placed. */
+export const structuralSpecs: readonly MaterialXNodeSpec[] = Object.freeze([
+  { category: 'nodegraph', nodeDefName: 'ND_nodegraph', nodeGroup: 'graph', inputs: [], outputs: [], parameters: [] },
+  {
+    category: 'input',
+    nodeDefName: 'ND_input',
+    nodeGroup: 'graph',
+    inputs: [],
+    outputs: [{ name: 'out' }],
+    parameters: [],
+  },
+  {
+    category: 'output',
+    nodeDefName: 'ND_output',
+    nodeGroup: 'graph',
+    inputs: [{ name: 'in' }],
+    outputs: [],
+    parameters: [],
+  },
+]);
+export const isStructural = (spec: MaterialXNodeSpec) =>
+  structuralSpecs.some((s) => s.nodeDefName === spec.nodeDefName);
 export function addNode(
   document: MaterialXDocument,
   spec: MaterialXNodeSpec,
   position: Point | undefined = undefined,
   scope = '',
 ): MaterialXDocument {
+  const structural = isStructural(spec);
+  if (structural && (spec.category === 'nodegraph') === !!scope)
+    throw new Error(
+      spec.category === 'nodegraph'
+        ? 'Node graphs cannot be nested inside another node graph.'
+        : 'Interface inputs and outputs belong inside a node graph.',
+    );
   return edit(document, (copy) => {
     const siblings = children(copy, scope);
     let id = spec.category.replace(/[^a-zA-Z0-9_]/g, '_');
@@ -206,12 +235,29 @@ export function addNode(
       name: spec.category,
       attributes: {
         name: id,
-        type: nodeType(spec) ?? 'float',
-        ...(spec.nodeDefName ? { nodedef: spec.nodeDefName } : {}),
+        ...(spec.category === 'nodegraph' ? {} : { type: nodeType(spec) ?? 'float' }),
+        ...(spec.nodeDefName && !structural ? { nodedef: spec.nodeDefName } : {}),
         ...(position ? { xpos: String(position.x), ypos: String(position.y) } : {}),
       },
       children: [],
     });
+  });
+}
+/** Retype an interface input or output of a node graph, or set the input's default value. A new type drops the old value. */
+export function setInterfacePort(
+  document: MaterialXDocument,
+  id: string,
+  changes: { type?: string; value?: string },
+  scope = '',
+): MaterialXDocument {
+  return edit(document, (copy) => {
+    const element = elementAt(copy, scope, id);
+    if (!['input', 'output'].includes(element.name)) throw new Error(`${id} is not an interface input or output.`);
+    if (changes.type !== undefined && changes.type !== element.attributes.type) {
+      element.attributes.type = changes.type;
+      delete element.attributes.value;
+    }
+    if (changes.value !== undefined && element.name === 'input') element.attributes.value = changes.value;
   });
 }
 /** Copy a node's values and incoming connections, leaving downstream connections unchanged. */

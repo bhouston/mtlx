@@ -330,3 +330,45 @@ describe('shared editing validation and queries', () => {
     expect(session.getDocument()).toBe(before);
   });
 });
+
+describe('compound node graphs', () => {
+  it('builds a node graph with interface ports and wires them through interfacename and output', () => {
+    const session = empty();
+    const root = session.graph();
+    expect(root.addNode({ definition: 'ND_nodegraph' })).toBe('nodegraph');
+    const inner = session.graph('nodegraph');
+    const input = inner.addNode({ definition: 'ND_input' });
+    const output = inner.addNode({ definition: 'ND_output' });
+    const tint = inner.addNode({ definition: 'ND_constant_color3' });
+    inner.setInterfacePort(input, { type: 'color3', value: '1, 0, 0' });
+    inner.setInterfacePort(output, { type: 'color3' });
+    inner.connect({ node: input, output: 'out' }, { node: tint, input: 'value' });
+    inner.connect({ node: tint, output: 'out' }, { node: output, input: 'in' });
+    const xml = serializeMaterialX(session.getDocument());
+    expect(xml).toContain('<nodegraph name="nodegraph">');
+    expect(xml).not.toContain('nodedef="ND_nodegraph"');
+    expect(xml).toContain('<input name="input" type="color3" value="1, 0, 0"');
+    expect(xml).toContain('<input name="value" interfacename="input"');
+    expect(xml).toContain('<output name="output" type="color3" nodename="constant"');
+    // The graph node in the parent scope exposes the interface as its ports.
+    const compound = root.getNode('nodegraph');
+    expect(compound.inputs.map((p) => p.name)).toEqual(['input']);
+    expect(compound.outputs.map((p) => p.name)).toEqual(['output']);
+    const surface = root.addNode({ definition: 'ND_standard_surface_surfaceshader' });
+    root.connect({ node: 'nodegraph', output: 'output' }, { node: surface, input: 'base_color' });
+    expect(serializeMaterialX(session.getDocument())).toContain('nodegraph="nodegraph" output="output"');
+  });
+  it('retyping a port drops its stale default and keeps structure in the right scope', () => {
+    const session = empty();
+    session.graph().addNode({ definition: 'ND_nodegraph' });
+    const inner = session.graph('nodegraph');
+    const input = inner.addNode({ definition: 'ND_input' });
+    inner.setInterfacePort(input, { value: '0.5' });
+    inner.setInterfacePort(input, { type: 'vector2' });
+    expect(serializeMaterialX(session.getDocument())).toContain('<input name="input" type="vector2"/>');
+    expect(() => inner.setInterfacePort('missing', { type: 'float' })).toThrow(EditorError);
+    expect(() => session.graph().addNode({ definition: 'ND_input' })).toThrow(/inside a node graph/);
+    expect(() => inner.addNode({ definition: 'ND_nodegraph' })).toThrow(/nested/);
+    expect(() => session.graph().setInterfacePort('nodegraph', { type: 'float' })).toThrow(/not an interface/);
+  });
+});

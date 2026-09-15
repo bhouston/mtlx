@@ -9,6 +9,8 @@ import {
   getNodeCatalog,
   graphScopes,
   materializeDocument,
+  setInterfacePort,
+  structuralSpecs,
   moveNodes,
   readGraph,
   removeNodes,
@@ -402,7 +404,9 @@ export class EditorSession {
       getConnection: readConnection,
       addNode: ({ definition }: { definition: string }): string => {
         this.assertScope(scope);
-        const spec = this.catalog().find((candidate) => candidate.nodeDefName === definition);
+        const spec =
+          this.catalog().find((candidate) => candidate.nodeDefName === definition) ??
+          structuralSpecs.find((candidate) => candidate.nodeDefName === definition);
         if (!spec)
           throw new EditorError({
             code: 'UNKNOWN_DEFINITION',
@@ -446,6 +450,11 @@ export class EditorSession {
             message: error instanceof Error ? error.message : String(error),
           });
         }
+      },
+      /** Retype or default an interface input/output node inside a node graph. */
+      setInterfacePort: (id: string, changes: { type?: string; value?: string }) => {
+        this.node(scope, id);
+        this.apply('Edit interface port', () => setInterfacePort(this.current, id, changes, scope));
       },
       setInputValue: (
         id: string,
@@ -544,6 +553,9 @@ export {
   renameNode,
   resetInput,
   setInputValue,
+  setInterfacePort,
+  structuralSpecs,
+  isStructural,
   type GraphConnection,
   type GraphNode,
   type GraphEdge,

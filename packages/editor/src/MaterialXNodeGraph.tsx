@@ -1,4 +1,4 @@
-import { createEditorSession, type EditorSession } from 'mtlx-core/session';
+import { createEditorSession, isStructural, structuralSpecs, type EditorSession } from 'mtlx-core/session';
 import { useEditorSession } from './useEditorSession.js';
 import { NodeParameterEditor } from './NodeParameterEditor.js';
 import { ParameterResourcesContext, type ParameterResources } from './parameter-editors.js';
@@ -228,7 +228,7 @@ const accepts = (from?: LooseEnd) => (spec: MaterialXNodeSpec) => {
   if (!from?.type) return true;
   return from.side === 'output'
     ? [...spec.inputs, ...spec.parameters].some((p) => !p.type || p.type === from.type)
-    : spec.outputs.some((p) => p.type === from.type);
+    : spec.outputs.some((p) => !p.type || p.type === from.type);
 };
 interface GraphViewProps {
   /** Material file name or path, shown at the root of the breadcrumbs. */
@@ -283,6 +283,11 @@ function Graph({
   onNavigate,
 }: SessionGraphProps & { path: string[]; onNavigate: (path: string[]) => void }) {
   const catalog = useMemo(() => suppliedCatalog ?? getNodeCatalog(document), [suppliedCatalog, document]);
+  // Menus offer a node graph at the root and interface ports inside one, alongside the definitions.
+  const menuCatalog = useMemo(
+    () => [...catalog, ...structuralSpecs.filter((spec) => (spec.category === 'nodegraph') === !scope)],
+    [catalog, scope],
+  );
   const projection = useMemo(() => projectGraph(document, scope, catalog), [document, scope, catalog]);
   const portType = useMemo(() => socketTypes(projection.nodes, projection.edges), [projection]);
   const diagnostics = useMemo(
@@ -415,6 +420,8 @@ function Graph({
         const id = operations.addNode({ definition: spec.nodeDefName });
         session.layout.moveNodes({ [id]: pending.position }, scope);
         const from = pending.from;
+        // A new interface port takes the type of the wire that created it.
+        if (from?.type && isStructural(spec)) operations.setInterfacePort(id, { type: from.type });
         if (from?.side === 'output') {
           const inputs = operations.getInputs(id);
           const port = inputs.find((p) => p.type === from.type) ?? inputs[0];
@@ -472,7 +479,7 @@ function Graph({
     <section className={`mtlx-editor mtlx-graph ${className}`} aria-label="MaterialX node graph">
       <div className="mtlx-graph-main">
         <GraphContextMenu
-          catalog={catalog}
+          catalog={menuCatalog}
           editable={editable}
           nodeId={context.nodeId}
           onAdd={(spec) => add(spec, context.position)}
@@ -510,7 +517,7 @@ function Graph({
               if (!id || !editable) return;
               e.preventDefault();
               e.stopPropagation();
-              const spec = catalog.find((n) => n.nodeDefName === id);
+              const spec = menuCatalog.find((n) => n.nodeDefName === id);
               if (spec && isNodeDefinition(spec)) add(spec, screenToFlowPosition({ x: e.clientX, y: e.clientY }));
             }}
           >
@@ -644,7 +651,7 @@ function Graph({
             {children && <div className="mtlx-canvas-overlay nodrag nopan nowheel">{children}</div>}
             {quickAdd && (
               <QuickAddMenu
-                catalog={catalog}
+                catalog={menuCatalog}
                 at={quickAdd.at}
                 accept={accepts(quickAdd.from)}
                 placeholder={quickAdd.from ? `Connect ${quickAdd.from.node}.${quickAdd.from.handle} to…` : undefined}
