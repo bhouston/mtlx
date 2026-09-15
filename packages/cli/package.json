@@ -28,6 +28,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@sentry/node": "^10.74.0",
     "mtlx-core": "workspace:*",
     "mtlx-viewer": "workspace:*",
@@ -35,7 +36,8 @@
     "type-fest": "^5.1.0",
     "yaml": "^2.7.0",
     "yargs": "^18.0.0",
-    "yargs-file-commands": "^1.2.2"
+    "yargs-file-commands": "^1.2.2",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^22.20.0",

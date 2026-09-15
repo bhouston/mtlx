@@ -123,6 +123,19 @@ This is the capture step for AI coding agents such as Claude Code or Codex: the 
 `.mtlx` file (directly or with a script against `mtlx-core/session`), runs `mtlx check` for
 validation, renders it, looks at the image, and repeats until the material looks right.
 
+### MCP server for AI agents
+
+```sh
+claude mcp add mtlx -- mtlx mcp     # Claude Code
+codex mcp add mtlx -- mtlx mcp      # Codex CLI
+```
+
+`mtlx mcp` serves the same capabilities over the Model Context Protocol on stdio, so an agent host
+calls them as tools instead of shelling out: `check_material`, `inspect_material`, `render_material`
+(returns the PNG inline), and `edit_material`, which runs a short script against the
+`mtlx-core/session` API and saves the file. Invalid edits are rejected and leave the file unchanged.
+Rendering needs the same Chrome or Edge as `mtlx render`.
+
 ### Pack and unpack
 
 ```sh
@@ -239,6 +252,8 @@ Commands:
   mtlx check <inputs..>      Run selected document checks on one or more .mtlx or .mtlx.zip files
                              (glob patterns accepted)
   mtlx info <input>          Print information about a .mtlx or .mtlx.zip file
+  mtlx mcp                   Run a Model Context Protocol server over stdio (check, inspect, render,
+                             and edit tools for AI agents)
   mtlx render <input>        Render a .mtlx or .mtlx.zip file to a PNG image using a local headless
                              browser
   mtlx transform <inputs..>  Convert, combine, or resize/reformat textures across one or more .mtlx
@@ -281,6 +296,17 @@ Options:
   --version  Show version number                                                           [boolean]
   --help     Show help                                                                     [boolean]
   --format   Output format                       [choices: "text", "json", "yaml"] [default: "text"]
+```
+
+```text
+mtlx mcp
+
+Run a Model Context Protocol server over stdio (check, inspect, render, and edit tools for AI
+agents)
+
+Options:
+  --version  Show version number                                                           [boolean]
+  --help     Show help                                                                     [boolean]
 ```
 
 ```text

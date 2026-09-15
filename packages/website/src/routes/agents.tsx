@@ -40,6 +40,9 @@ editor.transaction('Warmer, rougher wood', () => {
 
 await writeFile('material.mtlx', editor.toXml());`;
 
+const MCP_EXAMPLE = `claude mcp add mtlx -- mtlx mcp     # Claude Code
+codex mcp add mtlx -- mtlx mcp      # Codex CLI`;
+
 const AGENT_INSTRUCTIONS = `# MaterialX materials in this repo
 
 - Materials are .mtlx XML files. Edit them directly, or run a Node script against mtlx-core/session
@@ -140,6 +143,17 @@ function AgentsPage() {
           </a>{' '}
           README for the full session API: adding and removing nodes, connections, diagnostics, undo, and nested graphs.
         </p>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-xl font-semibold">As MCP tools</h2>
+        <p className="text-sm text-muted-foreground">
+          Hosts that speak the Model Context Protocol can register <code>mtlx mcp</code> once and call the same
+          capabilities as tools: <code>check_material</code>, <code>inspect_material</code>,{' '}
+          <code>render_material</code>, which returns the PNG inline, and <code>edit_material</code>, which runs a
+          script against the session API and saves the file. Nothing else is installed; it is the same CLI on stdio.
+        </p>
+        <CodeBlock code={MCP_EXAMPLE} />
       </section>
 
       <section className="flex flex-col gap-4">
