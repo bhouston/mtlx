@@ -28,10 +28,22 @@ import { viewerSettings } from '@/lib/viewer-search';
 import { MaterialLoadControls } from '@/components/viewer/MaterialLoadControls';
 import { EditorShareMenu } from '@/components/editor/EditorShareMenu';
 import { Button } from '@/components/ui/button';
-import { Download, Redo2, Undo2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import { Columns2, Download, Layers, Redo2, Rows2, Undo2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
+type EditorLayout = 'horizontal' | 'vertical' | 'overlay';
+const LAYOUTS: { value: EditorLayout; label: string; icon: typeof Columns2 }[] = [
+  { value: 'horizontal', label: 'Horizontal', icon: Columns2 },
+  { value: 'vertical', label: 'Vertical', icon: Rows2 },
+  { value: 'overlay', label: 'Overlay', icon: Layers },
+];
 const MAX_UPLOAD_BYTES = 16 * 1024 * 1024;
 const DRAFT_KEY = 'mtlx-editor-draft';
 const readDraft = () => {
@@ -81,6 +93,7 @@ function EditorPage() {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [source, setSource] = useState<MaterialSource | null>(null);
   const [loading, setLoading] = useState(false);
+  const [layout, setLayout] = useState<EditorLayout>('vertical');
   const generation = useRef(0);
   const documentXml = useMemo(() => serializeMaterialX(pkg.document), [pkg.document]);
   const dirty = documentXml !== loadedSource.xml || loadedPackage.resources !== loadedSource.resources;
@@ -290,6 +303,25 @@ function EditorPage() {
         >
           <Download aria-hidden="true" />
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" aria-label="Layout" title="Preview layout">
+              {(() => {
+                const Icon = LAYOUTS.find((l) => l.value === layout)!.icon;
+                return <Icon aria-hidden="true" />;
+              })()}
+              Layout
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            {LAYOUTS.map(({ value, label, icon: Icon }) => (
+              <DropdownMenuItem key={value} onSelect={() => setLayout(value)}>
+                <Icon aria-hidden="true" />
+                {label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
         {dirty && (
           <span
             className="text-xs text-muted-foreground"
@@ -311,48 +343,62 @@ function EditorPage() {
         />
       </MaterialLoadControls>
       {error && <p role="alert">{error}</p>}
-      <div className="min-h-0 flex-1">
-        <MaterialXNodeGraph
-          key={documentId}
-          className="mtlx-fill"
-          session={session}
-          fileName={pkg.rootPath}
-          mode="edit"
-          scope={scope}
-          colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
-          resources={resources}
-          onScopeChange={(nextScope) => {
-            void navigate({
-              to: '.',
-              search: (previous) => ({ ...previous, scope: nextScope || undefined }),
-              hash: true,
-              replace: true,
-              resetScroll: false,
-            });
-          }}
-        >
-          <MaterialViewer
-            source={source}
-            resources={pkg.resources}
-            onError={setPreviewError}
-            settings={viewerSettings(search)}
-            onSettingsChange={(patch) =>
+      {(() => {
+        const preview = (
+          <>
+            <MaterialViewer
+              source={source}
+              resources={pkg.resources}
+              onError={setPreviewError}
+              settings={viewerSettings(search)}
+              onSettingsChange={(patch) =>
+                void navigate({
+                  to: '.',
+                  search: (previous) => ({ ...previous, ...patch }),
+                  hash: true,
+                  replace: true,
+                  resetScroll: false,
+                })
+              }
+            />
+            {previewError && (
+              <p role="alert" className="mt-1 rounded bg-background/90 px-2 py-1 text-xs">
+                Preview: {previewError}
+              </p>
+            )}
+          </>
+        );
+        const graph = (
+          <MaterialXNodeGraph
+            key={documentId}
+            className="mtlx-fill"
+            session={session}
+            fileName={pkg.rootPath}
+            mode="edit"
+            scope={scope}
+            colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
+            resources={resources}
+            onScopeChange={(nextScope) => {
               void navigate({
                 to: '.',
-                search: (previous) => ({ ...previous, ...patch }),
+                search: (previous) => ({ ...previous, scope: nextScope || undefined }),
                 hash: true,
                 replace: true,
                 resetScroll: false,
-              })
-            }
-          />
-          {previewError && (
-            <p role="alert" className="mt-1 rounded bg-background/90 px-2 py-1 text-xs">
-              Preview: {previewError}
-            </p>
-          )}
-        </MaterialXNodeGraph>
-      </div>
+              });
+            }}
+          >
+            {layout === 'overlay' && preview}
+          </MaterialXNodeGraph>
+        );
+        return (
+          <div className={`min-h-0 flex-1 mtlx-editor-body mtlx-editor-body-${layout}`}>
+            {layout === 'vertical' && <div className="mtlx-preview-pane">{preview}</div>}
+            {graph}
+            {layout === 'horizontal' && <div className="mtlx-preview-pane">{preview}</div>}
+          </div>
+        );
+      })()}
     </main>
   );
 }

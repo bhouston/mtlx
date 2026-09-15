@@ -539,7 +539,10 @@ function Graph({
                   type="button"
                   className="mtlx-toolbar-button"
                   title="Add node"
-                  onClick={(event) => openQuickAdd({ x: event.clientX, y: event.clientY })}
+                  onClick={() => {
+                    const rect = canvas.current?.getBoundingClientRect();
+                    if (rect) openQuickAdd({ x: rect.left + rect.width / 2, y: rect.top + 80 });
+                  }}
                 >
                   <Plus size={14} aria-hidden="true" />
                   Add node

@@ -25,12 +25,14 @@ export function buildNodeCatalogTree(catalog: MaterialXNodeSpec[]): NodeCatalogE
     const group = entry.node.nodeGroup ?? 'Other';
     groups.set(group, [...(groups.get(group) ?? []), entry]);
   }
-  return [...groups.keys()].toSorted().map((group) => ({
-    kind: 'group',
-    id: group,
-    label: group,
-    children: groups.get(group)!,
-  }));
+  return [...groups.keys()]
+    .toSorted((a, b) => (a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b)))
+    .map((group) => ({
+      kind: 'group',
+      id: group,
+      label: group,
+      children: groups.get(group)!,
+    }));
 }
 
 /** Families matching a free-text query by category, definition name, type or group; `accept` narrows the variants. */

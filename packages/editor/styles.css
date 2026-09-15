@@ -316,6 +316,31 @@
   background: var(--mtlx-border);
 }
 
+.mtlx-editor-body {
+  display: flex;
+  min-height: 0;
+  gap: 12px;
+}
+.mtlx-editor-body-vertical {
+  flex-direction: column;
+}
+.mtlx-editor-body-overlay {
+  display: block;
+}
+.mtlx-preview-pane .viewer-frame {
+  aspect-ratio: auto;
+  height: 100%;
+}
+.mtlx-preview-pane {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.mtlx-preview-pane .viewer-frame {
+  flex: 1;
+}
+
 .mtlx-graph-main {
   display: flex;
   flex-direction: column;
@@ -605,6 +630,17 @@
 }
 .mtlx-quick-add .mtlx-node-list small {
   margin-left: auto;
+}
+.mtlx-quick-add .mtlx-quick-add-back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  font-size: 12px;
+  color: var(--mtlx-muted-fg);
+}
+.mtlx-quick-add .mtlx-node-list button {
+  justify-content: space-between;
 }
 
 .mtlx-toolbar-overlay {
