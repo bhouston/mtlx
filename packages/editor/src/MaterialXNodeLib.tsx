@@ -6,13 +6,14 @@ import {
   nodeCatalogLeaves,
   searchNodeCatalog,
   type NodeCatalogEntry,
+  type NodeDefinition,
 } from './node-catalog-tree.js';
 export const MATERIALX_NODE_MIME = 'application/x-materialx-nodedef';
 const defaultCatalog = getNodeCatalog();
 export interface MaterialXNodeListProps {
   nodes: MaterialXNodeSpec[];
   disabled?: boolean;
-  onAdd?: (node: MaterialXNodeSpec) => void;
+  onAdd?: (node: NodeDefinition) => void;
 }
 /** Shared by the category column and search results; buttons also support keyboard insertion. */
 export function MaterialXNodeList({ nodes, disabled, onAdd }: MaterialXNodeListProps) {
@@ -27,7 +28,7 @@ function CatalogList({
 }: {
   entries: NodeCatalogEntry[];
   disabled?: boolean;
-  onAdd?: (node: MaterialXNodeSpec) => void;
+  onAdd?: (node: NodeDefinition) => void;
   selected?: string;
   onSelect?: (id: string) => void;
 }) {
@@ -59,7 +60,7 @@ function CatalogList({
               title={[node.nodeDefName, node.attributes?.doc].filter(Boolean).join('\n')}
               onClick={() => onAdd?.(node)}
               onDragStart={(event) => {
-                event.dataTransfer.setData(MATERIALX_NODE_MIME, node.nodeDefName!);
+                event.dataTransfer.setData(MATERIALX_NODE_MIME, node.nodeDefName);
                 event.dataTransfer.effectAllowed = 'copy';
               }}
             >
@@ -76,7 +77,7 @@ function CatalogList({
 export interface MaterialXNodeLibProps {
   catalog?: MaterialXNodeSpec[];
   disabled?: boolean;
-  onAdd?: (node: MaterialXNodeSpec) => void;
+  onAdd?: (node: NodeDefinition) => void;
   className?: string;
 }
 export function MaterialXNodeLib({ catalog = defaultCatalog, disabled, onAdd, className = '' }: MaterialXNodeLibProps) {

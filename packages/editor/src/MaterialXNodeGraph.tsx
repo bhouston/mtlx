@@ -43,6 +43,7 @@ import { categoryColor } from './node-category-colors.js';
 import { MATERIALX_NODE_MIME } from './MaterialXNodeLib.js';
 import { GraphContextMenu } from './GraphContextMenu.js';
 import { QuickAddMenu } from './QuickAddMenu.js';
+import { isNodeDefinition, type NodeDefinition } from './node-catalog-tree.js';
 
 import {
   Breadcrumb,
@@ -387,10 +388,10 @@ function Graph({
       setError(e instanceof Error ? e.message : String(e));
     }
   };
-  const add = (spec: MaterialXNodeSpec, position: { x: number; y: number }) =>
+  const add = (spec: NodeDefinition, position: { x: number; y: number }) =>
     commit(() =>
       session.transaction('Add node', () => {
-        const id = operations.addNode({ definition: spec.nodeDefName! });
+        const id = operations.addNode({ definition: spec.nodeDefName });
         session.layout.moveNodes({ [id]: position }, scope);
       }),
     );
@@ -405,13 +406,13 @@ function Graph({
         }),
       );
   };
-  const addAndConnect = (spec: MaterialXNodeSpec) => {
+  const addAndConnect = (spec: NodeDefinition) => {
     const pending = quickAdd;
     setQuickAdd(undefined);
     if (!pending) return;
     commit(() =>
       session.transaction('Add node', () => {
-        const id = operations.addNode({ definition: spec.nodeDefName! });
+        const id = operations.addNode({ definition: spec.nodeDefName });
         session.layout.moveNodes({ [id]: pending.position }, scope);
         const from = pending.from;
         if (from?.side === 'output') {
@@ -510,7 +511,7 @@ function Graph({
               e.preventDefault();
               e.stopPropagation();
               const spec = catalog.find((n) => n.nodeDefName === id);
-              if (spec) add(spec, screenToFlowPosition({ x: e.clientX, y: e.clientY }));
+              if (spec && isNodeDefinition(spec)) add(spec, screenToFlowPosition({ x: e.clientX, y: e.clientY }));
             }}
           >
             <Breadcrumb aria-label="Graph breadcrumb" className="mtlx-breadcrumb-overlay nodrag nopan">

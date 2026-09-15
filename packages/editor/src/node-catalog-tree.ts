@@ -1,22 +1,23 @@
 import { nodeType, type MaterialXNodeSpec } from './model.js';
 import { getNodeFamilies } from './node-families.js';
 
+/** A definition the editor can instantiate: core's structural placeholders have no nodedef. */
+export type NodeDefinition = MaterialXNodeSpec & { nodeDefName: string };
+export const isNodeDefinition = (spec: MaterialXNodeSpec): spec is NodeDefinition => !!spec.nodeDefName;
 export type NodeCatalogEntry =
   | { kind: 'group'; id: string; label: string; children: NodeCatalogEntry[] }
-  | { kind: 'node'; id: string; label: string; node: MaterialXNodeSpec };
+  | { kind: 'node'; id: string; label: string; node: NodeDefinition };
 
-export function nodeCatalogLeaf(node: MaterialXNodeSpec): NodeCatalogEntry {
-  return { kind: 'node', id: node.nodeDefName!, label: node.category, node };
+export function nodeCatalogLeaf(node: NodeDefinition): NodeCatalogEntry {
+  return { kind: 'node', id: node.nodeDefName, label: node.category, node };
 }
 
 /** One entry per compatible interface family; concrete type variants stay out of the menus. */
 export function nodeCatalogLeaves(catalog: MaterialXNodeSpec[]): NodeCatalogEntry[] {
-  return getNodeFamilies(catalog).map((family) => ({
-    kind: 'node',
-    id: family.id,
-    label: family.label,
-    node: family.variants[0]!,
-  }));
+  return getNodeFamilies(catalog).flatMap((family) => {
+    const node = family.variants[0]!;
+    return isNodeDefinition(node) ? [{ kind: 'node' as const, id: family.id, label: family.label, node }] : [];
+  });
 }
 export function buildNodeCatalogTree(catalog: MaterialXNodeSpec[]): NodeCatalogEntry[] {
   const groups = new Map<string, NodeCatalogEntry[]>();
@@ -53,8 +54,9 @@ export function searchNodeCatalog(
     .flatMap((family) => {
       const variants = family.variants.filter(accept);
       const score = Math.min(3, ...variants.map(rank));
-      return score < 3
-        ? [{ score, entry: { kind: 'node' as const, id: family.id, label: family.label, node: variants[0]! } }]
+      const node = variants[0];
+      return node && isNodeDefinition(node) && score < 3
+        ? [{ score, entry: { kind: 'node' as const, id: family.id, label: family.label, node } }]
         : [];
     })
     .toSorted((a, b) => a.score - b.score)

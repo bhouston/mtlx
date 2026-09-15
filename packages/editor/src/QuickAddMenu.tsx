@@ -1,7 +1,12 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { MaterialXNodeSpec } from './model.js';
-import { buildNodeCatalogTree, searchNodeCatalog, type NodeCatalogEntry } from './node-catalog-tree.js';
+import {
+  buildNodeCatalogTree,
+  searchNodeCatalog,
+  type NodeCatalogEntry,
+  type NodeDefinition,
+} from './node-catalog-tree.js';
 
 export interface QuickAddMenuProps {
   catalog: MaterialXNodeSpec[];
@@ -10,7 +15,7 @@ export interface QuickAddMenuProps {
   /** Narrows the offered definitions, for example to those accepting a dragged wire. */
   accept?: (spec: MaterialXNodeSpec) => boolean;
   placeholder?: string;
-  onAdd: (spec: MaterialXNodeSpec) => void;
+  onAdd: (spec: NodeDefinition) => void;
   onClose: () => void;
 }
 const LIMIT = 12;

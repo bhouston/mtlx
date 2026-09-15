@@ -1,5 +1,5 @@
 import { useMemo, type ReactElement } from 'react';
-import { buildNodeCatalogTree, type NodeCatalogEntry } from './node-catalog-tree.js';
+import { buildNodeCatalogTree, type NodeCatalogEntry, type NodeDefinition } from './node-catalog-tree.js';
 import { nodeType, type MaterialXNodeSpec } from './model.js';
 import {
   ContextMenu,
@@ -25,7 +25,7 @@ export function GraphContextMenu({
   catalog: MaterialXNodeSpec[];
   editable: boolean;
   nodeId?: string;
-  onAdd: (spec: MaterialXNodeSpec) => void;
+  onAdd: (spec: NodeDefinition) => void;
   onSearch: () => void;
   onClone: () => void;
   onDelete: () => void;
@@ -61,7 +61,7 @@ export function GraphContextMenu({
   );
 }
 
-function CatalogMenu({ entries, onAdd }: { entries: NodeCatalogEntry[]; onAdd: (node: MaterialXNodeSpec) => void }) {
+function CatalogMenu({ entries, onAdd }: { entries: NodeCatalogEntry[]; onAdd: (node: NodeDefinition) => void }) {
   return entries.map((entry) => {
     if (entry.kind === 'group')
       return (

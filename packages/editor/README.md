@@ -19,7 +19,7 @@ function Editor() {
       <button disabled={!snapshot.canRedo} onClick={editor.redo}>
         Redo
       </button>
-      <MaterialXNodeLib onAdd={(spec) => editor.graph().addNode({ definition: spec.nodeDefName! })} />
+      <MaterialXNodeLib onAdd={(spec) => editor.graph().addNode({ definition: spec.nodeDefName })} />
       <MaterialXNodeGraph session={editor} mode="edit" />
     </>
   );

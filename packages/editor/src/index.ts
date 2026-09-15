@@ -8,3 +8,4 @@ export * from './session.js';
 export * from './useEditorSession.js';
 export * from './QuickAddMenu.js';
 export * from './NodeNameField.js';
+export { isNodeDefinition, type NodeDefinition } from './node-catalog-tree.js';
