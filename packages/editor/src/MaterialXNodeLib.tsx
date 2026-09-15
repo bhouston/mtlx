@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { ChevronRight, GripVertical } from 'lucide-react';
 import { getNodeCatalog, nodeType, type MaterialXNodeSpec } from './model.js';
-import { buildNodeCatalogTree, nodeCatalogLeaf, type NodeCatalogEntry } from './node-catalog-tree.js';
+import { buildNodeCatalogTree, nodeCatalogLeaves, type NodeCatalogEntry } from './node-catalog-tree.js';
+import { getNodeFamilies } from './node-families.js';
 export const MATERIALX_NODE_MIME = 'application/x-materialx-nodedef';
 const defaultCatalog = getNodeCatalog();
 export interface MaterialXNodeListProps {
@@ -11,7 +12,7 @@ export interface MaterialXNodeListProps {
 }
 /** Shared by the category column and search results; buttons also support keyboard insertion. */
 export function MaterialXNodeList({ nodes, disabled, onAdd }: MaterialXNodeListProps) {
-  return <CatalogList entries={nodes.map(nodeCatalogLeaf)} disabled={disabled} onAdd={onAdd} />;
+  return <CatalogList entries={nodeCatalogLeaves(nodes)} disabled={disabled} onAdd={onAdd} />;
 }
 function CatalogList({
   entries,
@@ -59,9 +60,7 @@ function CatalogList({
               }}
             >
               <GripVertical className="mtlx-node-grip" size={14} aria-hidden="true" />
-              <span className="mtlx-catalog-label">
-                {node.category} ({nodeType(node)})
-              </span>
+              <span className="mtlx-catalog-label">{entry.label}</span>
             </button>
           </li>
         );
@@ -81,9 +80,14 @@ export function MaterialXNodeLib({ catalog = defaultCatalog, disabled, onAdd, cl
   const tree = useMemo(() => buildNodeCatalogTree(catalog), [catalog]);
   const [path, setPath] = useState<string[]>(['shader']);
   const search = query.trim().toLowerCase();
-  const nodes = catalog.filter((node) =>
-    `${node.category} ${node.nodeDefName} ${nodeType(node)} ${node.nodeGroup}`.toLowerCase().includes(search),
-  );
+  const searchEntries: NodeCatalogEntry[] = getNodeFamilies(catalog)
+    .filter((family) =>
+      family.variants.some((node) =>
+        `${node.category} ${node.nodeDefName} ${nodeType(node)} ${node.nodeGroup}`.toLowerCase().includes(search),
+      ),
+    )
+    .map((family) => ({ kind: 'node', id: family.id, label: family.label, node: family.variants[0]! }));
+
   const columns: { entries: NodeCatalogEntry[]; label: string; selected?: string }[] = [];
   let entries = tree;
   let label = 'Node categories';
@@ -108,7 +112,7 @@ export function MaterialXNodeLib({ catalog = defaultCatalog, disabled, onAdd, cl
       />
       <div className={`mtlx-library-columns ${search ? 'mtlx-search-results' : ''}`}>
         {search ? (
-          <MaterialXNodeList nodes={nodes} disabled={disabled} onAdd={onAdd} />
+          <CatalogList entries={searchEntries} disabled={disabled} onAdd={onAdd} />
         ) : (
           columns.map((column, depth) => (
             <nav key={depth} aria-label={column.label}>

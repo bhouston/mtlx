@@ -56,13 +56,16 @@ describe('editing workflow', () => {
     expect(projectGraph(original, 'graph').nodes).toHaveLength(2);
     expect(() => cloneNode(original, 'missing', { x: 0, y: 0 }, 'graph')).toThrow('Unknown node');
   });
-  it('creates nodes with authoritative defaults and unique names without changing the original', () => {
+  it('creates nodes with implicit defaults and unique names without changing the original', () => {
     const original = createDefaultDocument();
     let doc = addNode(original, constant, { x: 50, y: 20 });
     doc = addNode(doc, constant, { x: 70, y: 40 });
     expect(original.nodes).toHaveLength(2);
     expect(doc.nodes.map((n) => n.name)).toContain('constant_2');
-    expect(doc.nodes.find((n) => n.name === 'constant')?.inputs[0]?.value).toBe(constant.inputs[0]?.value);
+    expect(doc.nodes.find((n) => n.name === 'constant')?.inputs).toEqual([]);
+    const projected = projectGraph(doc).nodes.find((n) => n.id === 'constant')!;
+    expect(projected.inputs[0]?.value).toBe(projected.definition?.inputs[0]?.value);
+    expect(projected.type).toBeUndefined();
     expect(
       catalog
         .find((n) => n.nodeDefName === 'ND_standard_surface_surfaceshader')
@@ -75,8 +78,8 @@ describe('editing workflow', () => {
   });
   it('edits, connects, replaces, disconnects and resets a parameter, then round trips XML', () => {
     let doc = addNode(createDefaultDocument(), constant, { x: 0, y: 0 });
-    doc = setInputValue(doc, 'constant', 'value', '0.1, 0.8, 0.2');
     doc = connectNodes(doc, { source: 'constant', sourceHandle: 'out', target: 'surface', targetHandle: 'base_color' });
+    doc = setInputValue(doc, 'constant', 'value', '0.1, 0.8, 0.2');
     expect(doc.nodes[0]?.inputs.find((p) => p.name === 'base_color')?.attributes).toMatchObject({
       nodename: 'constant',
     });

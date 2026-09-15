@@ -77,9 +77,7 @@ function CatalogMenu({ entries, onAdd }: { entries: NodeCatalogEntry[]; onAdd: (
         title={[spec.nodeDefName, spec.attributes?.doc].filter(Boolean).join('\n')}
         onSelect={() => onAdd(spec)}
       >
-        <span className="mtlx-catalog-label">
-          {spec.category} ({nodeType(spec)})
-        </span>
+        <span className="mtlx-catalog-label">{entry.label}</span>
       </ContextMenuItem>
     );
   });

@@ -537,3 +537,9 @@
 .mtlx-geometry-parameter > button {
   align-self: center;
 }
+
+/* Inferred types are secondary to the node name, in both graph and inspector. */
+.mtlx-node-type {
+  color: #a1a1a1;
+  font-weight: 400;
+}

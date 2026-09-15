@@ -39,7 +39,7 @@ it('keeps ambiguous outputs grey and preserves declared input types', () => {
 it('uses individual socket types for overloaded nodes and array element colors', () => {
   const { nodes, edges } = projectGraph(
     parseMaterialX(`<materialx version="1.39">
-    <mix name="blend" type="color3"/>
+    <mix name="blend" type="color3"><input name="mix" type="float" value="0.5"/></mix><output name="out" type="color3" nodename="blend"/>
   </materialx>`),
   );
   const type = socketTypes(nodes, edges);

@@ -43,30 +43,30 @@ async function downloadText() {
     importMaterial(new Uint8Array(await readFile((await download.path())!)), download.suggestedFilename()).document,
   );
 }
-test('node library opens variant columns and resets later columns when the category changes', async () => {
+test('node library lists families directly and finds them by any variant name', async () => {
   const library = page.getByRole('region', { name: 'MaterialX node library' });
   await page
     .getByRole('navigation', { name: 'Node categories' })
     .getByRole('button', { name: 'procedural', exact: true })
     .click();
-  await page
+  const leaf = page
     .getByRole('navigation', { name: 'procedural nodes' })
-    .getByRole('button', { name: 'constant', exact: true })
-    .click();
-  expect(await library.getByRole('navigation').count()).toBe(3);
-  const leaf = page.getByRole('navigation', { name: 'constant nodes' }).locator('[data-nodedef="ND_constant_float"]');
+    .getByRole('button', { name: 'constant', exact: true });
   expect(await leaf.getAttribute('draggable')).toBe('true');
   await leaf.click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
+  expect(await library.getByRole('navigation').count()).toBe(2);
+  expect(await page.locator('.react-flow__node[data-id="constant"] .mtlx-node-header').textContent()).toBe('constant');
   await page
     .getByRole('navigation', { name: 'Node categories' })
     .getByRole('button', { name: 'shader', exact: true })
     .click();
   expect(await library.getByRole('navigation').count()).toBe(2);
-  expect(await page.getByRole('navigation', { name: 'constant nodes' }).count()).toBe(0);
   await page.getByLabel('Search nodes').fill('ND_constant_float');
   expect(await library.getByRole('navigation').count()).toBe(0);
-  expect(await library.locator('[data-nodedef="ND_constant_float"]').isVisible()).toBe(true);
+  expect(await library.getByRole('button', { name: 'constant', exact: true }).count()).toBe(1);
+  await page.getByLabel('Search nodes').fill('tiledimage');
+  expect(await library.getByRole('button', { name: 'tiledimage', exact: true }).count()).toBe(1);
   expect(errors).toEqual([]);
 });
 test('context menu adds categorized nodes, clones and deletes the clicked node', async () => {
@@ -75,8 +75,7 @@ test('context menu adds categorized nodes, clones and deletes the clicked node',
   expect(await page.getByRole('menuitem', { name: 'Clone', exact: true }).count()).toBe(0);
   await page.getByRole('menuitem', { name: 'Add node', exact: true }).hover();
   await page.getByRole('menuitem', { name: 'procedural', exact: true }).hover();
-  await page.getByRole('menuitem', { name: 'constant', exact: true }).hover();
-  await page.getByRole('menuitem', { name: 'constant (float)', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'constant', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
   await page.locator('.react-flow__node[data-id="surface"]').click();
   await page.locator('.react-flow__node[data-id="constant"]').click({ button: 'right' });
@@ -106,11 +105,11 @@ test('search, insert, connect, edit, undo and ZIP download', async () => {
   expect(await downloadText()).toContain('xpos="5"');
   await page.getByLabel('Search nodes').fill('ND_constant_color3');
   expect(await page.getByRole('navigation', { name: 'Node categories' }).count()).toBe(0);
-  await page.locator('[data-nodedef="ND_constant_color3"]').click();
+  await page
+    .getByRole('region', { name: 'MaterialX node library' })
+    .getByRole('button', { name: 'constant', exact: true })
+    .click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
-  await page.locator('.react-flow__node[data-id="constant"]').click();
-  await fillColor('constant value value', '0.1, 0.8, 0.2');
-  await page.locator('.react-flow__node[data-id="surface"]').click();
   await page
     .locator('.react-flow__node[data-id="constant"] .react-flow__handle.source[data-handleid="out"]')
     .dragTo(
@@ -127,16 +126,27 @@ test('search, insert, connect, edit, undo and ZIP download', async () => {
     .toBe(true);
   await page.getByRole('button', { name: 'Redo', exact: true }).click();
   expect(await page.getByLabel('base_color connected to', { exact: true }).textContent()).toBe('constant.out');
-  expect(await page.locator('[data-nodedef="ND_constant_color3"]').isDisabled()).toBe(false);
+  expect(
+    await page
+      .getByRole('region', { name: 'MaterialX node library' })
+      .getByRole('button', { name: 'constant', exact: true })
+      .isDisabled(),
+  ).toBe(false);
   expect(await page.getByRole('button', { name: 'Disconnect base_color', exact: true }).isEnabled()).toBe(true);
   expect(await page.getByRole('button', { name: 'Delete node', exact: true }).count()).toBe(1);
+  await page.locator('.react-flow__node[data-id="constant"] .mtlx-node-header').click();
+  await fillColor('constant value value', '0.1, 0.8, 0.2');
+  expect(await downloadText()).toContain('value="0.1, 0.8, 0.2"');
   expect(errors).toEqual([]);
 });
 test('node drag and drop, delete and failed file import preserve the current document', async () => {
   await page.getByLabel('Search nodes').fill('ND_constant_float');
   // Native drag payload, as supplied by the reusable node library.
   const transfer = await page.evaluateHandle(() => new DataTransfer());
-  await page.locator('[data-nodedef="ND_constant_float"]').dispatchEvent('dragstart', { dataTransfer: transfer });
+  await page
+    .getByRole('region', { name: 'MaterialX node library' })
+    .getByRole('button', { name: 'constant', exact: true })
+    .dispatchEvent('dragstart', { dataTransfer: transfer });
   await page.locator('.mtlx-canvas').dispatchEvent('drop', { dataTransfer: transfer, clientX: 350, clientY: 650 });
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
   await page.locator('.react-flow__node[data-id="constant"]').click();
@@ -173,7 +183,10 @@ test('imports a ZIP, edits a nested graph, and downloads resources intact', asyn
     .textContent();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBeGreaterThan(0);
   await page.getByLabel('Search nodes').fill('ND_constant_float');
-  await page.locator('[data-nodedef="ND_constant_float"]').click();
+  await page
+    .getByRole('region', { name: 'MaterialX node library' })
+    .getByRole('button', { name: 'constant', exact: true })
+    .click();
   const waiting = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download .mtlx.zip' }).click();
   const download = await waiting;
@@ -231,7 +244,12 @@ test('query URLs, URL dialog, sample selection and reference share links use the
   await ready();
   expect(await page.getByLabel('Editor mode').count()).toBe(0);
   await page.getByLabel('Search nodes').fill('ND_constant_float');
-  expect(await page.locator('[data-nodedef="ND_constant_float"]').isEnabled()).toBe(true);
+  expect(
+    await page
+      .getByRole('region', { name: 'MaterialX node library' })
+      .getByRole('button', { name: 'constant', exact: true })
+      .isEnabled(),
+  ).toBe(true);
   const shared = new URL(await copyEditorLink());
   expect(shared.pathname).toBe('/editor');
   expect(shared.hash).toBe('');
@@ -404,7 +422,7 @@ test('live validation outlines errors while preserving wire colors and offers se
     name: 'invalid-connection.mtlx',
     mimeType: 'application/xml',
     buffer: Buffer.from(
-      '<materialx version="1.39"><constant name="c" type="color3"/><add name="a" type="float"><input name="in1" type="float" nodename="c"/></add></materialx>',
+      '<materialx version="1.39"><constant name="c" type="color3"><input name="value" type="color3" value="1,0,0"/></constant><add name="a" type="float"><input name="in1" type="float" nodename="c"/></add><output name="result" type="float" nodename="a"/></materialx>',
     ),
   });
   await expect.poll(() => page.locator('.mtlx-edge-error').count()).toBe(1);
@@ -472,4 +490,40 @@ test('error samples load from the sample picker and display their intended graph
     await expect.poll(() => page.locator('.mtlx-edge-error').count()).toBe(wires);
     expect(new URL(page.url()).searchParams.get('materialUrl')).toContain(`/materials/${name}/${name}.mtlx`);
   }
+});
+
+test('automatic tiledimage labels resolve, revert, and survive undo and export without authoring defaults', async () => {
+  await page.getByLabel('Search nodes').fill('tiledimage');
+  const add = page
+    .getByRole('region', { name: 'MaterialX node library' })
+    .getByRole('button', { name: 'tiledimage', exact: true });
+  await add.click();
+  await add.click();
+  const image = page.locator('.react-flow__node[data-id="tiledimage"]');
+  const unused = page.locator('.react-flow__node[data-id="tiledimage_2"]');
+  const label = image.locator('.mtlx-node-header');
+  await expect.poll(() => label.textContent()).toBe('tiledimage');
+  await image
+    .locator('.react-flow__handle.source[data-handleid="out"]')
+    .dragTo(page.locator('.react-flow__node[data-id="surface"] .react-flow__handle.target[data-handleid="normal"]'));
+  await expect.poll(() => label.textContent()).toBe('tiledimage (vector3)');
+  expect(await unused.locator('.mtlx-node-header').textContent()).toBe('tiledimage_2');
+  expect(await image.locator('.mtlx-node-type').evaluate((element) => getComputedStyle(element).color)).toBe(
+    'rgb(161, 161, 161)',
+  );
+  const exported = await downloadText();
+  const { parseMaterialX } = await import('mtlx-core');
+  const concrete = parseMaterialX(exported).nodes.find((n) => n.name === 'tiledimage')!;
+  expect(concrete.attributes.nodedef).toBe('ND_tiledimage_vector3');
+  expect(concrete.inputs).toEqual([]);
+  if (process.env.MTLX_POLYMORPHISM_SCREENSHOT)
+    await page.locator('.mtlx-graph').screenshot({ path: process.env.MTLX_POLYMORPHISM_SCREENSHOT });
+  await page.locator('.react-flow__node[data-id="surface"]').click();
+  await page.getByRole('button', { name: 'Disconnect normal', exact: true }).click();
+  await expect.poll(() => label.textContent()).toBe('tiledimage');
+  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect.poll(() => label.textContent()).toBe('tiledimage (vector3)');
+  await page.getByRole('button', { name: 'Redo', exact: true }).click();
+  await expect.poll(() => label.textContent()).toBe('tiledimage');
+  expect(errors).toEqual([]);
 });

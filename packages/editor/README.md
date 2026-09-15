@@ -48,11 +48,42 @@ function Editor() {
 ## Prototype workflows
 
 Open or drop `.mtlx` / `.mtlx.zip`, browse/search and drag/click nodes, select a node to
-edit values, wire matching typed ports, or use the inspector's connection menus.
+edit values, wire compatible ports, or use the inspector's connection menus.
 Double-click a wire to disconnect; use Reset to restore an input's definition default.
 Delete removes references to the removed nodes. The website has undo/redo (50 changes),
 graph scope navigation, and `.mtlx.zip` download. Downloads always include the
 current document and all loaded resource bytes.
+
+## Automatic node types
+
+The library and context menu offer one entry per node family. Definitions with the same
+category, version, target, and port names form a family; different interfaces remain
+separate entries. Search matches every variant's name and type but returns the family once.
+
+All eligible nodes, including imported nodes, infer their types from connections and
+explicitly authored input values. Stored `type` and `nodedef` attributes identify the
+family, but do not pin its type. The graph shows `tiledimage` while its output type is
+ambiguous, and `tiledimage (vector3)` with a light-grey suffix once it is known. Shared
+inputs such as texture coordinates do not determine the image's output type.
+
+Inference propagates in both directions through connected nodes. Disconnect, reset,
+delete, replacement connections, and undo recompute from the remaining constraints.
+An authored typed value remains a constraint even if it equals a definition's default.
+New nodes author no defaults; resetting an input removes its authored value.
+
+`resolveTypes()` returns candidate definitions, inferred socket types, and a concrete
+fallback for each node. It filters candidates with a work queue and uses deterministic
+backtracking to select the first jointly compatible definitions in document/catalog
+order. Connected components are solved independently and results are cached for immutable
+document/catalog pairs. Contradictory new connections are rejected without changing the
+document; imported conflicts remain visible in the error log.
+
+`materializeDocument()` and `exportMaterial()` resolve a copy to concrete MaterialX,
+leaving defaults implicit. `previewXml()` uses the same choices and supplies missing
+literal defaults in its temporary renderer copy, since Three.js does not consistently
+look them up from nodedefs. Neither operation changes the author's document or turns a
+fallback choice into a type constraint. Exported files become automatic again on import,
+so no editor-specific persistence format or Auto/fixed toggle is required.
 
 The `/editor` toolbar shares the viewer's file picker, URL dialog, and sample list. It accepts
 `?materialUrl=https://example.com/material.mtlx.zip` and the legacy `?material=standard_surface/copper`

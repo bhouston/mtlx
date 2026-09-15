@@ -11,8 +11,8 @@ import {
   EnumParameterEditor,
   parseParameterNumber,
 } from './parameter-editors.js';
-import { parseMaterialX } from 'mtlx-core';
-import { projectGraph, setInputValue, connectNodes } from './model.js';
+import { parseMaterialX, serializeMaterialX } from 'mtlx-core';
+import { projectGraph, setInputValue, connectNodes, previewXml } from './model.js';
 
 let container: HTMLDivElement;
 let root: Root;
@@ -205,4 +205,83 @@ it('distinguishes geometry defaults, literals and connections, including reset a
   act(() => render(false));
   expect(container.querySelector('[aria-label="normal geometry options"]')).toBeNull();
   expect(container.textContent).toContain('World-space normal');
+});
+
+it('chooses a temporary parameter type and authors that type only after a value edit', () => {
+  let doc = parseMaterialX(
+    '<materialx version="1.39"><tiledimage name="image" type="color3" nodedef="ND_tiledimage_color3"/></materialx>',
+  );
+  const original = serializeMaterialX(doc);
+  const preview = previewXml(doc);
+  const commit = vi.fn((operation: () => typeof doc) => {
+    doc = operation();
+    render();
+  });
+  function render() {
+    const projection = projectGraph(doc);
+    root.render(
+      createElement(NodeParameterEditor, {
+        document: doc,
+        projection,
+        node: projection.nodes[0],
+        editable: true,
+        commit,
+      }),
+    );
+  }
+  act(render);
+  const selector = container.querySelector('[aria-label="Parameter type"]') as HTMLSelectElement;
+  expect(selector.options).toHaveLength(6);
+  act(() => {
+    selector.value = 'ND_tiledimage_vector3';
+    selector.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  expect(container.querySelectorAll('[aria-label^="image default value"]')).toHaveLength(3);
+  expect(commit).not.toHaveBeenCalled();
+  expect(serializeMaterialX(doc)).toBe(original);
+  expect(previewXml(doc)).toBe(preview);
+  expect(projectGraph(doc).nodes[0]?.type).toBeUndefined();
+  const inputs = container.querySelectorAll<HTMLInputElement>('[aria-label^="image default value"]');
+  fill(inputs[0]!, '0.5');
+  expect(projectGraph(doc).nodes[0]?.type).toBe('vector3');
+  expect(doc.nodes[0]?.inputs.find((p) => p.name === 'default')).toMatchObject({ type: 'vector3', value: '0.5, 0, 0' });
+  expect(selector.options).toHaveLength(1);
+  act(() => (container.querySelector('[aria-label="Reset default"]') as HTMLButtonElement).click());
+  expect(projectGraph(doc).nodes[0]?.type).toBeUndefined();
+  expect(doc.nodes[0]?.inputs).toEqual([]);
+  expect(selector.value).toBe('ND_tiledimage_vector3');
+});
+
+it('labels mixed-input overloads distinctly and falls back when a connection invalidates the temporary choice', () => {
+  let doc = parseMaterialX(
+    '<materialx version="1.39"><add name="a" type="float"/><output name="out" type="color3"/></materialx>',
+  );
+  function render() {
+    const projection = projectGraph(doc);
+    root.render(
+      createElement(NodeParameterEditor, {
+        document: doc,
+        projection,
+        node: projection.nodes[0],
+        editable: true,
+        commit: () => {},
+      }),
+    );
+  }
+  act(render);
+  const selector = container.querySelector('[aria-label="Parameter type"]') as HTMLSelectElement;
+  expect([...selector.options].filter((o) => o.label.startsWith('color3')).map((o) => o.label)).toEqual([
+    'color3 (in2: color3)',
+    'color3 (in2: float)',
+  ]);
+  act(() => {
+    selector.value = 'ND_add_float';
+    selector.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  act(() => {
+    doc = connectNodes(doc, { source: 'a', sourceHandle: 'out', target: 'out', targetHandle: 'in' });
+    render();
+  });
+  expect(selector.value).toBe('ND_add_color3');
+  expect(selector.options).toHaveLength(2);
 });

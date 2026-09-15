@@ -1,5 +1,5 @@
 import { validateDocument } from 'mtlx-core';
-import { getNodeCatalog, projectGraph, type MaterialXDocument } from './model.js';
+import { getNodeCatalog, projectGraph, materializeDocument, resolveTypes, type MaterialXDocument } from './model.js';
 
 export interface GraphDiagnostic {
   message: string;
@@ -14,7 +14,9 @@ export function validateGraph(
   catalog = getNodeCatalog(document),
   projection = projectGraph(document, scope, catalog),
 ): GraphDiagnostic[] {
-  return validateDocument(document, { registry: catalog, rules: ['structure', 'types'] }).flatMap((issue) => {
+  const concrete = materializeDocument(document, catalog);
+  const issues = validateDocument(concrete, { registry: catalog, rules: ['structure', 'types'] });
+  const diagnostics = issues.flatMap((issue) => {
     const graph = issue.graph;
     if (!graph) return [];
     const direct = graph.scope === scope;
@@ -32,4 +34,22 @@ export function validateGraph(
       },
     ];
   });
+  for (const conflict of resolveTypes(document, catalog).conflicts) {
+    // Existing concrete diagnostics usually identify the precise conflicting value or wire.
+    if (
+      issues.some(
+        (issue) =>
+          issue.graph?.scope === conflict.scope && issue.graph.nodeIds.some((id) => conflict.nodeIds.includes(id)),
+      )
+    )
+      continue;
+    const contained = conflict.scope.startsWith(scope ? `${scope}/` : '') && conflict.scope !== scope;
+    if (conflict.scope !== scope && !contained) continue;
+    diagnostics.push({
+      message: `${conflict.scope ? conflict.scope + '/' : ''}${conflict.nodeIds.join(', ')}: No compatible node definitions satisfy the connections and authored values.`,
+      nodeIds: contained ? [conflict.scope.slice(scope ? scope.length + 1 : 0).split('/')[0]!] : conflict.nodeIds,
+      edgeId: undefined,
+    });
+  }
+  return diagnostics;
 }

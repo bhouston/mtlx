@@ -69,7 +69,10 @@ function MaterialNode({ data, selected }: NodeProps<FlowNode>) {
     >
       {data.errors.length > 0 && <span className="mtlx-node-error-label">Error</span>}
       <div className="mtlx-node-header">
-        <strong>{graph.id}</strong>
+        <strong>
+          {graph.id}
+          {graph.type && <span className="mtlx-node-type"> ({graph.type})</span>}
+        </strong>
         {data.onExpand && (
           <button
             type="button"
@@ -85,9 +88,7 @@ function MaterialNode({ data, selected }: NodeProps<FlowNode>) {
           </button>
         )}
       </div>
-      <small>
-        {graph.element.name} · {graph.element.attributes.type}
-      </small>
+      {graph.id !== graph.element.name && <small>{graph.element.name}</small>}
       <div className="mtlx-ports">
         <div>
           {graph.inputs.map((port) => (
@@ -371,7 +372,16 @@ function Graph({
               nodesDraggable={editable}
               nodesConnectable={editable}
               edgesReconnectable={false}
-              deleteKeyCode={null}
+              deleteKeyCode={editable ? ['Delete', 'Backspace'] : null}
+              onNodesDelete={(deleted) =>
+                commit(() =>
+                  removeNodes(
+                    document,
+                    deleted.map((n) => n.id),
+                    scope,
+                  ),
+                )
+              }
               onNodesChange={(changes) => {
                 const chosen = changes.find((c) => c.type === 'select' && c.selected);
                 if (chosen?.type === 'select') setSelected(chosen.id);
@@ -393,8 +403,8 @@ function Graph({
               }}
               onNodeClick={(_, n) => setSelected(n.id)}
               onPaneClick={() => setSelected(null)}
-              isValidConnection={(c) => !connectionError(document, asConnection(c), scope)}
-              onConnect={(c) => commit(() => connectNodes(document, asConnection(c), scope))}
+              isValidConnection={(c) => !connectionError(document, asConnection(c), scope, catalog)}
+              onConnect={(c) => commit(() => connectNodes(document, asConnection(c), scope, catalog))}
               onEdgeDoubleClick={(_, edge) =>
                 commit(() => disconnectInput(document, edge.target, edge.targetHandle ?? 'in', scope))
               }
@@ -420,6 +430,7 @@ function Graph({
         document={document}
         node={node}
         projection={projection}
+        catalog={catalog}
         editable={editable}
         scope={scope}
         commit={commit}

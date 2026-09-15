@@ -1,7 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
 import { parseMaterialX } from 'mtlx-core';
-import { createDefaultDocument, findNodeSpec, getNodeCatalog, graphScopes, setInputValue } from './model.js';
+import {
+  createDefaultDocument,
+  findNodeSpec,
+  getNodeCatalog,
+  graphScopes,
+  materializeDocument,
+  setInputValue,
+} from './model.js';
 import { validateGraph } from './validation.js';
 const doc = (body: string) => parseMaterialX(`<materialx version="1.39">${body}</materialx>`);
 it('validates every Onyx scope using the float-to-vector2 convert overload', () => {
@@ -14,15 +21,12 @@ it('validates every Onyx scope using the float-to-vector2 convert overload', () 
   for (const scope of graphScopes(document)) expect(validateGraph(document, scope, catalog)).toEqual([]);
 });
 
-it('honors explicit overloads and still reports incorrect input types', () => {
+it('resolves imported overloads from authored values instead of pinning the nodedef', () => {
   const document = doc(
-    '<convert name="c" type="vector2" nodedef="ND_convert_boolean_vector2"><input name="in" type="float" value="1"/></convert>',
+    '<convert name="c" type="vector2" nodedef="ND_convert_boolean_vector2"><input name="in" type="float" value="1"/></convert><output name="out" type="vector2" nodename="c"/>',
   );
-  expect(validateGraph(document)).toContainEqual(
-    expect.objectContaining({
-      message: expect.stringContaining('does not match declared type "boolean"'),
-    }),
-  );
+  expect(validateGraph(document)).toEqual([]);
+  expect(materializeDocument(document).nodes[0]?.attributes.nodedef).toBe('ND_convert_float_vector2');
 });
 it('revalidates edited values and clears errors after correction', () => {
   const initial = createDefaultDocument();
@@ -37,7 +41,7 @@ it('associates mismatched connections with both nodes and the wire', () => {
   expect(
     validateGraph(
       doc(
-        '<constant name="c" type="color3"/><add name="a" type="float"><input name="in1" type="float" nodename="c"/></add>',
+        '<constant name="c" type="color3"><input name="value" type="color3" value="1,0,0"/></constant><add name="a" type="float"><input name="in1" type="float" nodename="c"/></add><output name="out" type="float" nodename="a"/>',
       ),
     ),
   ).toContainEqual(
