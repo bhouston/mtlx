@@ -48,6 +48,101 @@ Parsing malformed XML throws. Validation of a parsed document returns issues; us
 `checkMaterialXText` when you want parsing failures reported as issues as well. Validation covers
 selected rules, not complete MaterialX conformance or shader compilation.
 
+## `mtlx-core/session` (browser-safe editing)
+
+`mtlx-core/session` is the primary manipulation interface. It has no React, DOM, or
+Three.js dependency, and works in JavaScript as well as TypeScript. The UI uses the same
+operations as scripts; the session owns the current document, validation, subscriptions,
+and undo/redo. Low-level immutable graph transforms are also exported from this subpath.
+They do not provide the session's complete validation and history contract.
+
+```ts
+import { parseMaterialX, serializeMaterialX } from 'mtlx-core';
+import { createEditorSession, EditorError } from 'mtlx-core/session';
+
+const editor = createEditorSession({ document: parseMaterialX('<materialx version="1.39"/>') });
+const graph = editor.graph(''); // Use 'group/nested' for a nested graph.
+
+try {
+  editor.transaction('Build multiplier', () => {
+    const color = graph.addNode({ definition: 'ND_constant_color3' });
+    const multiply = graph.addNode({ definition: 'ND_multiply_color3' });
+    graph.setInputValue(color, 'value', [0.8, 0.2, 0.1], { type: 'color3' });
+    graph.connect({ node: color, output: 'out' }, { node: multiply, input: 'in1' });
+  });
+} catch (error) {
+  if (error instanceof EditorError) console.error(error.code, error.message);
+  else throw error;
+}
+
+const xml = serializeMaterialX(editor.getDocument());
+```
+
+- `graph.addNode({ definition })` and `graph.cloneNode(id)` return the generated node
+  name immediately. Names are unique within a scope. They do not author positions.
+- `graph.removeNodes(ids)` removes the nodes and cleans their connections. Unknown
+  nodes, scopes, ports, and definitions throw `EditorError` with a code and message.
+- `graph.setInputValue(id, input, value, { type? })` accepts MaterialX text, finite
+  numbers, booleans, or arrays of finite numbers. An explicit type selects an authored
+  input type when a node family is ambiguous (for example, color3 versus vector3).
+  Numeric tuple sizes, numeric syntax, booleans, and type compatibility are validated.
+  Not every MaterialX extension type or metadata constraint has a validator.
+- Setting a value replaces its connection. Connecting replaces a value or previous
+  connection. `disconnectInput(id, input)` removes a connection and restores the
+  definition default; it does nothing to an unconnected value. `resetInput(id, input)`
+  removes both an authored value and any connection.
+- `checkConnection(source, target)` returns a diagnostic or `undefined`, without
+  changing state. It shares the checks used by `connect`, which validates again.
+- Queries include `listScopes()`, `getDiagnostics()`, and graph methods `listNodes()`,
+  `getNode(id)`, `getInputs(id)`, `getOutputs(id)`, and `getConnection({ node, input })`.
+  Connection queries preserve unresolved source references so broken imports can be
+  inspected. Node names are scoped references, not permanent IDs across document loads
+  or deletion and recreation.
+
+Each successful edit creates a new, deeply frozen document snapshot. Earlier snapshots
+stay unchanged. The session clones imported documents and supplied catalogs, so callers
+retain ownership of their inputs. Queries expose deeply read-only types and frozen
+results. Use `cloneMaterialXDocument(editor.getDocument())` when a separate mutable
+copy is needed by a low-level core API. The canonical core document API itself remains
+mutable; immutability is enforced at the session boundary.
+
+`editor.subscribe(listener)` returns an unsubscribe function. `getSnapshot()` returns a
+stable `{ document, canUndo, canRedo, undoLabel, redoLabel }` object until a commit;
+React consumers can use `useEditorSession(editor)` from the separate `mtlx-editor`
+package. A graph handle always reads the session's latest state, including edits earlier in the same
+script. Views derive their nodes and wires from that document.
+
+Transactions are **synchronous**: perform asynchronous loading before starting one.
+A successful transaction publishes once and creates one undo entry. An uncaught error
+rolls it back without notifying subscribers or discarding redo history. Nested
+transactions act as savepoints; catching a nested failure lets the outer transaction
+continue. Operations validate before updating their working snapshot, so transactions
+do not allow temporarily invalid edits. `getDocument()` and queries inside a transaction
+see the working snapshot; `getSnapshot()` stays at the last committed snapshot.
+No-op edits and transactions with no net changes create no history entry.
+
+History defaults to 50 entries; configure `historyLimit` (zero disables retained undo
+history). `replaceDocument(document)` loads even an invalid document and clears history.
+New edits reject newly introduced diagnostics while existing imported errors can remain
+during repair. History travel and document replacement are unavailable inside a
+transaction.
+
+Layout stays separate: `editor.layout.moveNodes({ [id]: { x, y } }, scope)` writes
+`xpos`/`ypos` without semantic validation. The UI wraps creation and placement in one
+transaction, so Undo removes the newly placed node in one step. Selection, viewport,
+parameter control selection, and graph navigation remain view state.
+
+The session and its semantic operations, node-family membership, and type resolution have
+no dependency on `mtlx-editor`, React, React Flow, a DOM, or a renderer. Installing the
+editor is unnecessary for scripts, CLI tools, or workers.
+
+`readGraph(document, scope, catalog)` provides a semantic graph snapshot for low-level
+consumers. Its nodes and the session's node queries have no computed `position` or
+selection state. Authored `xpos`/`ypos` remain available in XML attributes; assigning
+fallback canvas positions belongs to `projectGraph()` in `mtlx-editor/model`. Persisting
+layout metadata through `session.layout.moveNodes()` can still share a transaction and
+undo entry with a semantic edit. The core does not calculate layout.
+
 ## `mtlx-core` (root, browser-safe)
 
 Pure: no filesystem, no `Buffer`, no native modules. Runs in Node, the browser (the

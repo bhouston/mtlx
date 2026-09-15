@@ -1,40 +1,21 @@
 import { useState } from 'react';
 import { ConnectedParameterEditor, GeometryParameterEditor, getParameterEditor } from './parameter-editors.js';
-import {
-  disconnectInput,
-  nodeType,
-  removeNodes,
-  resetInput,
-  setInputValue,
-  type MaterialXDocument,
-  type MaterialXNodeSpec,
-  type GraphNode,
-  type GraphEdge,
-} from './model.js';
+import { nodeType, type MaterialXNodeSpec, type GraphNode, type GraphEdge } from './model.js';
+import type { EditorGraph } from 'mtlx-core/session';
 
 export interface NodeParameterEditorProps {
-  document: MaterialXDocument;
+  graph: EditorGraph;
   node?: GraphNode;
   projection: { nodes: GraphNode[]; edges: GraphEdge[] };
   editable: boolean;
-  scope?: string;
-  catalog?: MaterialXNodeSpec[];
-  commit: (operation: () => MaterialXDocument) => void;
+  commit: (operation: () => unknown) => void;
 }
 
 /** The selected node's typed parameter editors, connections and reset actions. */
-export function NodeParameterEditor({
-  document,
-  node,
-  projection,
-  editable,
-  scope = '',
-  catalog,
-  commit,
-}: NodeParameterEditorProps) {
+export function NodeParameterEditor({ graph, node, projection, editable, commit }: NodeParameterEditorProps) {
   const [view, setView] = useState<{ node: string; definition: string }>();
   if (!node) return null;
-  const viewKey = `${scope}/${node.id}`;
+  const viewKey = `${graph.scope}/${node.id}`;
   const candidates = node.candidates ?? [];
   const definition =
     (view?.node === viewKey && candidates.find((s) => s.nodeDefName === view.definition)) || node.definition;
@@ -59,13 +40,13 @@ export function NodeParameterEditor({
         {node.type && <span className="mtlx-node-type"> ({node.type})</span>}
       </h2>
       {node.id !== node.element.name && <p>{node.element.name}</p>}
-      {candidates.length > 0 && definition && (
+      {candidates.length > 1 && definition && (
         <div className="mtlx-field">
           <label>
             Parameter type
             <select
               aria-label="Parameter type"
-              disabled={!editable || candidates.length < 2}
+              disabled={!editable}
               value={definition.nodeDefName}
               onChange={(event) => setView({ node: viewKey, definition: event.target.value })}
             >
@@ -76,13 +57,7 @@ export function NodeParameterEditor({
               ))}
             </select>
           </label>
-          <small>View only. Editing a value can determine the node’s type.</small>
         </div>
-      )}
-      {editable && (
-        <button type="button" onClick={() => commit(() => removeNodes(document, [node.id], scope))}>
-          Delete node
-        </button>
       )}
       {node.inputs.map((socket) => {
         const fallback = [...(definition?.inputs ?? []), ...(definition?.parameters ?? [])].find(
@@ -114,7 +89,7 @@ export function NodeParameterEditor({
                     ? `${edge.source}.${edge.sourceHandle}`
                     : `${connection}${attrs?.output ? `.${attrs.output}` : ''}`
                 }
-                onDisconnect={() => commit(() => disconnectInput(document, node.id, input.name, scope))}
+                onDisconnect={() => commit(() => graph.disconnectInput(node.id, input.name))}
               />
             ) : (
               <Editor
@@ -122,13 +97,9 @@ export function NodeParameterEditor({
                 value={value}
                 ariaLabel={`${node.id} ${input.name} value`}
                 disabled={!editable || !!connection}
-                onReset={
-                  editable && explicit
-                    ? () => commit(() => resetInput(document, node.id, input.name, scope))
-                    : undefined
-                }
+                onReset={editable && explicit ? () => commit(() => graph.resetInput(node.id, input.name)) : undefined}
                 onChange={(nextValue) =>
-                  commit(() => setInputValue(document, node.id, input.name, nextValue, scope, catalog, input.type))
+                  commit(() => graph.setInputValue(node.id, input.name, nextValue, { type: input.type }))
                 }
               />
             )}

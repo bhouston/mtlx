@@ -133,7 +133,7 @@ test('search, insert, connect, edit, undo and ZIP download', async () => {
       .isDisabled(),
   ).toBe(false);
   expect(await page.getByRole('button', { name: 'Disconnect base_color', exact: true }).isEnabled()).toBe(true);
-  expect(await page.getByRole('button', { name: 'Delete node', exact: true }).count()).toBe(1);
+  expect(await page.getByRole('button', { name: 'Delete node', exact: true }).count()).toBe(0);
   await page.locator('.react-flow__node[data-id="constant"] .mtlx-node-header').click();
   await fillColor('constant value value', '0.1, 0.8, 0.2');
   expect(await downloadText()).toContain('value="0.1, 0.8, 0.2"');
@@ -149,8 +149,8 @@ test('node drag and drop, delete and failed file import preserve the current doc
     .dispatchEvent('dragstart', { dataTransfer: transfer });
   await page.locator('.mtlx-canvas').dispatchEvent('drop', { dataTransfer: transfer, clientX: 350, clientY: 650 });
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
-  await page.locator('.react-flow__node[data-id="constant"]').click();
-  await page.getByRole('button', { name: 'Delete node', exact: true }).click();
+  await page.locator('.react-flow__node[data-id="constant"]').click({ button: 'right' });
+  await page.getByRole('menuitem', { name: 'Delete', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(2);
   await page
     .getByLabel('Open material', { exact: true })

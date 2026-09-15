@@ -29,6 +29,8 @@ export { materialXNodeRegistry } from './registry.js';
 export { summarizeMaterialX } from './summary.js';
 export type { MaterialInfo, MaterialXSummary } from './summary.js';
 export type {
+  DeepReadonly,
+  ReadonlyMaterialXDocument,
   MaterialXDocument,
   MaterialXElement,
   MaterialXInput,

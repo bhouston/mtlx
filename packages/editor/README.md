@@ -4,20 +4,44 @@ A functional MaterialX graph editor, with no dependency on Three.js or the websi
 
 ```tsx
 import { useState } from 'react';
-import { MaterialXNodeGraph, MaterialXNodeLib, addNode, createDefaultDocument, getNodeCatalog } from 'mtlx-editor';
+import { createEditorSession } from 'mtlx-core/session';
+import { MaterialXNodeGraph, MaterialXNodeLib, createDefaultDocument, useEditorSession } from 'mtlx-editor';
 import 'mtlx-editor/styles.css';
 
 function Editor() {
-  const [document, setDocument] = useState(createDefaultDocument);
-  const catalog = getNodeCatalog(document);
+  const [editor] = useState(() => createEditorSession({ document: createDefaultDocument() }));
+  const snapshot = useEditorSession(editor);
   return (
     <>
-      <MaterialXNodeLib catalog={catalog} onAdd={(spec) => setDocument((doc) => addNode(doc, spec, { x: 0, y: 0 }))} />
-      <MaterialXNodeGraph document={document} onChange={setDocument} mode="edit" />
+      <button disabled={!snapshot.canUndo} onClick={editor.undo}>
+        Undo
+      </button>
+      <button disabled={!snapshot.canRedo} onClick={editor.redo}>
+        Redo
+      </button>
+      <MaterialXNodeLib onAdd={(spec) => editor.graph().addNode({ definition: spec.nodeDefName! })} />
+      <MaterialXNodeGraph session={editor} mode="edit" />
     </>
   );
 }
 ```
+
+## Headless editing lives in core
+
+Import `createEditorSession` from `mtlx-core/session`. It owns immutable document
+snapshots, graph operations and queries, validation, transactions, subscriptions, and
+undo/redo. It works without installing this React package. See the
+[core session API and scripting examples](../core/README.md#mtlx-coresession-browser-safe-editing).
+
+`mtlx-editor/session` and the session exports on `mtlx-editor` remain compatibility
+re-exports of the same implementation. Existing low-level mutation exports in
+`mtlx-editor/model` also delegate to core.
+
+`useEditorSession(editor)` remains in this package. It subscribes React through
+`useSyncExternalStore`. The graph viewer adds canvas positions to core's semantic graph;
+selection, viewport, menu labels, and renderer-specific preview preparation remain here.
+Core session node queries no longer expose a computed `position`; use `projectGraph()`
+for display positions or the node's XML attributes for persisted `xpos`/`ypos`.
 
 ## Boundaries
 
@@ -27,20 +51,25 @@ function Editor() {
   from `submodules/MaterialX` by `pnpm generate:nodes`; the generated header records the
   upstream version and source fingerprint.
   No renderer-specific definitions belong in core.
-- **Editor model** (`mtlx-editor/model`) supplies immutable document operations and a
-  graph projection. It has no React or Three.js imports. It edits the core element tree,
-  preserving unrelated XML, comments, custom nodes, and resource paths. The node catalog
-  incorporates document-local definitions, including inherited ports.
-- **React components** project that document into React Flow nodes and edges. `document`
-  and `onChange` are controlled props; `mode="view"` disables edits. `scope` selects the
+- **Core session** (`mtlx-core/session`) owns immutable editing operations, semantic
+  graph queries, node-family membership, type resolution, validation, and history.
+  Operations preserve unrelated XML, comments, custom nodes, and resource paths. The
+  catalog incorporates document-local definitions, including inherited ports.
+- **Editor model** (`mtlx-editor/model`) adapts the semantic graph to canvas nodes and
+  edges, supplies default positions, and prepares renderer-specific preview XML.
+  Its mutation exports are compatibility re-exports from core. It has no React imports.
+- **React components** subscribe to a shared `session` and project its document into
+  React Flow nodes and edges. The legacy `document`/`onChange` controlled props are
+  supported through a session adapter; use `session` for scripting and shared history.
+  `mode="view"` disables UI edits (headless callers can still edit their session). `scope` selects the
   document (`''`) or a named nodegraph. Compound nodes expose **Expand**, with breadcrumbs
   above the canvas to return to parent graphs. `onScopeChange` synchronizes navigation
   with a host scope selector or node library; without it, navigation is managed internally.
   Expansion works in view mode and for local node definition implementations. Nested
   graph scopes use slash-separated paths. `MaterialXNodeList` is shared between category
   browsing and search results. The drag payload contains only a nodedef identifier.
-- **Website** owns file I/O, archive resources, scope selection, history, and preview
-  scheduling. Each semantic edit produces new XML (or a ZIP containing XML and original
+- **Website** owns file I/O, archive resources, scope selection, and preview scheduling.
+  Its toolbar and graph share the session's history. Each semantic edit produces new XML (or a ZIP containing XML and original
   resources) after a 400 ms debounce. It reuses the existing `mtlx-viewer` integration,
   which compiles through Three.js `MaterialXLoader`. Moving nodes saves `xpos`/`ypos`
   without recompiling the preview. A replaced preview is cancelled and disposed.
@@ -107,8 +136,8 @@ expanded, and 128 entries. Larger edited materials can be shared using the ZIP d
   Unsupported nodes and missing resources are reported by the existing preview.
 - The initial layout is a simple grid. Imported `xpos`/`ypos` are respected. Large shaders
   show all ports, so graph fit can be small; zoom in to inspect them.
-- Parameter values use MaterialX text syntax (e.g. `0.2, 0.5, 0.8`). The prototype does
-  not yet enforce all numeric ranges or implement specialized color/texture controls.
+- Parameter values serialize as MaterialX text (e.g. `0.2, 0.5, 0.8`). Session validation
+  does not enforce all range metadata or extension-specific value formats.
 - Existing graph interfaces and outputs are editable; creating graph containers/interfaces,
   renaming nodes, editing definitions, and adding definitions from included libraries to the
   node palette are future work.
@@ -128,6 +157,8 @@ pnpm --filter website test:e2e
 MTLX_E2E_PORT=3137 pnpm --filter website test:e2e
 ```
 
+Core session tests cover deep immutability, sequential scripts, transaction rollback, nested
+savepoints, notifications, history, scoped queries, shared validation, and broken imports.
 Editor model tests cover defaults, immutable edits, connections/cycles, scopes,
 unknown XML, archive resource preservation, and round trips. Vitest-driven Playwright
 workflows cover the website, including actual Three.js rendering and recompile.

@@ -1,3 +1,7 @@
+/** A recursively read-only view, suitable for immutable editor snapshots. */
+export type DeepReadonly<T> = { readonly [K in keyof T]: DeepReadonly<T[K]> };
+export type ReadonlyMaterialXDocument = DeepReadonly<MaterialXDocument>;
+
 export type MaterialXValueType = string;
 
 export interface MaterialXElement {

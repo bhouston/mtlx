@@ -1,10 +1,11 @@
+import { createEditorSession } from 'mtlx-core/session';
 import { createFileRoute, useLocation } from '@tanstack/react-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { parseMaterialX, serializeMaterialX, type MaterialXDocument, type MaterialXPackage } from 'mtlx-core';
+import { cloneMaterialXDocument, parseMaterialX, serializeMaterialX, type MaterialXPackage } from 'mtlx-core';
 import {
   MaterialXNodeGraph,
   MaterialXNodeLib,
-  addNode,
+  useEditorSession,
   createDefaultDocument,
   exportMaterial,
   getNodeCatalog,
@@ -21,7 +22,7 @@ import { viewerSettings } from '@/lib/viewer-search';
 import { MaterialLoadControls } from '@/components/viewer/MaterialLoadControls';
 import { EditorShareMenu } from '@/components/editor/EditorShareMenu';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, Redo2, Undo2 } from 'lucide-react';
 
 export const Route = createFileRoute('/editor')({
   ssr: false,
@@ -37,11 +38,16 @@ function EditorPage() {
   const localFile = useRef(false);
   const activeController = useRef<AbortController | null>(null);
   const [loadedSource, setLoadedSource] = useState<{ url?: string; xml: string }>({ xml: '' });
-  const [pkg, setPackage] = useState<MaterialXPackage>(() => ({
+  const [loadedPackage, setPackage] = useState<MaterialXPackage>(() => ({
     rootPath: 'material.mtlx',
     document: createDefaultDocument(),
     resources: [],
   }));
+  const [session] = useState(() => createEditorSession({ document: loadedPackage.document }));
+  const snapshot = useEditorSession(session);
+  // File/preview APIs use a detached document copy; all edits target the session.
+  const documentCopy = useMemo(() => cloneMaterialXDocument(snapshot.document), [snapshot.document]);
+  const pkg = useMemo(() => ({ ...loadedPackage, document: documentCopy }), [loadedPackage, documentCopy]);
   const scope = graphScopes(pkg.document).includes(search.scope ?? '') ? (search.scope ?? '') : '';
   const [documentId, setDocumentId] = useState(0);
   const [error, setError] = useState('');
@@ -49,10 +55,6 @@ function EditorPage() {
   const [source, setSource] = useState<MaterialSource | null>(null);
   const [loading, setLoading] = useState(false);
   const generation = useRef(0);
-  const [history, setHistory] = useState<{ past: MaterialXDocument[]; future: MaterialXDocument[] }>({
-    past: [],
-    future: [],
-  });
   const catalog = useMemo(() => getNodeCatalog(pkg.document), [pkg.document]);
   const documentXml = useMemo(() => serializeMaterialX(pkg.document), [pkg.document]);
   const xml = useMemo(() => previewXml(pkg.document), [pkg.document]);
@@ -82,48 +84,36 @@ function EditorPage() {
     },
     [],
   );
-  const change = (document: MaterialXDocument) => {
-    setHistory((h) => ({ past: [...h.past.slice(-49), pkg.document], future: [] }));
-    setPackage((p) => ({ ...p, document }));
-  };
-  const travel = (undo: boolean) => {
-    const list = undo ? history.past : history.future;
-    const document = list.at(-1);
-    if (!document) return;
-    setHistory(
-      undo
-        ? { past: history.past.slice(0, -1), future: [...history.future, pkg.document] }
-        : { past: [...history.past, pkg.document], future: history.future.slice(0, -1) },
-    );
-    setPackage((p) => ({ ...p, document }));
-  };
-  const load = useCallback(async (input?: File | string | { snapshot: string }) => {
-    const run = ++generation.current;
-    activeController.current?.abort();
-    const controller = new AbortController();
-    activeController.current = controller;
-    setLoading(true);
-    setError('');
-    try {
-      const next =
-        input === undefined
-          ? { rootPath: 'material.mtlx', document: createDefaultDocument(), resources: [] }
-          : typeof input === 'object' && 'snapshot' in input
-            ? readEditorSnapshot(input.snapshot)
-            : await loadEditorMaterial(input, controller.signal, window.location.origin);
-      if (run !== generation.current || controller.signal.aborted) return;
-      getNodeCatalog(next.document);
-      setDocumentId(run);
-      setPackage(next);
-      setLoadedSource({ url: typeof input === 'string' ? input : undefined, xml: serializeMaterialX(next.document) });
-      setHistory({ past: [], future: [] });
-    } catch (e) {
-      if (run === generation.current && !controller.signal.aborted)
-        setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      if (run === generation.current) setLoading(false);
-    }
-  }, []);
+  const load = useCallback(
+    async (input?: File | string | { snapshot: string }) => {
+      const run = ++generation.current;
+      activeController.current?.abort();
+      const controller = new AbortController();
+      activeController.current = controller;
+      setLoading(true);
+      setError('');
+      try {
+        const next =
+          input === undefined
+            ? { rootPath: 'material.mtlx', document: createDefaultDocument(), resources: [] }
+            : typeof input === 'object' && 'snapshot' in input
+              ? readEditorSnapshot(input.snapshot)
+              : await loadEditorMaterial(input, controller.signal, window.location.origin);
+        if (run !== generation.current || controller.signal.aborted) return;
+        getNodeCatalog(next.document);
+        setDocumentId(run);
+        setPackage(next);
+        setLoadedSource({ url: typeof input === 'string' ? input : undefined, xml: serializeMaterialX(next.document) });
+        session.replaceDocument(next.document);
+      } catch (e) {
+        if (run === generation.current && !controller.signal.aborted)
+          setError(e instanceof Error ? e.message : String(e));
+      } finally {
+        if (run === generation.current) setLoading(false);
+      }
+    },
+    [session],
+  );
   // Route navigation is an external input that replaces the editable document.
   /* oxlint-disable react/set-state-in-effect */
   useEffect(() => {
@@ -180,9 +170,38 @@ function EditorPage() {
         MaterialX support.
       </p>
       <MaterialLoadControls materialUrl={search.materialUrl} onLoadFile={loadFromFile} onLoadUrl={loadFromUrl}>
-        <Button variant="outline" size="sm" onClick={download} disabled={loading}>
-          <Download />
-          Download .mtlx.zip
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-8 px-0"
+          aria-label="Undo"
+          title="Undo"
+          disabled={!snapshot.canUndo}
+          onClick={session.undo}
+        >
+          <Undo2 aria-hidden="true" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-8 px-0"
+          aria-label="Redo"
+          title="Redo"
+          disabled={!snapshot.canRedo}
+          onClick={session.redo}
+        >
+          <Redo2 aria-hidden="true" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-8 px-0"
+          aria-label="Download .mtlx.zip"
+          title="Download .mtlx.zip"
+          onClick={download}
+          disabled={loading}
+        >
+          <Download aria-hidden="true" />
         </Button>
         <EditorShareMenu
           disabled={loading}
@@ -196,23 +215,6 @@ function EditorPage() {
           }
         />
       </MaterialLoadControls>
-      <div className="flex flex-wrap items-center gap-3 text-sm">
-        <button
-          className="rounded border p-2 disabled:opacity-40"
-          disabled={!history.past.length}
-          onClick={() => travel(true)}
-        >
-          Undo
-        </button>
-        <button
-          className="rounded border p-2 disabled:opacity-40"
-          disabled={!history.future.length}
-          onClick={() => travel(false)}
-        >
-          Redo
-        </button>
-        <span>{loading ? 'Opening…' : pkg.rootPath}</span>
-      </div>
       {error && <p role="alert">{error}</p>}
       <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_340px]">
         <MaterialXNodeLib
@@ -220,7 +222,15 @@ function EditorPage() {
           onAdd={(spec) => {
             const nodes = projectGraph(pkg.document, scope, catalog).nodes;
             const x = Math.min(0, ...nodes.map((node) => node.position.x)) - 310;
-            change(addNode(pkg.document, spec, { x, y: 50 }, scope));
+            try {
+              session.transaction('Add node', () => {
+                const id = session.graph(scope).addNode({ definition: spec.nodeDefName! });
+                session.layout.moveNodes({ [id]: { x, y: 50 } }, scope);
+              });
+              setError('');
+            } catch (failure) {
+              setError(failure instanceof Error ? failure.message : String(failure));
+            }
           }}
         />
         <div>
@@ -247,9 +257,8 @@ function EditorPage() {
       </div>
       <MaterialXNodeGraph
         key={documentId}
-        document={pkg.document}
+        session={session}
         fileName={pkg.rootPath}
-        onChange={change}
         mode="edit"
         scope={scope}
         onScopeChange={(nextScope) => {
@@ -261,7 +270,6 @@ function EditorPage() {
             resetScroll: false,
           });
         }}
-        catalog={catalog}
       />
     </main>
   );

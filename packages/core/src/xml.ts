@@ -2,6 +2,8 @@ import { assertMaterialXXmlLimits, type MaterialXReadLimits } from './limits.js'
 import { XMLBuilder, XMLParser, XMLValidator } from 'fast-xml-parser';
 import type {
   MaterialXDocument,
+  ReadonlyMaterialXDocument,
+  DeepReadonly,
   MaterialXElement,
   MaterialXInput,
   MaterialXNode,
@@ -41,7 +43,7 @@ const parseOrdered = (records: XmlRecord[]): MaterialXElement[] =>
     const children = parseOrdered(record[name] as XmlRecord[]);
     return [{ name, attributes: asStringRecord(record[':@']), children }];
   });
-const elementToOrdered = (element: MaterialXElement): XmlRecord => {
+const elementToOrdered = (element: DeepReadonly<MaterialXElement>): XmlRecord => {
   if (element.name === '#text') return { '#text': element.text ?? '' };
   const children = element.children.map(elementToOrdered);
   if (element.text !== undefined) children.unshift({ '#text': element.text });
@@ -140,8 +142,8 @@ export const createMaterialXDocument = (
   },
 });
 
-export const cloneMaterialXDocument = (document: MaterialXDocument): MaterialXDocument =>
-  createMaterialXDocument({ ...document.attributes }, structuredClone(document.elements));
+export const cloneMaterialXDocument = (document: ReadonlyMaterialXDocument): MaterialXDocument =>
+  createMaterialXDocument({ ...document.attributes }, structuredClone(document.elements) as MaterialXElement[]);
 
 /**
  * *Parses MaterialX XML text into a {@link MaterialXDocument}.*
@@ -187,6 +189,6 @@ export const parseMaterialX = (xml: string, limits?: Partial<MaterialXReadLimits
  *
  * @category Parsing
  */
-export const serializeMaterialX = (document: MaterialXDocument): string => {
+export const serializeMaterialX = (document: ReadonlyMaterialXDocument): string => {
   return builder.build([{ materialx: document.elements.map(elementToOrdered), ':@': document.attributes }]);
 };

@@ -16,7 +16,35 @@ try {
     return join(root, 'publish', `${pkg.name}-${pkg.version}.tgz`);
   });
   writeFileSync(join(directory, 'package.json'), JSON.stringify({ private: true, type: 'module' }));
-  execFileSync('npm', ['install', '--omit=dev', '--no-audit', '--no-fund', ...tarballs], {
+  // Verify the core session before viewer dependencies can supply React accidentally.
+  execFileSync('npm', ['install', '--omit=dev', '--no-audit', '--no-fund', tarballs[0]], {
+    cwd: directory,
+    stdio: 'inherit',
+  });
+  const headlessConsumer = `
+import assert from 'node:assert/strict';
+import { parseMaterialX } from 'mtlx-core';
+import { createEditorSession } from 'mtlx-core/session';
+// The installed headless session must not rely on editor packages or browser globals.
+for (const dependency of ['mtlx-editor', 'react', 'react-dom', '@xyflow/react'])
+  assert.throws(() => import.meta.resolve(dependency), { code: 'ERR_MODULE_NOT_FOUND' });
+assert.equal(typeof document, 'undefined');
+const session = createEditorSession({ document: parseMaterialX('<materialx version="1.39"/>') });
+const before = session.getDocument();
+const id = session.transaction('Create constant', () => {
+  const created = session.graph().addNode({ definition: 'ND_constant_float' });
+  session.graph().setInputValue(created, 'value', 0.5, { type: 'float' });
+  return created;
+});
+assert.equal(session.graph().getInputs(id)[0].value, '0.5');
+assert.ok(Object.isFrozen(session.getDocument().elements[0].attributes));
+assert.ok(!('position' in session.graph().getNode(id)));
+session.undo();
+assert.equal(session.getDocument(), before);
+`;
+  writeFileSync(join(directory, 'check-session.mjs'), headlessConsumer);
+  execFileSync(process.execPath, ['check-session.mjs'], { cwd: directory, stdio: 'inherit' });
+  execFileSync('npm', ['install', '--omit=dev', '--no-audit', '--no-fund', ...tarballs.slice(1)], {
     cwd: directory,
     stdio: 'inherit',
   });
@@ -65,7 +93,9 @@ try {
   writeFileSync(join(directory, 'check.mjs'), consumer);
   execFileSync(process.execPath, ['check.mjs'], { cwd: directory, stdio: 'inherit' });
   checkReadmeExamples(directory);
-  console.log('Clean production tarball checks passed: help, check, transform, viewer routes, and exported assets.');
+  console.log(
+    'Clean production tarball checks passed: headless session, help, check, transform, viewer routes, and exported assets.',
+  );
 } finally {
   rmSync(directory, { recursive: true, force: true });
 }

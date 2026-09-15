@@ -417,16 +417,17 @@ export function ConnectedParameterEditor(props: ConnectedParameterEditorProps) {
         <output id={id} aria-label={`${props.parameter.name} connected to`}>
           {props.source}
         </output>
-        <button
-          type="button"
-          className="mtlx-parameter-icon-button"
-          disabled={props.disabled}
-          aria-label={`Disconnect ${props.parameter.name}`}
-          title="Disconnect input"
-          onClick={props.onDisconnect}
-        >
-          <Unplug size={14} aria-hidden="true" />
-        </button>
+        {!props.disabled && (
+          <button
+            type="button"
+            className="mtlx-parameter-icon-button"
+            aria-label={`Disconnect ${props.parameter.name}`}
+            title="Disconnect input"
+            onClick={props.onDisconnect}
+          >
+            <Unplug size={14} aria-hidden="true" />
+          </button>
+        )}
       </div>
     </div>
   );

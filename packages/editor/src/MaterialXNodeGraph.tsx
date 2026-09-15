@@ -1,3 +1,5 @@
+import { createEditorSession, type EditorSession } from 'mtlx-core/session';
+import { useEditorSession } from './useEditorSession.js';
 import { NodeParameterEditor } from './NodeParameterEditor.js';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Maximize2 } from 'lucide-react';
@@ -20,16 +22,9 @@ import {
   type Edge,
 } from '@xyflow/react';
 import {
-  addNode,
-  cloneNode,
-  connectNodes,
-  connectionError,
-  disconnectInput,
   getNodeCatalog,
   graphScopes,
-  moveNodes,
   projectGraph,
-  removeNodes,
   type EditorMode,
   type GraphConnection,
   type GraphNode,
@@ -187,16 +182,29 @@ function MaterialConnectionLine({
     </>
   );
 }
-export interface MaterialXNodeGraphProps {
-  document: MaterialXDocument;
+interface GraphViewProps {
   /** Material file name or path, shown at the root of the breadcrumbs. */
   fileName?: string;
-  onChange?: (document: MaterialXDocument) => void;
   mode?: EditorMode;
   scope?: string;
   onScopeChange?: (scope: string) => void;
-  catalog?: MaterialXNodeSpec[];
   className?: string;
+}
+/** Prefer a shared session. Controlled document/onChange hosts remain supported by an adapter. */
+export type MaterialXNodeGraphProps = GraphViewProps &
+  (
+    | { session: EditorSession; document?: never; onChange?: never; catalog?: never }
+    | {
+        session?: never;
+        document: MaterialXDocument;
+        onChange?: (document: MaterialXDocument) => void;
+        catalog?: MaterialXNodeSpec[];
+      }
+  );
+interface SessionGraphProps extends GraphViewProps {
+  session: EditorSession;
+  document: MaterialXDocument;
+  catalog: MaterialXNodeSpec[];
 }
 function asConnection(c: Connection | Edge): GraphConnection {
   return {
@@ -209,14 +217,14 @@ function asConnection(c: Connection | Edge): GraphConnection {
 function Graph({
   document,
   fileName,
-  onChange,
+  session,
   mode = 'edit',
   scope = '',
   catalog: suppliedCatalog,
   className = '',
   path,
   onNavigate,
-}: MaterialXNodeGraphProps & { path: string[]; onNavigate: (path: string[]) => void }) {
+}: SessionGraphProps & { path: string[]; onNavigate: (path: string[]) => void }) {
   const catalog = useMemo(() => suppliedCatalog ?? getNodeCatalog(document), [suppliedCatalog, document]);
   const projection = useMemo(() => projectGraph(document, scope, catalog), [document, scope, catalog]);
   const portType = useMemo(() => socketTypes(projection.nodes, projection.edges), [projection]);
@@ -254,7 +262,8 @@ function Graph({
   const [context, setContext] = useState<{ nodeId?: string; position: { x: number; y: number } }>({
     position: { x: 0, y: 0 },
   });
-  const editable = mode === 'edit' && !!onChange;
+  const editable = mode === 'edit';
+  const operations = session.graph(scope);
   const { screenToFlowPosition, fitView } = useReactFlow();
   const nodeCount = projection.nodes.length;
   useEffect(() => {
@@ -286,15 +295,22 @@ function Graph({
   );
   const [interaction, setInteraction] = useState({ projection: projectedNodes, nodes: projectedNodes });
   const nodes = interaction.projection === projectedNodes ? interaction.nodes : projectedNodes;
-  const commit = (operation: () => MaterialXDocument) => {
+  const commit = (operation: () => unknown) => {
     if (!editable) return;
     try {
-      onChange?.(operation());
+      operation();
       setError('');
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
   };
+  const add = (spec: MaterialXNodeSpec, position: { x: number; y: number }) =>
+    commit(() =>
+      session.transaction('Add node', () => {
+        const id = operations.addNode({ definition: spec.nodeDefName! });
+        session.layout.moveNodes({ [id]: position }, scope);
+      }),
+    );
   const node = projection.nodes.find((n) => n.id === selected);
   const rootLabel = fileName?.split(/[\\/]/).at(-1) || 'material.mtlx';
   return (
@@ -324,16 +340,19 @@ function Graph({
           catalog={catalog}
           editable={editable}
           nodeId={context.nodeId}
-          onAdd={(spec) => commit(() => addNode(document, spec, context.position, scope))}
+          onAdd={(spec) => add(spec, context.position)}
           onClone={() => {
             const source = projection.nodes.find((n) => n.id === context.nodeId);
             if (source)
               commit(() =>
-                cloneNode(document, source.id, { x: source.position.x + 40, y: source.position.y + 40 }, scope),
+                session.transaction('Clone node', () => {
+                  const id = operations.cloneNode(source.id);
+                  session.layout.moveNodes({ [id]: { x: source.position.x + 40, y: source.position.y + 40 } }, scope);
+                }),
               );
           }}
           onDelete={() => {
-            if (context.nodeId) commit(() => removeNodes(document, [context.nodeId!], scope));
+            if (context.nodeId) commit(() => operations.removeNodes([context.nodeId!]));
           }}
         >
           <div
@@ -357,8 +376,7 @@ function Graph({
               e.preventDefault();
               e.stopPropagation();
               const spec = catalog.find((n) => n.nodeDefName === id);
-              if (spec)
-                commit(() => addNode(document, spec, screenToFlowPosition({ x: e.clientX, y: e.clientY }), scope));
+              if (spec) add(spec, screenToFlowPosition({ x: e.clientX, y: e.clientY }));
             }}
           >
             <ReactFlow<FlowNode>
@@ -373,13 +391,19 @@ function Graph({
               nodesConnectable={editable}
               edgesReconnectable={false}
               deleteKeyCode={editable ? ['Delete', 'Backspace'] : null}
-              onNodesDelete={(deleted) =>
+              onDelete={({ nodes: deletedNodes, edges: deletedEdges }) =>
                 commit(() =>
-                  removeNodes(
-                    document,
-                    deleted.map((n) => n.id),
-                    scope,
-                  ),
+                  session.transaction(deletedNodes.length ? 'Delete nodes' : 'Disconnect inputs', () => {
+                    operations.removeNodes(deletedNodes.map((deleted) => deleted.id));
+                    const remaining = new Set(operations.listNodes().map((remainingNode) => remainingNode.id));
+                    for (const edge of deletedEdges) {
+                      if (!remaining.has(edge.target)) continue;
+                      const input = edge.targetHandle ?? 'in';
+                      const source = operations.getConnection({ node: edge.target, input });
+                      if (source?.node === edge.source && source.output === (edge.sourceHandle ?? 'out'))
+                        operations.disconnectInput(edge.target, input);
+                    }
+                  }),
                 )
               }
               onNodesChange={(changes) => {
@@ -392,7 +416,7 @@ function Graph({
                     c.type === 'position' && c.dragging === false && c.position ? [[c.id, c.position]] : [],
                   ),
                 );
-                if (Object.keys(positions).length) commit(() => moveNodes(document, positions, scope));
+                if (Object.keys(positions).length) commit(() => session.layout.moveNodes(positions, scope));
                 setInteraction((current) => ({
                   projection: projectedNodes,
                   nodes: applyNodeChanges(
@@ -403,10 +427,24 @@ function Graph({
               }}
               onNodeClick={(_, n) => setSelected(n.id)}
               onPaneClick={() => setSelected(null)}
-              isValidConnection={(c) => !connectionError(document, asConnection(c), scope, catalog)}
-              onConnect={(c) => commit(() => connectNodes(document, asConnection(c), scope, catalog))}
+              isValidConnection={(c) => {
+                const wire = asConnection(c);
+                return !operations.checkConnection(
+                  { node: wire.source, output: wire.sourceHandle },
+                  { node: wire.target, input: wire.targetHandle },
+                );
+              }}
+              onConnect={(c) =>
+                commit(() => {
+                  const wire = asConnection(c);
+                  operations.connect(
+                    { node: wire.source, output: wire.sourceHandle },
+                    { node: wire.target, input: wire.targetHandle },
+                  );
+                })
+              }
               onEdgeDoubleClick={(_, edge) =>
-                commit(() => disconnectInput(document, edge.target, edge.targetHandle ?? 'in', scope))
+                commit(() => operations.disconnectInput(edge.target, edge.targetHandle ?? 'in'))
               }
             >
               <Background />
@@ -427,19 +465,40 @@ function Graph({
       </div>
       <NodeParameterEditor
         key={`${scope}/${node?.id ?? ''}`}
-        document={document}
+        graph={operations}
         node={node}
         projection={projection}
-        catalog={catalog}
         editable={editable}
-        scope={scope}
         commit={commit}
       />
     </section>
   );
 }
 export function MaterialXNodeGraph(props: MaterialXNodeGraphProps) {
-  const scopes = graphScopes(props.document);
+  const session = useMemo(
+    () => props.session ?? createEditorSession({ document: props.document!, catalog: props.catalog }),
+    [props.session, props.document, props.catalog],
+  );
+  const onChange = props.onChange;
+  useEffect(() => {
+    if (!onChange) return;
+    return session.subscribe(() => onChange(session.getDocument() as MaterialXDocument));
+  }, [session, onChange]);
+  return (
+    <SessionNodeGraph
+      {...props}
+      session={session}
+      mode={props.session || props.onChange ? (props.mode ?? 'edit') : 'view'}
+    />
+  );
+}
+
+function SessionNodeGraph(props: GraphViewProps & { session: EditorSession }) {
+  const snapshot = useEditorSession(props.session);
+  // Legacy projection utilities read MaterialXDocument; the session freezes its entire tree.
+  const document = snapshot.document as MaterialXDocument;
+  const catalog = props.session.getCatalog() as MaterialXNodeSpec[];
+  const scopes = graphScopes(document);
   const externalScope = scopes.includes(props.scope ?? '') ? (props.scope ?? '') : '';
   const defaultPath = [
     '',
@@ -459,7 +518,7 @@ export function MaterialXNodeGraph(props: MaterialXNodeGraphProps) {
   };
   return (
     <ReactFlowProvider key={scope}>
-      <Graph {...props} scope={scope} path={path} onNavigate={onNavigate} />
+      <Graph {...props} document={document} catalog={catalog} scope={scope} path={path} onNavigate={onNavigate} />
     </ReactFlowProvider>
   );
 }

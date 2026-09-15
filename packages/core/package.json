@@ -42,6 +42,10 @@
     "./textures": {
       "types": "./dist/textures.d.ts",
       "default": "./dist/textures.js"
+    },
+    "./session": {
+      "types": "./dist/session.d.ts",
+      "default": "./dist/session.js"
     }
   },
   "scripts": {
