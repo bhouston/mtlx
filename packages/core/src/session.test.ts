@@ -149,20 +149,36 @@ describe('immutable editing session', () => {
     expect(session.getDocument()).toBe(before.document);
   });
 
-  it('rejects async callbacks before they run and history travel during transactions', () => {
+  it('rejects async callbacks and history travel during transactions', () => {
     const session = create();
-    const run = vi.fn();
-    // JS callers also get an explicit runtime rejection.
+    const before = session.getDocument();
+    // JS callers also get an explicit runtime rejection; the rejected edit is rolled back.
     expect(() =>
       session.transaction('Async', (async () => {
-        run();
+        session.graph().setInputValue('surface', 'specular_roughness', 0.9);
       }) as never),
     ).toThrow('synchronous');
-    expect(run).not.toHaveBeenCalled();
+    expect(session.getDocument()).toBe(before);
     expect(() => session.transaction('Undo', () => session.undo())).toThrow('inside a transaction');
     expect(() => session.transaction('Load', () => session.replaceDocument(createDefaultDocument()))).toThrow(
       'inside a transaction',
     );
+  });
+
+  it('tracks dirty state through edits, undo, markClean and reload, and serializes XML', () => {
+    const session = create();
+    expect(session.getSnapshot().dirty).toBe(false);
+    session.graph().setInputValue('surface', 'specular_roughness', 0.9);
+    expect(session.getSnapshot().dirty).toBe(true);
+    expect(session.toXml()).toContain('value="0.9"');
+    session.undo();
+    expect(session.getSnapshot().dirty).toBe(false);
+    session.redo();
+    session.markClean();
+    expect(session.getSnapshot().dirty).toBe(false);
+    session.replaceDocument(createDefaultDocument());
+    expect(session.getSnapshot().dirty).toBe(false);
+    expect(session.graph()).toBe(session.graph());
   });
 
   it('bounds history, ignores no-op edits, unsubscribes, and clears redo on new edits', () => {

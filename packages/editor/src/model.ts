@@ -15,6 +15,7 @@ import {
   readGraph,
   getNodeCatalog,
   materializeDocument,
+  nonNodes,
   type GraphNode as SemanticGraphNode,
   type GraphEdge,
   type Point,
@@ -71,24 +72,6 @@ export function projectGraph(
     })),
   };
 }
-
-const nonNodes = new Set([
-  'nodedef',
-  'implementation',
-  'look',
-  'lookgroup',
-  'collection',
-  'geominfo',
-  'geompropdef',
-  'typedef',
-  'unitdef',
-  'unittypedef',
-  'propertyset',
-  'variantset',
-  'xi:include',
-  'include',
-  'parameter',
-]);
 
 function stripPositions(elements: MaterialXElement[]) {
   for (const e of elements) {

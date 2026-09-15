@@ -1,25 +1,8 @@
 import { cloneMaterialXDocument } from './xml.js';
-import { findNodeSpec, getNodeCatalog, nodeType } from './node-catalog.js';
+import { findNodeSpec, getNodeCatalog, nodeType, nonNodes } from './node-catalog.js';
 import type { MaterialXDocument, MaterialXElement, MaterialXNodePortSpec, MaterialXNodeSpec } from './types.js';
 import { findNodeFamily, type NodeFamily } from './node-families.js';
 
-const nonNodes = new Set([
-  'nodedef',
-  'implementation',
-  'look',
-  'lookgroup',
-  'collection',
-  'geominfo',
-  'geompropdef',
-  'typedef',
-  'unitdef',
-  'unittypedef',
-  'propertyset',
-  'variantset',
-  'xi:include',
-  'include',
-  'parameter',
-]);
 export const resolutionKey = (scope: string, id: string) => (scope ? `${scope}/${id}` : id);
 const authoredPorts = (element: MaterialXElement, tag: string) => element.children.filter((p) => p.name === tag);
 const asPort = (p: MaterialXElement): MaterialXNodePortSpec => ({ ...p.attributes, name: p.attributes.name! });

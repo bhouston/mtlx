@@ -1,6 +1,24 @@
 import { materialXNodeRegistry } from './registry.js';
 import type { MaterialXDocument, MaterialXElement, MaterialXNodeSpec, MaterialXNodePortSpec } from './types.js';
 
+/** Element tags that never appear as graph nodes. */
+export const nonNodes = new Set([
+  'nodedef',
+  'implementation',
+  'look',
+  'lookgroup',
+  'collection',
+  'geominfo',
+  'geompropdef',
+  'typedef',
+  'unitdef',
+  'unittypedef',
+  'propertyset',
+  'variantset',
+  'xi:include',
+  'include',
+  'parameter',
+]);
 export const nodeType = (spec: MaterialXNodeSpec) =>
   spec.type ?? (spec.outputs.length === 1 ? spec.outputs[0]?.type : 'multioutput');
 

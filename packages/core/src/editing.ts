@@ -1,5 +1,12 @@
 import { cloneMaterialXDocument } from './xml.js';
-import { nodeType, getNodeCatalog as coreNodeCatalog, getNodeGraphScope, findNodeSpec } from './node-catalog.js';
+import {
+  nodeType,
+  getNodeCatalog as coreNodeCatalog,
+  getNodeGraphScope,
+  findNodeSpec,
+  nonNodes,
+} from './node-catalog.js';
+export { nonNodes } from './node-catalog.js';
 import type { MaterialXDocument, MaterialXElement, MaterialXNodeSpec, MaterialXNodePortSpec } from './types.js';
 
 import { invalidateTypeResolution, resolveTypes, resolutionKey } from './type-resolution.js';
@@ -48,23 +55,6 @@ export interface GraphNode {
 export interface GraphEdge extends GraphConnection {
   id: string;
 }
-const nonNodes = new Set([
-  'nodedef',
-  'implementation',
-  'look',
-  'lookgroup',
-  'collection',
-  'geominfo',
-  'geompropdef',
-  'typedef',
-  'unitdef',
-  'unittypedef',
-  'propertyset',
-  'variantset',
-  'xi:include',
-  'include',
-  'parameter',
-]);
 export { nodeType, findNodeSpec } from './node-catalog.js';
 export function graphScopes(document: MaterialXDocument): string[] {
   const scopes = [''];

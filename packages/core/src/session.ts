@@ -1,4 +1,4 @@
-import { cloneMaterialXDocument } from './xml.js';
+import { cloneMaterialXDocument, serializeMaterialX } from './xml.js';
 import { validateDocument } from './validate.js';
 import type { DeepReadonly, MaterialXDocument, MaterialXNodeSpec, ReadonlyMaterialXDocument } from './types.js';
 import {
@@ -56,6 +56,8 @@ export interface EditorSnapshot {
   readonly document: ReadonlyMaterialXDocument;
   readonly canUndo: boolean;
   readonly canRedo: boolean;
+  /** Whether the document differs from the one last loaded or marked clean. */
+  readonly dirty: boolean;
   readonly undoLabel?: string;
   readonly redoLabel?: string;
 }
@@ -76,7 +78,7 @@ function freeze<T>(value: T): T {
   return value;
 }
 const sameDocument = (a: MaterialXDocument, b: MaterialXDocument) =>
-  JSON.stringify([a.attributes, a.elements]) === JSON.stringify([b.attributes, b.elements]);
+  a === b || JSON.stringify([a.attributes, a.elements]) === JSON.stringify([b.attributes, b.elements]);
 const asEditorError = (error: unknown, scope?: string) =>
   error instanceof EditorError
     ? error
@@ -96,6 +98,7 @@ const connection = (source: OutputRef, target: InputRef): GraphConnection => ({
 /** Headless editing state. Only successful commits publish immutable snapshots. */
 export class EditorSession {
   private current: MaterialXDocument;
+  private clean: MaterialXDocument;
   private readonly suppliedCatalog?: MaterialXNodeSpec[];
   private readonly historyLimit: number;
   private past: { document: MaterialXDocument; label: string; merge?: string }[] = [];
@@ -105,6 +108,8 @@ export class EditorSession {
   private snapshot: EditorSnapshot;
   private specViews = new WeakMap<MaterialXNodeSpec, DeepReadonly<MaterialXNodeSpec>>();
   private catalogViews = new WeakMap<MaterialXNodeSpec[], DeepReadonly<MaterialXNodeSpec[]>>();
+  // Private member types vanish from declaration output, so the cache is typed at the read.
+  private graphs = new Map<string, unknown>();
   private diagnosticCache = new WeakMap<MaterialXDocument, readonly EditorDiagnostic[]>();
 
   constructor(options: EditorSessionOptions) {
@@ -113,6 +118,7 @@ export class EditorSession {
       throw new EditorError({ code: 'INVALID_ARGUMENT', message: 'historyLimit must be a nonnegative integer.' });
     this.historyLimit = limit;
     this.current = freeze(cloneMaterialXDocument(options.document));
+    this.clean = this.current;
     this.suppliedCatalog = options.catalog
       ? freeze(structuredClone(options.catalog) as MaterialXNodeSpec[])
       : undefined;
@@ -144,6 +150,13 @@ export class EditorSession {
     return view;
   }
   getSnapshot = (): EditorSnapshot => this.snapshot;
+  toXml = (): string => serializeMaterialX(this.current);
+  /** Treat the current document as saved; `dirty` clears until the next edit. */
+  markClean() {
+    this.outsideTransaction();
+    this.clean = this.current;
+    this.publish();
+  }
   subscribe = (listener: () => void): (() => void) => {
     this.listeners.add(listener);
     return () => {
@@ -155,6 +168,7 @@ export class EditorSession {
       document: this.current,
       canUndo: !!this.past.length,
       canRedo: !!this.future.length,
+      dirty: this.current !== this.clean,
       undoLabel: this.past.at(-1)?.label,
       redoLabel: this.future.at(-1)?.label,
     });
@@ -181,8 +195,6 @@ export class EditorSession {
   }
   /** Synchronous transactions support nested savepoints; an uncaught error rolls back the enclosing transaction. */
   transaction<T>(label: string, operation: () => T extends PromiseLike<unknown> ? never : T): T {
-    if (operation.constructor.name === 'AsyncFunction')
-      throw new EditorError({ code: 'ASYNC_TRANSACTION', message: 'Transactions must be synchronous.' });
     const before = this.current;
     this.depth++;
     let result: T;
@@ -211,6 +223,7 @@ export class EditorSession {
   replaceDocument(document: ReadonlyMaterialXDocument) {
     this.outsideTransaction();
     this.current = freeze(cloneMaterialXDocument(document));
+    this.clean = this.current;
     this.past = [];
     this.future = [];
     this.publish();
@@ -336,6 +349,14 @@ export class EditorSession {
   /** Graph handles resolve against current state, so they remain useful across commits and undo. */
   graph(scope = '') {
     this.assertScope(scope);
+    let graph = this.graphs.get(scope) as ReturnType<typeof this.createGraph> | undefined;
+    if (!graph) {
+      graph = this.createGraph(scope);
+      this.graphs.set(scope, graph);
+    }
+    return graph;
+  }
+  private createGraph(scope: string) {
     const proposeConnection = (source: OutputRef, target: InputRef) => {
       this.input(scope, target.node, target.input);
       if (!this.node(scope, source.node).outputs.some((port) => port.name === source.output))
@@ -517,6 +538,7 @@ export {
   getNodeCatalog,
   graphScopes,
   moveNodes,
+  nonNodes,
   readGraph,
   removeNodes,
   renameNode,

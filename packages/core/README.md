@@ -123,6 +123,9 @@ No-op edits and transactions with no net changes create no history entry.
 
 History defaults to 50 entries; configure `historyLimit` (zero disables retained undo
 history). `replaceDocument(document)` loads even an invalid document and clears history.
+Snapshots carry `dirty`, true once the document differs from the one last loaded or
+passed to `markClean()`; `toXml()` serializes the current document. `graph(scope)`
+returns the same handle for a scope on every call.
 New edits reject newly introduced diagnostics while existing imported errors can remain
 during repair. History travel and document replacement are unavailable inside a
 transaction.
