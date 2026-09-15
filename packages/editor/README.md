@@ -119,7 +119,8 @@ adds **Ctrl/Cmd+Z** and **Shift+Ctrl/Cmd+Z** for the session's undo and redo.
 
 Open or drop `.mtlx` / `.mtlx.zip`, browse/search and drag/click nodes, select a node to
 edit values, wire compatible ports, or use the inspector's connection menus.
-Double-click a wire to disconnect; use Reset to restore an input's definition default.
+Click a wire to select it, then double-click, press Delete, or right-click it to disconnect.
+Right-click a port for Disconnect and Reset to default; the inspector offers the same.
 Delete removes references to the removed nodes. The website has undo/redo (50 changes),
 graph scope navigation, and `.mtlx.zip` download. Downloads always include the
 current document and all loaded resource bytes.

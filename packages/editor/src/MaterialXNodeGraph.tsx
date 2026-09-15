@@ -46,6 +46,8 @@ import {
 const EMPTY_RESOURCES: ParameterResources = { files: [] };
 type Point = { x: number; y: number };
 type LooseEnd = { node: string; handle: string; side: 'output' | 'input'; type?: string };
+/** A right-clicked port, or the input end of a right-clicked wire. */
+type WireTarget = { node: string; side: 'output' | 'input'; name: string };
 /** Definitions that could take the loose end of a dragged wire. */
 const accepts = (from?: LooseEnd) => (spec: MaterialXNodeSpec) => {
   if (!from?.type) return true;
@@ -111,6 +113,8 @@ function Graph({
     () => new Set(diagnostics.flatMap((issue) => (issue.edgeId ? [issue.edgeId] : []))),
     [diagnostics],
   );
+  /** React Flow only reports edge selection through change events, so the graph keeps the selected ids. */
+  const [selectedEdges, setSelectedEdges] = useState<ReadonlySet<string>>(new Set());
   const edges = useMemo(
     () =>
       projection.edges.map((edge): Edge => {
@@ -121,6 +125,7 @@ function Graph({
           data: { invalid: invalidEdges.has(edge.id) },
           sourceHandle:
             outputs?.find((port) => port.name === edge.sourceHandle)?.name ?? outputs?.[0]?.name ?? edge.sourceHandle,
+          selected: selectedEdges.has(edge.id),
           className: invalidEdges.has(edge.id) ? 'mtlx-edge-error' : undefined,
           style: {
             stroke: socketColor(portType(edge.source, 'output', edge.sourceHandle)),
@@ -128,7 +133,7 @@ function Graph({
           },
         };
       }),
-    [projection, portType, invalidEdges],
+    [projection, portType, invalidEdges, selectedEdges],
   );
   /** Selected node ids in selection order; the inspector shows the last one. */
   const [selected, setSelected] = useState<readonly string[]>([]);
@@ -143,7 +148,7 @@ function Graph({
     [],
   );
   const [error, setError] = useState('');
-  const [context, setContext] = useState<{ nodeId?: string; position: Point; client: Point }>({
+  const [context, setContext] = useState<{ nodeId?: string; wire?: WireTarget; position: Point; client: Point }>({
     position: { x: 0, y: 0 },
     client: { x: 0, y: 0 },
   });
@@ -173,6 +178,8 @@ function Graph({
     observer.observe(element);
     return () => observer.disconnect();
   }, [fitView]);
+  // Node data is memoized on the projection, so port menus reach the latest openContext through a ref.
+  const portContext = useRef<(event: { clientX: number; clientY: number }, wire: WireTarget) => void>(() => {});
   const projectedNodes = useMemo(
     () =>
       projection.nodes.map(
@@ -187,6 +194,10 @@ function Graph({
             mode: editable ? 'edit' : 'view',
             showAll: showAll.has(graph.id),
             onToggleInputs: () => toggleInputs(graph.id),
+            onPortContextMenu: (event, side, name) => {
+              event.stopPropagation();
+              portContext.current(event, { node: graph.id, side, name });
+            },
             onExpand:
               graph.compoundScope !== undefined && !path.includes(graph.compoundScope)
                 ? () => onNavigate([...path, graph.compoundScope!])
@@ -277,12 +288,15 @@ function Graph({
     );
   };
   /** Records where the context menu opened; right-clicking inside a multi-selection keeps it. */
-  const openContext = (event: { clientX: number; clientY: number }, nodeId?: string) => {
+  const openContext = (event: { clientX: number; clientY: number }, nodeId?: string, wire?: WireTarget) => {
     if (!editable) return;
     const client = { x: event.clientX, y: event.clientY };
-    setContext({ nodeId, position: screenToFlowPosition(client), client });
+    setContext({ nodeId, wire, position: screenToFlowPosition(client), client });
     if (nodeId ? !selected.includes(nodeId) : selected.length) setSelected(nodeId ? [nodeId] : []);
   };
+  useEffect(() => {
+    portContext.current = (event, wire) => openContext(event, wire.node, wire);
+  });
   // The pane never takes focus, so shortcuts apply while the pointer or focus is on the canvas.
   const shortcuts = useRef<(event: KeyboardEvent) => void>(() => {});
   const onShortcut = (event: KeyboardEvent) => {
@@ -315,6 +329,34 @@ function Graph({
     window.addEventListener('keydown', listener);
     return () => window.removeEventListener('keydown', listener);
   }, []);
+  /** Disconnect and reset actions for the right-clicked wire or port, when they apply. */
+  const wireActions = (wire: WireTarget) => {
+    const incoming = projection.edges.filter((edge) => edge.target === wire.node && edge.targetHandle === wire.name);
+    const outgoing = projection.edges.filter((edge) => edge.source === wire.node && edge.sourceHandle === wire.name);
+    const explicit = projection.nodes
+      .find((node) => node.id === wire.node)
+      ?.element.children.some(
+        (child) => ['input', 'parameter'].includes(child.name) && child.attributes.name === wire.name,
+      );
+    if (wire.side === 'output')
+      return {
+        label: outgoing.length > 1 ? `Disconnect ${outgoing.length} wires` : 'Disconnect',
+        onDisconnect: outgoing.length
+          ? () =>
+              commit(() =>
+                session.transaction('Disconnect inputs', () => {
+                  for (const edge of outgoing) operations.disconnectInput(edge.target, edge.targetHandle ?? 'in');
+                }),
+              )
+          : undefined,
+      };
+    return {
+      label: 'Disconnect',
+      onDisconnect: incoming.length ? () => commit(() => operations.disconnectInput(wire.node, wire.name)) : undefined,
+      onReset:
+        explicit && !incoming.length ? () => commit(() => operations.resetInput(wire.node, wire.name)) : undefined,
+    };
+  };
   const inspected = projection.nodes.find((node) => node.id === selected.at(-1));
   const rootLabel = fileName?.split(/[\\/]/).at(-1) || 'material.mtlx';
   return (
@@ -407,6 +449,7 @@ function Graph({
               if (context.nodeId) commit(() => operations.removeNodes(targets(context.nodeId!)));
             }}
             onGroup={scope ? undefined : group}
+            wire={context.wire && wireActions(context.wire)}
           >
             <div className="mtlx-flow">
               <ReactFlow<FlowNode>
@@ -461,11 +504,21 @@ function Graph({
                   if (Object.keys(positions).length) commit(() => session.layout.moveNodes(positions, scope));
                   onNodesChange(changes.filter((change) => change.type !== 'remove'));
                 }}
+                onEdgesChange={(changes) =>
+                  setSelectedEdges((current) => {
+                    const next = new Set(current);
+                    for (const change of changes)
+                      if (change.type === 'select') next[change.selected ? 'add' : 'delete'](change.id);
+                    return next;
+                  })
+                }
                 onPaneClick={() => setSelected([])}
                 onNodeContextMenu={(event, node) => openContext(event, node.id)}
                 onSelectionContextMenu={(event, chosen) => openContext(event, chosen[0]?.id)}
                 onPaneContextMenu={(event) => openContext(event)}
-                onEdgeContextMenu={(event) => openContext(event)}
+                onEdgeContextMenu={(event, edge) =>
+                  openContext(event, undefined, { node: edge.target, side: 'input', name: edge.targetHandle ?? 'in' })
+                }
                 isValidConnection={(candidate) => {
                   const wire = asConnection(candidate);
                   return !operations.checkConnection(

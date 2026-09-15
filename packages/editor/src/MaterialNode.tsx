@@ -1,3 +1,4 @@
+import type React from 'react';
 import { ChevronDown, ChevronRight, Maximize2 } from 'lucide-react';
 import { Handle, Position, useConnection, type Node, type NodeProps } from '@xyflow/react';
 import { visibleInputs, type EditorMode, type GraphNode } from './model.js';
@@ -14,6 +15,7 @@ export type FlowNode = Node<
     /** Whether every input shows; collapsed nodes list only connected or authored inputs. */
     showAll: boolean;
     onToggleInputs: () => void;
+    onPortContextMenu?: (event: React.MouseEvent, side: 'input' | 'output', name: string) => void;
   },
   'materialx'
 >;
@@ -63,6 +65,7 @@ export function MaterialNode({ data, selected }: NodeProps<FlowNode>) {
               className="mtlx-port"
               key={port.name}
               title={`${port.name}: ${portType(graph.id, 'input', port.name) ?? port.type ?? 'unknown'}`}
+              onContextMenu={(event) => data.onPortContextMenu?.(event, 'input', port.name)}
             >
               <Handle
                 style={{ background: socketColor(portType(graph.id, 'input', port.name)) }}
@@ -99,6 +102,7 @@ export function MaterialNode({ data, selected }: NodeProps<FlowNode>) {
               className="mtlx-port mtlx-output"
               key={port.name}
               title={`${port.name}: ${portType(graph.id, 'output', port.name) ?? port.type ?? 'unknown'}`}
+              onContextMenu={(event) => data.onPortContextMenu?.(event, 'output', port.name)}
             >
               <span>{port.name}</span>
               <Handle

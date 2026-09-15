@@ -203,8 +203,10 @@
 }
 .mtlx-graph .react-flow__edge:hover .react-flow__edge-path,
 .mtlx-graph .react-flow__edge.selected .react-flow__edge-path {
-  stroke-width: 3;
-  filter: drop-shadow(0 0 2px currentColor);
+  stroke-width: 4 !important;
+}
+.mtlx-graph .react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--mtlx-primary) !important;
 }
 .mtlx-inspector {
   position: absolute;

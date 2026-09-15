@@ -21,6 +21,7 @@ export function GraphContextMenu({
   onClone,
   onDelete,
   onGroup,
+  wire,
 }: {
   children: ReactElement;
   catalog: MaterialXNodeSpec[];
@@ -32,6 +33,8 @@ export function GraphContextMenu({
   onDelete: () => void;
   /** Offered at the root scope only; collapses the selection into a node graph. */
   onGroup?: () => void;
+  /** Actions for a right-clicked wire or port; the menu shows these instead of the node or pane items. */
+  wire?: { label: string; onDisconnect?: () => void; onReset?: () => void };
 }) {
   const groups = useMemo(() => buildNodeCatalogTree(catalog), [catalog]);
   return (
@@ -41,8 +44,19 @@ export function GraphContextMenu({
       </ContextMenuTrigger>
       {editable && (
         <ContextMenuContent collisionPadding={8}>
-          {!nodeId && <ContextMenuItem onSelect={onSearch}>Search nodes…</ContextMenuItem>}
-          {!nodeId && (
+          {wire && (
+            <>
+              {wire.onDisconnect && (
+                <ContextMenuItem variant="destructive" onSelect={wire.onDisconnect}>
+                  {wire.label}
+                </ContextMenuItem>
+              )}
+              {wire.onReset && <ContextMenuItem onSelect={wire.onReset}>Reset to default</ContextMenuItem>}
+              {!wire.onDisconnect && !wire.onReset && <ContextMenuItem disabled>Not connected</ContextMenuItem>}
+            </>
+          )}
+          {!wire && !nodeId && <ContextMenuItem onSelect={onSearch}>Search nodes…</ContextMenuItem>}
+          {!wire && !nodeId && (
             <ContextMenuSub>
               <ContextMenuSubTrigger disabled={!groups.length}>Add node</ContextMenuSubTrigger>
               <ContextMenuSubContent>
@@ -50,7 +64,7 @@ export function GraphContextMenu({
               </ContextMenuSubContent>
             </ContextMenuSub>
           )}
-          {nodeId && (
+          {!wire && nodeId && (
             <>
               <ContextMenuItem onSelect={onClone}>Clone</ContextMenuItem>
               {onGroup && <ContextMenuItem onSelect={onGroup}>Group into node graph</ContextMenuItem>}
