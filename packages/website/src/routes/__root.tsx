@@ -80,6 +80,13 @@ function SiteLayout() {
             >
               Extension
             </Link>
+            <Link
+              to="/material-viewer"
+              className="text-primary underline underline-offset-4"
+              activeProps={{ className: 'font-semibold' }}
+            >
+              &lt;material-viewer&gt;
+            </Link>
             <a href="https://www.npmjs.com/package/mtlx-cli" className="text-primary underline underline-offset-4">
               CLI
             </a>

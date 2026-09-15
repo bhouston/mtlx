@@ -131,7 +131,7 @@ function EditorPage() {
   // The editor owns XML and resource bytes. The preview owns every Three.js object.
   // Layout changes do not alter this XML; semantic edits schedule a fresh compilation.
   useEffect(() => {
-    const timer = setTimeout(() => setSource({ name: pkg.rootPath, data: new TextEncoder().encode(xml).buffer }), 400);
+    const timer = setTimeout(() => setSource({ name: pkg.rootPath, data: new TextEncoder().encode(xml).buffer }), 200);
     return () => clearTimeout(timer);
   }, [xml, pkg.rootPath]);
   useEffect(

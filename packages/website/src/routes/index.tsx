@@ -161,6 +161,29 @@ function HomePage() {
           </CardContent>
         </Card>
 
+        <Card className="flex min-w-0 flex-col">
+          <CardHeader>
+            <CardTitle>
+              <Link to="/material-viewer" className="text-primary underline underline-offset-4">
+                &lt;material-viewer&gt;
+              </Link>
+            </CardTitle>
+            <CardDescription>
+              Drop a 3D MaterialX preview into any page with one custom element tag, like Google's{' '}
+              <code>&lt;model-viewer&gt;</code>.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-3">
+            <CodeBlock
+              code={`<script type="module" src=".../mtlx-viewer/dist/element.js"></script>\n<material-viewer src="material.mtlx.zip"></material-viewer>`}
+            />
+            <PackageLinks
+              github="https://github.com/bhouston/mtlx/blob/main/packages/viewer/README.md"
+              npm="https://www.npmjs.com/package/mtlx-viewer"
+            />
+          </CardContent>
+        </Card>
+
         <Card className="flex min-w-0 flex-col sm:col-span-2 lg:col-span-3">
           <CardHeader>
             <CardTitle>

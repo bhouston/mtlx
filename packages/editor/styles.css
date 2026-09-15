@@ -164,7 +164,6 @@
   background: var(--mtlx-bg);
   border-radius: 6px;
   min-width: 240px;
-  overflow: hidden;
 }
 .mtlx-node > small {
   display: block;
@@ -392,6 +391,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 4px 8px 4px 12px;
+  border-radius: 5px 5px 0 0;
 }
 .mtlx-node-header > strong {
   overflow-wrap: anywhere;
@@ -637,8 +637,10 @@
 
 /* Hosts that dock the editor into a viewport-filling layout. */
 .mtlx-fill {
+  flex: 1;
   height: 100%;
   min-height: 0;
+  min-width: 0;
 }
 .mtlx-library-dock .mtlx-library-columns {
   grid-auto-flow: row;

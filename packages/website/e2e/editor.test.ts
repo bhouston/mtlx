@@ -71,7 +71,9 @@ test('node library lists families directly and finds them by any variant name', 
 });
 test('context menu adds categorized nodes, clones and deletes the clicked node', async () => {
   const pane = page.locator('.react-flow__pane');
-  await pane.click({ button: 'right', position: { x: 30, y: 30 } });
+  // Empty canvas near the bottom edge: clear of the breadcrumb overlay, the nodes and the zoom controls.
+  const corner = { x: 120, y: (await pane.boundingBox())!.height - 30 };
+  await pane.click({ button: 'right', position: corner });
   expect(await page.getByRole('menuitem', { name: 'Clone', exact: true }).count()).toBe(0);
   await page.getByRole('menuitem', { name: 'Add node', exact: true }).hover();
   await page.getByRole('menuitem', { name: 'procedural', exact: true }).hover();
@@ -87,7 +89,7 @@ test('context menu adds categorized nodes, clones and deletes the clicked node',
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
   await page.getByRole('button', { name: 'Undo', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(4);
-  await pane.click({ button: 'right', position: { x: 30, y: 30 } });
+  await pane.click({ button: 'right', position: corner });
   expect(await page.getByRole('menuitem', { name: 'Add node', exact: true }).isVisible()).toBe(true);
   expect(await page.getByRole('menuitem', { name: 'Clone', exact: true }).count()).toBe(0);
   await page.keyboard.press('Escape');
@@ -396,10 +398,12 @@ test('Onyx compound opens above the canvas with a parent breadcrumb', async () =
   const breadcrumb = page.getByRole('navigation', { name: 'Graph breadcrumb' });
   await expect.poll(() => breadcrumb.locator('[aria-current="page"]').textContent()).toBe('NG_OnyxHextiled');
   await expect.poll(() => page.locator('.react-flow__node[data-id="image_color"]').count()).toBe(1);
+  // The breadcrumb floats inside the canvas's top-left corner.
   const bounds = await breadcrumb.boundingBox();
   const canvas = await page.locator('.mtlx-canvas').boundingBox();
-  expect(bounds!.x).toBe(canvas!.x);
-  expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(canvas!.y + 1);
+  expect(bounds!.x).toBeGreaterThanOrEqual(canvas!.x);
+  expect(bounds!.y).toBeGreaterThanOrEqual(canvas!.y);
+  expect(bounds!.y + bounds!.height).toBeLessThan(canvas!.y + canvas!.height / 4);
   expect(canvas!.height).toBeGreaterThan(300);
   if (process.env.MTLX_COMPOUND_SCREENSHOT)
     await page.locator('.mtlx-graph').screenshot({ path: process.env.MTLX_COMPOUND_SCREENSHOT });
