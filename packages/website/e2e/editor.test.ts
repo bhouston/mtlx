@@ -563,3 +563,25 @@ test('parameter type selection is temporary until a value is authored', async ()
   expect(await selector.inputValue()).toBe('ND_tiledimage_color3');
   expect(errors).toEqual([]);
 });
+test('groups the selection into a node graph and adds interface ports inside it', async () => {
+  await page.locator('.react-flow__node[data-id="surface"]').click({ button: 'right' });
+  await page.getByRole('menuitem', { name: 'Group into node graph', exact: true }).click();
+  await expect.poll(() => page.locator('.react-flow__node[data-id="nodegraph"]').count()).toBe(1);
+  expect(await page.locator('.react-flow__node[data-id="surface"]').count()).toBe(0);
+  await page.getByRole('button', { name: 'Expand nodegraph', exact: true }).click();
+  await expect.poll(() => page.locator('.react-flow__node[data-id="out"]').count()).toBe(1);
+  const pane = page.locator('.react-flow__pane');
+  await pane.click({ button: 'right', position: { x: 120, y: (await pane.boundingBox())!.height - 30 } });
+  await page.getByRole('menuitem', { name: 'Add node', exact: true }).hover();
+  await page.getByRole('menuitem', { name: 'Graph', exact: true }).hover();
+  expect(await page.getByRole('menuitem', { name: 'nodegraph', exact: true }).count()).toBe(0);
+  await page.getByRole('menuitem', { name: 'input', exact: true }).click();
+  await expect.poll(() => page.locator('.react-flow__node[data-id="input"]').count()).toBe(1);
+  await page.locator('.react-flow__node[data-id="input"]').click();
+  await page.getByLabel('Port type', { exact: true }).selectOption('color3');
+  const xml = await downloadText();
+  expect(xml).toMatch(/<input name="input" type="color3"[^>]*\/>/);
+  expect(xml).toContain('<output name="out" type="surfaceshader" nodename="surface"/>');
+  expect(xml).toContain('nodegraph="nodegraph" output="out"');
+  expect(errors).toEqual([]);
+});

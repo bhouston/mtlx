@@ -20,6 +20,7 @@ export function GraphContextMenu({
   onSearch,
   onClone,
   onDelete,
+  onGroup,
 }: {
   children: ReactElement;
   catalog: MaterialXNodeSpec[];
@@ -29,6 +30,8 @@ export function GraphContextMenu({
   onSearch: () => void;
   onClone: () => void;
   onDelete: () => void;
+  /** Offered at the root scope only; collapses the selection into a node graph. */
+  onGroup?: () => void;
 }) {
   const groups = useMemo(() => buildNodeCatalogTree(catalog), [catalog]);
   return (
@@ -50,6 +53,7 @@ export function GraphContextMenu({
           {nodeId && (
             <>
               <ContextMenuItem onSelect={onClone}>Clone</ContextMenuItem>
+              {onGroup && <ContextMenuItem onSelect={onGroup}>Group into node graph</ContextMenuItem>}
               <ContextMenuItem variant="destructive" onSelect={onDelete}>
                 Delete
               </ContextMenuItem>

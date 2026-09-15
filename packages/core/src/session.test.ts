@@ -372,3 +372,51 @@ describe('compound node graphs', () => {
     expect(() => session.graph().setInterfacePort('nodegraph', { type: 'float' })).toThrow(/not an interface/);
   });
 });
+
+describe('grouping nodes into a node graph', () => {
+  const doc = () =>
+    parseMaterialX(
+      '<materialx version="1.39"><constant name="a" type="color3" xpos="10" ypos="40"><input name="value" type="color3" value="1, 0, 0"/></constant><multiply name="m" type="color3" xpos="200" ypos="20"><input name="in1" type="color3" nodename="a"/><input name="in2" type="color3" value="0.5, 0.5, 0.5"/></multiply><standard_surface name="surface" type="surfaceshader"><input name="base_color" type="color3" nodename="m"/><input name="specular_color" type="color3" nodename="m"/></standard_surface><surfacematerial name="material" type="material"><input name="surfaceshader" type="surfaceshader" nodename="surface"/></surfacematerial></materialx>',
+    );
+  it('moves the selection and turns boundary wires into interface ports', () => {
+    const session = createEditorSession({ document: doc() });
+    const id = session.graph().groupNodes(['m']);
+    expect(id).toBe('nodegraph');
+    const xml = serializeMaterialX(session.getDocument());
+    expect(xml).toContain('<nodegraph name="nodegraph" xpos="200" ypos="20">');
+    expect(xml).toContain('<input name="in1" type="color3" nodename="a"/>');
+    expect(xml).toContain('<output name="out" type="color3" nodename="m"/>');
+    expect(xml).toContain('<input name="in1" type="color3" interfacename="in1"/>');
+    expect(xml).toContain('<input name="base_color" type="color3" nodegraph="nodegraph" output="out"/>');
+    expect(xml).toContain('<input name="specular_color" type="color3" nodegraph="nodegraph" output="out"/>');
+    expect(
+      session
+        .graph()
+        .listNodes()
+        .map((n) => n.id),
+    ).toEqual(['a', 'surface', 'material', 'nodegraph']);
+    expect(
+      session
+        .graph('nodegraph')
+        .listNodes()
+        .map((n) => n.id),
+    ).toEqual(['in1', 'out', 'm']);
+    expect(session.getSnapshot().undoLabel).toBe('Group nodes');
+    session.undo();
+    expect(serializeMaterialX(session.getDocument())).toBe(serializeMaterialX(doc()));
+  });
+  it('shares one interface input per external source and refuses cycles, materials and nested graphs', () => {
+    const session = createEditorSession({ document: doc() });
+    session.graph().groupNodes(['a', 'm']);
+    const inner = session.graph('nodegraph');
+    expect(inner.listNodes().map((n) => n.id)).toEqual(['out', 'a', 'm']);
+    expect(serializeMaterialX(session.getDocument())).not.toContain('interfacename');
+    const cyclic = createEditorSession({ document: doc() });
+    // Grouping only a and surface would route a → m → surface back into the group.
+    expect(() => cyclic.graph().groupNodes(['a', 'surface'])).toThrow(/cycle/);
+    expect(() => cyclic.graph().groupNodes(['material'])).toThrow(/cannot be grouped/);
+    expect(() => cyclic.graph().groupNodes([])).toThrow(EditorError);
+    expect(() => inner.groupNodes(['a'])).toThrow(/nested/);
+    expect(cyclic.getSnapshot().canUndo).toBe(false);
+  });
+});

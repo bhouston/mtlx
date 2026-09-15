@@ -8,6 +8,7 @@ import {
   disconnectInput,
   getNodeCatalog,
   graphScopes,
+  groupNodes,
   materializeDocument,
   setInterfacePort,
   structuralSpecs,
@@ -438,6 +439,19 @@ export class EditorSession {
         for (const id of ids) this.node(scope, id);
         this.apply('Delete nodes', () => removeNodes(this.current, [...ids], scope));
       },
+      /** Collapse root-scope nodes into a new node graph and return its id. Boundary wires become interface ports. */
+      groupNodes: (ids: readonly string[]): string => {
+        if (scope) throw new EditorError({ code: 'INVALID_ARGUMENT', scope, message: 'Node graphs cannot be nested.' });
+        for (const id of ids) this.node(scope, id);
+        const before = new Set(this.projection(scope).nodes.map((node) => node.id));
+        let created = '';
+        this.apply('Group nodes', () => {
+          const next = groupNodes(this.current, [...ids], this.catalog());
+          created = readGraph(next, scope, this.catalog()).nodes.find((node) => !before.has(node.id))!.id;
+          return next;
+        });
+        return created;
+      },
       renameNode: (id: string, name: string) => {
         this.node(scope, id);
         try {
@@ -556,6 +570,7 @@ export {
   setInterfacePort,
   structuralSpecs,
   isStructural,
+  groupNodes,
   type GraphConnection,
   type GraphNode,
   type GraphEdge,

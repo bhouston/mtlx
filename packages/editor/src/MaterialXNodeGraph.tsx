@@ -411,6 +411,20 @@ function Graph({
         }),
       );
   };
+  /** React Flow's shift-drag and modifier-click selection, falling back to the inspector's node. */
+  const selection = () => {
+    const chosen = nodes.filter((n) => n.selected).map((n) => n.id);
+    return chosen.length ? chosen : selected ? [selected] : [];
+  };
+  const group = () => {
+    const ids = selection();
+    if (!ids.length || scope) return;
+    commit(() =>
+      session.transaction('Group nodes', () => {
+        setSelected(operations.groupNodes(ids));
+      }),
+    );
+  };
   const addAndConnect = (spec: NodeDefinition) => {
     const pending = quickAdd;
     setQuickAdd(undefined);
@@ -456,6 +470,7 @@ function Graph({
     if (!element.matches(':hover') && !element.contains(target)) return;
     const meta = event.metaKey || event.ctrlKey;
     if (meta && event.key.toLowerCase() === 'd' && selected) duplicate(selected);
+    else if (meta && event.key.toLowerCase() === 'g' && !scope) group();
     else if (event.shiftKey && !meta && event.key.toLowerCase() === 'a') {
       const rect = element.getBoundingClientRect();
       openQuickAdd({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
@@ -490,6 +505,7 @@ function Graph({
           onDelete={() => {
             if (context.nodeId) commit(() => operations.removeNodes([context.nodeId!]));
           }}
+          onGroup={scope ? undefined : group}
         >
           <div
             ref={canvas}
@@ -500,7 +516,8 @@ function Graph({
                 (event.target as Element).closest('.react-flow__node')?.getAttribute('data-id') ?? undefined;
               const client = { x: event.clientX, y: event.clientY };
               setContext({ nodeId, position: screenToFlowPosition(client), client });
-              setSelected(nodeId ?? null);
+              // Right-clicking inside a multi-selection keeps it for Group.
+              if (!nodeId || !nodes.some((n) => n.id === nodeId && n.selected)) setSelected(nodeId ?? null);
             }}
             onDoubleClick={(event) => {
               if ((event.target as Element).classList.contains('react-flow__pane'))

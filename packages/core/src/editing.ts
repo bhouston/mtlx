@@ -400,6 +400,108 @@ export function removeNodes(document: MaterialXDocument, ids: string[], scope = 
     clean(copy.elements, '');
   });
 }
+/** Collapse root-scope nodes into a new node graph. Wires crossing the boundary become interface inputs and outputs. */
+export function groupNodes(
+  document: MaterialXDocument,
+  ids: string[],
+  catalog = getNodeCatalog(document),
+): MaterialXDocument {
+  if (!ids.length) throw new Error('Select at least one node to group.');
+  const { nodes, edges } = readGraph(document, '', catalog);
+  const chosen = new Set(ids);
+  for (const id of ids) {
+    const node = nodes.find((n) => n.id === id);
+    if (!node) throw new Error(`Unknown node: ${id}`);
+    if (['nodegraph', 'input', 'output'].includes(node.element.name) || node.element.attributes.type === 'material')
+      throw new Error(`${id} cannot be grouped: node graphs hold only ordinary nodes.`);
+  }
+  const inbound = edges.filter((e) => chosen.has(e.target) && !chosen.has(e.source));
+  const outbound = edges.filter((e) => chosen.has(e.source) && !chosen.has(e.target));
+  // A path from an outbound target back to an inbound source would loop through the new graph.
+  const downstream = new Set<string>();
+  const visit = (id: string) => {
+    if (downstream.has(id)) return;
+    downstream.add(id);
+    for (const e of edges) if (e.source === id && !chosen.has(e.target)) visit(e.target);
+  };
+  for (const e of outbound) visit(e.target);
+  if (inbound.some((e) => downstream.has(e.source))) throw new Error('Grouping these nodes would create a cycle.');
+  const portType = (id: string, side: 'inputs' | 'outputs', name: string) =>
+    nodes.find((n) => n.id === id)?.[side].find((p) => p.name === name)?.type;
+  return edit(document, (copy) => {
+    const root = copy.elements;
+    let name = 'nodegraph';
+    for (let i = 2; root.some((e) => e.attributes.name === name); i++) name = `nodegraph_${i}`;
+    const members = ids.map((id) => elementAt(copy, '', id));
+    const xs = members.map((e) => Number(e.attributes.xpos)).filter(Number.isFinite);
+    const ys = members.map((e) => Number(e.attributes.ypos)).filter(Number.isFinite);
+    const graph: MaterialXElement = {
+      name: 'nodegraph',
+      attributes: {
+        name,
+        ...(xs.length && ys.length ? { xpos: String(Math.min(...xs)), ypos: String(Math.min(...ys)) } : {}),
+      },
+      children: [],
+    };
+    // Interface ports share the graph's namespace with the moved nodes.
+    const unique = (base: string) => {
+      let port = base;
+      for (let i = 2; [...graph.children, ...members].some((e) => e.attributes.name === port); i++)
+        port = `${base}_${i}`;
+      return port;
+    };
+    const ports = new Map<string, string>();
+    for (const e of inbound) {
+      // One interface input per external source port, shared by every inner input it feeds.
+      const key = `in:${e.source}/${e.sourceHandle}`;
+      let port = ports.get(key);
+      if (!port) {
+        port = unique(e.targetHandle);
+        ports.set(key, port);
+        const source = elementAt(copy, '', e.source);
+        graph.children.push({
+          name: 'input',
+          attributes: {
+            name: port,
+            type:
+              portType(e.target, 'inputs', e.targetHandle) ?? portType(e.source, 'outputs', e.sourceHandle) ?? 'float',
+            [source.name === 'nodegraph' ? 'nodegraph' : 'nodename']: e.source,
+            ...(source.name === 'nodegraph' || e.sourceHandle !== 'out' ? { output: e.sourceHandle } : {}),
+          },
+          children: [],
+        });
+      }
+      const input = inputElement(copy, '', e.target, e.targetHandle, catalog);
+      clearConnection(input.attributes);
+      input.attributes.interfacename = port;
+    }
+    for (const e of outbound) {
+      const key = `out:${e.source}/${e.sourceHandle}`;
+      let port = ports.get(key);
+      if (!port) {
+        port = unique(e.sourceHandle);
+        ports.set(key, port);
+        graph.children.push({
+          name: 'output',
+          attributes: {
+            name: port,
+            type: portType(e.source, 'outputs', e.sourceHandle) ?? 'float',
+            nodename: e.source,
+            ...(e.sourceHandle !== 'out' ? { output: e.sourceHandle } : {}),
+          },
+          children: [],
+        });
+      }
+      const input = inputElement(copy, '', e.target, e.targetHandle, catalog);
+      clearConnection(input.attributes);
+      input.attributes.nodegraph = name;
+      input.attributes.output = port;
+    }
+    for (const member of members) root.splice(root.indexOf(member), 1);
+    graph.children.push(...members);
+    root.push(graph);
+  });
+}
 export function moveNodes(
   document: MaterialXDocument,
   positions: Record<string, Point>,
