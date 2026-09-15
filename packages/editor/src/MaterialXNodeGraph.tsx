@@ -316,26 +316,6 @@ function Graph({
   return (
     <section className={`mtlx-editor mtlx-graph ${className}`} aria-label="MaterialX node graph">
       <div className="mtlx-graph-main">
-        <Breadcrumb aria-label="Graph breadcrumb">
-          <BreadcrumbList>
-            {path.map((value, index) => (
-              <Fragment key={value}>
-                {index > 0 && <BreadcrumbSeparator />}
-                <BreadcrumbItem>
-                  {index === path.length - 1 ? (
-                    <BreadcrumbPage>{value.split('/').at(-1) || rootLabel}</BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink asChild>
-                      <button type="button" onClick={() => onNavigate(path.slice(0, index + 1))}>
-                        {value.split('/').at(-1) || rootLabel}
-                      </button>
-                    </BreadcrumbLink>
-                  )}
-                </BreadcrumbItem>
-              </Fragment>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
         <GraphContextMenu
           catalog={catalog}
           editable={editable}
@@ -379,6 +359,26 @@ function Graph({
               if (spec) add(spec, screenToFlowPosition({ x: e.clientX, y: e.clientY }));
             }}
           >
+            <Breadcrumb aria-label="Graph breadcrumb" className="mtlx-breadcrumb-overlay nodrag nopan">
+              <BreadcrumbList>
+                {path.map((value, index) => (
+                  <Fragment key={value}>
+                    {index > 0 && <BreadcrumbSeparator />}
+                    <BreadcrumbItem>
+                      {index === path.length - 1 ? (
+                        <BreadcrumbPage>{value.split('/').at(-1) || rootLabel}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink asChild>
+                          <button type="button" onClick={() => onNavigate(path.slice(0, index + 1))}>
+                            {value.split('/').at(-1) || rootLabel}
+                          </button>
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                  </Fragment>
+                ))}
+              </BreadcrumbList>
+            </Breadcrumb>
             <ReactFlow<FlowNode>
               nodes={nodes}
               edges={edges}

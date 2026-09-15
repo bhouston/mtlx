@@ -14,6 +14,19 @@
   font-weight: 600;
   margin: 0 0 8px;
 }
+.mtlx-library-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mtlx-library-header h2 {
+  margin: 0;
+  flex: none;
+}
+.mtlx-library-header input {
+  min-width: 0;
+}
 .mtlx-editor button,
 .mtlx-editor input,
 .mtlx-editor select {
@@ -309,15 +322,27 @@
   min-height: 0;
   height: auto;
 }
+.mtlx-breadcrumb-overlay {
+  position: absolute;
+  z-index: 5;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  pointer-events: none;
+}
 .mtlx-breadcrumb-list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin: 0;
-  padding: 10px 12px;
+  padding: 6px 10px;
   list-style: none;
-  border-bottom: 1px solid var(--border, #b9c0cb);
+  width: fit-content;
+  border-radius: 6px;
+  background: var(--background, #fff);
+  box-shadow: 0 1px 4px #0002;
+  pointer-events: auto;
 }
 .mtlx-breadcrumb-list li {
   display: inline-flex;

@@ -102,14 +102,16 @@ export function MaterialXNodeLib({ catalog = defaultCatalog, disabled, onAdd, cl
   }
   return (
     <section className={`mtlx-editor mtlx-library ${className}`} aria-label="MaterialX node library">
-      <h2>Node library</h2>
-      <input
-        aria-label="Search nodes"
-        type="search"
-        placeholder="Search nodes or types…"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
+      <div className="mtlx-library-header">
+        <h2>Node library</h2>
+        <input
+          aria-label="Search nodes"
+          type="search"
+          placeholder="Search nodes or types…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
       <div className={`mtlx-library-columns ${search ? 'mtlx-search-results' : ''}`}>
         {search ? (
           <CatalogList entries={searchEntries} disabled={disabled} onAdd={onAdd} />
