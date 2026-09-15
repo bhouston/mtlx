@@ -208,6 +208,29 @@ describe('immutable editing session', () => {
 });
 
 describe('shared editing validation and queries', () => {
+  it('types an untyped value from the node’s own nodedef when candidates are ambiguous', () => {
+    const session = empty();
+    const graph = session.graph();
+    const multiply = graph.addNode({ definition: 'ND_multiply_float' });
+    const fractal = graph.addNode({ definition: 'ND_fractal3d_float' });
+    // Nothing constrains these polymorphic nodes yet, so the first catalog variant (color3) used to win.
+    graph.setInputValue(multiply, 'in2', 3);
+    graph.setInputValue(fractal, 'amplitude', 1);
+    const xml = serializeMaterialX(session.getDocument());
+    expect(xml).toContain('<input name="in2" type="float" value="3"/>');
+    expect(xml).toContain('<input name="amplitude" type="float" value="1"/>');
+    // A color3 connection leaves color3 * color3 and color3 * float as candidates; the authored float
+    // nodedef breaks the tie, and an explicit type still overrides it.
+    const color = graph.addNode({ definition: 'ND_constant_color3' });
+    graph.setInputValue(color, 'value', [1, 0, 0], { type: 'color3' });
+    const mix = graph.addNode({ definition: 'ND_multiply_float' });
+    graph.connect({ node: color, output: 'out' }, { node: mix, input: 'in1' });
+    graph.setInputValue(mix, 'in2', 0.5);
+    expect(serializeMaterialX(session.getDocument())).toContain('<input name="in2" type="float" value="0.5"/>');
+    graph.setInputValue(mix, 'in2', [0, 1, 0], { type: 'color3' });
+    expect(serializeMaterialX(session.getDocument())).toContain('<input name="in2" type="color3" value="0, 1, 0"/>');
+  });
+
   it('rejects invalid values, identifiers, definitions and positions without changing snapshots', () => {
     const session = create();
     const graph = session.graph();

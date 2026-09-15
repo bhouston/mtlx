@@ -297,11 +297,15 @@ export function setInputValue(
   valueType?: string,
 ): MaterialXDocument {
   const resolved = resolveTypes(document, catalog).nodes.get(resolutionKey(scope, node));
-  const spec = resolved?.definition;
+  const portType = (spec?: MaterialXNodeSpec) =>
+    [...(spec?.inputs ?? []), ...(spec?.parameters ?? [])].find((port) => port.name === input)?.type;
+  // Explicit type, then the type every surviving candidate agrees on, then the node's own authored
+  // nodedef (a node added as ND_multiply_float means float), and only then the arbitrary fallback.
   const type =
     valueType ??
-    [...(spec?.inputs ?? []), ...(spec?.parameters ?? [])].find((port) => port.name === input)?.type ??
-    resolved?.inputs.find((port) => port.name === input)?.type;
+    resolved?.inputs.find((port) => port.name === input)?.type ??
+    (resolved && portType(findNodeSpec(resolved.element, catalog))) ??
+    portType(resolved?.definition);
   const edited = edit(document, (copy) => {
     const port = inputElement(copy, scope, node, input, catalog);
     if (type) port.attributes.type = type;
