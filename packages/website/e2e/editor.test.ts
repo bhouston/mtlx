@@ -79,11 +79,14 @@ test('context menu adds categorized nodes, clones and deletes the clicked node',
   await page.getByRole('menuitem', { name: 'Procedural', exact: true }).hover();
   await page.getByRole('menuitem', { name: 'constant', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
+  // Adding no longer refits the viewport, so bring the edge-placed node fully into view first.
+  await page.getByRole('button', { name: 'Fit View', exact: true }).click();
   await page.locator('.react-flow__node[data-id="surface"]').click();
   await page.locator('.react-flow__node[data-id="constant"]').click({ button: 'right' });
   expect(await page.getByRole('menuitem', { name: 'Add node', exact: true }).count()).toBe(0);
   await page.getByRole('menuitem', { name: 'Clone', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node[data-id="constant_copy"]').count()).toBe(1);
+  await page.getByRole('button', { name: 'Fit View', exact: true }).click();
   await page.locator('.react-flow__node[data-id="constant_copy"]').click({ button: 'right' });
   await page.getByRole('menuitem', { name: 'Delete', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
@@ -104,7 +107,8 @@ test('search, insert, connect, edit, undo and ZIP download', async () => {
     await page.getByRole('button', { name: 'surface base_color value color picker', exact: true }).isVisible(),
   ).toBe(true);
   await page.keyboard.press('ArrowRight');
-  expect(await downloadText()).toContain('xpos="5"');
+  // Arrow keys nudge by one snap-grid step.
+  expect(await downloadText()).toContain('xpos="10"');
   await page.getByLabel('Search nodes').fill('ND_constant_color3');
   expect(await page.getByRole('navigation', { name: 'Node categories' }).count()).toBe(0);
   await page
