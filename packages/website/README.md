@@ -53,7 +53,7 @@ search APIs, defined in `src/lib/viewer-search.ts`:
 | `toneMapping`  | `neutral`, `aces`, `agx`, `reinhard`, `cineon`, `linear`, `none` | `neutral`                   |
 | `exposure`     | −2–2 EV                                                          | 0                           |
 | `rotate`       | `true`, `false` (40 seconds per turn)                            | `false`                     |
-| `geometry`     | `totem`, `sphere`, `plane`                                       | `totem`                     |
+| `geometry`     | `totem`, `sphere`, `cube`, `plane`                               | `totem`                     |
 | `materialName` | Material name within the document                                | Document's initial material |
 
 Setting changes replace the current history entry without resetting the scene or scrolling;

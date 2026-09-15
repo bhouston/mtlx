@@ -136,7 +136,7 @@
           "type": "array",
           "default": [],
           "scope": "resource",
-          "description": "Additional glTF/GLB preview geometries. Built-in names: totem, sphere, plane.",
+          "description": "Additional glTF/GLB preview geometries. Built-in names: totem, sphere, cube, plane.",
           "items": {
             "type": "object",
             "required": [
@@ -170,7 +170,7 @@
           "default": "totem",
           "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
           "scope": "resource",
-          "description": "Geometry name used for new previews. Built-ins: totem, sphere, plane; or an additional geometry name."
+          "description": "Geometry name used for new previews. Built-ins: totem, sphere, cube, plane; or an additional geometry name."
         },
         "mtlx.preview.autoRotate": {
           "type": "boolean",

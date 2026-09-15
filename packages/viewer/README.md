@@ -18,7 +18,7 @@ npm install mtlx-viewer three
 ## Scene
 
 `createMtlxScene` parses a `.mtlx` / `.mtlx.zip` file and builds a swappable preview scene: a
-shaderball/sphere/plane wearing the material, ready to add to your own `THREE.Scene`. Callers own
+shaderball/sphere/cube/plane wearing the material, ready to add to your own `THREE.Scene`. Callers own
 the renderer, camera, controls, and animation loop. The scene owns MaterialX parsing and its
 preview geometry, materials, and textures.
 
@@ -32,7 +32,7 @@ const preview: MtlxScene = await createMtlxScene(camera, controls, {
   shaderBall: await (await fetch(shaderBallUrl)).arrayBuffer(),
   // optional:
   materialName: 'Wood_Oak', // defaults to the document's last material
-  geometry: 'sphere', // 'totem' | 'sphere' | 'plane', defaults to 'totem'
+  geometry: 'sphere', // 'totem' | 'sphere' | 'cube' | 'plane', defaults to 'totem'
   autoRotate: true, // defaults to true
   manager: myLoadingManager, // supply your own for setURLModifier/onProgress/onError
 });

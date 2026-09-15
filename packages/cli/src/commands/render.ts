@@ -5,7 +5,7 @@ import { chromium, type Browser } from 'playwright-core';
 import { defineCommand } from 'yargs-file-commands';
 import { startViewServer } from '../view/server.js';
 
-const GEOMETRIES = ['totem', 'sphere', 'plane'] as const;
+const GEOMETRIES = ['totem', 'sphere', 'cube', 'plane'] as const;
 
 /** Prefers a browser the user already has (Chrome, then Edge) over Playwright's own download, so
  * installing mtlx-cli never pulls a Chromium build. `MTLX_BROWSER` or `--browser` pins a binary. */

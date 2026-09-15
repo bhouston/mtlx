@@ -27,7 +27,7 @@ export interface ViewerOptions {
   /** `none` lights the scene with the IBL but leaves the backdrop transparent (clear alpha 0). */
   background?: 'environment' | 'none';
   loadEnvironment(kind: string): Promise<THREE.Texture>;
-  /** Host-configured geometries beyond totem/sphere/plane; `manager` resolves glTF sidecar files. */
+  /** Host-configured geometries beyond totem/sphere/cube/plane; `manager` resolves glTF sidecar files. */
   loadGeometry?(name: string): Promise<{ data: ArrayBuffer; manager?: THREE.LoadingManager }>;
   /** Rewrite texture URLs the document references (e.g. to blob: URLs of bytes the host already read). */
   resolveUrl?(url: string): string | undefined;

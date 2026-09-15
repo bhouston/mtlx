@@ -23,6 +23,7 @@ export interface SettingsOption {
 export const GEOMETRY_OPTIONS: SettingsOption[] = [
   { value: 'totem', label: 'Totem' },
   { value: 'sphere', label: 'Sphere' },
+  { value: 'cube', label: 'Cube' },
   { value: 'plane', label: 'Plane' },
 ];
 export const IBL_OPTIONS: SettingsOption[] = [
@@ -37,7 +38,7 @@ export const DEFAULT_VIEWER_SETTINGS = {
   exposure: 0,
   rotate: false,
   materialName: '',
-  geometry: 'totem' as 'totem' | 'sphere' | 'plane',
+  geometry: 'totem' as 'totem' | 'sphere' | 'cube' | 'plane',
 };
 /** Asset names may include host-configured environments and geometries. */
 export type ViewerSettings = Omit<typeof DEFAULT_VIEWER_SETTINGS, 'ibl' | 'geometry'> & {
@@ -67,7 +68,7 @@ export function parseViewerSettings(
     result.ibl = input.ibl;
   if (
     typeof input.geometry === 'string' &&
-    ['totem', 'sphere', 'plane', ...(assets.geometries ?? [])].includes(input.geometry)
+    ['totem', 'sphere', 'cube', 'plane', ...(assets.geometries ?? [])].includes(input.geometry)
   )
     result.geometry = input.geometry;
   const toneMapping = TONE_MAPPING_OPTIONS.find(({ value }) => value === input.toneMapping);

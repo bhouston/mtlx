@@ -88,6 +88,7 @@ function renderIndexHtml(fileName: string): string {
   <select id="geometry-select" title="Geometry">
     <option value="totem">Totem</option>
     <option value="sphere">Sphere</option>
+    <option value="cube">Cube</option>
     <option value="plane">Plane</option>
   </select>
 </div>

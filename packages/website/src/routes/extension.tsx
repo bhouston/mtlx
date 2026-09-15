@@ -18,7 +18,7 @@ const VSCODE_MARKETPLACE_URL = 'https://marketplace.visualstudio.com/items?itemN
 const OPEN_VSX_URL = 'https://open-vsx.org/extension/benhouston3d/mtlx-vscode-extension';
 
 const FEATURES = [
-  'Opens .mtlx and .mtlx.zip files with totem, sphere, plane, or custom glTF preview geometry.',
+  'Opens .mtlx and .mtlx.zip files with totem, sphere, cube, plane, or custom glTF preview geometry.',
   'Configurable IBL lighting, geometry and rotation defaults; San Giuseppe Bridge lighting by default.',
   'Stats panel: version, materials (surfaces/volumes), referenced textures, internal node list, validity/issues.',
   'Right-click a .mtlx or .mtlx.zip file in the Explorer to convert it to the other format.',
@@ -133,7 +133,11 @@ function ExtensionPage() {
                   'neutral, aces (ACES Filmic), agx, reinhard, cineon, linear, none.',
                 ],
                 ['mtlx.preview.geometries', '[]', 'Additional named .gltf / .glb mesh scenes.'],
-                ['mtlx.preview.defaultGeometry', '"totem"', 'totem, sphere, plane, or an additional geometry name.'],
+                [
+                  'mtlx.preview.defaultGeometry',
+                  '"totem"',
+                  'totem, sphere, cube, plane, or an additional geometry name.',
+                ],
               ].map(([name, defaultValue, description]) => (
                 <tr key={name} className="border-b border-border align-top">
                   <th scope="row" className="p-2 font-normal">

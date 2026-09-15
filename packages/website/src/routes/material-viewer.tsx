@@ -29,7 +29,7 @@ const ATTRIBUTES: Array<[string, string]> = [
   ['src', 'Required. The .mtlx or .mtlx.zip file to preview.'],
   ['model', 'A custom glTF/GLB URL to preview the material on, instead of the built-in shaderball.'],
   ['ibl', '"bridge" (default), "studio", or a URL to a custom .hdr/.exr/.png/.jpg environment.'],
-  ['geometry', '"totem" | "sphere" | "plane" | "custom" (the last selects model, if given).'],
+  ['geometry', '"totem" | "sphere" | "cube" | "plane" | "custom" (the last selects model, if given).'],
   ['material', 'Initial material name; defaults to the document’s last material.'],
   ['rotate / bloom / ao', '"false" to disable; all default on.'],
   ['tone-mapping', 'neutral (default), aces, agx, reinhard, cineon, linear, none.'],

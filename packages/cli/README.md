@@ -295,7 +295,7 @@ Options:
       --version     Show version number                                                    [boolean]
       --help        Show help                                                              [boolean]
   -o, --output      PNG file to write                                            [string] [required]
-  -g, --geometry    Preview geometry        [choices: "totem", "sphere", "plane"] [default: "totem"]
+  -g, --geometry    Preview geometry[choices: "totem", "sphere", "cube", "plane"] [default: "totem"]
   -m, --material    Material name (default: last material in the document)                  [string]
   -b, --background  Backdrop behind the model; none keeps the IBL lighting but leaves the PNG
                     transparent                   [choices: "none", "environment"] [default: "none"]

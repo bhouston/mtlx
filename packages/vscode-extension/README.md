@@ -11,7 +11,7 @@ In VS Code's Extensions view, search for **Mtlx Viewer** by **benhouston3d** and
 Open a `.mtlx` or `.mtlx.zip` file to preview it. To inspect or edit the source XML, use
 **Reopen Editor With → Text Editor**; return with **Open with Mtlx Viewer** in the Command Palette.
 
-The preview offers totem, sphere, and plane geometry and a selector for documents with multiple
+The preview offers totem, sphere, cube, and plane geometry and a selector for documents with multiple
 materials. Its information panel lists version, materials, texture references, nodes, and
 validation issues. Document, Resources and Preview report their status separately. Every core rule group runs: basic node/port checks, structure, types, recursive resources and renderer categories. Archive contents and included documents are checked too. Saved files and sibling resources refresh visible previews automatically;
 use **Refresh** to reload manually. Material, geometry, camera, rotation and lighting settings survive tab switching. Unsaved text-editor edits are not previewed; save the source or use Refresh after saving.
@@ -71,7 +71,7 @@ namespaces, so the same custom name can appear in both.
 | `mtlx.preview.defaultIbl`      | `"bridge"`  | `bridge`, `studio`, or an additional IBL name                                   |
 | `mtlx.preview.autoRotate`      | `true`      | Reduced motion takes precedence; rotation can be enabled manually               |
 | `mtlx.preview.geometries`      | `[]`        | Additional named `.gltf` / `.glb` mesh scenes                                   |
-| `mtlx.preview.defaultGeometry` | `"totem"`   | `totem`, `sphere`, `plane`, or an additional geometry name                      |
+| `mtlx.preview.defaultGeometry` | `"totem"`   | `totem`, `sphere`, `cube`, `plane`, or an additional geometry name              |
 | `mtlx.preview.bloom`           | `true`      | Enable HDR bloom by default                                                     |
 | `mtlx.preview.ao`              | `true`      | Enable denoised GTAO by default                                                 |
 | `mtlx.preview.toneMapping`     | `"neutral"` | `neutral`, `aces` (ACES Filmic), `agx`, `reinhard`, `cineon`, `linear`, `none`  |

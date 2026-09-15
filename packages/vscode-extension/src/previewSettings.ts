@@ -43,7 +43,7 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
     return result;
   };
   const ibls = assets('ibls', ['studio', 'bridge']);
-  const geometries = assets('geometries', ['totem', 'sphere', 'plane']);
+  const geometries = assets('geometries', ['totem', 'sphere', 'cube', 'plane']);
   const defaultName = (key: string, names: string[], fallback: string) => {
     const value = input[key] ?? fallback;
     if (typeof value === 'string' && names.includes(value)) return value;
@@ -63,7 +63,7 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
     defaultIbl: defaultName('defaultIbl', ['studio', 'bridge', ...ibls.map((asset) => asset.name)], 'bridge'),
     defaultGeometry: defaultName(
       'defaultGeometry',
-      ['totem', 'sphere', 'plane', ...geometries.map((asset) => asset.name)],
+      ['totem', 'sphere', 'cube', 'plane', ...geometries.map((asset) => asset.name)],
       'totem',
     ),
     autoRotate: boolean('autoRotate'),

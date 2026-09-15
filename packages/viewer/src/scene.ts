@@ -116,6 +116,12 @@ function buildSphere(): THREE.Mesh {
   return new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
 }
 
+function buildCube(): THREE.Mesh {
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  computeTangentsIfPossible(geometry);
+  return new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
+}
+
 function buildPlane(): THREE.Mesh {
   const geometry = new THREE.PlaneGeometry(2, 2);
   computeTangentsIfPossible(geometry);
@@ -209,6 +215,7 @@ export async function createMtlxScene(
   const geometries: Record<string, THREE.Object3D> = Object.assign(Object.create(null), {
     totem,
     sphere: normalizeToUnitCube(buildSphere()),
+    cube: normalizeToUnitCube(buildCube()),
     plane: normalizeToUnitCube(buildPlane()),
   });
   let disposed = false;

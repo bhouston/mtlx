@@ -7,7 +7,7 @@
  * - `src` (required): the `.mtlx` / `.mtlx.zip` file to preview.
  * - `model`: a custom glTF/GLB URL to preview the material on, in place of the built-in shaderball.
  * - `ibl`: `bridge` (default) or `studio`, or a URL to a custom `.hdr`/`.exr`/`.png`/`.jpg` environment.
- * - `geometry`: `totem` | `sphere` | `plane` | `custom` (the last selects `model`, if given).
+ * - `geometry`: `totem` | `sphere` | `cube` | `plane` | `custom` (the last selects `model`, if given).
  * - `material`: initial material name; defaults to the document's last material.
  * - `rotate`, `bloom`, `ao`: `"false"` to disable (all default on).
  * - `tone-mapping`: one of {@link TONE_MAPPING_OPTIONS}; defaults to `neutral`.
