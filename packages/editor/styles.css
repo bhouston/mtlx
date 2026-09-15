@@ -446,6 +446,9 @@
 .mtlx-canvas {
   position: relative;
 }
+.mtlx-flow {
+  height: 100%;
+}
 .mtlx-node.mtlx-node-error {
   box-shadow: 0 0 0 4px var(--mtlx-error);
 }

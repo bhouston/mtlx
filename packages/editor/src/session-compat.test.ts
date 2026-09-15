@@ -1,13 +1,13 @@
 import { expect, it } from 'vitest';
 import { parseMaterialX } from 'mtlx-core';
 import * as core from 'mtlx-core/session';
-import * as legacy from 'mtlx-editor/session';
+import * as editor from 'mtlx-editor';
 import { addNode, projectGraph } from './model.js';
 
 it('keeps editor session and mutation exports bound to the core implementation', () => {
-  expect(legacy.createEditorSession).toBe(core.createEditorSession);
-  expect(legacy.EditorSession).toBe(core.EditorSession);
-  expect(legacy.EditorError).toBe(core.EditorError);
+  expect(editor.createEditorSession).toBe(core.createEditorSession);
+  expect(editor.EditorSession).toBe(core.EditorSession);
+  expect(editor.EditorError).toBe(core.EditorError);
   expect(addNode).toBe(core.addNode);
 });
 

@@ -20,11 +20,7 @@
       "types": "./dist/model.d.ts",
       "default": "./dist/model.js"
     },
-    "./styles.css": "./styles.css",
-    "./session": {
-      "types": "./dist/session.d.ts",
-      "default": "./dist/session.js"
-    }
+    "./styles.css": "./styles.css"
   },
   "scripts": {
     "build": "tsc -b",
