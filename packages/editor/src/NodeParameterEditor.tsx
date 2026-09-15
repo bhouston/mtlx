@@ -21,14 +21,16 @@ export function NodeParameterEditor({ graph, node, projection, editable, commit,
   const viewKey = `${graph.scope}/${node.id}`;
   const candidates = node.candidates ?? [];
   const definition =
-    (view?.node === viewKey && candidates.find((s) => s.nodeDefName === view.definition)) || node.definition;
+    (view?.node === viewKey && candidates.find((spec) => spec.nodeDefName === view.definition)) || node.definition;
   const optionLabel = (spec: MaterialXNodeSpec) => {
     const type = nodeType(spec) ?? 'unknown';
-    const peers = candidates.filter((s) => nodeType(s) === type);
-    const varying = [...spec.inputs, ...spec.parameters].filter((p) =>
-      peers.some((s) => [...s.inputs, ...s.parameters].find((other) => other.name === p.name)?.type !== p.type),
+    const peers = candidates.filter((spec) => nodeType(spec) === type);
+    const varying = [...spec.inputs, ...spec.parameters].filter((port) =>
+      peers.some(
+        (peer) => [...peer.inputs, ...peer.parameters].find((other) => other.name === port.name)?.type !== port.type,
+      ),
     );
-    return varying.length ? `${type} (${varying.map((p) => `${p.name}: ${p.type}`).join(', ')})` : type;
+    return varying.length ? `${type} (${varying.map((port) => `${port.name}: ${port.type}`).join(', ')})` : type;
   };
   // Interface ports of a node graph: the type is the port's contract, an input also carries its default.
   if (node.element.name === 'input' || node.element.name === 'output') {
@@ -97,15 +99,15 @@ export function NodeParameterEditor({ graph, node, projection, editable, commit,
       )}
       {node.inputs.map((socket) => {
         const fallback = [...(definition?.inputs ?? []), ...(definition?.parameters ?? [])].find(
-          (p) => p.name === socket.name,
+          (port) => port.name === socket.name,
         );
         const explicit = node.element.children.find(
-          (p) => ['input', 'parameter'].includes(p.name) && p.attributes.name === socket.name,
+          (child) => ['input', 'parameter'].includes(child.name) && child.attributes.name === socket.name,
         );
         const attrs = explicit?.attributes;
         const input = fallback ? { ...fallback, attributes: { ...fallback.attributes, ...attrs } } : socket;
         const connection = attrs?.nodename ?? attrs?.nodegraph ?? attrs?.interfacename;
-        const edge = projection.edges.find((e) => e.target === node.id && e.targetHandle === input.name);
+        const edge = projection.edges.find((edge) => edge.target === node.id && edge.targetHandle === input.name);
         const value = attrs?.value ?? input.value ?? '';
         const Editor =
           input.attributes?.defaultgeomprop && attrs?.value === undefined && input.value === undefined

@@ -72,14 +72,14 @@ export function graphScopes(document: MaterialXDocument): string[] {
 function children(document: MaterialXDocument, scope: string): MaterialXElement[] {
   let elements = document.elements;
   for (const name of scope ? scope.split('/') : []) {
-    const graph = elements.find((e) => e.name === 'nodegraph' && e.attributes.name === name);
+    const graph = elements.find((element) => element.name === 'nodegraph' && element.attributes.name === name);
     if (!graph) throw new Error(`Unknown graph: ${scope}`);
     elements = graph.children;
   }
   return elements;
 }
 function elementAt(document: MaterialXDocument, scope: string, id: string) {
-  const element = children(document, scope).find((e) => e.attributes.name === id);
+  const element = children(document, scope).find((element) => element.attributes.name === id);
   if (!element) throw new Error(`Unknown node: ${id}`);
   return element;
 }
@@ -97,14 +97,16 @@ export function readGraph(
 ): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const resolution = resolveTypes(document, catalog);
   const nodes = children(document, scope)
-    .filter((e) => e.attributes.name && !nonNodes.has(e.name) && !e.name.startsWith('#'))
+    .filter((element) => element.attributes.name && !nonNodes.has(element.name) && !element.name.startsWith('#'))
     .map((element): GraphNode => {
       const resolved = resolution.nodes.get(resolutionKey(scope, element.attributes.name!));
       const spec = resolved?.definition ?? findNodeSpec(element, catalog);
       const inputs = new Map(
-        (resolved?.inputs ?? [...(spec?.inputs ?? []), ...(spec?.parameters ?? [])]).map((p) => [p.name, p]),
+        (resolved?.inputs ?? [...(spec?.inputs ?? []), ...(spec?.parameters ?? [])]).map((port) => [port.name, port]),
       );
-      for (const child of element.children.filter((e) => e.name === 'input' || e.name === 'parameter')) {
+      for (const child of element.children.filter(
+        (element) => element.name === 'input' || element.name === 'parameter',
+      )) {
         const existing = inputs.get(child.attributes.name!);
         inputs.set(child.attributes.name!, {
           ...existing,
@@ -115,7 +117,8 @@ export function readGraph(
         });
       }
       let outputs = resolved?.outputs ?? spec?.outputs ?? [{ name: 'out', type: element.attributes.type }];
-      if (element.name === 'nodegraph') outputs = element.children.filter((e) => e.name === 'output').map(port);
+      if (element.name === 'nodegraph')
+        outputs = element.children.filter((element) => element.name === 'output').map(port);
       if (element.name === 'output') {
         inputs.clear();
         inputs.set('in', { name: 'in', type: element.attributes.type });
@@ -141,16 +144,16 @@ export function readGraph(
     const ports =
       node.element.name === 'output'
         ? [node.element]
-        : node.element.children.filter((e) => e.name === 'input' || e.name === 'parameter');
-    for (const p of ports) {
-      const a = p.attributes;
-      const source = a.nodename ?? a.nodegraph ?? a.interfacename;
-      if (!source || !nodes.some((n) => n.id === source)) continue;
-      const targetHandle = node.element.name === 'output' ? 'in' : a.name!;
+        : node.element.children.filter((element) => element.name === 'input' || element.name === 'parameter');
+    for (const port of ports) {
+      const attributes = port.attributes;
+      const source = attributes.nodename ?? attributes.nodegraph ?? attributes.interfacename;
+      if (!source || !nodes.some((candidate) => candidate.id === source)) continue;
+      const targetHandle = node.element.name === 'output' ? 'in' : attributes.name!;
       edges.push({
         id: `${node.id}/${targetHandle}`,
         source,
-        sourceHandle: a.output ?? 'out',
+        sourceHandle: attributes.output ?? 'out',
         target: node.id,
         targetHandle,
       });
@@ -176,13 +179,15 @@ function inputElement(
 ): MaterialXElement {
   const node = elementAt(document, scope, id);
   if (node.name === 'output' && name === 'in') return node;
-  let input = node.children.find((e) => (e.name === 'input' || e.name === 'parameter') && e.attributes.name === name);
+  let input = node.children.find(
+    (element) => (element.name === 'input' || element.name === 'parameter') && element.attributes.name === name,
+  );
   if (!input) {
-    const graphNode = readGraph(document, scope, catalog).nodes.find((n) => n.id === id);
-    const spec = graphNode?.inputs.find((p) => p.name === name);
+    const graphNode = readGraph(document, scope, catalog).nodes.find((candidate) => candidate.id === id);
+    const spec = graphNode?.inputs.find((port) => port.name === name);
     if (!spec) throw new Error(`Unknown input: ${name}`);
     input = {
-      name: graphNode?.definition?.parameters.some((p) => p.name === name) ? 'parameter' : 'input',
+      name: graphNode?.definition?.parameters.some((port) => port.name === name) ? 'parameter' : 'input',
       attributes: { name, ...(spec.type ? { type: spec.type } : {}) },
       children: [],
     };
@@ -230,7 +235,7 @@ export function addNode(
     let id = spec.category.replace(/[^a-zA-Z0-9_]/g, '_');
     if (!/^[a-zA-Z_]/.test(id)) id = `node_${id}`;
     const base = id;
-    for (let i = 2; siblings.some((e) => e.attributes.name === id); i++) id = `${base}_${i}`;
+    for (let i = 2; siblings.some((element) => element.attributes.name === id); i++) id = `${base}_${i}`;
     siblings.push({
       name: spec.category,
       attributes: {
@@ -295,13 +300,13 @@ export function setInputValue(
   const spec = resolved?.definition;
   const type =
     valueType ??
-    [...(spec?.inputs ?? []), ...(spec?.parameters ?? [])].find((p) => p.name === input)?.type ??
-    resolved?.inputs.find((p) => p.name === input)?.type;
+    [...(spec?.inputs ?? []), ...(spec?.parameters ?? [])].find((port) => port.name === input)?.type ??
+    resolved?.inputs.find((port) => port.name === input)?.type;
   const edited = edit(document, (copy) => {
-    const p = inputElement(copy, scope, node, input, catalog);
-    if (type) p.attributes.type = type;
-    clearConnection(p.attributes);
-    p.attributes.value = value;
+    const port = inputElement(copy, scope, node, input, catalog);
+    if (type) port.attributes.type = type;
+    clearConnection(port.attributes);
+    port.attributes.value = value;
   });
   if (valueType && !resolved?.conflict && resolveTypes(edited, catalog).nodes.get(resolutionKey(scope, node))?.conflict)
     throw new Error('This value type conflicts with the node’s connections or other authored values.');
@@ -315,7 +320,7 @@ export function resetInput(document: MaterialXDocument, node: string, input: str
       delete target.attributes.value;
     } else
       target.children = target.children.filter(
-        (e) => !(['input', 'parameter'].includes(e.name) && e.attributes.name === input),
+        (element) => !(['input', 'parameter'].includes(element.name) && element.attributes.name === input),
       );
   });
 }
@@ -326,8 +331,12 @@ export function connectionError(
   catalog = getNodeCatalog(document),
 ): string | undefined {
   const { nodes, edges } = readGraph(document, scope, catalog);
-  const from = nodes.find((n) => n.id === connection.source)?.outputs.find((p) => p.name === connection.sourceHandle);
-  const to = nodes.find((n) => n.id === connection.target)?.inputs.find((p) => p.name === connection.targetHandle);
+  const from = nodes
+    .find((candidate) => candidate.id === connection.source)
+    ?.outputs.find((port) => port.name === connection.sourceHandle);
+  const to = nodes
+    .find((candidate) => candidate.id === connection.target)
+    ?.inputs.find((port) => port.name === connection.targetHandle);
   if (!from || !to) return 'Choose an output and an input in this graph.';
   const visited = new Set<string>();
   function reaches(id: string): boolean {
@@ -335,8 +344,12 @@ export function connectionError(
     if (visited.has(id)) return false;
     visited.add(id);
     return edges
-      .filter((e) => e.source === id && !(e.target === connection.target && e.targetHandle === connection.targetHandle))
-      .some((e) => reaches(e.target));
+      .filter(
+        (element) =>
+          element.source === id &&
+          !(element.target === connection.target && element.targetHandle === connection.targetHandle),
+      )
+      .some((element) => reaches(element.target));
   }
   if (reaches(connection.target)) return 'This connection would create a cycle.';
   const proposed = edit(document, (copy) => writeConnection(copy, connection, scope, catalog));
@@ -385,16 +398,25 @@ export function removeNodes(document: MaterialXDocument, ids: string[], scope = 
     for (let i = siblings.length - 1; i >= 0; i--)
       if (ids.includes(siblings[i]!.attributes.name!)) siblings.splice(i, 1);
     const clean = (elements: MaterialXElement[], graphScope: string) => {
-      for (const e of elements) {
-        const a = e.attributes;
+      for (const element of elements) {
+        const attributes = element.attributes;
         if (
-          (graphScope === scope && ids.includes(a.nodename ?? a.interfacename ?? '')) ||
+          (graphScope === scope && ids.includes(attributes.nodename ?? attributes.interfacename ?? '')) ||
           ids.some(
-            (id) => a.nodegraph === (scope ? `${scope}/${id}` : id) || (graphScope === scope && a.nodegraph === id),
+            (id) =>
+              attributes.nodegraph === (scope ? `${scope}/${id}` : id) ||
+              (graphScope === scope && attributes.nodegraph === id),
           )
         )
-          clearConnection(a);
-        clean(e.children, e.name === 'nodegraph' ? (graphScope ? `${graphScope}/${a.name}` : a.name!) : graphScope);
+          clearConnection(attributes);
+        clean(
+          element.children,
+          element.name === 'nodegraph'
+            ? graphScope
+              ? `${graphScope}/${attributes.name}`
+              : attributes.name!
+            : graphScope,
+        );
       }
     };
     clean(copy.elements, '');
@@ -410,31 +432,32 @@ export function groupNodes(
   const { nodes, edges } = readGraph(document, '', catalog);
   const chosen = new Set(ids);
   for (const id of ids) {
-    const node = nodes.find((n) => n.id === id);
+    const node = nodes.find((candidate) => candidate.id === id);
     if (!node) throw new Error(`Unknown node: ${id}`);
     if (['nodegraph', 'input', 'output'].includes(node.element.name) || node.element.attributes.type === 'material')
       throw new Error(`${id} cannot be grouped: node graphs hold only ordinary nodes.`);
   }
-  const inbound = edges.filter((e) => chosen.has(e.target) && !chosen.has(e.source));
-  const outbound = edges.filter((e) => chosen.has(e.source) && !chosen.has(e.target));
+  const inbound = edges.filter((element) => chosen.has(element.target) && !chosen.has(element.source));
+  const outbound = edges.filter((element) => chosen.has(element.source) && !chosen.has(element.target));
   // A path from an outbound target back to an inbound source would loop through the new graph.
   const downstream = new Set<string>();
   const visit = (id: string) => {
     if (downstream.has(id)) return;
     downstream.add(id);
-    for (const e of edges) if (e.source === id && !chosen.has(e.target)) visit(e.target);
+    for (const edge of edges) if (edge.source === id && !chosen.has(edge.target)) visit(edge.target);
   };
-  for (const e of outbound) visit(e.target);
-  if (inbound.some((e) => downstream.has(e.source))) throw new Error('Grouping these nodes would create a cycle.');
+  for (const edge of outbound) visit(edge.target);
+  if (inbound.some((element) => downstream.has(element.source)))
+    throw new Error('Grouping these nodes would create a cycle.');
   const portType = (id: string, side: 'inputs' | 'outputs', name: string) =>
-    nodes.find((n) => n.id === id)?.[side].find((p) => p.name === name)?.type;
+    nodes.find((candidate) => candidate.id === id)?.[side].find((port) => port.name === name)?.type;
   return edit(document, (copy) => {
     const root = copy.elements;
     let name = 'nodegraph';
-    for (let i = 2; root.some((e) => e.attributes.name === name); i++) name = `nodegraph_${i}`;
+    for (let i = 2; root.some((element) => element.attributes.name === name); i++) name = `nodegraph_${i}`;
     const members = ids.map((id) => elementAt(copy, '', id));
-    const xs = members.map((e) => Number(e.attributes.xpos)).filter(Number.isFinite);
-    const ys = members.map((e) => Number(e.attributes.ypos)).filter(Number.isFinite);
+    const xs = members.map((element) => Number(element.attributes.xpos)).filter(Number.isFinite);
+    const ys = members.map((element) => Number(element.attributes.ypos)).filter(Number.isFinite);
     const graph: MaterialXElement = {
       name: 'nodegraph',
       attributes: {
@@ -446,53 +469,55 @@ export function groupNodes(
     // Interface ports share the graph's namespace with the moved nodes.
     const unique = (base: string) => {
       let port = base;
-      for (let i = 2; [...graph.children, ...members].some((e) => e.attributes.name === port); i++)
+      for (let i = 2; [...graph.children, ...members].some((element) => element.attributes.name === port); i++)
         port = `${base}_${i}`;
       return port;
     };
     const ports = new Map<string, string>();
-    for (const e of inbound) {
+    for (const edge of inbound) {
       // One interface input per external source port, shared by every inner input it feeds.
-      const key = `in:${e.source}/${e.sourceHandle}`;
+      const key = `in:${edge.source}/${edge.sourceHandle}`;
       let port = ports.get(key);
       if (!port) {
-        port = unique(e.targetHandle);
+        port = unique(edge.targetHandle);
         ports.set(key, port);
-        const source = elementAt(copy, '', e.source);
+        const source = elementAt(copy, '', edge.source);
         graph.children.push({
           name: 'input',
           attributes: {
             name: port,
             type:
-              portType(e.target, 'inputs', e.targetHandle) ?? portType(e.source, 'outputs', e.sourceHandle) ?? 'float',
-            [source.name === 'nodegraph' ? 'nodegraph' : 'nodename']: e.source,
-            ...(source.name === 'nodegraph' || e.sourceHandle !== 'out' ? { output: e.sourceHandle } : {}),
+              portType(edge.target, 'inputs', edge.targetHandle) ??
+              portType(edge.source, 'outputs', edge.sourceHandle) ??
+              'float',
+            [source.name === 'nodegraph' ? 'nodegraph' : 'nodename']: edge.source,
+            ...(source.name === 'nodegraph' || edge.sourceHandle !== 'out' ? { output: edge.sourceHandle } : {}),
           },
           children: [],
         });
       }
-      const input = inputElement(copy, '', e.target, e.targetHandle, catalog);
+      const input = inputElement(copy, '', edge.target, edge.targetHandle, catalog);
       clearConnection(input.attributes);
       input.attributes.interfacename = port;
     }
-    for (const e of outbound) {
-      const key = `out:${e.source}/${e.sourceHandle}`;
+    for (const edge of outbound) {
+      const key = `out:${edge.source}/${edge.sourceHandle}`;
       let port = ports.get(key);
       if (!port) {
-        port = unique(e.sourceHandle);
+        port = unique(edge.sourceHandle);
         ports.set(key, port);
         graph.children.push({
           name: 'output',
           attributes: {
             name: port,
-            type: portType(e.source, 'outputs', e.sourceHandle) ?? 'float',
-            nodename: e.source,
-            ...(e.sourceHandle !== 'out' ? { output: e.sourceHandle } : {}),
+            type: portType(edge.source, 'outputs', edge.sourceHandle) ?? 'float',
+            nodename: edge.source,
+            ...(edge.sourceHandle !== 'out' ? { output: edge.sourceHandle } : {}),
           },
           children: [],
         });
       }
-      const input = inputElement(copy, '', e.target, e.targetHandle, catalog);
+      const input = inputElement(copy, '', edge.target, edge.targetHandle, catalog);
       clearConnection(input.attributes);
       input.attributes.nodegraph = name;
       input.attributes.output = port;
