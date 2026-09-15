@@ -5,7 +5,7 @@
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { MATERIALX_VALIDATION_RULES, parseMaterialX, summarizeMaterialX } from 'mtlx-core';
+import { MATERIALX_VALIDATION_RULES, materialXNodeRegistry, parseMaterialX, summarizeMaterialX } from 'mtlx-core';
 import { loadMaterialXDocument } from 'mtlx-core/node';
 import { createEditorSession } from 'mtlx-core/session';
 import { z } from 'zod';
@@ -25,8 +25,9 @@ top-level scope) in scope; \`await\` is allowed. Use editor.graph('name') for a 
   const c = graph.addNode({ definition: 'ND_constant_color3' });
   graph.setInputValue(c, 'value', [0.8, 0.2, 0.1], { type: 'color3' });
   graph.connect({ node: c, output: 'out' }, { node: 'SR_wood1', input: 'base_color' })
-Always pass { type: 'float' } (or 'integer', 'color3', 'vector3') when setting a value on math and noise
-nodes such as multiply, add, or fractal3d; untyped scalars on those nodes are currently rejected.
+Values take the type of the node's definition, so a number on an ND_multiply_float input is a float. Pass
+{ type: 'color3' } or { type: 'vector3' } when a 3-number value could be either. Use list_node_definitions to find
+exact definition names and their input names and types before adding nodes.
 Edits are validated as they happen and throw with a code and message on an invalid change.`;
 
 export function createMcpServer(): McpServer {
@@ -48,6 +49,41 @@ export function createMcpServer(): McpServer {
       } catch (error) {
         return failure(error);
       }
+    },
+  );
+
+  server.registerTool(
+    'list_node_definitions',
+    {
+      description:
+        'Search the built-in MaterialX node definitions. Returns matching definition names with their output type and inputs (name, type, default), so scripts use exact names such as ND_absval_float or ND_worleynoise3d_float.',
+      inputSchema: {
+        query: z
+          .string()
+          .describe(
+            'Case-insensitive substring matched against the definition name, category, or node group (e.g. "noise3d", "absval", "procedural3d")',
+          ),
+        limit: z.number().int().min(1).max(200).optional().describe('Maximum results (default 40)'),
+      },
+    },
+    (args) => {
+      const query = args.query.toLowerCase();
+      const matches = materialXNodeRegistry.filter((spec) =>
+        [spec.nodeDefName, spec.category, spec.nodeGroup].some((field) => field?.toLowerCase().includes(query)),
+      );
+      return json({
+        total: matches.length,
+        definitions: matches.slice(0, args.limit ?? 40).map((spec) => ({
+          name: spec.nodeDefName,
+          category: spec.category,
+          output: spec.type,
+          inputs: [...spec.inputs, ...spec.parameters].map((port) => ({
+            name: port.name,
+            type: port.type,
+            ...(port.value !== undefined ? { default: port.value } : {}),
+          })),
+        })),
+      });
     },
   );
 

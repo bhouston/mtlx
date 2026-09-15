@@ -40,8 +40,43 @@ describe('mtlx mcp', () => {
       'check_material',
       'edit_material',
       'inspect_material',
+      'list_node_definitions',
       'render_material',
     ]);
+  });
+
+  it('searches node definitions by name, category, or group', async () => {
+    const result = (await client.callTool({
+      name: 'list_node_definitions',
+      arguments: { query: 'worleynoise3d' },
+    })) as ToolResult;
+    const { definitions } = JSON.parse(text(result));
+    const float = definitions.find((d: { name: string }) => d.name === 'ND_worleynoise3d_float');
+    expect(float.output).toBe('float');
+    expect(float.inputs.map((i: { name: string }) => i.name)).toContain('jitter');
+  });
+
+  it('types untyped scalars from the node definition and names accepted types on a conflict', async () => {
+    const ok = (await client.callTool({
+      name: 'edit_material',
+      arguments: {
+        file: wood,
+        script: "const m = graph.addNode({ definition: 'ND_multiply_float' }); graph.setInputValue(m, 'in2', 3)",
+      },
+    })) as ToolResult;
+    expect(ok.isError).toBeFalsy();
+    expect(await readFile(wood, 'utf8')).toContain('<input name="in2" type="float" value="3"/>');
+    // color3 * float exists, but no multiply variant takes color3 and vector3 together.
+    const conflict = (await client.callTool({
+      name: 'edit_material',
+      arguments: {
+        file: wood,
+        script:
+          "graph.setInputValue('multiply', 'in1', [1, 0, 0], { type: 'color3' }); graph.setInputValue('multiply', 'in2', [1, 1, 1], { type: 'vector3' })",
+      },
+    })) as ToolResult;
+    expect(conflict.isError).toBe(true);
+    expect(text(conflict)).toMatch(/Type "vector3" for multiply\.in2 conflicts.*Accepted here: float/);
   });
 
   it('checks and inspects a material', async () => {

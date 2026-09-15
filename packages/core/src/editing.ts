@@ -312,8 +312,18 @@ export function setInputValue(
     clearConnection(port.attributes);
     port.attributes.value = value;
   });
-  if (valueType && !resolved?.conflict && resolveTypes(edited, catalog).nodes.get(resolutionKey(scope, node))?.conflict)
-    throw new Error('This value type conflicts with the node’s connections or other authored values.');
+  if (
+    valueType &&
+    !resolved?.conflict &&
+    resolveTypes(edited, catalog).nodes.get(resolutionKey(scope, node))?.conflict
+  ) {
+    const accepted = [...new Set(resolved?.candidates.map(portType).filter(Boolean))];
+    throw new Error(
+      `Type "${valueType}" for ${node}.${input} conflicts with the node’s connections or other authored values.${
+        accepted.length ? ` Accepted here: ${accepted.join(', ')}.` : ''
+      }`,
+    );
+  }
   return edited;
 }
 export function resetInput(document: MaterialXDocument, node: string, input: string, scope = ''): MaterialXDocument {
