@@ -100,7 +100,26 @@ function HomePage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="flex min-w-0 flex-col">
+          <CardHeader>
+            <CardTitle>
+              <Link to="/editor" className="text-primary underline underline-offset-4">
+                Online Editor
+              </Link>
+            </CardTitle>
+            <CardDescription>Edit MaterialX node graphs and preview your materials in 3D.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col gap-3">
+            <img
+              src="/editor.webp"
+              alt="Mtlx editor screenshot"
+              className="aspect-video rounded-md border border-border bg-muted object-contain"
+            />
+            <PackageLinks github="https://github.com/bhouston/mtlx/blob/main/packages/editor/README.md" />
+          </CardContent>
+        </Card>
+
         <Card className="flex min-w-0 flex-col">
           <CardHeader>
             <CardTitle>
@@ -142,7 +161,7 @@ function HomePage() {
           </CardContent>
         </Card>
 
-        <Card className="flex min-w-0 flex-col sm:col-span-2">
+        <Card className="flex min-w-0 flex-col sm:col-span-2 lg:col-span-3">
           <CardHeader>
             <CardTitle>
               <a href="https://www.npmjs.com/package/mtlx-cli" className="text-primary underline underline-offset-4">
@@ -162,7 +181,7 @@ function HomePage() {
           </CardContent>
         </Card>
 
-        <Card className="flex min-w-0 flex-col sm:col-span-2">
+        <Card className="flex min-w-0 flex-col sm:col-span-2 lg:col-span-3">
           <CardHeader>
             <CardTitle>
               <a href="https://www.npmjs.com/package/mtlx-core" className="text-primary underline underline-offset-4">

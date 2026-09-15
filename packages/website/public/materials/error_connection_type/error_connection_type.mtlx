@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Intentionally invalid editor sample: A color3 output drives a float input. Disconnect surface.specular_roughness or insert a conversion node. -->
+  <constant name="color" type="color3" xpos="0" ypos="0">
+    <input name="value" type="color3" value="0.8, 0.2, 0.1"/>
+  </constant>
+  <standard_surface name="surface" type="surfaceshader" xpos="340" ypos="0">
+    <input name="base_color" type="color3" value="0.8, 0.2, 0.1"/>
+    <input name="specular_roughness" type="float" nodename="color"/>
+  </standard_surface>
+  <surfacematerial name="material" type="material" xpos="680" ypos="240">
+    <input name="surfaceshader" type="surfaceshader" nodename="surface"/>
+  </surfacematerial>
+</materialx>

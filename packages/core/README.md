@@ -147,6 +147,18 @@ Multi-input merges and writes preserve their input packages. File transforms mut
 `checkMaterialX` and `checkMaterialXZipArchive` default to basic, structure, and resource checks.
 `validateDocument` and CLI `check` default to basic checks; select rule groups explicitly for CI.
 
+Validation visits every nodegraph recursively, including unopened and unconnected graphs.
+The Info panel and node graph viewer share the core rules: `structure` checks references,
+outputs and connection cycles; `types` checks declared inputs, connections and numeric/boolean
+values. Definition resolution uses input types to distinguish overloads and honors explicit
+`nodedef` references. `getNodeCatalog` and `findNodeSpec` expose the same resolution for UI ports.
+Graph findings include optional `graph` coordinates (`scope`, `nodeIds`, `input`, `source`,
+`output`) so clients can highlight nodes and wires without parsing diagnostic messages.
+The optional `graph.containers` lists enclosing graphs and compound instances transitively,
+allowing collapsed nodes to show errors from their contents. Each diagnostic remains listed
+once at its original location, including when multiple instances share an implementation.
+Locations and rule codes remain available to CLI and other consumers.
+
 ```ts
 import { transform } from 'mtlx-core';
 import { resizeTextures } from 'mtlx-core/textures';
@@ -234,3 +246,16 @@ MIT
 ## Author
 
 [Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com)
+
+## Node definitions for editors
+
+`materialXNodeRegistry` includes typed port definitions, literal default values, node groups,
+and original UI metadata (`uiname`, `enum`, ranges, and `defaultgeomprop`). Entries with a
+`nodeDefName` describe concrete library variants; structural fallback entries remain available
+for validation. Definitions are generated from the local `submodules/MaterialX` source tree,
+with nodedef inheritance resolved. Run `pnpm generate:nodes` from the repository root to update
+them, or `pnpm check:nodes` to verify that the committed output matches the local source. An
+alternate source directory can be passed to either command. The generated header records the
+upstream version and a SHA-256 fingerprint of the input files. Generation also copies
+[the MaterialX license](MATERIALX-LICENSE) from that source tree. See
+[the contributor guide](../../CONTRIBUTING.md#updating-materialx-node-definitions) for the workflow.

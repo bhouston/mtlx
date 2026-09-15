@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'mtlx-editor/styles.css';
 @import 'mtlx-viewer/styles/viewer.css';
 
 /* Map the shared theme tokens onto VS Code's editor colors so the webview follows the user's theme. */

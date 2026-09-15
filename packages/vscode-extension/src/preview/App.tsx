@@ -1,3 +1,4 @@
+import { MaterialXGraphView } from 'mtlx-editor';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   GEOMETRY_OPTIONS,
@@ -5,6 +6,7 @@ import {
   InfoPanel,
   LogPanel,
   MaterialSelect,
+  MaterialViewTabs,
   ViewerSettingsPanel,
 } from 'mtlx-viewer/react';
 import { computeChecks, type CheckState } from 'mtlx-viewer/diagnostics';
@@ -217,44 +219,50 @@ export function PreviewApp() {
         </output>
       ) : null}
       <div className="grid min-w-0 gap-3 md:min-h-0 md:flex-1 md:grid-cols-[minmax(0,3fr)_minmax(260px,1fr)]">
-        <div
-          className="viewer-frame relative aspect-square w-full min-w-0 overflow-hidden rounded-xl border border-border bg-zinc-950 shadow-sm md:aspect-auto md:min-h-0"
-          data-preview-state={diagnostics.report.state}
-        >
-          <canvas ref={canvasRef} id="viewport" className="absolute inset-0 h-full w-full" />
-          <MaterialSelect
-            names={materialNames}
-            value={
-              materialNames.includes(viewerSettings.materialName)
-                ? viewerSettings.materialName
-                : (viewer?.scene.activeMaterial ?? '')
-            }
-            onChange={(name) => updateSettings({ materialName: name })}
-          />
-          {error ? (
+        <MaterialViewTabs
+          className="material-view-tabs-extension"
+          graph={<MaterialXGraphView data={payload?.data} fileName={payload?.fileName} />}
+          preview={
             <div
-              role="alert"
-              className="absolute inset-x-3 top-3 z-10 rounded-lg bg-destructive/90 p-3 text-xs whitespace-pre-wrap text-white [overflow-wrap:anywhere]"
+              className="viewer-frame relative aspect-square w-full min-w-0 overflow-hidden rounded-xl border border-border bg-zinc-950 shadow-sm md:aspect-auto md:min-h-0"
+              data-preview-state={diagnostics.report.state}
             >
-              {error}
+              <canvas ref={canvasRef} id="viewport" className="absolute inset-0 h-full w-full" />
+              <MaterialSelect
+                names={materialNames}
+                value={
+                  materialNames.includes(viewerSettings.materialName)
+                    ? viewerSettings.materialName
+                    : (viewer?.scene.activeMaterial ?? '')
+                }
+                onChange={(name) => updateSettings({ materialName: name })}
+              />
+              {error ? (
+                <div
+                  role="alert"
+                  className="absolute inset-x-3 top-3 z-10 rounded-lg bg-destructive/90 p-3 text-xs whitespace-pre-wrap text-white [overflow-wrap:anywhere]"
+                >
+                  {error}
+                </div>
+              ) : null}
+              <output id="geometry-status" aria-live="polite" className={statusClass(diagnostics.geometryStatus)}>
+                {diagnostics.geometryStatus}
+              </output>
+              <output id="environment-status" aria-live="polite" className={statusClass(diagnostics.environmentStatus)}>
+                {diagnostics.environmentStatus}
+              </output>
+              <ViewerSettingsPanel
+                className="absolute right-3 bottom-3 left-3 z-10"
+                settings={viewerSettings}
+                onChange={updateSettings}
+                geometries={geometries}
+                ibls={ibls}
+                rotating={rotating}
+                rotateDisabled={diagnostics.report.state !== 'ready'}
+              />
             </div>
-          ) : null}
-          <output id="geometry-status" aria-live="polite" className={statusClass(diagnostics.geometryStatus)}>
-            {diagnostics.geometryStatus}
-          </output>
-          <output id="environment-status" aria-live="polite" className={statusClass(diagnostics.environmentStatus)}>
-            {diagnostics.environmentStatus}
-          </output>
-          <ViewerSettingsPanel
-            className="absolute right-3 bottom-3 left-3 z-10"
-            settings={viewerSettings}
-            onChange={updateSettings}
-            geometries={geometries}
-            ibls={ibls}
-            rotating={rotating}
-            rotateDisabled={diagnostics.report.state !== 'ready'}
-          />
-        </div>
+          }
+        />
         <aside id="material-details" className="min-w-0 md:min-h-0 md:overflow-auto">
           <InfoPanel
             fileName={payload?.fileName}

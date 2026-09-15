@@ -1,0 +1,86 @@
+import { useMemo, type ReactElement } from 'react';
+import { buildNodeCatalogTree, type NodeCatalogEntry } from './node-catalog-tree.js';
+import { nodeType, type MaterialXNodeSpec } from './model.js';
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+} from './ui/context-menu.js';
+
+export function GraphContextMenu({
+  children,
+  catalog,
+  editable,
+  nodeId,
+  onAdd,
+  onClone,
+  onDelete,
+}: {
+  children: ReactElement;
+  catalog: MaterialXNodeSpec[];
+  editable: boolean;
+  nodeId?: string;
+  onAdd: (spec: MaterialXNodeSpec) => void;
+  onClone: () => void;
+  onDelete: () => void;
+}) {
+  const groups = useMemo(() => buildNodeCatalogTree(catalog), [catalog]);
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild disabled={!editable}>
+        {children}
+      </ContextMenuTrigger>
+      {editable && (
+        <ContextMenuContent collisionPadding={8}>
+          {!nodeId && (
+            <ContextMenuSub>
+              <ContextMenuSubTrigger disabled={!groups.length}>Add node</ContextMenuSubTrigger>
+              <ContextMenuSubContent>
+                <CatalogMenu entries={groups} onAdd={onAdd} />
+              </ContextMenuSubContent>
+            </ContextMenuSub>
+          )}
+          {nodeId && (
+            <>
+              <ContextMenuItem onSelect={onClone}>Clone</ContextMenuItem>
+              <ContextMenuItem variant="destructive" onSelect={onDelete}>
+                Delete
+              </ContextMenuItem>
+            </>
+          )}
+        </ContextMenuContent>
+      )}
+    </ContextMenu>
+  );
+}
+
+function CatalogMenu({ entries, onAdd }: { entries: NodeCatalogEntry[]; onAdd: (node: MaterialXNodeSpec) => void }) {
+  return entries.map((entry) => {
+    if (entry.kind === 'group')
+      return (
+        <ContextMenuSub key={entry.id}>
+          <ContextMenuSubTrigger>{entry.label}</ContextMenuSubTrigger>
+          <ContextMenuSubContent>
+            <CatalogMenu entries={entry.children} onAdd={onAdd} />
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+      );
+    const spec = entry.node;
+    return (
+      <ContextMenuItem
+        key={entry.id}
+        textValue={`${spec.category} ${nodeType(spec)} ${spec.nodeDefName}`}
+        title={[spec.nodeDefName, spec.attributes?.doc].filter(Boolean).join('\n')}
+        onSelect={() => onAdd(spec)}
+      >
+        <span className="mtlx-catalog-label">
+          {spec.category} ({nodeType(spec)})
+        </span>
+      </ContextMenuItem>
+    );
+  });
+}

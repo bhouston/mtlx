@@ -20,6 +20,31 @@ node packages/cli/bin/cli.js check material.mtlx
 
 or `npm link` inside `packages/cli` so `mtlx` resolves to your checkout.
 
+## Updating MaterialX node definitions
+
+Keep upstream MaterialX sources in `submodules/MaterialX`. This is currently a local source
+copy, not a registered Git submodule. It is needed only when updating or checking generated
+node definitions; normal builds and runtime use the committed TypeScript registry.
+
+```sh
+pnpm generate:nodes  # build core's parser, regenerate the registry, and copy the upstream license
+pnpm check:nodes     # verify generated files without rewriting them
+# An alternate source tree can also be supplied:
+pnpm generate:nodes /path/to/MaterialX
+```
+
+The generator reads `libraries/**/*.mtlx`, resolves nodedef inheritance, and retains port
+types, defaults, groups, and UI metadata. It rejects duplicate names, missing parents, and
+inheritance cycles. The output records the version from `CMakeLists.txt` and a SHA-256
+fingerprint of that file and the library XML inputs. Review and commit the generated registry
+and license with any matching core model changes; run `pnpm test` after regeneration.
+
+Upstream sources are excluded from our formatter and linter. Update those sources using the
+upstream project's workflow. The source copy currently supplied here contains a `.git` file
+pointing to unavailable metadata; generation works without Git metadata. Before registering
+it as a real submodule, preserve local changes, establish a valid checkout, and pin an upstream
+commit. Once that commit is tracked, CI can check out the submodule and run `pnpm check:nodes`.
+
 ## Pull requests
 
 Before adding a feature, please open an issue to discuss it. Changes with test coverage are

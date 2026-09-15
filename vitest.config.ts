@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     projects: [
+      { test: { name: 'editor', include: ['packages/editor/src/**/*.test.ts'], environment: 'node' } },
       {
         test: { name: 'viewer', include: ['packages/viewer/src/**/*.test.ts'], environment: 'node' },
       },

@@ -60,3 +60,5 @@ export { validateMaterialXPackage } from './validate-package.js';
 
 export { inspectMaterialX } from './inspect.js';
 export type { MaterialXInspection } from './inspect.js';
+
+export { nodeType, getNodeCatalog, findNodeSpec, getNodeGraphScope } from './node-catalog.js';

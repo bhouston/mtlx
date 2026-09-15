@@ -14,6 +14,8 @@ import { createMtlxScene, type MtlxScene } from './scene.js';
 import type { PreviewReport } from './diagnostics.js';
 
 export interface ViewerOptions {
+  /** Cancel an in-progress compilation when an editor supplies a newer document. */
+  signal?: AbortSignal;
   /** Render into this canvas; otherwise a canvas is created and appended to `container`. */
   canvas?: HTMLCanvasElement;
   /** Sized against; a created canvas is appended here. */
@@ -56,6 +58,10 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
   const scope = new CleanupScope();
   const abort = new AbortController();
   scope.own(() => abort.abort());
+  options.signal?.throwIfAborted();
+  const cancel = () => scope.dispose();
+  options.signal?.addEventListener('abort', cancel, { once: true });
+  scope.own(() => options.signal?.removeEventListener('abort', cancel));
   const report: PreviewReport = { state: 'loading', resources: 'unchecked', failedResources: [] };
   const publish = () => options.onReport?.({ ...report, failedResources: [...report.failedResources] });
   publish();
@@ -75,6 +81,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       canvas: options.canvas,
       updateStyle: !options.canvas,
     });
+    if (scope.disposed) throw new Error('Viewer disposed');
     scope.own(() => renderer.setAnimationLoop(null));
     const backend = (renderer as unknown as { backend?: { isWebGPUBackend?: boolean } }).backend;
     onLog?.(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);

@@ -86,6 +86,7 @@ export function MaterialViewer({
     const abort = new AbortController();
     let created: Viewer | undefined;
     const patch = (fields: Partial<Omit<Run, 'source'>>) =>
+      !abort.signal.aborted &&
       setRun((current) => ({
         source,
         state: 'loading',
@@ -99,7 +100,9 @@ export function MaterialViewer({
     (async () => {
       const { createViewer, parseEnvironmentFile } = await import('mtlx-viewer');
       const shaderBall = await fetchBytes(shaderBallUrl, abort.signal);
+      abort.signal.throwIfAborted();
       created = await createViewer({
+        signal: abort.signal,
         container,
         data: source.data,
         fileName: source.name,
@@ -109,16 +112,20 @@ export function MaterialViewer({
           const url = ENVIRONMENT_URLS[kind] ?? ENVIRONMENT_URLS.studio!;
           return parseEnvironmentFile(await fetchBytes(url, abort.signal), url);
         },
-        onLog: (line) => callbacks.current.onLog?.(line),
+        onLog: (line) => {
+          if (!abort.signal.aborted) callbacks.current.onLog?.(line);
+        },
         onStage: (stage) => patch({ stage }),
         onStatus: (status) => {
           if (status.environment !== undefined) patch({ environment: status.environment });
         },
         onReport: (report) => {
+          if (abort.signal.aborted) return;
           patch({ state: report.state });
           callbacks.current.onStatus?.(report);
         },
         onError: (text) => {
+          if (abort.signal.aborted) return;
           patch({ viewer: null });
           callbacks.current.onError(text);
         },
@@ -128,6 +135,8 @@ export function MaterialViewer({
     })().catch((error: unknown) => {
       if (abort.signal.aborted) return;
       const text = error instanceof Error ? error.message : String(error);
+      patch({ state: 'error' });
+      callbacks.current.onStatus?.({ state: 'error', resources: 'unchecked', failedResources: [] });
       callbacks.current.onLog?.(`ERROR: ${text}`);
       callbacks.current.onError(text);
     });

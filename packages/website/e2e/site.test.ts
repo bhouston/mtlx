@@ -1,3 +1,4 @@
+import { checkGraphTabs } from './graph-tabs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -418,4 +419,22 @@ test('Share copies matching viewer, embed, and iframe state', async () => {
   expect(embed.searchParams.get('materialName')).toBe('Copper');
   const code = await copy('Copy embed code');
   expect(code).toContain(`src="${embed.href.replaceAll('&', '&amp;')}"`);
+});
+
+test('viewer tabs inspect read-only graphs and preserve the 3D preview', async () => {
+  await page.goto(`http://localhost:${PORT}/viewer`);
+  await page.setInputFiles('input[type=file]', materialPath);
+  await expectReady();
+  await checkGraphTabs(page);
+  await page.setInputFiles('input[type=file]', resolve(import.meta.dirname, '../../../assets/wood_grain.mtlx.zip'));
+  await page.getByRole('tab', { name: 'Graph', exact: true }).click();
+  expect(await page.getByRole('combobox', { name: 'Graph scope', exact: true }).count()).toBe(0);
+  const expand = page.getByRole('button', { name: /^Expand / }).first();
+  await expect.poll(() => expand.count()).toBe(1);
+  await expand.click();
+  await expect.poll(() => page.locator('.react-flow__node').count()).toBeGreaterThan(0);
+  await page.setViewportSize({ width: 375, height: 800 });
+  expect((await page.locator('.mtlx-canvas').boundingBox())!.width).toBeGreaterThan(200);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  expect(pageErrors).toEqual([]);
 });

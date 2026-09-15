@@ -5,3 +5,4 @@ export * from './LogPanel.js';
 export * from './ValidityChecks.js';
 export * from './ViewerSettingsPanel.js';
 export * from './MaterialSelect.js';
+export * from './MaterialViewTabs.js';

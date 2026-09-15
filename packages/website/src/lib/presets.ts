@@ -20,6 +20,13 @@ export const PRESET_MATERIALS: PresetMaterial[] = [
   { category: 'gltf_pbr', name: 'glass_dispersion' },
   { category: 'local', name: 'compound' },
   { category: 'local', name: 'compound_zip', format: 'mtlx.zip' },
+  // Intentionally invalid graphs for inspecting editor diagnostics.
+  { category: 'local', name: 'error_invalid_values' },
+  { category: 'local', name: 'error_connection_type' },
+  { category: 'local', name: 'error_missing_source' },
+  { category: 'local', name: 'error_cycle' },
+  { category: 'local', name: 'error_missing_output' },
+  { category: 'local', name: 'error_subgraph' },
 ];
 
 const RAW_BASE = 'https://raw.githubusercontent.com/bhouston/material-samples/main/materials/showcase';

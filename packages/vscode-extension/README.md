@@ -18,6 +18,10 @@ use **Refresh** to reload manually. Material, geometry, camera, rotation and lig
 
 ## Inspect a material
 
+The **3D Preview** tab opens by default. Switch to **Graph** to pan, zoom, select nodes, and
+inspect their parameters without editing the material. Use the **Expand** icon and parent breadcrumbs to inspect nested
+node graphs. Switching back preserves the 3D scene and camera. The website viewer uses the same tabs.
+
 Use **Pause rotation** to hold the object still, or **Reset** to restore its original orientation and
 the camera's position, target and zoom. Reduced-motion preferences pause rotation automatically.
 The object turns once every 40 seconds. Bottom controls toggle **Bloom** and **AO** (full-resolution,

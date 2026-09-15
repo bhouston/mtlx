@@ -9,7 +9,7 @@
     "prepare": "husky",
     "build": "pnpm -r build",
     "tsc": "tsc -b",
-    "dev": "pnpm --parallel --filter mtlx-core --filter website dev",
+    "dev": "pnpm --parallel --filter mtlx-core --filter mtlx-editor --filter website dev",
     "test": "pnpm tsc && vitest run",
     "test:e2e": "pnpm --filter website test:e2e",
     "format": "oxfmt .",
@@ -21,7 +21,9 @@
     "gcloud": "gcloud auth application-default login && gcloud config set account \"neuralsoft@gmail.com\" && gcloud config set project bhouston-general-hosting && gcloud config set run/region us-central1",
     "make-release:viewer": "node scripts/make-release.mjs packages/viewer",
     "pack:release": "pnpm make-release:core && pnpm make-release:viewer && pnpm make-release:cli",
-    "check:release": "node scripts/check-release.mjs"
+    "check:release": "node scripts/check-release.mjs",
+    "generate:nodes": "pnpm --filter mtlx-core build && node scripts/generate-node-registry.mjs",
+    "check:nodes": "pnpm --filter mtlx-core build && node scripts/generate-node-registry.mjs --check"
   },
   "devDependencies": {
     "@types/node": "^22.20.0",

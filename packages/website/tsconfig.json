@@ -14,5 +14,15 @@
       "@/*": ["./src/*"]
     }
   },
-  "references": [{ "path": "../core" }, { "path": "../vscode-extension" }]
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../vscode-extension"
+    },
+    {
+      "path": "../editor"
+    }
+  ]
 }

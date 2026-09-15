@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Intentionally invalid editor sample: Invalid color and roughness literals. Fix base_color to 0.8, 0.2, 0.1 and specular_roughness to 0.3. -->
+  <standard_surface name="surface" type="surfaceshader" xpos="0" ypos="0">
+    <input name="base_color" type="color3" value="0.8, 0.2"/>
+    <input name="specular_roughness" type="float" value="rough"/>
+  </standard_surface>
+  <surfacematerial name="material" type="material" xpos="680" ypos="240">
+    <input name="surfaceshader" type="surfaceshader" nodename="surface"/>
+  </surfacematerial>
+</materialx>

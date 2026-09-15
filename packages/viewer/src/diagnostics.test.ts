@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { parseMaterialX, summarizeMaterialX } from '../../core/src/index.js';
 import { expect, it } from 'vitest';
 import { computeChecks, summarizeInternalNodes, type DiagnosticInput } from './diagnostics';
 
@@ -65,5 +67,28 @@ it('groups internal node types and excludes materials', () => {
       ['multiply', 2],
     ],
     count: 3,
+  });
+});
+
+it('includes all Onyx subgraph nodes in the Info panel counts', () => {
+  const xml = readFileSync(new URL('../../editor/src/fixtures/onyx_hextiled.mtlx', import.meta.url), 'utf8');
+  expect(summarizeInternalNodes(summarizeMaterialX('onyx_hextiled.mtlx', parseMaterialX(xml)))).toEqual({
+    count: 5,
+    types: [
+      ['convert', 1],
+      ['extract', 1],
+      ['hextiledimage', 2],
+      ['standard_surface', 1],
+    ],
+  });
+});
+
+it('groups nodes across every graph depth using the same category counts', () => {
+  const document = parseMaterialX(
+    '<materialx><constant name="c" type="float"/><nodegraph name="outer"><constant name="c" type="float"/><nodegraph name="inner"><constant name="c" type="float"/></nodegraph></nodegraph><surfacematerial name="m" type="material"/></materialx>',
+  );
+  expect(summarizeInternalNodes(summarizeMaterialX('nested.mtlx', document))).toEqual({
+    count: 3,
+    types: [['constant', 3]],
   });
 });

@@ -5,7 +5,8 @@
     "packages/core/src/generated/node-registry.generated.ts",
     "packages/vscode-extension/dist/**",
     "packages/vscode-extension/media/**",
-    "packages/cli/media/**"
+    "packages/cli/media/**",
+    "submodules/**"
   ],
   "categories": {
     "correctness": "error",

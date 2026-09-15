@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { createRootRoute, HeadContent, Link, Outlet, Scripts, useLocation } from '@tanstack/react-router';
 import { HeartIcon } from 'lucide-react';
 import { ThemeProvider } from 'next-themes';
-import { GoogleAnalytics } from 'tanstack-router-ga4';
+import { SiteAnalytics } from '@/components/SiteAnalytics';
 
 import { Toaster } from '@/components/ui/sonner';
 import appCss from '@/app.css?url';
@@ -51,12 +51,19 @@ function SiteLayout() {
   return (
     <div className="flex min-h-svh flex-col">
       <header className="flex items-center justify-between gap-4 border-b border-border px-6 py-3">
-        <div className="flex items-center gap-4">
+        <div className="flex min-w-0 flex-wrap items-center gap-4">
           <Link to="/" className="flex items-center gap-4 font-semibold text-primary underline underline-offset-4">
             <img src="/logo.webp" alt="mtlx" className="h-9 w-auto" />
             Home
           </Link>
-          <nav className="flex gap-4 text-sm">
+          <nav className="flex flex-wrap gap-4 text-sm">
+            <Link
+              to="/editor"
+              className="text-primary underline underline-offset-4"
+              activeProps={{ className: 'font-semibold' }}
+            >
+              Editor
+            </Link>
             <Link
               to="/viewer"
               className="text-primary underline underline-offset-4"
@@ -123,7 +130,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
       </head>
       <body className="bg-background text-foreground antialiased">
-        {import.meta.env.PROD ? <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} /> : null}
+        {import.meta.env.PROD ? <SiteAnalytics measurementId={GA_MEASUREMENT_ID} /> : null}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
           <Toaster />

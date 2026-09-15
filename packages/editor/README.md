@@ -1,0 +1,149 @@
+# mtlx-editor
+
+A functional MaterialX graph editor, with no dependency on Three.js or the website.
+
+```tsx
+import { useState } from 'react';
+import { MaterialXNodeGraph, MaterialXNodeLib, addNode, createDefaultDocument, getNodeCatalog } from 'mtlx-editor';
+import 'mtlx-editor/styles.css';
+
+function Editor() {
+  const [document, setDocument] = useState(createDefaultDocument);
+  const catalog = getNodeCatalog(document);
+  return (
+    <>
+      <MaterialXNodeLib catalog={catalog} onAdd={(spec) => setDocument((doc) => addNode(doc, spec, { x: 0, y: 0 }))} />
+      <MaterialXNodeGraph document={document} onChange={setDocument} mode="edit" />
+    </>
+  );
+}
+```
+
+## Boundaries
+
+- **Core** owns the loss-preserving MaterialX document tree, parsing, serialization,
+  archive resources, and standard node definitions. The registry includes output types,
+  groups, literal defaults, enums, ranges, and implicit geometry metadata. It is generated
+  from `submodules/MaterialX` by `pnpm generate:nodes`; the generated header records the
+  upstream version and source fingerprint.
+  No renderer-specific definitions belong in core.
+- **Editor model** (`mtlx-editor/model`) supplies immutable document operations and a
+  graph projection. It has no React or Three.js imports. It edits the core element tree,
+  preserving unrelated XML, comments, custom nodes, and resource paths. The node catalog
+  incorporates document-local definitions, including inherited ports.
+- **React components** project that document into React Flow nodes and edges. `document`
+  and `onChange` are controlled props; `mode="view"` disables edits. `scope` selects the
+  document (`''`) or a named nodegraph. Compound nodes expose **Expand**, with breadcrumbs
+  above the canvas to return to parent graphs. `onScopeChange` synchronizes navigation
+  with a host scope selector or node library; without it, navigation is managed internally.
+  Expansion works in view mode and for local node definition implementations. Nested
+  graph scopes use slash-separated paths. `MaterialXNodeList` is shared between category
+  browsing and search results. The drag payload contains only a nodedef identifier.
+- **Website** owns file I/O, archive resources, scope selection, history, and preview
+  scheduling. Each semantic edit produces new XML (or a ZIP containing XML and original
+  resources) after a 400 ms debounce. It reuses the existing `mtlx-viewer` integration,
+  which compiles through Three.js `MaterialXLoader`. Moving nodes saves `xpos`/`ypos`
+  without recompiling the preview. A replaced preview is cancelled and disposed.
+
+## Prototype workflows
+
+Open or drop `.mtlx` / `.mtlx.zip`, browse/search and drag/click nodes, select a node to
+edit values, wire matching typed ports, or use the inspector's connection menus.
+Double-click a wire to disconnect; use Reset to restore an input's definition default.
+Delete removes references to the removed nodes. The website has undo/redo (50 changes),
+graph scope navigation, and `.mtlx.zip` download. Downloads always include the
+current document and all loaded resource bytes.
+
+The `/editor` toolbar shares the viewer's file picker, URL dialog, and sample list. It accepts
+`?materialUrl=https://example.com/material.mtlx.zip` and the legacy `?material=standard_surface/copper`
+query. The website editor is always editable. Preview settings and `scope` also round-trip in the URL without reloading the
+material. URL imports collect relative textures and included libraries, resolve redirects,
+and rewrite references into portable ZIP paths.
+
+Share copies an editor link. Unchanged URL-loaded materials use a short source link; edited
+or local materials use a ZIP snapshot in the URL fragment, preserving edits, node positions,
+and bundled resources without an upload. Snapshots are limited to 24 KiB compressed, 1 MiB
+expanded, and 128 entries. Larger edited materials can be shared using the ZIP download.
+
+## Current limits
+
+- The node library represents MaterialX definitions, not a promise of Three.js support.
+  Unsupported nodes and missing resources are reported by the existing preview.
+- The initial layout is a simple grid. Imported `xpos`/`ypos` are respected. Large shaders
+  show all ports, so graph fit can be small; zoom in to inspect them.
+- Parameter values use MaterialX text syntax (e.g. `0.2, 0.5, 0.8`). The prototype does
+  not yet enforce all numeric ranges or implement specialized color/texture controls.
+- Existing graph interfaces and outputs are editable; creating graph containers/interfaces,
+  renaming nodes, editing definitions, and adding definitions from included libraries to the
+  node palette are future work.
+  Unrecognized document elements are preserved rather than reconstructed.
+- Loose `.mtlx` cannot include local texture bytes. Open a ZIP to preview and preserve
+  bundled textures; resource import/replacement is not yet exposed in the UI.
+
+## Verification
+
+From the repository root:
+
+```sh
+pnpm test
+pnpm --filter website build
+pnpm --filter website test:e2e
+# For concurrent browser runs, choose a separate port:
+MTLX_E2E_PORT=3137 pnpm --filter website test:e2e
+```
+
+Editor model tests cover defaults, immutable edits, connections/cycles, scopes,
+unknown XML, archive resource preservation, and round trips. Vitest-driven Playwright
+workflows cover the website, including actual Three.js rendering and recompile.
+
+## Live graph validation
+
+The visible graph scope is checked whenever the document changes, in both edit and view
+modes. Checks cover unresolved connections and explicit definitions, port and connection
+types, cycles, duplicate node names, and numeric/boolean parameter values. Problem nodes
+and wires have thick red outlines; sockets and wire centers retain their type colors.
+A scrollable log overlays the canvas while errors exist, with selectable text including
+node and input names for copying. Correcting errors automatically clears the highlights
+and log. Missing sources highlight the receiving node because no wire can be drawn.
+These are editor checks, not full MaterialX conformance or renderer compilation checks.
+
+### Parameter editors
+
+`NodeParameterEditor` renders the selected node's inputs (output nodes have no parameter panel).
+`ParameterEditor` is a React component type with `parameter`, `value`, `onChange`, `disabled`,
+and `ariaLabel` props. Implementations render their own layout using the shared `ParameterLabel`.
+`getParameterEditor` selects float/integer sliders, boolean toggles, enums, color pickers,
+vector2/3/4 components, matrix33/44 grids, or text/path fields. Unsupported types are read-only.
+Numeric fields reject invalid drafts and respect `uimin`/`uimax`; blur or Escape restores the
+last valid value. Sliders default to 0–1 and expand to include values outside that range when
+no range metadata is provided. Color pickers use `react-colorful` with normalized RGB(A)
+channels; numeric fields retain HDR values. Click the swatch beside a color label to expand
+the picker, numeric channels and RGB hex field. Hex edits accept 3 or 6 digits and commit on
+Enter or blur, preserving alpha. No color-space conversion is applied. Labels omit type names.
+Connected inputs use `ConnectedParameterEditor`, with a source indicator and disconnect action.
+Reset uses a refresh icon with an accessible label. Create connections by dragging graph ports.
+
+The **Sample materials** picker includes deliberately invalid examples:
+
+| Sample                  | Error                                     | Suggested fix                                                       |
+| ----------------------- | ----------------------------------------- | ------------------------------------------------------------------- |
+| `error_invalid_values`  | Incomplete color and nonnumeric roughness | Set `surface.base_color` to `0.8, 0.2, 0.1` and roughness to `0.3`. |
+| `error_connection_type` | Color output connected to float roughness | Disconnect `surface.specular_roughness`.                            |
+| `error_missing_source`  | Reference to a missing color node         | Reset `surface.base_color`.                                         |
+| `error_cycle`           | Two add nodes feed each other             | Disconnect either `in1` wire.                                       |
+| `error_missing_output`  | Reference to a nonexistent graph output   | Connect `surface.base_color` to `palette.color`.                    |
+
+The `error_subgraph` sample has a color-to-float connection error two graphs deep.
+The **finish** container shows an error immediately. Expand **finish**, then **roughness**,
+to see the invalid wire from **color** to **amount.in1**. Disconnect that wire to clear
+both container indicators. This invalid graph is separate from the surface preview.
+
+All errors are visible in the document scope, including propagated container indicators. The cycle example keeps its loop separate
+from the surface so the material can still preview. Other examples may also produce
+preview compilation errors until repaired.
+
+Inputs with `defaultgeomprop` and no literal value use `GeometryParameterEditor`: a compact
+source indicator with an “Override with constant…” menu. Normal overrides start at `0, 0, 1`,
+tangents at `1, 0, 0`; these are editable starting constants, not sampled geometry values.
+Reset removes the override and restores the geometry source. Connected inputs continue to
+use `ConnectedParameterEditor`; read-only geometry rows have no override menu.

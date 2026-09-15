@@ -51,6 +51,9 @@ fallback, including the extension's bundled webview; real editor/GPU combination
 | [`mtlx-vscode-extension`](https://github.com/bhouston/mtlx/tree/main/packages/vscode-extension) | "Mtlx Viewer": preview, inspect, and convert MaterialX files inside VS Code.                                                                                  |
 | [`mtlx-viewer`](https://github.com/bhouston/mtlx/tree/main/packages/viewer)                     | Shared three.js preview scenes and environment assets for applications.                                                                                       |
 
+The prototype at `/editor` combines a reusable node library and React Flow graph with the
+Three.js preview. See [mtlx-editor](packages/editor/README.md) for the component API and architecture.
+
 ## Scripting
 
 ```sh

@@ -1,9 +1,5 @@
-import { useRef } from 'react';
-import { Upload } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import type { ViewerSearch } from '@/lib/viewer-search';
-import { LoadMaterialUrlDialog } from './LoadMaterialUrlDialog';
-import { SampleMaterialsMenu } from './SampleMaterialsMenu';
+import { MaterialLoadControls } from './MaterialLoadControls';
 import { ViewerShareMenu } from './ViewerShareMenu';
 
 export function ViewerToolbar({
@@ -15,27 +11,9 @@ export function ViewerToolbar({
   onLoadFile: (file: File) => void;
   onLoadUrl: (url: string) => void;
 }) {
-  const fileInput = useRef<HTMLInputElement>(null);
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-muted/30 p-2 shadow-sm">
-      <Button size="sm" onClick={() => fileInput.current?.click()}>
-        <Upload />
-        Choose file
-      </Button>
-      <input
-        ref={fileInput}
-        type="file"
-        accept=".mtlx,.zip"
-        className="hidden"
-        onChange={(event) => {
-          const file = event.target.files?.[0];
-          if (file) onLoadFile(file);
-          event.target.value = '';
-        }}
-      />
-      <LoadMaterialUrlDialog materialUrl={search.materialUrl} onLoad={onLoadUrl} />
-      <SampleMaterialsMenu onLoad={onLoadUrl} />
+    <MaterialLoadControls materialUrl={search.materialUrl} onLoadFile={onLoadFile} onLoadUrl={onLoadUrl}>
       <ViewerShareMenu key={search.materialUrl} search={search} />
-    </div>
+    </MaterialLoadControls>
   );
 }

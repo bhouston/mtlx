@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { MaterialViewer } from '@/components/MaterialViewerLazy';
+import { MaterialXGraphView } from 'mtlx-editor';
+import 'mtlx-editor/styles.css';
+import { MaterialViewTabs } from 'mtlx-viewer/react';
 import { InfoPanel } from 'mtlx-viewer/react';
 import { LogPanel } from 'mtlx-viewer/react';
 import { ViewerToolbar } from '@/components/viewer/ViewerToolbar';
@@ -71,24 +74,29 @@ function ViewerPage() {
         </p>
       ) : null}
       <MaterialDropZone onLoadFile={loadFromFile} className="grid gap-6 md:grid-cols-[minmax(0,3fr)_minmax(260px,1fr)]">
-        <MaterialViewer
-          source={source}
-          settings={viewerSettings(search)}
-          onSettingsChange={(patch) =>
-            void navigate({
-              to: '.',
-              search: (previous) => ({ ...previous, ...patch }),
-              replace: true,
-              resetScroll: false,
-            })
+        <MaterialViewTabs
+          graph={<MaterialXGraphView data={source?.data} fileName={source?.name} />}
+          preview={
+            <MaterialViewer
+              source={source}
+              settings={viewerSettings(search)}
+              onSettingsChange={(patch) =>
+                void navigate({
+                  to: '.',
+                  search: (previous) => ({ ...previous, ...patch }),
+                  replace: true,
+                  resetScroll: false,
+                })
+              }
+              loadProgress={loadProgress}
+              onError={(message) => {
+                setViewerError(message);
+                if (message) appendLog(`ERROR: ${message}`);
+              }}
+              onLog={appendLog}
+              onStatus={setPreview}
+            />
           }
-          loadProgress={loadProgress}
-          onError={(message) => {
-            setViewerError(message);
-            if (message) appendLog(`ERROR: ${message}`);
-          }}
-          onLog={appendLog}
-          onStatus={setPreview}
         />
         <aside id="material-details" className="min-w-0">
           <InfoPanel

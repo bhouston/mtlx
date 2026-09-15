@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Intentionally invalid editor sample: surface.base_color refers to a missing node. Reset that input to restore its default. No wire can be drawn for a missing source. -->
+  <standard_surface name="surface" type="surfaceshader" xpos="0" ypos="0">
+    <input name="base_color" type="color3" nodename="missing_color"/>
+    <input name="specular_roughness" type="float" value="0.3"/>
+  </standard_surface>
+  <surfacematerial name="material" type="material" xpos="680" ypos="240">
+    <input name="surfaceshader" type="surfaceshader" nodename="surface"/>
+  </surfacematerial>
+</materialx>

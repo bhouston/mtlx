@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "mtlx-core": "workspace:*",
+    "mtlx-editor": "workspace:*",
     "mtlx-viewer": "workspace:*"
   },
   "devDependencies": {

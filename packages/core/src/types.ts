@@ -60,6 +60,10 @@ export interface MaterialXDocument {
 export interface MaterialXNodePortSpec {
   name: string;
   type?: string;
+  /** Literal default; absent when the definition uses implicit geometry or a connection. */
+  value?: string;
+  /** Original definition metadata, including uiname, enum, ranges and defaultgeomprop. */
+  attributes?: Readonly<Record<string, string>>;
 }
 
 /**
@@ -71,6 +75,8 @@ export interface MaterialXNodeSpec {
   category: string;
   nodeDefName?: string;
   type?: string;
+  nodeGroup?: string;
+  attributes?: Readonly<Record<string, string>>;
   inputs: MaterialXNodePortSpec[];
   outputs: MaterialXNodePortSpec[];
   parameters: MaterialXNodePortSpec[];
@@ -82,6 +88,17 @@ export interface MaterialXNodeSpec {
  * @category Validation
  */
 export interface MaterialXValidationIssue {
+  /** Optional graph coordinates for highlighting nodes and connections in a UI. */
+  graph?: {
+    /** Slash-separated nodegraph path; empty for the document scope. */
+    scope: string;
+    /** All enclosing graph containers and compound instances affected by this finding. */
+    containers?: { scope: string; nodeId: string }[];
+    nodeIds: string[];
+    input?: string;
+    source?: string;
+    output?: string;
+  };
   /** Stable machine-readable identifier when supplied by the producing rule. */
   code?: string;
   rule?: string;

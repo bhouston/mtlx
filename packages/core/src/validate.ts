@@ -1,12 +1,8 @@
+import { getNodeCatalog, findNodeSpec, getNodeGraphScope } from './node-catalog.js';
+import { validateGraphScope, nonGraphNodes } from './validate-graph.js';
 import type { MaterialXReadLimits } from './limits.js';
 import { materialXNodeRegistry } from './registry.js';
-import type {
-  MaterialXDocument,
-  MaterialXElement,
-  MaterialXNode,
-  MaterialXNodeSpec,
-  MaterialXValidationIssue,
-} from './types.js';
+import type { MaterialXDocument, MaterialXElement, MaterialXNodeSpec, MaterialXValidationIssue } from './types.js';
 import { parseMaterialX } from './xml.js';
 
 export const MATERIALX_VALIDATION_RULES = ['basic', 'structure', 'types', 'resources', 'renderer-support'] as const;
@@ -28,7 +24,7 @@ export const validateDocument = (
 ): MaterialXValidationIssue[] => {
   const options = Array.isArray(registryOrOptions) ? { registry: registryOrOptions } : registryOrOptions;
   const registry = options.registry ?? materialXNodeRegistry;
-  const rules = new Set(options.rules ?? ['basic']);
+  const rules = new Set<MaterialXValidationRule>(options.rules ?? ['basic']);
   const issues: MaterialXValidationIssue[] = [];
   const issue = (
     rule: MaterialXValidationRule,
@@ -44,149 +40,64 @@ export const validateDocument = (
     ...registry.map((entry) => entry.category.toLowerCase()),
     ...customDefinitions.map((element) => element.attributes.node?.toLowerCase()),
   ]);
-  const checkNode = (node: MaterialXNode, location: string) => {
+  const checkNode = (node: MaterialXElement, location: string) => {
     if (
-      [
-        'nodedef',
-        'implementation',
-        'typedef',
-        'unitdef',
-        'unittypedef',
-        'geominfo',
-        'look',
-        'lookgroup',
-        'collection',
-        'propertyset',
-        'variantset',
-        'include',
-        'xi:include',
-      ].includes(node.category)
+      nonGraphNodes.has(node.name) ||
+      ['nodegraph', 'input', 'output'].includes(node.name) ||
+      node.name.startsWith('#')
     )
       return;
     if (rules.has('basic')) {
-      if (!knownCategories.has(node.category.toLowerCase()))
-        issue('basic', 'UNKNOWN_NODE_CATEGORY', location, `Unknown node category "${node.category}"`, 'warning');
-      for (const port of [...node.inputs, ...node.outputs]) {
-        if (!port.name)
-          issue(
-            'basic',
-            'MISSING_PORT_NAME',
-            location,
-            `Node has an ${node.inputs.includes(port) ? 'input' : 'output'} with no name`,
-          );
-      }
-    }
-    if (rules.has('types')) {
-      const explicit = node.attributes.nodedef;
-      const local = customDefinitions.filter((entry) =>
-        explicit
-          ? entry.attributes.name === explicit
-          : entry.attributes.node === node.category && entry.attributes.type === node.type,
-      );
-      const definitions: MaterialXNodeSpec[] = local.length
-        ? local.map((entry) => ({
-            category: entry.attributes.node!,
-            type: entry.attributes.type,
-            inputs: entry.children
-              .filter((child) => child.name === 'input')
-              .map((child) => ({ name: child.attributes.name!, type: child.attributes.type })),
-            outputs: [],
-            parameters: [],
-          }))
-        : registry.filter((entry) =>
-            explicit ? entry.nodeDefName === explicit : entry.category === node.category && entry.type === node.type,
-          );
-      // Ambiguous overloads are deliberately not guessed. Custom definitions override built-ins.
-      for (const input of node.inputs) {
-        const candidates = definitions.map(
-          (definition) => definition.inputs.find((port) => port.name === input.name)?.type,
-        );
-        const expected = candidates[0];
-        if (expected && candidates.every((type) => type === expected) && input.type && input.type !== expected) {
-          issue(
-            'types',
-            'PORT_TYPE_MISMATCH',
-            `${location}/input:${input.name}`,
-            `Input type "${input.type}" does not match declared type "${expected}"`,
-          );
-        }
+      if (!knownCategories.has(node.name.toLowerCase()))
+        issue('basic', 'UNKNOWN_NODE_CATEGORY', location, `Unknown node category "${node.name}"`, 'warning');
+      for (const port of node.children.filter((p) => p.name === 'input' || p.name === 'output')) {
+        if (!port.attributes.name)
+          issue('basic', 'MISSING_PORT_NAME', location, `Node has an ${port.name} with no name`);
       }
     }
     if (
       rules.has('renderer-support') &&
       options.supportedCategories &&
-      !options.supportedCategories.includes(node.category)
+      !options.supportedCategories.includes(node.name)
     ) {
       issue(
         'renderer-support',
         'RENDERER_CATEGORY_UNSUPPORTED',
         location,
-        `Renderer does not declare support for "${node.category}"`,
+        `Renderer does not declare support for "${node.name}"`,
         'warning',
       );
     }
   };
-  for (const node of document.nodes) checkNode(node, `materialx/${node.category}:${node.name ?? 'unnamed'}`);
-  for (const graph of document.nodeGraphs) {
-    for (const node of graph.nodes)
-      checkNode(node, `materialx/nodegraph:${graph.name ?? 'unnamed'}/${node.category}:${node.name ?? 'unnamed'}`);
+  let catalog = registry;
+  if (rules.has('structure') || rules.has('types')) {
+    try {
+      catalog = getNodeCatalog(document, registry);
+    } catch (error) {
+      issue(
+        rules.has('structure') ? 'structure' : 'types',
+        'NODEDEF_INHERITANCE_CYCLE',
+        'materialx',
+        error instanceof Error ? error.message : String(error),
+      );
+    }
   }
-
-  const graphByName = new Map(
-    document.elements.filter((element) => element.name === 'nodegraph').map((graph) => [graph.attributes.name, graph]),
-  );
-  const walkScope = (elements: MaterialXElement[], location: string) => {
+  const containersByGraph = new Map<string, { scope: string; nodeId: string }[]>();
+  const walkScope = (elements: MaterialXElement[], location: string, scope = '', graphScope = true) => {
+    if (graphScope && (rules.has('structure') || rules.has('types')))
+      issues.push(
+        ...validateGraphScope(
+          elements,
+          scope,
+          location,
+          catalog,
+          rules,
+          document.elements.filter((e) => e.name === 'nodegraph'),
+        ),
+      );
     const names = new Set<string>();
-    const nodes = new Map(
-      elements
-        .filter((element) => !['input', 'output', 'parameter'].includes(element.name))
-        .map((element) => [element.attributes.name, element]),
-    );
     const visit = (element: MaterialXElement, path: string) => {
       const attributes = element.attributes;
-      if ((rules.has('structure') || rules.has('types')) && (attributes.nodename || attributes.nodegraph)) {
-        const target = attributes.nodename ? nodes.get(attributes.nodename) : graphByName.get(attributes.nodegraph);
-        if (!target && rules.has('structure'))
-          issue(
-            'structure',
-            'UNRESOLVED_CONNECTION',
-            path,
-            `Cannot resolve ${attributes.nodename ? 'node' : 'nodegraph'} "${attributes.nodename ?? attributes.nodegraph}"`,
-          );
-        else if (target) {
-          const outputs = target.children.filter((child) => child.name === 'output');
-          if (
-            rules.has('structure') &&
-            attributes.output &&
-            outputs.length !== 1 &&
-            (target.name === 'nodegraph' || outputs.length > 1) &&
-            !outputs.some((output) => output.attributes.name === attributes.output)
-          ) {
-            issue('structure', 'UNRESOLVED_OUTPUT', path, `Cannot resolve output "${attributes.output}"`);
-          }
-          const connectedType =
-            outputs.length === 1
-              ? outputs[0]!.attributes.type
-              : attributes.output && outputs.length > 1
-                ? outputs.find((output) => output.attributes.name === attributes.output)?.attributes.type
-                : target.attributes.type;
-          if (
-            rules.has('types') &&
-            connectedType &&
-            connectedType !== 'multioutput' &&
-            attributes.type &&
-            connectedType !== attributes.type &&
-            !(connectedType === 'string' && attributes.type === 'filename')
-          ) {
-            issue(
-              'types',
-              'CONNECTION_TYPE_MISMATCH',
-              path,
-              `Connection type "${connectedType}" does not match port type "${attributes.type}"`,
-            );
-          }
-        }
-      }
       if (rules.has('resources') && options.availableResources) {
         const reference =
           attributes.type === 'filename'
@@ -197,14 +108,19 @@ export const validateDocument = (
         if (reference && !options.availableResources.includes(reference))
           issue('resources', 'RESOURCE_MISSING', path, `Resource "${reference}" is unavailable`);
       }
-      if (element.name === 'nodegraph' || element.name === 'nodedef') walkScope(element.children, path);
+      if (element.name === 'nodegraph')
+        walkScope(element.children, path, scope ? `${scope}/${attributes.name}` : (attributes.name ?? 'unnamed'));
+      else if (element.name === 'nodedef') walkScope(element.children, path, scope, false);
       else {
         const childNames = new Set<string>();
         for (const child of element.children) {
           const childName = child.attributes.name;
           const childPath = `${path}/${child.name}:${childName ?? 'unnamed'}`;
-          if (rules.has('structure') && childName && childNames.has(childName))
+          if (rules.has('structure') && childName && childNames.has(childName)) {
             issue('structure', 'DUPLICATE_NAME', childPath, `Duplicate name "${childName}" in this scope`);
+            if (graphScope && element.attributes.name && !nonGraphNodes.has(element.name))
+              issues[issues.length - 1]!.graph = { scope, nodeIds: [element.attributes.name], input: childName };
+          }
           if (childName) childNames.add(childName);
           visit(child, childPath);
         }
@@ -214,13 +130,47 @@ export const validateDocument = (
       const name = element.attributes.name;
       const path = `${location}/${element.name}:${name ?? 'unnamed'}`;
       if (rules.has('structure') && name) {
-        if (names.has(name)) issue('structure', 'DUPLICATE_NAME', path, `Duplicate name "${name}" in this scope`);
+        if (names.has(name)) {
+          issue('structure', 'DUPLICATE_NAME', path, `Duplicate name "${name}" in this scope`);
+          if (graphScope && !nonGraphNodes.has(element.name))
+            issues[issues.length - 1]!.graph = { scope, nodeIds: [name] };
+        }
         names.add(name);
+      }
+      if (graphScope) {
+        checkNode(element, path);
+        const implementation = nonGraphNodes.has(element.name)
+          ? undefined
+          : getNodeGraphScope(document, element, scope, findNodeSpec(element, catalog));
+        if (implementation !== undefined && name) {
+          const containers = containersByGraph.get(implementation) ?? [];
+          containers.push({ scope, nodeId: name });
+          containersByGraph.set(implementation, containers);
+        }
       }
       visit(element, path);
     }
   };
   walkScope(document.elements, 'materialx');
+  // Keep one finding at its source and attach every containing instance. A visited
+  // scope set also bounds recursive implementation references and shared graphs.
+  for (const finding of issues) {
+    if (!finding.graph) continue;
+    const pending = [finding.graph.scope];
+    const visited = new Set<string>();
+    const containers: { scope: string; nodeId: string }[] = [];
+    while (pending.length) {
+      const scope = pending.pop()!;
+      if (visited.has(scope)) continue;
+      visited.add(scope);
+      for (const container of containersByGraph.get(scope) ?? []) {
+        if (!containers.some((entry) => entry.scope === container.scope && entry.nodeId === container.nodeId))
+          containers.push(container);
+        pending.push(container.scope);
+      }
+    }
+    if (containers.length) finding.graph.containers = containers;
+  }
   if (rules.has('resources') && !options.availableResources)
     issue(
       'resources',

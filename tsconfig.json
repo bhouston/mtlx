@@ -6,10 +6,23 @@
   "files": [],
   "include": [],
   "references": [
-    { "path": "./packages/core" },
-    { "path": "./packages/viewer" },
-    { "path": "./packages/cli" },
-    { "path": "./packages/website" },
-    { "path": "./packages/vscode-extension" }
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/viewer"
+    },
+    {
+      "path": "./packages/cli"
+    },
+    {
+      "path": "./packages/website"
+    },
+    {
+      "path": "./packages/vscode-extension"
+    },
+    {
+      "path": "./packages/editor"
+    }
   ]
 }

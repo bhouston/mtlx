@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Intentionally invalid editor sample: The two add nodes form a cycle. Disconnect either in1 wire to break it. The cycle is separate from the surface so the valid material can still preview. -->
+  <add name="loop_a" type="float" xpos="0" ypos="0">
+    <input name="in1" type="float" nodename="loop_b"/>
+    <input name="in2" type="float" value="0.1"/>
+  </add>
+  <add name="loop_b" type="float" xpos="340" ypos="0">
+    <input name="in1" type="float" nodename="loop_a"/>
+    <input name="in2" type="float" value="0.2"/>
+  </add>
+  <standard_surface name="surface" type="surfaceshader" xpos="0" ypos="240">
+    <input name="base_color" type="color3" value="0.8, 0.2, 0.1"/>
+    <input name="specular_roughness" type="float" value="0.3"/>
+  </standard_surface>
+  <surfacematerial name="material" type="material" xpos="680" ypos="240">
+    <input name="surfaceshader" type="surfaceshader" nodename="surface"/>
+  </surfacematerial>
+</materialx>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Intentionally invalid editor sample: surface.base_color requests a nonexistent output on palette. Select palette.color in its connection menu to fix it. -->
+  <nodegraph name="palette" xpos="0" ypos="0">
+    <constant name="color_value" type="color3" xpos="0" ypos="0">
+      <input name="value" type="color3" value="0.8, 0.2, 0.1"/>
+    </constant>
+    <constant name="roughness_value" type="float" xpos="0" ypos="180">
+      <input name="value" type="float" value="0.3"/>
+    </constant>
+    <output name="color" type="color3" nodename="color_value" xpos="340" ypos="0"/>
+    <output name="roughness" type="float" nodename="roughness_value" xpos="340" ypos="180"/>
+  </nodegraph>
+  <standard_surface name="surface" type="surfaceshader" xpos="340" ypos="0">
+    <input name="base_color" type="color3" nodegraph="palette" output="missing_color"/>
+    <input name="specular_roughness" type="float" value="0.3"/>
+  </standard_surface>
+  <surfacematerial name="material" type="material" xpos="680" ypos="240">
+    <input name="surfaceshader" type="surfaceshader" nodename="surface"/>
+  </surfacematerial>
+</materialx>

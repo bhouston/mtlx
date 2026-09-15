@@ -110,3 +110,25 @@
   align-items: stretch;
   gap: 0.375rem;
 }
+
+.material-view-panel {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+}
+.material-view-panel[hidden] {
+  display: none;
+}
+.material-view-graph-panel {
+  min-height: 480px;
+}
+@media (min-width: 768px) {
+  .material-view-tabs-extension .material-view-panel > .viewer-frame {
+    height: 100%;
+  }
+  .material-view-tabs-extension .material-view-graph-panel,
+  .material-view-tabs-extension .mtlx-graph-view {
+    min-height: 0;
+  }
+}

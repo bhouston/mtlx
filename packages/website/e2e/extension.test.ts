@@ -1,3 +1,4 @@
+import { checkGraphTabs } from './graph-tabs';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { chromium } from 'playwright';
@@ -139,6 +140,7 @@ test.each([false, true])(
       };
       await page.goto(`http://localhost:${PORT}/__extension-test__/index.html`);
       await send();
+      await checkGraphTabs(page);
       expect(await page.getByRole('checkbox', { name: 'Rotate', exact: true }).isChecked()).toBe(false);
       expect(await page.getByRole('combobox', { name: 'Geometry' }).inputValue()).toBe(custom ? 'bust' : 'totem');
       expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe(
