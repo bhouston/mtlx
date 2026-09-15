@@ -164,6 +164,8 @@
   background: var(--mtlx-bg);
   border-radius: 6px;
   min-width: 240px;
+  /* Caps shrink-to-fit width so long node/port names wrap instead of stretching past the auto-layout column gap. */
+  max-width: 300px;
 }
 .mtlx-node > small {
   display: block;
