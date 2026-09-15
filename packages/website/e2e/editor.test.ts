@@ -527,3 +527,35 @@ test('automatic tiledimage labels resolve, revert, and survive undo and export w
   await expect.poll(() => label.textContent()).toBe('tiledimage');
   expect(errors).toEqual([]);
 });
+
+test('parameter type selection is temporary until a value is authored', async () => {
+  await page.getByLabel('Search nodes').fill('tiledimage');
+  await page
+    .getByRole('region', { name: 'MaterialX node library' })
+    .getByRole('button', { name: 'tiledimage', exact: true })
+    .click();
+  const image = page.locator('.react-flow__node[data-id="tiledimage"]');
+  await image.locator('.mtlx-node-header').click();
+  const original = await downloadText();
+  const selector = page.getByRole('combobox', { name: 'Parameter type', exact: true });
+  await selector.selectOption({ label: 'vector3' });
+  expect(await image.locator('.mtlx-node-header').textContent()).toBe('tiledimage');
+  expect(await downloadText()).toBe(original);
+  const components = page.locator('.mtlx-inspector input[aria-label^="tiledimage default value"]');
+  expect(await components.count()).toBe(3);
+  if (process.env.MTLX_PARAMETER_TYPE_SCREENSHOT)
+    await page.locator('.mtlx-inspector').screenshot({ path: process.env.MTLX_PARAMETER_TYPE_SCREENSHOT });
+  await components.first().fill('0.5');
+  await expect.poll(() => image.locator('.mtlx-node-header').textContent()).toBe('tiledimage (vector3)');
+  const { parseMaterialX } = await import('mtlx-core');
+  const authored = parseMaterialX(await downloadText()).nodes.find((n) => n.name === 'tiledimage')!.inputs;
+  expect(authored).toHaveLength(1);
+  expect(authored[0]?.type).toBe('vector3');
+  await page.getByRole('button', { name: 'Reset default', exact: true }).click();
+  await expect.poll(() => image.locator('.mtlx-node-header').textContent()).toBe('tiledimage');
+  expect(await selector.inputValue()).toBe('ND_tiledimage_vector3');
+  await page.locator('.react-flow__node[data-id="surface"] .mtlx-node-header').click();
+  await image.locator('.mtlx-node-header').click();
+  expect(await selector.inputValue()).toBe('ND_tiledimage_color3');
+  expect(errors).toEqual([]);
+});

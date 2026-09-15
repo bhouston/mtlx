@@ -241,14 +241,19 @@ it('chooses a temporary parameter type and authors that type only after a value 
   expect(serializeMaterialX(doc)).toBe(original);
   expect(previewXml(doc)).toBe(preview);
   expect(projectGraph(doc).nodes[0]?.type).toBeUndefined();
+  fill(container.querySelector('[aria-label="image file value"]') as HTMLInputElement, 'texture.png');
+  expect(projectGraph(doc).nodes[0]?.type).toBeUndefined();
   const inputs = container.querySelectorAll<HTMLInputElement>('[aria-label^="image default value"]');
   fill(inputs[0]!, '0.5');
   expect(projectGraph(doc).nodes[0]?.type).toBe('vector3');
-  expect(doc.nodes[0]?.inputs.find((p) => p.name === 'default')).toMatchObject({ type: 'vector3', value: '0.5, 0, 0' });
+  expect(doc.nodes[0]?.inputs.find((p) => p.name === 'default')).toMatchObject({
+    type: 'vector3',
+    value: '0.5, 0.0, 0.0',
+  });
   expect(selector.options).toHaveLength(1);
   act(() => (container.querySelector('[aria-label="Reset default"]') as HTMLButtonElement).click());
   expect(projectGraph(doc).nodes[0]?.type).toBeUndefined();
-  expect(doc.nodes[0]?.inputs).toEqual([]);
+  expect(doc.nodes[0]?.inputs.map((p) => p.name)).toEqual(['file']);
   expect(selector.value).toBe('ND_tiledimage_vector3');
 });
 

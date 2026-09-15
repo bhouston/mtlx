@@ -69,7 +69,12 @@ inputs such as texture coordinates do not determine the image's output type.
 Inference propagates in both directions through connected nodes. Disconnect, reset,
 delete, replacement connections, and undo recompute from the remaining constraints.
 An authored typed value remains a constraint even if it equals a definition's default.
-New nodes author no defaults; resetting an input removes its authored value.
+New nodes author no defaults; resetting an input removes its authored value. The
+**Parameter type** dropdown temporarily selects the inspector's controls and defaults.
+Changing it does not change the graph, preview, export, or undo history. Editing a value
+authors the input type used by those controls; that value can then constrain the node.
+Only compatible variants are offered, with input-type differences shown for overloads
+sharing an output type. Selecting another node discards the temporary view choice.
 
 `resolveTypes()` returns candidate definitions, inferred socket types, and a concrete
 fallback for each node. It filters candidates with a work queue and uses deterministic

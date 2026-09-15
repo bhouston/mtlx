@@ -88,11 +88,11 @@ export function NodeParameterEditor({
         const fallback = [...(definition?.inputs ?? []), ...(definition?.parameters ?? [])].find(
           (p) => p.name === socket.name,
         );
-        const input = fallback ?? socket;
         const explicit = node.element.children.find(
-          (p) => ['input', 'parameter'].includes(p.name) && p.attributes.name === input.name,
+          (p) => ['input', 'parameter'].includes(p.name) && p.attributes.name === socket.name,
         );
         const attrs = explicit?.attributes;
+        const input = fallback ? { ...fallback, attributes: { ...fallback.attributes, ...attrs } } : socket;
         const connection = attrs?.nodename ?? attrs?.nodegraph ?? attrs?.interfacename;
         const edge = projection.edges.find((e) => e.target === node.id && e.targetHandle === input.name);
         const value = attrs?.value ?? input.value ?? '';
