@@ -312,6 +312,20 @@ export function setInputValue(
     clearConnection(port.attributes);
     port.attributes.value = value;
   });
+  // An authored value can move a polymorphic node to a different variant (a vector3 on
+  // ND_multiply_vector3FA's float input makes it ND_multiply_vector3). Keep the authored nodedef
+  // truthful once exactly one variant remains, so later untyped edits and readers agree with it.
+  const after = resolveTypes(edited, catalog).nodes.get(resolutionKey(scope, node));
+  const only = after?.candidates.length === 1 ? after.candidates[0] : undefined;
+  if (
+    after &&
+    only?.nodeDefName &&
+    after.element.attributes.nodedef &&
+    after.element.attributes.nodedef !== only.nodeDefName
+  ) {
+    after.element.attributes.nodedef = only.nodeDefName;
+    invalidateTypeResolution(edited);
+  }
   if (
     valueType &&
     !resolved?.conflict &&

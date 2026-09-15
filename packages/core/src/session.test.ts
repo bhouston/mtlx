@@ -230,6 +230,18 @@ describe('shared editing validation and queries', () => {
     graph.setInputValue(mix, 'in2', [0, 1, 0], { type: 'color3' });
     expect(serializeMaterialX(session.getDocument())).toContain('<input name="in2" type="color3" value="0, 1, 0"/>');
   });
+  it('updates the authored nodedef when a typed value moves the node to another variant', () => {
+    const session = empty();
+    const graph = session.graph();
+    const scale = graph.addNode({ definition: 'ND_multiply_vector3FA' });
+    graph.setInputValue(scale, 'in1', [1, 2, 3], { type: 'vector3' });
+    graph.setInputValue(scale, 'in2', [2, 0.5, 2], { type: 'vector3' });
+    const xml = serializeMaterialX(session.getDocument());
+    expect(xml).toContain('nodedef="ND_multiply_vector3"');
+    expect(xml).not.toContain('ND_multiply_vector3FA');
+    // A later untyped scalar now follows the corrected variant and is rejected rather than mistyped.
+    expect(() => graph.setInputValue(scale, 'in2', 1.5)).toThrow(EditorError);
+  });
 
   it('rejects invalid values, identifiers, definitions and positions without changing snapshots', () => {
     const session = create();

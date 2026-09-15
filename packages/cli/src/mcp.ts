@@ -28,6 +28,12 @@ top-level scope) in scope; \`await\` is allowed. Use editor.graph('name') for a 
 Values take the type of the node's definition, so a number on an ND_multiply_float input is a float. Pass
 { type: 'color3' } or { type: 'vector3' } when a 3-number value could be either. Use list_node_definitions to find
 exact definition names and their input names and types before adding nodes.
+Other calls: graph.removeNodes([id, ...]) deletes nodes (there is no removeNode); graph.disconnectInput(id, input);
+graph.listNodes(); graph.getInputs(id); editor.getDiagnostics(). Multioutput nodes such as separate3 expose
+outputs named outx, outy, outz (separate2: outx, outy).
+Procedural node outputs in this renderer: noise3d and fractal3d are roughly 0..1 centred near 0.5; cellnoise3d is a
+random 0..1 value per cell; worleynoise3d is a distance field, near 0 at each cell's feature point and higher
+toward cell borders. Thin film is a set of standard_surface inputs (thin_film_thickness, thin_film_IOR), not a node.
 Edits are validated as they happen and throw with a code and message on an invalid change.`;
 
 export function createMcpServer(): McpServer {
@@ -67,7 +73,7 @@ export function createMcpServer(): McpServer {
       },
     },
     (args) => {
-      const query = args.query.toLowerCase();
+      const query = args.query.trim().toLowerCase();
       const matches = materialXNodeRegistry.filter((spec) =>
         [spec.nodeDefName, spec.category, spec.nodeGroup].some((field) => field?.toLowerCase().includes(query)),
       );
@@ -108,7 +114,7 @@ export function createMcpServer(): McpServer {
     'render_material',
     {
       description:
-        'Render a MaterialX file to a PNG image with a headless browser and return it. The backdrop is transparent by default so only the model is visible. Fails with the compile error when the material cannot be built.',
+        'Render a MaterialX file to a PNG image with a headless browser and return it. The backdrop is transparent by default so only the model is visible; use background "environment" to judge reflective, glossy, metallic or transmissive materials, since reflections and refraction need something to show. Lighting is the same studio IBL in both modes and is fairly dim, so bright diffuse materials read mid-grey. Fails with the compile error when the material cannot be built.',
       inputSchema: {
         file,
         geometry: z.enum(GEOMETRIES).optional().describe('Preview geometry (default totem)'),
