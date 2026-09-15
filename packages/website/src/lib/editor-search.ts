@@ -7,11 +7,15 @@ import {
 } from 'mtlx-core';
 import { viewerSearch, type ViewerSearch } from './viewer-search';
 
-export type EditorSearch = ViewerSearch & { scope?: string };
+export const EDITOR_LAYOUTS = ['horizontal', 'vertical', 'overlay'] as const;
+export type EditorLayout = (typeof EDITOR_LAYOUTS)[number];
+
+export type EditorSearch = ViewerSearch & { scope?: string; layout?: EditorLayout };
 export function editorSearch(search: Record<string, unknown>): EditorSearch {
   return {
     ...viewerSearch(search),
     ...(typeof search.scope === 'string' && search.scope.length <= 256 ? { scope: search.scope } : {}),
+    ...(EDITOR_LAYOUTS.includes(search.layout as EditorLayout) ? { layout: search.layout as EditorLayout } : {}),
   };
 }
 export interface SnapshotLimits {

@@ -17,12 +17,14 @@ import type { MaterialSource } from '@/components/MaterialViewer';
 import { loadEditorMaterial } from '@/lib/editor-material-load';
 import {
   DRAFT_LIMITS,
+  EDITOR_LAYOUTS,
   decodeEditorSnapshot,
   editorSearch,
   editorShareUrl,
   encodeEditorSnapshot,
   hasEditorSnapshot,
   readEditorSnapshot,
+  type EditorLayout,
 } from '@/lib/editor-search';
 import { viewerSettings } from '@/lib/viewer-search';
 import { MaterialLoadControls } from '@/components/viewer/MaterialLoadControls';
@@ -38,12 +40,12 @@ import { Columns2, Download, Layers, Redo2, Rows2, Undo2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
-type EditorLayout = 'horizontal' | 'vertical' | 'overlay';
-const LAYOUTS: { value: EditorLayout; label: string; icon: typeof Columns2 }[] = [
-  { value: 'horizontal', label: 'Horizontal', icon: Columns2 },
-  { value: 'vertical', label: 'Vertical', icon: Rows2 },
-  { value: 'overlay', label: 'Overlay', icon: Layers },
-];
+const LAYOUT_ICONS: Record<EditorLayout, typeof Columns2> = { horizontal: Columns2, vertical: Rows2, overlay: Layers };
+const LAYOUT_LABELS: Record<EditorLayout, string> = {
+  horizontal: 'Horizontal',
+  vertical: 'Vertical',
+  overlay: 'Overlay',
+};
 const MAX_UPLOAD_BYTES = 16 * 1024 * 1024;
 const DRAFT_KEY = 'mtlx-editor-draft';
 const readDraft = () => {
@@ -93,7 +95,15 @@ function EditorPage() {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [source, setSource] = useState<MaterialSource | null>(null);
   const [loading, setLoading] = useState(false);
-  const [layout, setLayout] = useState<EditorLayout>('vertical');
+  const layout = search.layout ?? 'vertical';
+  const setLayout = (next: EditorLayout) =>
+    void navigate({
+      to: '.',
+      search: (previous) => ({ ...previous, layout: next === 'vertical' ? undefined : next }),
+      hash: true,
+      replace: true,
+      resetScroll: false,
+    });
   const generation = useRef(0);
   const documentXml = useMemo(() => serializeMaterialX(pkg.document), [pkg.document]);
   const dirty = documentXml !== loadedSource.xml || loadedPackage.resources !== loadedSource.resources;
@@ -307,19 +317,22 @@ function EditorPage() {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" aria-label="Layout" title="Preview layout">
               {(() => {
-                const Icon = LAYOUTS.find((l) => l.value === layout)!.icon;
+                const Icon = LAYOUT_ICONS[layout];
                 return <Icon aria-hidden="true" />;
               })()}
               Layout
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            {LAYOUTS.map(({ value, label, icon: Icon }) => (
-              <DropdownMenuItem key={value} onSelect={() => setLayout(value)}>
-                <Icon aria-hidden="true" />
-                {label}
-              </DropdownMenuItem>
-            ))}
+            {EDITOR_LAYOUTS.map((value) => {
+              const Icon = LAYOUT_ICONS[value];
+              return (
+                <DropdownMenuItem key={value} onSelect={() => setLayout(value)}>
+                  <Icon aria-hidden="true" />
+                  {LAYOUT_LABELS[value]}
+                </DropdownMenuItem>
+              );
+            })}
           </DropdownMenuContent>
         </DropdownMenu>
         {dirty && (
@@ -335,7 +348,7 @@ function EditorPage() {
           getUrl={() =>
             editorShareUrl(
               window.location.origin,
-              { ...viewerSettings(search), scope },
+              { ...viewerSettings(search), scope, layout },
               pkg,
               documentXml === loadedSource.xml ? loadedSource.url : undefined,
             )

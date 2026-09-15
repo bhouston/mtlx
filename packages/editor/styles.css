@@ -150,8 +150,9 @@
   grid-template-columns: 1fr;
 }
 .mtlx-graph {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 285px;
+  grid-template-columns: minmax(0, 1fr);
   height: 650px;
 }
 .mtlx-canvas {
@@ -205,9 +206,17 @@
   filter: drop-shadow(0 0 2px currentColor);
 }
 .mtlx-inspector {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 285px;
   overflow: auto;
   padding: 12px;
+  background: var(--mtlx-bg);
   border-left: 1px solid var(--mtlx-border);
+  box-shadow: var(--mtlx-shadow);
+  z-index: 5;
 }
 .mtlx-field {
   padding: 10px 0;
@@ -229,12 +238,15 @@
 }
 @media (max-width: 700px) {
   .mtlx-graph {
-    grid-template-columns: minmax(0, 1fr);
     height: 850px;
     grid-template-rows: 500px 350px;
   }
   .mtlx-inspector {
+    position: static;
+    width: auto;
+    border-left: none;
     border-top: 1px solid var(--mtlx-border);
+    box-shadow: none;
   }
 }
 
@@ -253,19 +265,24 @@
   height: auto;
   border: 0;
   border-radius: 0;
-  grid-template-columns: minmax(0, 1fr) minmax(150px, 30%);
   grid-template-rows: minmax(0, 1fr);
+}
+.mtlx-graph-view .mtlx-inspector {
+  width: min(285px, 30%);
+  min-width: 150px;
 }
 @media (max-width: 500px) {
   .mtlx-graph-view .mtlx-graph {
-    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(280px, 1fr) 180px;
   }
-}
-
-.mtlx-graph:not(:has(> .mtlx-inspector)) {
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
+  .mtlx-graph-view .mtlx-inspector {
+    position: static;
+    width: auto;
+    min-width: 0;
+    border-left: none;
+    border-top: 1px solid var(--mtlx-border);
+    box-shadow: none;
+  }
 }
 
 .mtlx-context-menu {
