@@ -59,44 +59,82 @@ export function MaterialViewer({
     if (onSettingsChange) onSettingsChange(patch);
     else setLocalSettings((current) => ({ ...current, ...patch }));
   };
-  // Everything the running viewer reports, tagged with its source so a stale run never shows through.
+  // The viewer outlives the material. The first source builds it (renderer, environment, post
+  // pipeline, controls, shader ball); every later source is compiled into the running viewer, so
+  // the camera and the previous material stay on screen while the new one compiles.
   interface Run {
-    source: MaterialSource;
+    /** What the viewer shows or is loading; a newer `source` prop reads as loading until applied. */
+    source: MaterialSource | null;
     state: PreviewReport['state'];
     stage: keyof typeof STAGE_PROGRESS;
     environment: string;
     viewer: Viewer | null;
   }
-  const [run, setRun] = useState<Run | null>(null);
-  const live = run?.source === source ? run : null;
-  const viewer = live?.viewer ?? null;
-  const previewState = live?.state ?? (source ? 'loading' : 'idle');
+  const [run, setRun] = useState<Run>({
+    source: null,
+    state: 'idle',
+    stage: 'renderer',
+    environment: '',
+    viewer: null,
+  });
+  const viewer = source ? run.viewer : null;
+  const previewState = run.source === source ? run.state : source ? 'loading' : 'idle';
   const containerRef = useRef<HTMLDivElement>(null);
+  const viewerRef = useRef<Viewer | null>(null);
+  // Identifies the viewer being built or shown, so callbacks from a superseded build never show through.
+  const owner = useRef<object | null>(null);
   // Callbacks and the initial settings are read from a ref so a new source never rebuilds the viewer.
   const callbacks = useRef({ onError, onLog, onStatus, settings: currentSettings });
   useEffect(() => {
     callbacks.current = { onError, onLog, onStatus, settings: currentSettings };
   });
+  useEffect(
+    () => () => {
+      owner.current = null;
+      viewerRef.current?.dispose();
+      viewerRef.current = null;
+    },
+    [],
+  );
 
   useEffect(() => {
     const container = containerRef.current;
     const idle: PreviewReport = { state: source ? 'loading' : 'idle', resources: 'unchecked', failedResources: [] };
     callbacks.current.onStatus?.(idle);
-    if (!container || !source) return;
+    if (!container || !source) {
+      owner.current = null;
+      viewerRef.current?.dispose();
+      viewerRef.current = null;
+      return;
+    }
+    callbacks.current.onError(null);
+    const live = viewerRef.current && !viewerRef.current.disposed ? viewerRef.current : null;
+    const token = live ? owner.current! : {};
+    owner.current = token;
+    const patch = (fields: Partial<Run>) => owner.current === token && setRun((current) => ({ ...current, ...fields }));
+    const fail = (error: unknown) => {
+      if (owner.current !== token) return;
+      const text = error instanceof Error ? error.message : String(error);
+      patch({ state: 'error' });
+      callbacks.current.onStatus?.({ state: 'error', resources: 'unchecked', failedResources: [] });
+      callbacks.current.onLog?.(`ERROR: ${text}`);
+      callbacks.current.onError(text);
+    };
+    if (live) {
+      // Compiling is synchronous; yield once so the loading state paints first.
+      const timer = setTimeout(() => {
+        patch({ source });
+        try {
+          live.replaceMaterial(source.data, source.name);
+        } catch (error) {
+          fail(error);
+        }
+      }, 0);
+      return () => clearTimeout(timer);
+    }
     const abort = new AbortController();
     let created: Viewer | undefined;
-    const patch = (fields: Partial<Omit<Run, 'source'>>) =>
-      !abort.signal.aborted &&
-      setRun((current) => ({
-        source,
-        state: 'loading',
-        stage: 'renderer',
-        environment: '',
-        viewer: null,
-        ...(current?.source === source ? current : {}),
-        ...fields,
-      }));
-    callbacks.current.onError(null);
+    patch({ source, state: 'loading', stage: 'renderer', environment: '', viewer: null });
     (async () => {
       const { createViewer, parseEnvironmentFile } = await import('mtlx-viewer');
       const shaderBall = await fetchBytes(shaderBallUrl, abort.signal);
@@ -113,36 +151,35 @@ export function MaterialViewer({
           return parseEnvironmentFile(await fetchBytes(url, abort.signal), url);
         },
         onLog: (line) => {
-          if (!abort.signal.aborted) callbacks.current.onLog?.(line);
+          if (owner.current === token) callbacks.current.onLog?.(line);
         },
         onStage: (stage) => patch({ stage }),
         onStatus: (status) => {
           if (status.environment !== undefined) patch({ environment: status.environment });
         },
         onReport: (report) => {
-          if (abort.signal.aborted) return;
+          if (owner.current !== token) return;
           patch({ state: report.state });
           callbacks.current.onStatus?.(report);
         },
         onError: (text) => {
-          if (abort.signal.aborted) return;
+          if (owner.current !== token) return;
+          viewerRef.current = null;
           patch({ viewer: null });
           callbacks.current.onError(text);
         },
       });
-      if (abort.signal.aborted) created.dispose();
-      else patch({ viewer: created });
-    })().catch((error: unknown) => {
-      if (abort.signal.aborted) return;
-      const text = error instanceof Error ? error.message : String(error);
-      patch({ state: 'error' });
-      callbacks.current.onStatus?.({ state: 'error', resources: 'unchecked', failedResources: [] });
-      callbacks.current.onLog?.(`ERROR: ${text}`);
-      callbacks.current.onError(text);
-    });
+      if (owner.current !== token) created.dispose();
+      else {
+        viewerRef.current = created;
+        patch({ viewer: created });
+      }
+    })().catch(fail);
     return () => {
+      // A source that arrives mid-build restarts the build; a finished viewer is kept for reuse.
+      if (created) return;
+      if (owner.current === token) owner.current = null;
       abort.abort();
-      created?.dispose();
     };
   }, [source]);
 
@@ -152,8 +189,8 @@ export function MaterialViewer({
   }, [viewer, ibl, geometry, rotate, bloom, ao, toneMapping, exposure, intensity, materialName]);
 
   const loading = !!source && previewState !== 'ready' && previewState !== 'error';
-  const progress = loadProgress ?? (loading ? STAGE_PROGRESS[live?.stage ?? 'renderer'] : null);
-  const environmentMessage = live?.environment ?? '';
+  const progress = loadProgress ?? (loading ? STAGE_PROGRESS[run.stage] : null);
+  const environmentMessage = run.environment;
   const materialNames = viewer?.scene.materialNames ?? [];
 
   return (
@@ -186,7 +223,12 @@ export function MaterialViewer({
       >
         {environmentMessage}
       </output>
-      {progress ? <MaterialLoadingOverlay progress={progress} /> : null}
+      {progress && (!viewer || loadProgress) ? <MaterialLoadingOverlay progress={progress} /> : null}
+      {progress && viewer && !loadProgress ? (
+        <output className="absolute top-2 left-2 z-20 rounded bg-black/80 px-2 py-1 text-xs text-white">
+          {progress.label}
+        </output>
+      ) : null}
       {!source && !progress ? (
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/50">
           Drop a MaterialX file here, or choose a sample to get started.

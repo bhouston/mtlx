@@ -46,6 +46,11 @@ export interface Viewer {
   readonly controls: OrbitControls;
   /** Apply a full settings object; only changed fields do work. Resolves to what actually took effect. */
   setSettings(settings: ViewerSettings): Promise<ViewerSettings>;
+  /**
+   * Compile a new document into the running scene, keeping the renderer, environment, camera and
+   * geometry. Reports through `onReport`; throws (and keeps the previous material) on a parse failure.
+   */
+  replaceMaterial(data: ArrayBuffer, fileName: string): void;
   dispose(): void;
 }
 
@@ -265,6 +270,27 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
         await Promise.all(pending);
         applied.geometry = mtlxScene.geometry;
         return { ...applied };
+      },
+      replaceMaterial(data, fileName) {
+        if (scope.disposed) return;
+        onStage?.('material');
+        onLog?.(`Parsing MaterialX document (${fileName})...`);
+        Object.assign(report, { state: 'loading', resources: 'unchecked', failedResources: [] });
+        publish();
+        try {
+          mtlxScene.replaceMaterials(data, fileName);
+          applied.materialName = mtlxScene.activeMaterial;
+          onStage?.('render');
+          rendering.render();
+        } catch (error) {
+          report.state = 'error';
+          publish();
+          throw error;
+        }
+        onLog?.(`Material applied (${mtlxScene.materialNames.length} available).`);
+        report.state = 'ready';
+        publish();
+        onStage?.('ready');
       },
       dispose: () => scope.dispose(),
     };

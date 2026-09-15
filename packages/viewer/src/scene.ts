@@ -48,6 +48,11 @@ export interface MtlxScene {
   /** Releases owned geometries, materials and textures; safe to call repeatedly. */
   dispose(): void;
   setMaterial(name: string): void;
+  /**
+   * Parse a new document and show it on the current geometry, keeping the camera and orientation.
+   * The previous materials stay in place when the new document fails to parse.
+   */
+  replaceMaterials(data: ArrayBuffer, fileName: string): void;
   hasGeometry(name: string): boolean;
   setGeometry(kind: string): void;
   /** Load an additional named glTF/GLB geometry; this scene owns its resources. */
@@ -179,12 +184,17 @@ export async function createMtlxScene(
   options: MtlxSceneOptions,
 ): Promise<MtlxScene> {
   const manager = options.manager ?? new THREE.LoadingManager();
-  const { materials, dispose: disposeDocument } = parseMaterialX(manager, options.data, options.fileName);
+  const parse = (data: ArrayBuffer, fileName: string) => {
+    const parsed = parseMaterialX(manager, data, fileName);
+    if (Object.keys(parsed.materials).length === 0) {
+      parsed.dispose();
+      throw new Error('No materials found in this MaterialX document');
+    }
+    return { ...parsed, disposeMaterials: collectDisposables(Object.values(parsed.materials)) };
+  };
+  let document = parse(options.data, options.fileName);
+  let materials = document.materials;
   const materialNames = Object.keys(materials);
-  if (materialNames.length === 0) {
-    disposeDocument();
-    throw new Error('No materials found in this MaterialX document');
-  }
 
   let totem: THREE.Group;
   try {
@@ -192,8 +202,8 @@ export async function createMtlxScene(
     // Start facing front-right; capture this orientation below as the Reset baseline.
     totem.rotateY(Math.PI / 4);
   } catch (error) {
-    collectDisposables(Object.values(materials))();
-    disposeDocument();
+    document.disposeMaterials();
+    document.dispose();
     throw error;
   }
   const geometries: Record<string, THREE.Object3D> = Object.assign(Object.create(null), {
@@ -204,7 +214,7 @@ export async function createMtlxScene(
   let disposed = false;
   const additionalDisposers: Array<() => void> = [];
   // Capture original glTF/default materials before replacing them with MaterialX materials.
-  const disposeResources = collectDisposables([...Object.values(geometries), ...Object.values(materials)]);
+  const disposeGeometries = collectDisposables(Object.values(geometries));
   const originalRotations = new Map(Object.values(geometries).map((object) => [object, object.rotation.clone()]));
   const root = new THREE.Group();
   for (const object of Object.values(geometries)) root.add(object);
@@ -218,10 +228,11 @@ export async function createMtlxScene(
     dispose() {
       if (disposed) return;
       disposed = true;
-      disposeDocument();
+      document.dispose();
       for (const dispose of additionalDisposers.splice(0)) dispose();
       root.removeFromParent();
-      disposeResources();
+      disposeGeometries();
+      document.disposeMaterials();
       root.clear();
     },
     materialNames,
@@ -234,6 +245,16 @@ export async function createMtlxScene(
       if (!material) return;
       scene.activeMaterial = name;
       applyMaterial(geometries[scene.geometry]!, material);
+    },
+    replaceMaterials(data, fileName) {
+      if (disposed) return;
+      const next = parse(data, fileName);
+      document.disposeMaterials();
+      document.dispose();
+      document = next;
+      materials = next.materials;
+      scene.materialNames = Object.keys(materials);
+      scene.setMaterial(materials[scene.activeMaterial] ? scene.activeMaterial : scene.materialNames.at(-1)!);
     },
     async addGeometry(name, data, geometryManager = new THREE.LoadingManager()) {
       if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name) || geometries[name])

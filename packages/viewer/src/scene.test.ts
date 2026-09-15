@@ -9,7 +9,9 @@ vi.mock('three/addons/loaders/MaterialXLoader.js', () => ({
     }
     parseBuffer(data: ArrayBuffer, url: string) {
       loaderCalls.parse(data, url);
-      return { materials: { sample: new THREE.MeshStandardMaterial() } };
+      if (url === 'empty.mtlx') return { materials: {} };
+      const names = url === 'two.mtlx' ? ['sample', 'other'] : ['sample'];
+      return { materials: Object.fromEntries(names.map((name) => [name, new THREE.MeshStandardMaterial()])) };
     }
   },
 }));
@@ -100,4 +102,42 @@ it('uses archive-local texture URLs and releases their blob resolver on disposal
   scene.dispose();
   scene.dispose();
   expect(loaderCalls.dispose).toHaveBeenCalledTimes(1);
+});
+
+it('replaces materials in place, keeping geometry, orientation and the selection when it still exists', async () => {
+  const camera = new THREE.PerspectiveCamera(45, 1);
+  const scene = await createMtlxScene(
+    camera,
+    { target: new THREE.Vector3(), update: vi.fn() },
+    { data: new ArrayBuffer(0), fileName: 'two.mtlx', shaderBall: new ArrayBuffer(0) },
+  );
+  scene.setGeometry('sphere');
+  scene.setMaterial('sample');
+  const sphere = scene.root.children.find((child) => child.visible)!;
+  sphere.rotation.y = 1;
+  camera.position.set(9, 9, 9);
+  const mesh = sphere.getObjectByProperty('isMesh', true) as THREE.Mesh;
+  const previous = mesh.material as THREE.Material;
+  const disposePrevious = vi.spyOn(previous, 'dispose');
+  loaderCalls.dispose.mockClear();
+  scene.replaceMaterials(new ArrayBuffer(0), 'two.mtlx');
+  expect(mesh.material).not.toBe(previous);
+  expect(disposePrevious).toHaveBeenCalledOnce();
+  expect(loaderCalls.dispose).toHaveBeenCalledOnce();
+  expect(scene.activeMaterial).toBe('sample');
+  expect(scene.geometry).toBe('sphere');
+  expect(sphere.visible).toBe(true);
+  expect(sphere.rotation.y).toBe(1);
+  expect(camera.position.x).toBe(9);
+  // A document without the selected material falls back to its last one.
+  scene.setMaterial('other');
+  scene.replaceMaterials(new ArrayBuffer(0), 'one.mtlx');
+  expect(scene.activeMaterial).toBe('sample');
+  expect(scene.materialNames).toEqual(['sample']);
+  // A failed parse keeps the current material.
+  const current = mesh.material;
+  expect(() => scene.replaceMaterials(new ArrayBuffer(0), 'empty.mtlx')).toThrow('No materials');
+  expect(mesh.material).toBe(current);
+  scene.dispose();
+  expect((current as THREE.Material).dispose).toBeDefined();
 });
