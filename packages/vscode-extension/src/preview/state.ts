@@ -23,6 +23,7 @@ export const hostDefaults = (settings: PreviewSettings): ViewerSettings => ({
   bloom: settings.bloom,
   ao: settings.ao,
   toneMapping: settings.toneMapping,
+  background: settings.background,
   exposure: 0,
   intensity: 1,
   materialName: '',

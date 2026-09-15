@@ -58,6 +58,7 @@ async function main(): Promise<void> {
     rotate: query.get('rotate') !== 'false',
     geometry: query.get('geometry') ?? DEFAULT_VIEWER_SETTINGS.geometry,
     materialName: query.get('material') ?? DEFAULT_VIEWER_SETTINGS.materialName,
+    background: query.get('background') === 'none' ? 'none' : 'environment',
   };
   geometryEl.value = settings.geometry;
   toneMappingEl.value = settings.toneMapping;
@@ -72,7 +73,6 @@ async function main(): Promise<void> {
     fileName,
     shaderBall,
     settings,
-    background: query.get('background') === 'none' ? 'none' : 'environment',
     loadEnvironment: () => parseEnvironmentFile(dataUrlToArrayBuffer(studioEnvironmentDataUrl), 'studio.png'),
     onLog: (message) => console.log(`[mtlx view] ${message}`),
     onError: showError,

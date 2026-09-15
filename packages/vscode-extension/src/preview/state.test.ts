@@ -19,6 +19,7 @@ it('preserves saved settings, custom assets, and camera on restoration', () => {
       bloom: false,
       ao: false,
       toneMapping: 'agx',
+      background: 'none',
       intensity: 0.6,
       exposure: -1,
       materialName: 'Copper',

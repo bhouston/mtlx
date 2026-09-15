@@ -8,6 +8,7 @@ it('defaults to bridge, totem and rotation', () => {
     bloom: true,
     ao: true,
     toneMapping: 'neutral',
+    background: 'environment',
     warnings: [],
   });
 });
@@ -43,6 +44,8 @@ it('rejects malformed names, collisions and unknown defaults without losing vali
 });
 
 it('validates effect defaults and tone mapping names', () => {
+  expect(parsePreviewSettings({ background: 'none' })).toMatchObject({ background: 'none', warnings: [] });
+  expect(parsePreviewSettings({ background: 'blue' })).toMatchObject({ background: 'environment' });
   expect(parsePreviewSettings({ bloom: false, ao: false, toneMapping: 'agx' })).toMatchObject({
     bloom: false,
     ao: false,

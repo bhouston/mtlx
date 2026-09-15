@@ -216,10 +216,22 @@ export function MaterialViewer({
     };
   }, [source]);
 
-  const { ibl, geometry, rotate, bloom, ao, toneMapping, exposure, intensity, materialName } = currentSettings;
+  const { ibl, geometry, rotate, bloom, ao, toneMapping, background, exposure, intensity, materialName } =
+    currentSettings;
   useEffect(() => {
-    void viewer?.setSettings({ ibl, geometry, rotate, bloom, ao, toneMapping, exposure, intensity, materialName });
-  }, [viewer, ibl, geometry, rotate, bloom, ao, toneMapping, exposure, intensity, materialName]);
+    void viewer?.setSettings({
+      ibl,
+      geometry,
+      rotate,
+      bloom,
+      ao,
+      toneMapping,
+      background,
+      exposure,
+      intensity,
+      materialName,
+    });
+  }, [viewer, ibl, geometry, rotate, bloom, ao, toneMapping, background, exposure, intensity, materialName]);
 
   const loading = !!source && previewState !== 'ready' && previewState !== 'error';
   const progress = loadProgress ?? (loading ? STAGE_PROGRESS[run.stage] : null);

@@ -32,6 +32,7 @@ const ATTRIBUTES: Array<[string, string]> = [
   ['geometry', '"totem" | "sphere" | "cube" | "plane" | "custom" (the last selects model, if given).'],
   ['material', 'Initial material name; defaults to the document’s last material.'],
   ['rotate / bloom / ao', '"false" to disable; all default on.'],
+  ['background', '"environment" (default) shows the IBL behind the model; "none" leaves it transparent.'],
   ['tone-mapping', 'neutral (default), aces, agx, reinhard, cineon, linear, none.'],
   ['exposure / intensity', 'Numbers in -2..2 / 0..2.'],
   ['settings-panel', '"open" | "closed" | "hidden" (default) — a built-in overlay for the above.'],

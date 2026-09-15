@@ -24,8 +24,6 @@ export interface ViewerOptions {
   fileName: string;
   shaderBall: ArrayBuffer;
   settings: ViewerSettings;
-  /** `none` lights the scene with the IBL but leaves the backdrop transparent (clear alpha 0). */
-  background?: 'environment' | 'none';
   loadEnvironment(kind: string): Promise<THREE.Texture>;
   /** Host-configured geometries beyond totem/sphere/cube/plane; `manager` resolves glTF sidecar files. */
   loadGeometry?(name: string): Promise<{ data: ArrayBuffer; manager?: THREE.LoadingManager }>;
@@ -101,8 +99,10 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
     const rendering = createViewerRendering(renderer, scene, camera, applied);
     scope.own(() => rendering.dispose());
-    const applyRendering = (settings: ViewerSettings) =>
+    const applyRendering = (settings: ViewerSettings) => {
       applyViewerRenderingSettings(renderer, scene, rendering, settings);
+      scene.background = settings.background === 'none' ? null : scene.environment;
+    };
     applyRendering(applied);
 
     // @types/three lags three's addon source: fromEquirectangular() isn't in its PMREMGenerator typings yet.
@@ -116,7 +116,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       (texture) => pmrem.fromEquirectangular(texture),
       (texture) => {
         scene.environment = texture;
-        scene.background = options.background === 'none' ? null : texture;
+        scene.background = applied.background === 'none' ? null : texture;
       },
     );
     scope.own(() => environments.dispose());
@@ -257,6 +257,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
           bloom: next.bloom,
           ao: next.ao,
           toneMapping: next.toneMapping,
+          background: next.background,
           exposure: next.exposure,
           intensity: next.intensity,
           rotate: next.rotate,

@@ -34,6 +34,7 @@ const SETTINGS_EXAMPLE = `{
   "mtlx.preview.bloom": true,
   "mtlx.preview.ao": true,
   "mtlx.preview.toneMapping": "neutral",
+  "mtlx.preview.background": "environment",
   "mtlx.preview.geometries": [
     { "name": "bust", "source": "models/bust.gltf" },
     { "name": "sample_mesh", "source": "https://example.com/models/sample.glb" }
@@ -131,6 +132,11 @@ function ExtensionPage() {
                   'mtlx.preview.toneMapping',
                   '"neutral"',
                   'neutral, aces (ACES Filmic), agx, reinhard, cineon, linear, none.',
+                ],
+                [
+                  'mtlx.preview.background',
+                  '"environment"',
+                  'environment shows the IBL behind the model; none leaves it transparent.',
                 ],
                 ['mtlx.preview.geometries', '[]', 'Additional named .gltf / .glb mesh scenes.'],
                 [

@@ -52,6 +52,7 @@ asset has a `name` and a `source` file path or HTTP(S) URL:
   "mtlx.preview.bloom": true,
   "mtlx.preview.ao": true,
   "mtlx.preview.toneMapping": "neutral",
+  "mtlx.preview.background": "environment",
   "mtlx.preview.geometries": [
     { "name": "bust", "source": "models/bust.gltf" },
     { "name": "sample_mesh", "source": "https://example.com/models/sample.glb" }
@@ -65,16 +66,17 @@ Replace the example paths/URLs with your files. Names are case-sensitive identif
 Duplicates within a list and built-in names are rejected. IBL and geometry names are separate
 namespaces, so the same custom name can appear in both.
 
-| Setting                        | Default     | Built-in names / behavior                                                       |
-| ------------------------------ | ----------- | ------------------------------------------------------------------------------- |
-| `mtlx.preview.ibls`            | `[]`        | Additional named equirectangular `.hdr`, `.exr`, `.png`, `.jpg` / `.jpeg` files |
-| `mtlx.preview.defaultIbl`      | `"bridge"`  | `bridge`, `studio`, or an additional IBL name                                   |
-| `mtlx.preview.autoRotate`      | `true`      | Reduced motion takes precedence; rotation can be enabled manually               |
-| `mtlx.preview.geometries`      | `[]`        | Additional named `.gltf` / `.glb` mesh scenes                                   |
-| `mtlx.preview.defaultGeometry` | `"totem"`   | `totem`, `sphere`, `cube`, `plane`, or an additional geometry name              |
-| `mtlx.preview.bloom`           | `true`      | Enable HDR bloom by default                                                     |
-| `mtlx.preview.ao`              | `true`      | Enable denoised GTAO by default                                                 |
-| `mtlx.preview.toneMapping`     | `"neutral"` | `neutral`, `aces` (ACES Filmic), `agx`, `reinhard`, `cineon`, `linear`, `none`  |
+| Setting                        | Default         | Built-in names / behavior                                                       |
+| ------------------------------ | --------------- | ------------------------------------------------------------------------------- |
+| `mtlx.preview.ibls`            | `[]`            | Additional named equirectangular `.hdr`, `.exr`, `.png`, `.jpg` / `.jpeg` files |
+| `mtlx.preview.defaultIbl`      | `"bridge"`      | `bridge`, `studio`, or an additional IBL name                                   |
+| `mtlx.preview.autoRotate`      | `true`          | Reduced motion takes precedence; rotation can be enabled manually               |
+| `mtlx.preview.geometries`      | `[]`            | Additional named `.gltf` / `.glb` mesh scenes                                   |
+| `mtlx.preview.defaultGeometry` | `"totem"`       | `totem`, `sphere`, `cube`, `plane`, or an additional geometry name              |
+| `mtlx.preview.bloom`           | `true`          | Enable HDR bloom by default                                                     |
+| `mtlx.preview.ao`              | `true`          | Enable denoised GTAO by default                                                 |
+| `mtlx.preview.toneMapping`     | `"neutral"`     | `neutral`, `aces` (ACES Filmic), `agx`, `reinhard`, `cineon`, `linear`, `none`  |
+| `mtlx.preview.background`      | `"environment"` | `environment` shows the IBL behind the model; `none` leaves it transparent      |
 
 Relative paths resolve from the material's workspace folder (or the material's folder when no
 workspace folder exists). Absolute paths and `~/` refer to the extension host's filesystem.

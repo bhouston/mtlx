@@ -31,8 +31,16 @@ export const IBL_OPTIONS: SettingsOption[] = [
   { value: 'bridge', label: 'San Giuseppe Bridge' },
 ];
 
+/** `none` lights the scene with the IBL but leaves the backdrop transparent (clear alpha 0). */
+export const BACKGROUND_OPTIONS = [
+  { value: 'environment', label: 'Environment' },
+  { value: 'none', label: 'None' },
+] as const;
+export type BackgroundKind = (typeof BACKGROUND_OPTIONS)[number]['value'];
+
 export const DEFAULT_VIEWER_SETTINGS = {
   ibl: 'bridge' as 'bridge' | 'studio',
+  background: 'environment' as BackgroundKind,
   ...DEFAULT_RENDERING_SETTINGS,
   intensity: 1,
   exposure: 0,
@@ -73,5 +81,7 @@ export function parseViewerSettings(
     result.geometry = input.geometry;
   const toneMapping = TONE_MAPPING_OPTIONS.find(({ value }) => value === input.toneMapping);
   if (toneMapping) result.toneMapping = toneMapping.value;
+  const background = BACKGROUND_OPTIONS.find(({ value }) => value === input.background);
+  if (background) result.background = background.value;
   return result;
 }

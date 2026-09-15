@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add a Background setting (environment or none/transparent) to the website viewer, the viewer
+  settings panel, the `<material-viewer>` element (`background` attribute) and the VS Code extension
+  (`mtlx.preview.background`). It is now part of `ViewerSettings` and applies live.
+
 - Add bloom, denoised GTAO and selectable tone mapping to the website, extension and CLI viewers, with extension defaults (on, on, Neutral). Halve auto-rotation speed to one turn per 40 seconds.
 
 - Default both viewers to the bridge IBL. Add extension settings for named IBLs and glTF/GLB

@@ -1,4 +1,9 @@
-import { TONE_MAPPING_OPTIONS, type RenderingSettings } from 'mtlx-viewer/settings';
+import {
+  BACKGROUND_OPTIONS,
+  TONE_MAPPING_OPTIONS,
+  type BackgroundKind,
+  type RenderingSettings,
+} from 'mtlx-viewer/settings';
 export const PREVIEW_NAME_PATTERN = '^[a-zA-Z_][a-zA-Z0-9_]*$';
 export interface NamedPreviewAsset {
   name: string;
@@ -10,6 +15,7 @@ export interface PreviewSettings extends RenderingSettings {
   defaultIbl: string;
   defaultGeometry: string;
   autoRotate: boolean;
+  background: BackgroundKind;
   warnings: string[];
 }
 
@@ -57,6 +63,8 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
   };
   const toneMapping = TONE_MAPPING_OPTIONS.find((option) => option.value === (input.toneMapping ?? 'neutral'))?.value;
   if (!toneMapping) warnings.push('toneMapping is unknown; using neutral.');
+  const background = BACKGROUND_OPTIONS.find((option) => option.value === (input.background ?? 'environment'))?.value;
+  if (!background) warnings.push('background is unknown; using environment.');
   return {
     ibls,
     geometries,
@@ -70,6 +78,7 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
     bloom: boolean('bloom'),
     ao: boolean('ao'),
     toneMapping: toneMapping ?? 'neutral',
+    background: background ?? 'environment',
     warnings,
   };
 }

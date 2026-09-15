@@ -13,6 +13,7 @@ describe('shared viewer and embed search state', () => {
       exposure: -1.2,
       rotate: true,
       geometry: 'sphere' as const,
+      background: 'none' as const,
       materialName: 'Copper',
     };
     for (const route of ['viewer', 'embed'] as const) {
@@ -27,6 +28,7 @@ describe('shared viewer and embed search state', () => {
         ibl: 'bad',
         geometry: 'bad',
         toneMapping: 'bad',
+        background: 'bad',
         rotate: 'no',
         bloom: false,
         intensity: 20,

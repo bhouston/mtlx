@@ -138,7 +138,7 @@ MIT
 ## React UI
 
 `mtlx-viewer/react` ships the React + Tailwind CSS components shared by the website and the VS Code
-extension webview: `ViewerSettingsPanel` (collapsible geometry/IBL/tone-mapping/bloom/AO/exposure
+extension webview: `ViewerSettingsPanel` (collapsible geometry/IBL/background/tone-mapping/bloom/AO/exposure
 controls), `MaterialSelect`, `InfoPanel`, `ValidityChecks`, `LogPanel`, plus the shadcn/ui primitives
 they build on (`Button`, `Card`, `Select`, `Switch`, `Slider`, …) and the `cn` class helper. React is an
 optional peer dependency; the rest of the package works without it.

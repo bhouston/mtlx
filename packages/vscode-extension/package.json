@@ -204,6 +204,16 @@
           ],
           "scope": "resource",
           "description": "Tone mapping for new previews: Neutral, ACES Filmic, AgX, Reinhard, Cineon, Linear, or None."
+        },
+        "mtlx.preview.background": {
+          "type": "string",
+          "default": "environment",
+          "enum": [
+            "environment",
+            "none"
+          ],
+          "scope": "resource",
+          "description": "Backdrop for new previews: the IBL environment, or none for a transparent backdrop."
         }
       }
     }

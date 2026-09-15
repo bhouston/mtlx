@@ -103,6 +103,15 @@ export function ViewerSettingsPanel({
             ))}
           </select>
         </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={settings.background !== 'none'}
+            aria-label="Background"
+            onChange={(event) => onChange({ background: event.target.checked ? 'environment' : 'none' })}
+          />
+          Background
+        </label>
         {(['bloom', 'ao'] as const).map((effect) => (
           <label key={effect} className="flex items-center gap-2">
             <input

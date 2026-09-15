@@ -10,6 +10,7 @@
  * - `geometry`: `totem` | `sphere` | `cube` | `plane` | `custom` (the last selects `model`, if given).
  * - `material`: initial material name; defaults to the document's last material.
  * - `rotate`, `bloom`, `ao`: `"false"` to disable (all default on).
+ * - `background`: `environment` (default) shows the IBL; `none` leaves the backdrop transparent.
  * - `tone-mapping`: one of {@link TONE_MAPPING_OPTIONS}; defaults to `neutral`.
  * - `exposure` (-2..2), `intensity` (0..2).
  * - `settings-panel`: `open` | `closed` | `hidden` (default) — a built-in overlay for the above.
@@ -74,6 +75,7 @@ const PANEL_HTML = `
   <label>Material<select id="material"></select></label>
   <label>Tone mapping<select id="tone-mapping"></select></label>
   <label class="row"><span>Rotate</span><input id="rotate" type="checkbox" /></label>
+  <label class="row"><span>Background</span><input id="background" type="checkbox" /></label>
   <label class="row"><span>Bloom</span><input id="bloom" type="checkbox" /></label>
   <label class="row"><span>Ambient occlusion</span><input id="ao" type="checkbox" /></label>
   <label>Exposure<input id="exposure" type="range" min="-2" max="2" step="0.1" /></label>
@@ -91,6 +93,7 @@ export class MaterialViewerElement extends HTMLElement {
       'rotate',
       'bloom',
       'ao',
+      'background',
       'tone-mapping',
       'exposure',
       'intensity',
@@ -166,6 +169,7 @@ export class MaterialViewerElement extends HTMLElement {
     bind('material', 'material', (el) => el.value);
     bind('tone-mapping', 'tone-mapping', (el) => el.value);
     bind('rotate', 'rotate', (el) => (el.checked ? null : 'false'));
+    bind('background', 'background', (el) => (el.checked ? null : 'none'));
     bind('bloom', 'bloom', (el) => (el.checked ? null : 'false'));
     bind('ao', 'ao', (el) => (el.checked ? null : 'false'));
     bind('exposure', 'exposure', (el) => el.value);
@@ -205,6 +209,7 @@ export class MaterialViewerElement extends HTMLElement {
     set('ibl', settings.ibl);
     set('tone-mapping', settings.toneMapping);
     set('rotate', settings.rotate);
+    set('background', settings.background !== 'none');
     set('bloom', settings.bloom);
     set('ao', settings.ao);
     set('exposure', String(settings.exposure));
@@ -227,6 +232,7 @@ export class MaterialViewerElement extends HTMLElement {
       geometry: this.getAttribute('geometry') ?? (this.getAttribute('model') ? 'custom' : 'totem'),
       materialName: this.getAttribute('material') ?? '',
       rotate: bool('rotate', true),
+      background: this.getAttribute('background') === 'none' ? 'none' : 'environment',
       bloom: bool('bloom', DEFAULT_VIEWER_SETTINGS.bloom),
       ao: bool('ao', DEFAULT_VIEWER_SETTINGS.ao),
       toneMapping,
