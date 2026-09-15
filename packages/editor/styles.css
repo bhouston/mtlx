@@ -1,11 +1,29 @@
 @import '@xyflow/react/dist/style.css';
+/* Theme tokens. Hosts using shadcn-style variables (light and dark) get them automatically;
+   others may override the --mtlx-* values directly. */
+.mtlx-editor,
+.mtlx-context-menu,
+.mtlx-quick-add {
+  --mtlx-bg: var(--background, #fff);
+  --mtlx-fg: var(--foreground, #20252c);
+  --mtlx-border: var(--border, #b9c0cb);
+  --mtlx-canvas: var(--muted, #f4f6fa);
+  --mtlx-muted-fg: var(--muted-foreground, #626d7e);
+  --mtlx-accent: var(--accent, #e4edff);
+  --mtlx-accent-fg: var(--accent-foreground, #234b9b);
+  --mtlx-primary: var(--primary, #4777df);
+  --mtlx-popover: var(--popover, #fff);
+  --mtlx-popover-fg: var(--popover-foreground, #20252c);
+  --mtlx-error: var(--destructive, #dc2626);
+  --mtlx-shadow: 0 1px 4px #0002;
+}
 .mtlx-editor {
-  color: #20252c;
-  background: #fff;
+  color: var(--mtlx-fg);
+  background: var(--mtlx-bg);
   font:
     13px/1.4 system-ui,
     sans-serif;
-  border: 1px solid #b9c0cb;
+  border: 1px solid var(--mtlx-border);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -30,9 +48,9 @@
 .mtlx-editor button,
 .mtlx-editor input,
 .mtlx-editor select {
-  border: 1px solid #b9c0cb;
-  background: #fff;
-  color: #20252c;
+  border: 1px solid var(--mtlx-border);
+  background: var(--mtlx-bg);
+  color: var(--mtlx-fg);
   border-radius: 4px;
   padding: 5px 8px;
 }
@@ -41,14 +59,14 @@
 }
 .mtlx-editor button:hover,
 .mtlx-editor button[aria-pressed='true'] {
-  background: #e4edff;
+  background: var(--mtlx-accent);
 }
 .mtlx-editor :disabled {
   opacity: 0.55;
   cursor: default;
 }
 .mtlx-editor small {
-  color: #626d7e;
+  color: var(--mtlx-muted-fg);
   font-size: 11px;
 }
 .mtlx-library {
@@ -86,14 +104,14 @@
   overflow-wrap: anywhere;
 }
 .mtlx-node-list button[aria-pressed='true'] {
-  background: #e4edff;
-  color: #234b9b;
+  background: var(--mtlx-accent);
+  color: var(--mtlx-accent-fg);
   font-weight: 600;
-  box-shadow: inset 2px 0 #4777df;
+  box-shadow: inset 2px 0 var(--mtlx-primary);
 }
 .mtlx-library-columns nav button:focus-visible,
 .mtlx-node-list button:focus-visible {
-  outline: 2px solid #4777df;
+  outline: 2px solid var(--mtlx-primary);
   outline-offset: -2px;
 }
 .mtlx-node-list button {
@@ -119,7 +137,7 @@
 }
 .mtlx-node-grip {
   flex: none;
-  color: #626d7e;
+  color: var(--mtlx-muted-fg);
 }
 .mtlx-catalog-label {
   flex: 1;
@@ -139,26 +157,27 @@
 .mtlx-canvas {
   min-width: 0;
   height: 100%;
-  background: #f4f6fa;
+  background: var(--mtlx-canvas);
 }
 .mtlx-node {
-  border: 1px solid #929eae;
-  background: #fff;
+  border: 1px solid var(--mtlx-border);
+  background: var(--mtlx-bg);
   border-radius: 6px;
   min-width: 240px;
+  overflow: hidden;
 }
 .mtlx-node > small {
   display: block;
   padding: 4px 12px;
 }
 .mtlx-selected {
-  outline: 2px solid #4777df;
+  outline: 2px solid var(--mtlx-primary);
 }
 .mtlx-ports {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 14px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--mtlx-border);
 }
 .mtlx-port {
   position: relative;
@@ -172,7 +191,7 @@
 .mtlx-port .react-flow__handle {
   width: 10px;
   height: 10px;
-  border: 1px solid #454b54;
+  border: 1px solid var(--mtlx-fg);
 }
 .mtlx-port .react-flow__handle-left {
   left: 0;
@@ -187,7 +206,7 @@
 .mtlx-inspector {
   overflow: auto;
   padding: 12px;
-  border-left: 1px solid #b9c0cb;
+  border-left: 1px solid var(--mtlx-border);
 }
 .mtlx-field {
   padding: 10px 0;
@@ -214,7 +233,7 @@
     grid-template-rows: 500px 350px;
   }
   .mtlx-inspector {
-    border-top: 1px solid #b9c0cb;
+    border-top: 1px solid var(--mtlx-border);
   }
 }
 
@@ -223,7 +242,7 @@
   flex-direction: column;
   height: 100%;
   min-height: 480px;
-  border: 1px solid var(--border, #b9c0cb);
+  border: 1px solid var(--mtlx-border);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -235,19 +254,6 @@
   border-radius: 0;
   grid-template-columns: minmax(0, 1fr) minmax(150px, 30%);
   grid-template-rows: minmax(0, 1fr);
-}
-.mtlx-graph-view .mtlx-editor,
-.mtlx-graph-view .mtlx-node,
-.mtlx-graph-view .mtlx-editor input,
-.mtlx-graph-view .mtlx-editor select {
-  background: var(--background, #fff);
-  color: var(--foreground, #20252c);
-}
-.mtlx-graph-view .mtlx-canvas {
-  background: var(--muted, #f4f6fa);
-}
-.mtlx-graph-view small {
-  color: var(--muted-foreground, #626d7e);
 }
 @media (max-width: 500px) {
   .mtlx-graph-view .mtlx-graph {
@@ -268,10 +274,10 @@
   max-height: var(--radix-context-menu-content-available-height);
   overflow-y: auto;
   padding: 6px;
-  border: 1px solid var(--border, #b9c0cb);
+  border: 1px solid var(--mtlx-border);
   border-radius: 8px;
-  background: var(--popover, #fff);
-  color: var(--popover-foreground, #20252c);
+  background: var(--mtlx-popover);
+  color: var(--mtlx-popover-fg);
   box-shadow: 0 8px 24px #0003;
   font:
     13px/1.4 system-ui,
@@ -290,15 +296,15 @@
 }
 .mtlx-context-menu-item[data-highlighted],
 .mtlx-context-menu-item[data-state='open'] {
-  background: var(--accent, #e4edff);
-  color: var(--accent-foreground, #20252c);
+  background: var(--mtlx-accent);
+  color: var(--mtlx-accent-fg);
 }
 .mtlx-context-menu-item[data-disabled] {
   pointer-events: none;
   opacity: 0.5;
 }
 .mtlx-context-menu-item[data-variant='destructive'] {
-  color: var(--destructive, #c62828);
+  color: var(--mtlx-error);
 }
 .mtlx-context-menu-chevron {
   margin-left: auto;
@@ -308,7 +314,7 @@
 .mtlx-context-menu-separator {
   height: 1px;
   margin: 4px -6px;
-  background: var(--border, #b9c0cb);
+  background: var(--mtlx-border);
 }
 
 .mtlx-graph-main {
@@ -340,8 +346,8 @@
   list-style: none;
   width: fit-content;
   border-radius: 6px;
-  background: var(--background, #fff);
-  box-shadow: 0 1px 4px #0002;
+  background: var(--mtlx-bg);
+  box-shadow: var(--mtlx-shadow);
   pointer-events: auto;
 }
 .mtlx-breadcrumb-list li {
@@ -354,13 +360,13 @@
   border: 0;
   padding: 0;
   background: transparent;
-  color: var(--muted-foreground, #626d7e);
+  color: var(--mtlx-muted-fg);
   font: inherit;
   text-align: left;
   overflow-wrap: anywhere;
 }
 .mtlx-editor .mtlx-breadcrumb-list button:hover {
-  color: var(--foreground, #20252c);
+  color: var(--mtlx-fg);
   text-decoration: underline;
 }
 .mtlx-breadcrumb-list [aria-current='page'] {
@@ -376,8 +382,8 @@
   padding: 4px;
   border: 0;
   font: inherit;
-  background: var(--background, #fff);
-  color: var(--foreground, #20252c);
+  background: var(--mtlx-bg);
+  color: var(--mtlx-fg);
 }
 
 .mtlx-node-header {
@@ -396,7 +402,7 @@
   position: relative;
 }
 .mtlx-node.mtlx-node-error {
-  box-shadow: 0 0 0 4px #dc2626;
+  box-shadow: 0 0 0 4px var(--mtlx-error);
 }
 .mtlx-node-error-label {
   display: block;
@@ -415,16 +421,16 @@
   display: flex;
   flex-direction: column;
   padding: 10px 12px;
-  border: 1px solid #dc2626;
+  border: 1px solid var(--mtlx-error);
   border-radius: 6px;
-  background: var(--background, #fff);
-  color: var(--foreground, #20252c);
+  background: var(--mtlx-bg);
+  color: var(--mtlx-fg);
   box-shadow: 0 4px 16px #0003;
   user-select: text;
   cursor: text;
 }
 .mtlx-error-log h2 {
-  color: #dc2626;
+  color: var(--mtlx-error);
   flex: none;
 }
 .mtlx-error-log [role='log'] {
@@ -488,26 +494,35 @@
 }
 .mtlx-field input[type='range'] {
   padding: 0;
-  accent-color: var(--primary, #5578ce);
+  accent-color: var(--mtlx-primary);
   cursor: pointer;
 }
 .mtlx-field input[aria-invalid='true'] {
-  border-color: #dc2626;
+  border-color: var(--mtlx-error);
 }
 .mtlx-parameter-error {
-  color: #dc2626;
+  color: var(--mtlx-error);
   font-size: 10px;
 }
 .mtlx-field .mtlx-color-swatch {
   width: 42px;
   height: 24px;
-  border: 1px solid #888;
+  border: 1px solid var(--mtlx-border);
   border-radius: 4px;
+  /* A checkerboard keeps white and transparent swatches visible on any background. */
+  background-image:
+    linear-gradient(45deg, #8884 25%, transparent 25%, transparent 75%, #8884 75%),
+    linear-gradient(45deg, #8884 25%, transparent 25%, transparent 75%, #8884 75%);
+  background-size: 8px 8px;
+  background-position:
+    0 0,
+    4px 4px;
+  box-shadow: inset 0 0 0 100px var(--swatch, transparent);
   justify-self: end;
   cursor: pointer;
 }
 .mtlx-color-swatch:focus-visible {
-  outline: 2px solid var(--primary, #5578ce);
+  outline: 2px solid var(--mtlx-primary);
   outline-offset: 2px;
 }
 .mtlx-color-picker {
@@ -551,7 +566,7 @@
   align-items: center;
   gap: 5px;
   font-size: 11px;
-  color: var(--muted-foreground, #64748b);
+  color: var(--mtlx-muted-fg);
 }
 .mtlx-geometry-source svg {
   flex-shrink: 0;
@@ -565,6 +580,104 @@
 
 /* Inferred types are secondary to the node name, in both graph and inspector. */
 .mtlx-node-type {
-  color: #a1a1a1;
+  color: var(--mtlx-muted-fg);
   font-weight: 400;
+}
+
+.mtlx-quick-add {
+  position: absolute;
+  z-index: 20;
+  width: 260px;
+  max-height: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--mtlx-border);
+  border-radius: 8px;
+  background: var(--mtlx-popover);
+  color: var(--mtlx-popover-fg);
+  box-shadow: 0 8px 24px #0003;
+}
+.mtlx-quick-add .mtlx-node-list {
+  overflow: auto;
+  min-height: 0;
+}
+.mtlx-quick-add .mtlx-node-list small {
+  margin-left: auto;
+}
+
+.mtlx-toolbar-overlay {
+  position: absolute;
+  z-index: 5;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.mtlx-editor .mtlx-toolbar-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  box-shadow: var(--mtlx-shadow);
+}
+.mtlx-editor .mtlx-toggle-inputs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--mtlx-muted-fg);
+  font-size: 11px;
+}
+
+/* Hosts that dock the editor into a viewport-filling layout. */
+.mtlx-fill {
+  height: 100%;
+  min-height: 0;
+}
+.mtlx-library-dock .mtlx-library-columns {
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: minmax(0, 1fr);
+  overflow-x: hidden;
+}
+.mtlx-library-dock .mtlx-library-header {
+  flex-wrap: wrap;
+}
+.mtlx-canvas-overlay {
+  position: absolute;
+  z-index: 5;
+  right: 12px;
+  bottom: 12px;
+  width: clamp(200px, 30%, 380px);
+}
+
+.mtlx-editor .mtlx-node-name {
+  font: inherit;
+  padding: 0 4px;
+  margin-left: -5px;
+  border-color: transparent;
+  background: transparent;
+  max-width: 100%;
+}
+.mtlx-editor .mtlx-node-name:hover,
+.mtlx-editor .mtlx-node-name:focus {
+  border-color: var(--mtlx-border);
+  background: var(--mtlx-bg);
+}
+.mtlx-filename-field {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+}
+.mtlx-filename-field input[type='text'],
+.mtlx-filename-field input:not([type]) {
+  flex: 1;
+  min-width: 0;
 }

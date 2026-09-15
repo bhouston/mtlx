@@ -60,7 +60,7 @@ describe('parameter editing', () => {
     fill(input, '2');
     expect(onChange).not.toHaveBeenCalled();
     fill(input, '0.75');
-    expect(onChange).toHaveBeenLastCalledWith('0.75');
+    expect(onChange).toHaveBeenLastCalledWith('0.75', { merge: expect.any(String) });
     expect(container.querySelector('input[type="range"]')).not.toBeNull();
   });
   it('edits vector components without changing other channels', () => {
@@ -80,7 +80,7 @@ describe('parameter editing', () => {
     fill(inputs[1]!, 'invalid');
     expect(onChange).not.toHaveBeenCalled();
     fill(inputs[1]!, '4');
-    expect(onChange).toHaveBeenLastCalledWith('1, 4, 3');
+    expect(onChange).toHaveBeenLastCalledWith('1, 4, 3', { merge: expect.any(String) });
   });
   it('selects enum editors for integer metadata', () => {
     expect(getParameterEditor({ name: 'mode', type: 'integer', attributes: { enum: 'A, B' } })).toBe(

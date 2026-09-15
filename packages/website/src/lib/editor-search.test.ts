@@ -1,7 +1,15 @@
 import { expect, it } from 'vitest';
 import { createDefaultDocument, setInputValue } from 'mtlx-editor/model';
 import { createMaterialXZipArchive, serializeMaterialX, type MaterialXPackage } from 'mtlx-core';
-import { editorSearch, editorShareUrl, hasEditorSnapshot, readEditorSnapshot } from './editor-search';
+import {
+  DRAFT_LIMITS,
+  decodeEditorSnapshot,
+  editorSearch,
+  editorShareUrl,
+  encodeEditorSnapshot,
+  hasEditorSnapshot,
+  readEditorSnapshot,
+} from './editor-search';
 const pkg = (): MaterialXPackage => ({ rootPath: 'material.mtlx', document: createDefaultDocument(), resources: [] });
 it('shares an unchanged source with the editor and preview settings in the query', () => {
   const state = {
@@ -50,4 +58,14 @@ it('bounds shared packages on creation and decoding', () => {
     .replaceAll('/', '_')
     .replace(/=+$/, '');
   expect(() => readEditorSnapshot('#material=' + encoded)).toThrow();
+});
+
+it('drafts accept resources beyond the share-link size', () => {
+  const draft = pkg();
+  const data = new Uint8Array(200 * 1024).map(() => Math.floor(Math.random() * 256));
+  draft.resources = [{ archivePath: 'textures/big.png', sourcePath: 'textures/big.png', data }];
+  expect(() => encodeEditorSnapshot(draft)).toThrow(/too large/);
+  const restored = decodeEditorSnapshot(encodeEditorSnapshot(draft, DRAFT_LIMITS), DRAFT_LIMITS);
+  expect(serializeMaterialX(restored.document)).toBe(serializeMaterialX(draft.document));
+  expect(restored.resources[0]!.data).toEqual(data);
 });

@@ -17,6 +17,7 @@ export function GraphContextMenu({
   editable,
   nodeId,
   onAdd,
+  onSearch,
   onClone,
   onDelete,
 }: {
@@ -25,6 +26,7 @@ export function GraphContextMenu({
   editable: boolean;
   nodeId?: string;
   onAdd: (spec: MaterialXNodeSpec) => void;
+  onSearch: () => void;
   onClone: () => void;
   onDelete: () => void;
 }) {
@@ -36,6 +38,7 @@ export function GraphContextMenu({
       </ContextMenuTrigger>
       {editable && (
         <ContextMenuContent collisionPadding={8}>
+          {!nodeId && <ContextMenuItem onSelect={onSearch}>Search nodes…</ContextMenuItem>}
           {!nodeId && (
             <ContextMenuSub>
               <ContextMenuSubTrigger disabled={!groups.length}>Add node</ContextMenuSubTrigger>

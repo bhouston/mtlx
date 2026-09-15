@@ -1,29 +1,60 @@
 import { createEditorSession } from 'mtlx-core/session';
 import { createFileRoute, useLocation } from '@tanstack/react-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { cloneMaterialXDocument, parseMaterialX, serializeMaterialX, type MaterialXPackage } from 'mtlx-core';
+import {
+  cloneMaterialXDocument,
+  parseMaterialX,
+  relativeResourcePath,
+  serializeMaterialX,
+  type MaterialXPackage,
+} from 'mtlx-core';
 import {
   MaterialXNodeGraph,
-  MaterialXNodeLib,
   useEditorSession,
   createDefaultDocument,
   exportMaterial,
   getNodeCatalog,
   graphScopes,
   previewXml,
-  projectGraph,
 } from 'mtlx-editor';
 import 'mtlx-editor/styles.css';
 import { MaterialViewer } from '@/components/MaterialViewerLazy';
 import type { MaterialSource } from '@/components/MaterialViewer';
 import { loadEditorMaterial } from '@/lib/editor-material-load';
-import { editorSearch, editorShareUrl, hasEditorSnapshot, readEditorSnapshot } from '@/lib/editor-search';
+import {
+  DRAFT_LIMITS,
+  decodeEditorSnapshot,
+  editorSearch,
+  editorShareUrl,
+  encodeEditorSnapshot,
+  hasEditorSnapshot,
+  readEditorSnapshot,
+} from '@/lib/editor-search';
 import { viewerSettings } from '@/lib/viewer-search';
 import { MaterialLoadControls } from '@/components/viewer/MaterialLoadControls';
 import { EditorShareMenu } from '@/components/editor/EditorShareMenu';
 import { Button } from '@/components/ui/button';
 import { Download, Redo2, Undo2 } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { toast } from 'sonner';
 
+const MAX_UPLOAD_BYTES = 16 * 1024 * 1024;
+const DRAFT_KEY = 'mtlx-editor-draft';
+const readDraft = () => {
+  try {
+    return localStorage.getItem(DRAFT_KEY) ?? '';
+  } catch {
+    return '';
+  }
+};
+const writeDraft = (encoded: string | null) => {
+  try {
+    if (encoded === null) localStorage.removeItem(DRAFT_KEY);
+    else localStorage.setItem(DRAFT_KEY, encoded);
+  } catch {
+    // Private windows and full quotas simply skip the draft.
+  }
+};
 export const Route = createFileRoute('/editor')({
   ssr: false,
   validateSearch: editorSearch,
@@ -34,10 +65,12 @@ export const Route = createFileRoute('/editor')({
 function EditorPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  const { resolvedTheme } = useTheme();
   const hash = useLocation({ select: (location) => location.hash });
   const localFile = useRef(false);
   const activeController = useRef<AbortController | null>(null);
-  const [loadedSource, setLoadedSource] = useState<{ url?: string; xml: string }>({ xml: '' });
+  const [loadedSource, setLoadedSource] = useState<{ url?: string; xml: string; resources?: unknown }>({ xml: '' });
+  const offeredDraft = useRef(false);
   const [loadedPackage, setPackage] = useState<MaterialXPackage>(() => ({
     rootPath: 'material.mtlx',
     document: createDefaultDocument(),
@@ -55,8 +88,51 @@ function EditorPage() {
   const [source, setSource] = useState<MaterialSource | null>(null);
   const [loading, setLoading] = useState(false);
   const generation = useRef(0);
-  const catalog = useMemo(() => getNodeCatalog(pkg.document), [pkg.document]);
   const documentXml = useMemo(() => serializeMaterialX(pkg.document), [pkg.document]);
+  const dirty = documentXml !== loadedSource.xml || loadedPackage.resources !== loadedSource.resources;
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
+  // Unsaved work survives a closed tab as a local draft; a clean document clears it.
+  useEffect(() => {
+    if (!dirty) {
+      writeDraft(null);
+      return;
+    }
+    const timer = setTimeout(() => {
+      try {
+        writeDraft(encodeEditorSnapshot(pkg, DRAFT_LIMITS));
+      } catch {
+        writeDraft(null);
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [dirty, pkg]);
+  const resources = useMemo(
+    () => ({
+      files: loadedPackage.resources
+        .filter((resource) => !/\.mtlx$/i.test(resource.archivePath))
+        .map((resource) => relativeResourcePath(loadedPackage.rootPath, resource.archivePath)),
+      addFile: async (file: File) => {
+        if (file.size > MAX_UPLOAD_BYTES) throw new Error('Images must be 16 MB or smaller.');
+        const data = new Uint8Array(await file.arrayBuffer());
+        const base = file.name.replace(/[^a-zA-Z0-9._-]/g, '_') || 'texture';
+        const taken = new Set(loadedPackage.resources.map((resource) => resource.archivePath));
+        let archivePath = `textures/${base}`;
+        for (let suffix = 2; taken.has(archivePath); suffix++)
+          archivePath = `textures/${base.replace(/(\.[^.]*)?$/, `-${suffix}$1`)}`;
+        setPackage((current) => ({
+          ...current,
+          resources: [...current.resources, { archivePath, sourcePath: archivePath, data }],
+        }));
+        return relativeResourcePath(loadedPackage.rootPath, archivePath);
+      },
+    }),
+    [loadedPackage],
+  );
   const xml = useMemo(() => previewXml(pkg.document), [pkg.document]);
   // The editor owns XML and resource bytes. The preview owns every Three.js object.
   // Layout changes do not alter this XML; semantic edits schedule a fresh compilation.
@@ -84,8 +160,23 @@ function EditorPage() {
     },
     [],
   );
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+      const target = event.target as HTMLElement;
+      if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
+      const key = event.key.toLowerCase();
+      if (key === 'z' && event.shiftKey) session.redo();
+      else if (key === 'z') session.undo();
+      else if (key === 'y') session.redo();
+      else return;
+      event.preventDefault();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [session]);
   const load = useCallback(
-    async (input?: File | string | { snapshot: string }) => {
+    async (input?: File | string | { snapshot: string } | { draft: string }) => {
       const run = ++generation.current;
       activeController.current?.abort();
       const controller = new AbortController();
@@ -98,12 +189,20 @@ function EditorPage() {
             ? { rootPath: 'material.mtlx', document: createDefaultDocument(), resources: [] }
             : typeof input === 'object' && 'snapshot' in input
               ? readEditorSnapshot(input.snapshot)
-              : await loadEditorMaterial(input, controller.signal, window.location.origin);
+              : typeof input === 'object' && 'draft' in input
+                ? decodeEditorSnapshot(input.draft, DRAFT_LIMITS)
+                : await loadEditorMaterial(input, controller.signal, window.location.origin);
         if (run !== generation.current || controller.signal.aborted) return;
         getNodeCatalog(next.document);
         setDocumentId(run);
         setPackage(next);
-        setLoadedSource({ url: typeof input === 'string' ? input : undefined, xml: serializeMaterialX(next.document) });
+        // A restored draft is still unsaved work, so it stays dirty.
+        const restored = typeof input === 'object' && 'draft' in input;
+        setLoadedSource({
+          url: typeof input === 'string' ? input : undefined,
+          xml: restored ? '' : serializeMaterialX(next.document),
+          resources: restored ? undefined : next.resources,
+        });
         session.replaceDocument(next.document);
       } catch (e) {
         if (run === generation.current && !controller.signal.aborted)
@@ -123,7 +222,18 @@ function EditorPage() {
     } else if (search.materialUrl) {
       localFile.current = false;
       void load(search.materialUrl);
-    } else if (!localFile.current) void load();
+    } else if (!localFile.current) {
+      void load();
+      const draft = readDraft();
+      if (draft && !offeredDraft.current) {
+        offeredDraft.current = true;
+        toast('You have unsaved edits from a previous visit.', {
+          duration: Infinity,
+          action: { label: 'Restore', onClick: () => void load({ draft }) },
+          cancel: { label: 'Discard', onClick: () => writeDraft(null) },
+        });
+      }
+    }
   }, [search.materialUrl, hash, load]);
   /* oxlint-enable react/set-state-in-effect */
   const loadFromFile = (file: File) => {
@@ -153,7 +263,7 @@ function EditorPage() {
   return (
     // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <main
-      className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-6"
+      className="flex min-h-0 flex-1 flex-col gap-3 p-3"
       onDragOver={(e) => {
         if (e.dataTransfer.types.includes('Files')) e.preventDefault();
       }}
@@ -164,18 +274,14 @@ function EditorPage() {
         }
       }}
     >
-      <h1 className="text-3xl font-semibold">MaterialX editor</h1>
-      <p className="text-sm text-muted-foreground">
-        Drop a .mtlx or .mtlx.zip file, or edit the starter material. Preview updates after each edit using Three.js
-        MaterialX support.
-      </p>
+      <h1 className="sr-only">MaterialX editor</h1>
       <MaterialLoadControls materialUrl={search.materialUrl} onLoadFile={loadFromFile} onLoadUrl={loadFromUrl}>
         <Button
           variant="outline"
           size="sm"
           className="w-8 px-0"
           aria-label="Undo"
-          title="Undo"
+          title={snapshot.undoLabel ? `Undo ${snapshot.undoLabel.toLowerCase()}` : 'Undo'}
           disabled={!snapshot.canUndo}
           onClick={session.undo}
         >
@@ -186,7 +292,7 @@ function EditorPage() {
           size="sm"
           className="w-8 px-0"
           aria-label="Redo"
-          title="Redo"
+          title={snapshot.redoLabel ? `Redo ${snapshot.redoLabel.toLowerCase()}` : 'Redo'}
           disabled={!snapshot.canRedo}
           onClick={session.redo}
         >
@@ -203,6 +309,14 @@ function EditorPage() {
         >
           <Download aria-hidden="true" />
         </Button>
+        {dirty && (
+          <span
+            className="text-xs text-muted-foreground"
+            title="Edits are kept as a local draft until you download them"
+          >
+            Unsaved
+          </span>
+        )}
         <EditorShareMenu
           disabled={loading}
           getUrl={() =>
@@ -216,24 +330,26 @@ function EditorPage() {
         />
       </MaterialLoadControls>
       {error && <p role="alert">{error}</p>}
-      <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_340px]">
-        <MaterialXNodeLib
-          catalog={catalog}
-          onAdd={(spec) => {
-            const nodes = projectGraph(pkg.document, scope, catalog).nodes;
-            const x = Math.min(0, ...nodes.map((node) => node.position.x)) - 310;
-            try {
-              session.transaction('Add node', () => {
-                const id = session.graph(scope).addNode({ definition: spec.nodeDefName! });
-                session.layout.moveNodes({ [id]: { x, y: 50 } }, scope);
-              });
-              setError('');
-            } catch (failure) {
-              setError(failure instanceof Error ? failure.message : String(failure));
-            }
+      <div className="min-h-0 flex-1">
+        <MaterialXNodeGraph
+          key={documentId}
+          className="mtlx-fill"
+          session={session}
+          fileName={pkg.rootPath}
+          mode="edit"
+          scope={scope}
+          colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
+          resources={resources}
+          onScopeChange={(nextScope) => {
+            void navigate({
+              to: '.',
+              search: (previous) => ({ ...previous, scope: nextScope || undefined }),
+              hash: true,
+              replace: true,
+              resetScroll: false,
+            });
           }}
-        />
-        <div>
+        >
           <MaterialViewer
             source={source}
             onError={setPreviewError}
@@ -249,28 +365,12 @@ function EditorPage() {
             }
           />
           {previewError && (
-            <p role="alert" className="text-sm">
+            <p role="alert" className="mt-1 rounded bg-background/90 px-2 py-1 text-xs">
               Preview: {previewError}
             </p>
           )}
-        </div>
+        </MaterialXNodeGraph>
       </div>
-      <MaterialXNodeGraph
-        key={documentId}
-        session={session}
-        fileName={pkg.rootPath}
-        mode="edit"
-        scope={scope}
-        onScopeChange={(nextScope) => {
-          void navigate({
-            to: '.',
-            search: (previous) => ({ ...previous, scope: nextScope || undefined }),
-            hash: true,
-            replace: true,
-            resetScroll: false,
-          });
-        }}
-      />
     </main>
   );
 }

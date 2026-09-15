@@ -6,3 +6,5 @@ export * from './NodeParameterEditor.js';
 export * from './parameter-editors.js';
 export * from './session.js';
 export * from './useEditorSession.js';
+export * from './QuickAddMenu.js';
+export * from './NodeNameField.js';

@@ -47,6 +47,7 @@ export type { MaterialXValidationOptions, MaterialXValidationRule } from './vali
 export { MATERIALX_VALIDATION_RULES, checkMaterialXText, validateDocument } from './validate.js';
 export { createMaterialXDocument, cloneMaterialXDocument, parseMaterialX, serializeMaterialX } from './xml.js';
 
+export { relativeResourcePath, resolveResourcePath } from './resource-graph.js';
 export {
   buildResourceGraph,
   cloneMaterialXPackage,

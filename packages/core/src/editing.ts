@@ -374,3 +374,36 @@ export function moveNodes(
       Object.assign(elementAt(copy, scope, id).attributes, { xpos: String(point.x), ypos: String(point.y) });
   });
 }
+const NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
+/** Rename a node and every reference to it: sibling wires, interface names, nested graph paths, and material assignments. */
+export function renameNode(document: MaterialXDocument, id: string, name: string, scope = ''): MaterialXDocument {
+  if (!NAME.test(name)) throw new Error(`Invalid node name: ${name}. Use letters, digits and underscores.`);
+  if (name === id) return document;
+  return edit(document, (copy) => {
+    const siblings = children(copy, scope);
+    if (siblings.some((element) => element.attributes.name === name))
+      throw new Error(`A node named ${name} already exists in this graph.`);
+    elementAt(copy, scope, id).attributes.name = name;
+    const qualified = (node: string) => (scope ? `${scope}/${node}` : node);
+    const rewrite = (elements: MaterialXElement[], graphScope: string) => {
+      for (const element of elements) {
+        const attributes = element.attributes;
+        if (graphScope === scope) {
+          for (const key of ['nodename', 'interfacename', 'nodegraph'] as const)
+            if (attributes[key] === id) attributes[key] = name;
+          if (!scope && element.name === 'materialassign' && attributes.material === id) attributes.material = name;
+        }
+        if (attributes.nodegraph === qualified(id)) attributes.nodegraph = qualified(name);
+        rewrite(
+          element.children,
+          element.name === 'nodegraph'
+            ? graphScope
+              ? `${graphScope}/${attributes.name}`
+              : attributes.name!
+            : graphScope,
+        );
+      }
+    };
+    rewrite(copy.elements, '');
+  });
+}

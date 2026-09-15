@@ -10,6 +10,7 @@ import {
   type MaterialXElement,
   type MaterialXPackage,
 } from 'mtlx-core';
+import { autoLayout } from './auto-layout.js';
 import {
   readGraph,
   getNodeCatalog,
@@ -29,6 +30,7 @@ export {
   graphScopes,
   moveNodes,
   removeNodes,
+  renameNode,
   resetInput,
   setInputValue,
   materializeDocument,
@@ -40,11 +42,16 @@ export {
 export { nodeType, findNodeSpec } from 'mtlx-core';
 export type { MaterialXDocument, MaterialXNodeSpec, MaterialXNodePortSpec } from 'mtlx-core';
 export { getNodeFamilies } from './node-families.js';
+export { autoLayout, visibleInputs } from './auto-layout.js';
 export type EditorMode = 'view' | 'edit';
 export interface GraphNode extends SemanticGraphNode {
   position: Point;
 }
 
+const authored = (node: SemanticGraphNode) =>
+  node.element.attributes.xpos !== undefined &&
+  Number.isFinite(Number(node.element.attributes.xpos)) &&
+  Number.isFinite(Number(node.element.attributes.ypos));
 /** Adapt the semantic graph to the canvas, including fallback positions for unplaced nodes. */
 export function projectGraph(
   document: MaterialXDocument,
@@ -52,18 +59,15 @@ export function projectGraph(
   catalog = getNodeCatalog(document),
 ): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const graph = readGraph(document, scope, catalog);
+  // Unpositioned nodes get a data-flow layout; a partially positioned graph keeps its authored coordinates.
+  const fallback = graph.nodes.every(authored) ? {} : autoLayout(graph.nodes, graph.edges);
   return {
     ...graph,
-    nodes: graph.nodes.map((node, index) => ({
+    nodes: graph.nodes.map((node) => ({
       ...node,
-      position: {
-        x: Number.isFinite(Number(node.element.attributes.xpos))
-          ? Number(node.element.attributes.xpos)
-          : (index % 3) * 310,
-        y: Number.isFinite(Number(node.element.attributes.ypos))
-          ? Number(node.element.attributes.ypos)
-          : Math.floor(index / 3) * 320,
-      },
+      position: authored(node)
+        ? { x: Number(node.element.attributes.xpos), y: Number(node.element.attributes.ypos) }
+        : fallback[node.id]!,
     })),
   };
 }

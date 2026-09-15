@@ -1,8 +1,9 @@
 import { createEditorSession, type EditorSession } from 'mtlx-core/session';
 import { useEditorSession } from './useEditorSession.js';
 import { NodeParameterEditor } from './NodeParameterEditor.js';
-import { Fragment, useEffect, useMemo, useState } from 'react';
-import { Maximize2 } from 'lucide-react';
+import { ParameterResourcesContext, type ParameterResources } from './parameter-editors.js';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { ChevronDown, ChevronRight, LayoutGrid, Maximize2, Plus } from 'lucide-react';
 import {
   Background,
   BaseEdge,
@@ -14,17 +15,22 @@ import {
   ReactFlow,
   ReactFlowProvider,
   applyNodeChanges,
+  useConnection,
   useReactFlow,
+  type ColorMode,
   type ConnectionLineComponentProps,
+  type FinalConnectionState,
   type Node,
   type NodeProps,
   type Connection,
   type Edge,
 } from '@xyflow/react';
 import {
+  autoLayout,
   getNodeCatalog,
   graphScopes,
   projectGraph,
+  visibleInputs,
   type EditorMode,
   type GraphConnection,
   type GraphNode,
@@ -33,8 +39,10 @@ import {
 } from './model.js';
 import { validateGraph } from './validation.js';
 import { socketColor, socketTypes } from './socket-colors.js';
+import { categoryColor } from './node-category-colors.js';
 import { MATERIALX_NODE_MIME } from './MaterialXNodeLib.js';
 import { GraphContextMenu } from './GraphContextMenu.js';
+import { QuickAddMenu } from './QuickAddMenu.js';
 
 import {
   Breadcrumb,
@@ -52,18 +60,30 @@ type FlowNode = Node<
     mode: EditorMode;
     portType: ReturnType<typeof socketTypes>;
     onExpand?: () => void;
+    /** Whether every input shows; collapsed nodes list only connected or authored inputs. */
+    showAll: boolean;
+    onToggleInputs: () => void;
   },
   'materialx'
 >;
 function MaterialNode({ data, selected }: NodeProps<FlowNode>) {
   const { graph, mode, portType } = data;
+  // A wire in flight can target any input, so hidden ports reappear for the drag.
+  const connecting = useConnection((connection) => connection.inProgress);
+  const shown = visibleInputs(graph);
+  const hidden = graph.inputs.length - shown.length;
+  const inputs = data.showAll || connecting || !hidden ? graph.inputs : shown;
+  const accent = categoryColor(graph.definition?.nodeGroup);
   return (
     <div
       className={`mtlx-node ${selected ? 'mtlx-selected' : ''} ${data.errors.length ? 'mtlx-node-error' : ''}`}
       title={data.errors.join('\n') || undefined}
     >
       {data.errors.length > 0 && <span className="mtlx-node-error-label">Error</span>}
-      <div className="mtlx-node-header">
+      <div
+        className="mtlx-node-header"
+        style={accent ? { backgroundColor: `${accent}2e`, borderBottom: `1px solid ${accent}` } : undefined}
+      >
         <strong>
           {graph.id}
           {graph.type && <span className="mtlx-node-type"> ({graph.type})</span>}
@@ -86,7 +106,7 @@ function MaterialNode({ data, selected }: NodeProps<FlowNode>) {
       {graph.id !== graph.element.name && <small>{graph.element.name}</small>}
       <div className="mtlx-ports">
         <div>
-          {graph.inputs.map((port) => (
+          {inputs.map((port) => (
             <div
               className="mtlx-port"
               key={port.name}
@@ -102,6 +122,24 @@ function MaterialNode({ data, selected }: NodeProps<FlowNode>) {
               <span>{port.name}</span>
             </div>
           ))}
+          {hidden > 0 && (
+            <button
+              type="button"
+              className="mtlx-port mtlx-toggle-inputs nodrag nopan"
+              aria-expanded={data.showAll}
+              onClick={(event) => {
+                event.stopPropagation();
+                data.onToggleInputs();
+              }}
+            >
+              {data.showAll ? (
+                <ChevronDown size={12} aria-hidden="true" />
+              ) : (
+                <ChevronRight size={12} aria-hidden="true" />
+              )}
+              {data.showAll ? 'Fewer inputs' : `${hidden} more input${hidden === 1 ? '' : 's'}`}
+            </button>
+          )}
         </div>
         <div>
           {graph.outputs.map((port) => (
@@ -182,6 +220,15 @@ function MaterialConnectionLine({
     </>
   );
 }
+const EMPTY_RESOURCES: ParameterResources = { files: [] };
+type LooseEnd = { node: string; handle: string; side: 'output' | 'input'; type?: string };
+/** Definitions that could take the loose end of a dragged wire. */
+const accepts = (from?: LooseEnd) => (spec: MaterialXNodeSpec) => {
+  if (!from?.type) return true;
+  return from.side === 'output'
+    ? [...spec.inputs, ...spec.parameters].some((p) => !p.type || p.type === from.type)
+    : spec.outputs.some((p) => p.type === from.type);
+};
 interface GraphViewProps {
   /** Material file name or path, shown at the root of the breadcrumbs. */
   fileName?: string;
@@ -189,6 +236,12 @@ interface GraphViewProps {
   scope?: string;
   onScopeChange?: (scope: string) => void;
   className?: string;
+  /** React Flow chrome (controls, background) follows this; the editor's own colors follow CSS tokens. */
+  colorMode?: ColorMode;
+  /** Rendered over the canvas, for example a material preview. */
+  children?: ReactNode;
+  /** Package files offered by filename inputs, and an optional upload hook. */
+  resources?: ParameterResources;
 }
 /** Prefer a shared session. Controlled document/onChange hosts remain supported by an adapter. */
 export type MaterialXNodeGraphProps = GraphViewProps &
@@ -222,6 +275,9 @@ function Graph({
   scope = '',
   catalog: suppliedCatalog,
   className = '',
+  colorMode = 'system',
+  children,
+  resources,
   path,
   onNavigate,
 }: SessionGraphProps & { path: string[]; onNavigate: (path: string[]) => void }) {
@@ -258,13 +314,38 @@ function Graph({
     [projection, portType, invalidEdges],
   );
   const [selected, setSelected] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState<ReadonlySet<string>>(new Set());
+  const toggleInputs = useCallback(
+    (id: string) =>
+      setShowAll((current) => {
+        const next = new Set(current);
+        if (!next.delete(id)) next.add(id);
+        return next;
+      }),
+    [],
+  );
   const [error, setError] = useState('');
-  const [context, setContext] = useState<{ nodeId?: string; position: { x: number; y: number } }>({
-    position: { x: 0, y: 0 },
-  });
+  const [context, setContext] = useState<{
+    nodeId?: string;
+    position: { x: number; y: number };
+    client: { x: number; y: number };
+  }>({ position: { x: 0, y: 0 }, client: { x: 0, y: 0 } });
   const editable = mode === 'edit';
   const operations = session.graph(scope);
   const { screenToFlowPosition, fitView } = useReactFlow();
+  const canvas = useRef<HTMLDivElement>(null);
+  /** A wire released on empty canvas remembers its loose end so the added node connects to it. */
+  const [quickAdd, setQuickAdd] = useState<{
+    at: { x: number; y: number };
+    position: { x: number; y: number };
+    from?: LooseEnd;
+  }>();
+  const openQuickAdd = (client: { x: number; y: number }, from?: NonNullable<typeof quickAdd>['from']) => {
+    const rect = canvas.current?.getBoundingClientRect();
+    if (!rect || !editable) return;
+    const at = { x: Math.max(0, client.x - rect.left), y: Math.max(0, client.y - rect.top) };
+    setQuickAdd({ at, position: screenToFlowPosition(client), from });
+  };
   const nodeCount = projection.nodes.length;
   useEffect(() => {
     if (!nodeCount) return;
@@ -283,6 +364,8 @@ function Graph({
             errors: diagnostics.filter((issue) => issue.nodeIds.includes(graph.id)).map((issue) => issue.message),
             portType,
             mode: editable ? 'edit' : 'view',
+            showAll: showAll.has(graph.id),
+            onToggleInputs: () => toggleInputs(graph.id),
             onExpand:
               graph.compoundScope !== undefined && !path.includes(graph.compoundScope)
                 ? () => onNavigate([...path, graph.compoundScope!])
@@ -291,7 +374,7 @@ function Graph({
           selected: graph.id === selected,
         }),
       ),
-    [projection, portType, diagnostics, editable, selected, path, onNavigate],
+    [projection, portType, diagnostics, editable, selected, showAll, toggleInputs, path, onNavigate],
   );
   const [interaction, setInteraction] = useState({ projection: projectedNodes, nodes: projectedNodes });
   const nodes = interaction.projection === projectedNodes ? interaction.nodes : projectedNodes;
@@ -311,6 +394,77 @@ function Graph({
         session.layout.moveNodes({ [id]: position }, scope);
       }),
     );
+  const duplicate = (id: string) => {
+    const source = projection.nodes.find((n) => n.id === id);
+    if (source)
+      commit(() =>
+        session.transaction('Clone node', () => {
+          const cloned = operations.cloneNode(source.id);
+          session.layout.moveNodes({ [cloned]: { x: source.position.x + 40, y: source.position.y + 40 } }, scope);
+          setSelected(cloned);
+        }),
+      );
+  };
+  const addAndConnect = (spec: MaterialXNodeSpec) => {
+    const pending = quickAdd;
+    setQuickAdd(undefined);
+    if (!pending) return;
+    commit(() =>
+      session.transaction('Add node', () => {
+        const id = operations.addNode({ definition: spec.nodeDefName! });
+        session.layout.moveNodes({ [id]: pending.position }, scope);
+        const from = pending.from;
+        if (from?.side === 'output') {
+          const inputs = operations.getInputs(id);
+          const port = inputs.find((p) => p.type === from.type) ?? inputs[0];
+          if (port) operations.connect({ node: from.node, output: from.handle }, { node: id, input: port.name });
+        } else if (from?.side === 'input') {
+          const outputs = operations.getOutputs(id);
+          const port = outputs.find((p) => p.type === from.type) ?? outputs[0];
+          if (port) operations.connect({ node: id, output: port.name }, { node: from.node, input: from.handle });
+        }
+        setSelected(id);
+      }),
+    );
+  };
+  const onConnectEnd = (event: MouseEvent | TouchEvent, state: FinalConnectionState) => {
+    if (state.isValid || state.toNode || !state.fromNode || !state.fromHandle) return;
+    const point = 'clientX' in event ? event : event.changedTouches[0];
+    if (!point) return;
+    const side = state.fromHandle.type === 'source' ? 'output' : 'input';
+    const handle = state.fromHandle.id ?? (side === 'output' ? 'out' : 'in');
+    openQuickAdd(
+      { x: point.clientX, y: point.clientY },
+      { node: state.fromNode.id, handle, side, type: portType(state.fromNode.id, side, handle) },
+    );
+  };
+  // The pane never takes focus, so shortcuts apply while the pointer or focus is on the canvas.
+  const shortcuts = useRef<(event: KeyboardEvent) => void>(() => {});
+  const onShortcut = (event: KeyboardEvent) => {
+    const element = canvas.current;
+    if (!editable || quickAdd || !element) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
+    if (!element.matches(':hover') && !element.contains(target)) return;
+    const meta = event.metaKey || event.ctrlKey;
+    if (meta && event.key.toLowerCase() === 'd' && selected) duplicate(selected);
+    else if (event.shiftKey && !meta && event.key.toLowerCase() === 'a') {
+      const rect = element.getBoundingClientRect();
+      openQuickAdd({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
+    } else if (event.key === 'f' && !meta)
+      void fitView({ padding: 0.15, duration: 200, ...(selected ? { nodes: [{ id: selected }] } : {}) });
+    else if (event.key === 'Escape') setSelected(null);
+    else return;
+    event.preventDefault();
+  };
+  useEffect(() => {
+    shortcuts.current = onShortcut;
+  });
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => shortcuts.current(event);
+    window.addEventListener('keydown', listener);
+    return () => window.removeEventListener('keydown', listener);
+  }, []);
   const node = projection.nodes.find((n) => n.id === selected);
   const rootLabel = fileName?.split(/[\\/]/).at(-1) || 'material.mtlx';
   return (
@@ -321,28 +475,28 @@ function Graph({
           editable={editable}
           nodeId={context.nodeId}
           onAdd={(spec) => add(spec, context.position)}
+          onSearch={() => openQuickAdd(context.client)}
           onClone={() => {
-            const source = projection.nodes.find((n) => n.id === context.nodeId);
-            if (source)
-              commit(() =>
-                session.transaction('Clone node', () => {
-                  const id = operations.cloneNode(source.id);
-                  session.layout.moveNodes({ [id]: { x: source.position.x + 40, y: source.position.y + 40 } }, scope);
-                }),
-              );
+            if (context.nodeId) duplicate(context.nodeId);
           }}
           onDelete={() => {
             if (context.nodeId) commit(() => operations.removeNodes([context.nodeId!]));
           }}
         >
           <div
+            ref={canvas}
             className="mtlx-canvas"
             onContextMenuCapture={(event) => {
               if (!editable) return;
               const nodeId =
                 (event.target as Element).closest('.react-flow__node')?.getAttribute('data-id') ?? undefined;
-              setContext({ nodeId, position: screenToFlowPosition({ x: event.clientX, y: event.clientY }) });
+              const client = { x: event.clientX, y: event.clientY };
+              setContext({ nodeId, position: screenToFlowPosition(client), client });
               setSelected(nodeId ?? null);
+            }}
+            onDoubleClick={(event) => {
+              if ((event.target as Element).classList.contains('react-flow__pane'))
+                openQuickAdd({ x: event.clientX, y: event.clientY });
             }}
             onDragOver={(e) => {
               if (editable && e.dataTransfer.types.includes(MATERIALX_NODE_MIME)) {
@@ -379,6 +533,34 @@ function Graph({
                 ))}
               </BreadcrumbList>
             </Breadcrumb>
+            {editable && (
+              <div className="mtlx-toolbar-overlay nodrag nopan">
+                <button
+                  type="button"
+                  className="mtlx-toolbar-button"
+                  title="Add node"
+                  onClick={(event) => openQuickAdd({ x: event.clientX, y: event.clientY })}
+                >
+                  <Plus size={14} aria-hidden="true" />
+                  Add node
+                </button>
+                <button
+                  type="button"
+                  className="mtlx-toolbar-button"
+                  title="Arrange nodes by data flow"
+                  disabled={!nodeCount}
+                  onClick={() =>
+                    commit(() => {
+                      session.layout.moveNodes(autoLayout(projection.nodes, projection.edges), scope);
+                      requestAnimationFrame(() => void fitView({ padding: 0.15, duration: 200 }));
+                    })
+                  }
+                >
+                  <LayoutGrid size={14} aria-hidden="true" />
+                  Arrange
+                </button>
+              </div>
+            )}
             <ReactFlow<FlowNode>
               nodes={nodes}
               edges={edges}
@@ -386,6 +568,8 @@ function Graph({
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               fitView
+              colorMode={colorMode}
+              zoomOnDoubleClick={false}
               minZoom={0.08}
               nodesDraggable={editable}
               nodesConnectable={editable}
@@ -446,10 +630,22 @@ function Graph({
               onEdgeDoubleClick={(_, edge) =>
                 commit(() => operations.disconnectInput(edge.target, edge.targetHandle ?? 'in'))
               }
+              onConnectEnd={onConnectEnd}
             >
               <Background />
               <Controls showInteractive={false} />
             </ReactFlow>
+            {children && <div className="mtlx-canvas-overlay nodrag nopan nowheel">{children}</div>}
+            {quickAdd && (
+              <QuickAddMenu
+                catalog={catalog}
+                at={quickAdd.at}
+                accept={accepts(quickAdd.from)}
+                placeholder={quickAdd.from ? `Connect ${quickAdd.from.node}.${quickAdd.from.handle} to…` : undefined}
+                onAdd={addAndConnect}
+                onClose={() => setQuickAdd(undefined)}
+              />
+            )}
             {(diagnostics.length > 0 || error) && (
               <section className="mtlx-error-log nodrag nopan nowheel" aria-label="Graph errors">
                 <h2>Graph errors ({diagnostics.length + (error ? 1 : 0)})</h2>
@@ -463,14 +659,22 @@ function Graph({
           </div>
         </GraphContextMenu>
       </div>
-      <NodeParameterEditor
-        key={`${scope}/${node?.id ?? ''}`}
-        graph={operations}
-        node={node}
-        projection={projection}
-        editable={editable}
-        commit={commit}
-      />
+      <ParameterResourcesContext.Provider value={resources ?? EMPTY_RESOURCES}>
+        <NodeParameterEditor
+          key={`${scope}/${node?.id ?? ''}`}
+          graph={operations}
+          node={node}
+          projection={projection}
+          editable={editable}
+          commit={commit}
+          onRename={(name) =>
+            commit(() => {
+              operations.renameNode(node!.id, name);
+              setSelected(name);
+            })
+          }
+        />
+      </ParameterResourcesContext.Provider>
     </section>
   );
 }

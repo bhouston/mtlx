@@ -1,8 +1,12 @@
 import { useMemo, useState } from 'react';
 import { ChevronRight, GripVertical } from 'lucide-react';
-import { getNodeCatalog, nodeType, type MaterialXNodeSpec } from './model.js';
-import { buildNodeCatalogTree, nodeCatalogLeaves, type NodeCatalogEntry } from './node-catalog-tree.js';
-import { getNodeFamilies } from './node-families.js';
+import { getNodeCatalog, type MaterialXNodeSpec } from './model.js';
+import {
+  buildNodeCatalogTree,
+  nodeCatalogLeaves,
+  searchNodeCatalog,
+  type NodeCatalogEntry,
+} from './node-catalog-tree.js';
 export const MATERIALX_NODE_MIME = 'application/x-materialx-nodedef';
 const defaultCatalog = getNodeCatalog();
 export interface MaterialXNodeListProps {
@@ -80,13 +84,7 @@ export function MaterialXNodeLib({ catalog = defaultCatalog, disabled, onAdd, cl
   const tree = useMemo(() => buildNodeCatalogTree(catalog), [catalog]);
   const [path, setPath] = useState<string[]>(['shader']);
   const search = query.trim().toLowerCase();
-  const searchEntries: NodeCatalogEntry[] = getNodeFamilies(catalog)
-    .filter((family) =>
-      family.variants.some((node) =>
-        `${node.category} ${node.nodeDefName} ${nodeType(node)} ${node.nodeGroup}`.toLowerCase().includes(search),
-      ),
-    )
-    .map((family) => ({ kind: 'node', id: family.id, label: family.label, node: family.variants[0]! }));
+  const searchEntries = searchNodeCatalog(catalog, search);
 
   const columns: { entries: NodeCatalogEntry[]; label: string; selected?: string }[] = [];
   let entries = tree;

@@ -17,10 +17,10 @@ it('adds canvas placement only in the editor projection', () => {
   );
   const semantic = core.readGraph(document);
   const canvas = projectGraph(document);
-  expect(canvas.nodes.map((node) => node.position)).toEqual([
-    { x: 12, y: 34 },
-    { x: 310, y: 0 },
-  ]);
+  expect(canvas.nodes[0]!.position).toEqual({ x: 12, y: 34 });
+  // Unplaced nodes receive a data-flow layout position rather than their authored coordinates.
+  expect(canvas.nodes[1]!.position).not.toEqual(canvas.nodes[0]!.position);
+  expect(Number.isFinite(canvas.nodes[1]!.position.y)).toBe(true);
   expect(canvas.nodes.map(({ position: _position, ...node }) => node)).toEqual(semantic.nodes);
   expect(canvas.edges).toEqual(semantic.edges);
   expect(semantic.nodes.every((node) => !('position' in node))).toBe(true);

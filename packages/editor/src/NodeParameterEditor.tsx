@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NodeNameField } from './NodeNameField.js';
 import { ConnectedParameterEditor, GeometryParameterEditor, getParameterEditor } from './parameter-editors.js';
 import { nodeType, type MaterialXNodeSpec, type GraphNode, type GraphEdge } from './model.js';
 import type { EditorGraph } from 'mtlx-core/session';
@@ -9,10 +10,11 @@ export interface NodeParameterEditorProps {
   projection: { nodes: GraphNode[]; edges: GraphEdge[] };
   editable: boolean;
   commit: (operation: () => unknown) => void;
+  onRename?: (name: string) => void;
 }
 
 /** The selected node's typed parameter editors, connections and reset actions. */
-export function NodeParameterEditor({ graph, node, projection, editable, commit }: NodeParameterEditorProps) {
+export function NodeParameterEditor({ graph, node, projection, editable, commit, onRename }: NodeParameterEditorProps) {
   const [view, setView] = useState<{ node: string; definition: string }>();
   if (!node) return null;
   const viewKey = `${graph.scope}/${node.id}`;
@@ -36,7 +38,7 @@ export function NodeParameterEditor({ graph, node, projection, editable, commit 
   return (
     <aside className="mtlx-inspector" aria-label="Node parameters">
       <h2>
-        {node.id}
+        {editable && onRename ? <NodeNameField key={node.id} name={node.id} onRename={onRename} /> : node.id}
         {node.type && <span className="mtlx-node-type"> ({node.type})</span>}
       </h2>
       {node.id !== node.element.name && <p>{node.element.name}</p>}
@@ -98,8 +100,8 @@ export function NodeParameterEditor({ graph, node, projection, editable, commit 
                 ariaLabel={`${node.id} ${input.name} value`}
                 disabled={!editable || !!connection}
                 onReset={editable && explicit ? () => commit(() => graph.resetInput(node.id, input.name)) : undefined}
-                onChange={(nextValue) =>
-                  commit(() => graph.setInputValue(node.id, input.name, nextValue, { type: input.type }))
+                onChange={(nextValue, options) =>
+                  commit(() => graph.setInputValue(node.id, input.name, nextValue, { type: input.type, ...options }))
                 }
               />
             )}

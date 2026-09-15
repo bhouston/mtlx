@@ -12,6 +12,7 @@ import {
   moveNodes,
   readGraph,
   removeNodes,
+  renameNode,
   resetInput,
   resolveTypes,
   setInputValue,
@@ -97,7 +98,7 @@ export class EditorSession {
   private current: MaterialXDocument;
   private readonly suppliedCatalog?: MaterialXNodeSpec[];
   private readonly historyLimit: number;
-  private past: { document: MaterialXDocument; label: string }[] = [];
+  private past: { document: MaterialXDocument; label: string; merge?: string }[] = [];
   private future: { document: MaterialXDocument; label: string }[] = [];
   private listeners = new Set<() => void>();
   private depth = 0;
@@ -171,8 +172,10 @@ export class EditorSession {
       }
     }
   }
-  private record(before: MaterialXDocument, label: string) {
-    if (this.historyLimit) this.past = [...this.past, { document: before, label }].slice(-this.historyLimit);
+  /** Consecutive commits sharing a merge key (one slider drag, one typing session) form a single history entry. */
+  private record(before: MaterialXDocument, label: string, merge?: string) {
+    if (this.historyLimit && !(merge && this.past.at(-1)?.merge === merge))
+      this.past = [...this.past, { document: before, label, merge }].slice(-this.historyLimit);
     this.future = [];
     this.publish();
   }
@@ -266,7 +269,7 @@ export class EditorSession {
     const introduced = this.diagnostics(next).find((issue) => !existing.has(JSON.stringify(issue)));
     if (introduced) throw new EditorError(introduced);
   }
-  private apply(label: string, operation: () => MaterialXDocument, validate = true) {
+  private apply(label: string, operation: () => MaterialXDocument, validate = true, merge?: string) {
     let next: MaterialXDocument;
     try {
       next = operation();
@@ -277,7 +280,7 @@ export class EditorSession {
     }
     const before = this.current;
     this.current = freeze(next);
-    if (!this.depth) this.record(before, label);
+    if (!this.depth) this.record(before, label, merge);
   }
   listScopes(): readonly string[] {
     return Object.freeze(graphScopes(this.current));
@@ -410,7 +413,28 @@ export class EditorSession {
         for (const id of ids) this.node(scope, id);
         this.apply('Delete nodes', () => removeNodes(this.current, [...ids], scope));
       },
-      setInputValue: (id: string, input: string, value: InputValue, options: { type?: string } = {}) => {
+      renameNode: (id: string, name: string) => {
+        this.node(scope, id);
+        try {
+          this.apply('Rename node', () => renameNode(this.current, id, name, scope));
+        } catch (error) {
+          throw new EditorError({
+            code: 'INVALID_NAME',
+            scope,
+            node: id,
+            message: error instanceof Error ? error.message : String(error),
+          });
+        }
+      },
+      setInputValue: (
+        id: string,
+        input: string,
+        value: InputValue,
+        options: {
+          type?: string;
+          /** Opaque gesture token; equal tokens merge into one undo entry. */ merge?: string;
+        } = {},
+      ) => {
         this.input(scope, id, input);
         if (
           !(
@@ -427,23 +451,28 @@ export class EditorSession {
             input,
             message: `Invalid value for ${id}.${input}. Expected text, a finite number, a boolean, or an array of finite numbers.`,
           });
-        this.apply('Set input value', () => {
-          const next = setInputValue(
-            this.current,
-            id,
-            input,
-            Array.isArray(value) ? value.join(', ') : String(value),
-            scope,
-            this.catalog(),
-            options.type,
-          );
-          const invalid = this.diagnostics(next).find(
-            (issue) =>
-              issue.code === 'INVALID_VALUE' && issue.scope === scope && issue.node === id && issue.input === input,
-          );
-          if (invalid) throw new EditorError(invalid);
-          return next;
-        });
+        this.apply(
+          'Set input value',
+          () => {
+            const next = setInputValue(
+              this.current,
+              id,
+              input,
+              Array.isArray(value) ? value.join(', ') : String(value),
+              scope,
+              this.catalog(),
+              options.type,
+            );
+            const invalid = this.diagnostics(next).find(
+              (issue) =>
+                issue.code === 'INVALID_VALUE' && issue.scope === scope && issue.node === id && issue.input === input,
+            );
+            if (invalid) throw new EditorError(invalid);
+            return next;
+          },
+          true,
+          options.merge === undefined ? undefined : JSON.stringify([scope, id, input, options.merge]),
+        );
       },
       resetInput: (id: string, input: string) => {
         this.input(scope, id, input);
@@ -490,6 +519,7 @@ export {
   moveNodes,
   readGraph,
   removeNodes,
+  renameNode,
   resetInput,
   setInputValue,
   type GraphConnection,

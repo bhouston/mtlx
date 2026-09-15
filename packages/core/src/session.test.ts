@@ -12,7 +12,51 @@ function createDefaultDocument(): MaterialXDocument {
 const create = () => createEditorSession({ document: createDefaultDocument() });
 const empty = () => createEditorSession({ document: parseMaterialX('<materialx version="1.39"/>') });
 
+describe('renaming nodes', () => {
+  it('rewrites sibling wires and nested graph references', () => {
+    const session = createEditorSession({
+      document: parseMaterialX(
+        '<materialx version="1.39"><nodegraph name="graph"><constant name="c" type="color3"/><output name="out" type="color3" nodename="c"/></nodegraph><standard_surface name="surface" type="surfaceshader"><input name="base_color" type="color3" nodegraph="graph"/></standard_surface><surfacematerial name="material" type="material"><input name="surfaceshader" type="surfaceshader" nodename="surface"/></surfacematerial><look name="look"><materialassign name="assign" material="material" geom="/"/></look></materialx>',
+      ),
+    });
+    session.graph('graph').renameNode('c', 'tint');
+    session.graph().renameNode('graph', 'colors');
+    session.graph().renameNode('material', 'gold');
+    const xml = serializeMaterialX(session.getDocument());
+    expect(xml).toContain('<output name="out" type="color3" nodename="tint"');
+    expect(xml).toContain('nodegraph="colors"');
+    expect(xml).toContain('material="gold"');
+    expect(session.getSnapshot().undoLabel).toBe('Rename node');
+    session.undo();
+    session.undo();
+    session.undo();
+    expect(serializeMaterialX(session.getDocument())).toContain('nodename="c"');
+  });
+  it('rejects invalid and duplicate names without committing', () => {
+    const session = create();
+    expect(() => session.graph().renameNode('surface', '1bad')).toThrow(EditorError);
+    expect(() => session.graph().renameNode('surface', 'material')).toThrow(/already exists/);
+    expect(session.getSnapshot().canUndo).toBe(false);
+  });
+});
 describe('immutable editing session', () => {
+  it('merges commits that share a gesture token into one undo entry', () => {
+    const session = create();
+    const graph = session.graph();
+    graph.setInputValue('surface', 'specular_roughness', 0.4, { merge: 'drag-1' });
+    graph.setInputValue('surface', 'specular_roughness', 0.5, { merge: 'drag-1' });
+    graph.setInputValue('surface', 'specular_roughness', 0.6, { merge: 'drag-1' });
+    graph.setInputValue('surface', 'specular_roughness', 0.9, { merge: 'drag-2' });
+    graph.setInputValue('surface', 'base', 0.5, { merge: 'drag-2' });
+    expect(session.getSnapshot().canUndo).toBe(true);
+    session.undo();
+    expect(serializeMaterialX(session.getDocument())).toContain('specular_roughness" type="float" value="0.9"');
+    session.undo();
+    expect(serializeMaterialX(session.getDocument())).toContain('value="0.6"');
+    session.undo();
+    expect(serializeMaterialX(session.getDocument())).toContain('value="0.3"');
+    expect(session.getSnapshot().canUndo).toBe(false);
+  });
   it('owns its input and publishes deeply frozen snapshots, including query results', () => {
     const input = createDefaultDocument();
     const session = createEditorSession({ document: input });

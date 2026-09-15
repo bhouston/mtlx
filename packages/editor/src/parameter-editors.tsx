@@ -1,6 +1,6 @@
 import { DropdownMenu } from 'radix-ui';
-import { Diamond, Ellipsis, Link2, RefreshCw, Unplug } from 'lucide-react';
-import { useId, useState, type ComponentType, type ReactNode } from 'react';
+import { Diamond, Ellipsis, Link2, RefreshCw, Unplug, Upload } from 'lucide-react';
+import { createContext, useContext, useId, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { RgbColorPicker, RgbaColorPicker } from 'react-colorful';
 import type { MaterialXNodePortSpec } from './model.js';
 
@@ -9,8 +9,15 @@ export interface ParameterEditorProps {
   value: string;
   ariaLabel: string;
   disabled?: boolean;
-  onChange: (value: string) => void;
+  /** `merge` identifies one continuous gesture (a drag, a typing session) so its changes share an undo entry. */
+  onChange: (value: string, options?: { merge?: string }) => void;
   onReset?: () => void;
+}
+/** A token that changes whenever a new gesture starts. Equal tokens coalesce in history. */
+function useGesture() {
+  const count = useRef(0);
+  const id = useId();
+  return { token: () => `${id}:${count.current}`, next: () => void count.current++ };
 }
 /** Implementations own their layout and use ParameterLabel for consistent labels. */
 export type ParameterEditor = ComponentType<ParameterEditorProps>;
@@ -67,7 +74,7 @@ function NumberField({
 }: {
   id?: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, options?: { merge?: string }) => void;
   integer?: boolean;
   min?: number;
   max?: number;
@@ -79,6 +86,7 @@ function NumberField({
   const number = parseParameterNumber(text, integer);
   const valid = number !== undefined && (min === undefined || number >= min) && (max === undefined || number <= max);
   const errorId = useId();
+  const gesture = useGesture();
   return (
     <div className="mtlx-number-field">
       <input
@@ -86,6 +94,7 @@ function NumberField({
         type="text"
         inputMode={integer ? 'numeric' : 'decimal'}
         value={text}
+        onFocus={gesture.next}
         aria-invalid={!valid && text !== ''}
         aria-describedby={!valid && text !== '' ? errorId : undefined}
         onChange={(event) => {
@@ -93,7 +102,7 @@ function NumberField({
           setDraft({ source: value, text: next });
           const n = parseParameterNumber(next, integer);
           if (n !== undefined && (min === undefined || n >= min) && (max === undefined || n <= max)) {
-            onChange(String(n));
+            onChange(String(n), { merge: gesture.token() });
             setDraft({ source: String(n), text: next });
           }
         }}
@@ -122,6 +131,7 @@ export const FloatParameterEditor: ParameterEditor = (props) => {
   const min = limits.min ?? Math.min(0, value);
   const max = limits.max ?? Math.max(1, value);
   const integer = props.parameter.type === 'integer';
+  const gesture = useGesture();
   return (
     <>
       <Row props={props} id={id}>
@@ -144,7 +154,9 @@ export const FloatParameterEditor: ParameterEditor = (props) => {
         max={max}
         step={integer ? 1 : 'any'}
         value={Math.max(min, Math.min(max, value))}
-        onChange={(event) => props.onChange(event.target.value)}
+        onPointerDown={gesture.next}
+        onFocus={gesture.next}
+        onChange={(event) => props.onChange(event.target.value, { merge: gesture.token() })}
       />
     </>
   );
@@ -183,9 +195,9 @@ function ComponentsEditor(
               value={values[index] ?? ''}
               disabled={props.disabled}
               {...bounds(props.parameter)}
-              onChange={(value) => {
+              onChange={(value, options) => {
                 const next = props.components.map((_, i) => (i === index ? value : values[i] || '0'));
-                if (next.every((v) => parseParameterNumber(v) !== undefined)) props.onChange(next.join(', '));
+                if (next.every((v) => parseParameterNumber(v) !== undefined)) props.onChange(next.join(', '), options);
               }}
             />
           </div>
@@ -276,11 +288,13 @@ export const ColorParameterEditor: ParameterEditor = (props) => {
   const channel = (index: number) => Math.max(0, Math.min(1, Number.isFinite(values[index]) ? values[index]! : 0));
   const color = { r: channel(0) * 255, g: channel(1) * 255, b: channel(2) * 255, a: channel(3) };
   const hex = '#' + [color.r, color.g, color.b].map((c) => Math.round(c).toString(16).padStart(2, '0')).join('');
+  const gesture = useGesture();
   const change = (next: { r: number; g: number; b: number; a?: number }) =>
     props.onChange(
       [next.r / 255, next.g / 255, next.b / 255, ...(alpha ? [next.a ?? values[3] ?? 1] : [])]
         .map((v) => Number(v.toFixed(6)))
         .join(', '),
+      { merge: gesture.token() },
     );
   return (
     <>
@@ -293,12 +307,19 @@ export const ColorParameterEditor: ParameterEditor = (props) => {
           aria-expanded={expanded}
           aria-controls={`${id}-controls`}
           title={`${expanded ? 'Collapse' : 'Edit'} color (${hex})`}
-          style={{ backgroundColor: hex }}
+          style={{ '--swatch': hex } as React.CSSProperties}
           onClick={() => setExpanded(!expanded)}
         />
       </Row>
       {expanded && (
-        <div id={`${id}-controls`} className="mtlx-color-picker">
+        <div
+          id={`${id}-controls`}
+          className="mtlx-color-picker"
+          onPointerDownCapture={gesture.next}
+          onKeyDownCapture={(event) => {
+            if (!event.repeat) gesture.next();
+          }}
+        >
           {!props.disabled &&
             (alpha ? (
               <RgbaColorPicker color={color} onChange={change} />
@@ -383,6 +404,80 @@ export const TextParameterEditor: ParameterEditor = (props) => {
 };
 export const ReadOnlyParameterEditor: ParameterEditor = (props) => <TextParameterEditor {...props} disabled />;
 
+export interface ParameterResources {
+  /** Document-relative paths of files already in the package, offered as completions. */
+  files: readonly string[];
+  /** Adds a file to the package and resolves to its document-relative path. */
+  addFile?: (file: File) => Promise<string>;
+}
+export const ParameterResourcesContext = createContext<ParameterResources>({ files: [] });
+/** Filename inputs complete against package resources and accept uploads through the host. */
+export const FilenameParameterEditor: ParameterEditor = (props) => {
+  const id = useId();
+  const listId = useId();
+  const resources = useContext(ParameterResourcesContext);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [failure, setFailure] = useState('');
+  return (
+    <>
+      <Row props={props} id={id}>
+        <div className="mtlx-filename-field">
+          <input
+            id={id}
+            aria-label={props.ariaLabel}
+            list={resources.files.length ? listId : undefined}
+            value={props.value}
+            disabled={props.disabled}
+            placeholder="path/to/texture.png"
+            spellCheck={false}
+            onChange={(event) => props.onChange(event.target.value)}
+          />
+          {resources.files.length > 0 && (
+            <datalist id={listId}>
+              {resources.files.map((file) => (
+                <option key={file} value={file}>
+                  {file}
+                </option>
+              ))}
+            </datalist>
+          )}
+          {resources.addFile && !props.disabled && (
+            <>
+              <button
+                type="button"
+                className="mtlx-parameter-icon-button"
+                aria-label={`Upload file for ${props.parameter.name}`}
+                title="Add an image from your computer"
+                onClick={() => fileInput.current?.click()}
+              >
+                <Upload size={14} aria-hidden="true" />
+              </button>
+              <input
+                ref={fileInput}
+                type="file"
+                accept="image/*,.exr,.hdr,.tif,.tiff"
+                hidden
+                aria-label={`Choose file for ${props.parameter.name}`}
+                tabIndex={-1}
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  event.target.value = '';
+                  if (!file) return;
+                  setFailure('');
+                  resources.addFile!(file)
+                    .then((path) => props.onChange(path))
+                    .catch((error: unknown) => setFailure(error instanceof Error ? error.message : String(error)));
+                }}
+              />
+            </>
+          )}
+        </div>
+      </Row>
+      {failure && <small className="mtlx-parameter-error">{failure}</small>}
+    </>
+  );
+};
+
 export const parameterEditors: Readonly<Record<string, ParameterEditor>> = {
   float: FloatParameterEditor,
   integer: IntegerParameterEditor,
@@ -395,7 +490,7 @@ export const parameterEditors: Readonly<Record<string, ParameterEditor>> = {
   matrix33: MatrixParameterEditor,
   matrix44: MatrixParameterEditor,
   string: TextParameterEditor,
-  filename: TextParameterEditor,
+  filename: FilenameParameterEditor,
   geomname: TextParameterEditor,
 };
 export function getParameterEditor(parameter: MaterialXNodePortSpec): ParameterEditor {

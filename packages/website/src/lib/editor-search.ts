@@ -14,27 +14,45 @@ export function editorSearch(search: Record<string, unknown>): EditorSearch {
     ...(typeof search.scope === 'string' && search.scope.length <= 256 ? { scope: search.scope } : {}),
   };
 }
-const MAX_SHARE_BYTES = 24 * 1024;
-const MAX_SHARE_EXPANDED_BYTES = 1024 * 1024;
+export interface SnapshotLimits {
+  maxArchiveBytes: number;
+  maxExpandedBytes: number;
+}
+/** Fragment links stay short enough to paste anywhere. */
+export const SHARE_LIMITS: SnapshotLimits = { maxArchiveBytes: 24 * 1024, maxExpandedBytes: 1024 * 1024 };
+/** Local drafts may carry textures; browsers allow a few megabytes per origin. */
+export const DRAFT_LIMITS: SnapshotLimits = { maxArchiveBytes: 3 * 1024 * 1024, maxExpandedBytes: 32 * 1024 * 1024 };
 const tooLarge = 'This material is too large for a self-contained link. Download the .mtlx.zip to share your edits.';
 export const hasEditorSnapshot = (hash: string): boolean => hash.replace(/^#/, '').startsWith('material=');
 
-/** Small snapshots travel in the fragment, which is not sent to the web server. */
-export function readEditorSnapshot(hash: string): MaterialXPackage {
-  const encoded = hash.replace(/^#?material=/, '');
-  if (!encoded || encoded.length > (MAX_SHARE_BYTES * 4) / 3 || !/^[\w-]+$/.test(encoded))
+/** A package as a base64url `.mtlx.zip`; throws when it exceeds the limits. */
+export function encodeEditorSnapshot(pkg: MaterialXPackage, limits = SHARE_LIMITS): string {
+  const entries = packageToEntries(pkg);
+  if (entries.length > 128 || entries.reduce((sum, entry) => sum + entry.data.byteLength, 0) > limits.maxExpandedBytes)
+    throw new Error(tooLarge);
+  const bytes = createMaterialXZipArchive(entries);
+  if (bytes.length > limits.maxArchiveBytes) throw new Error(tooLarge);
+  return btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join(''))
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/, '');
+}
+export function decodeEditorSnapshot(encoded: string, limits = SHARE_LIMITS): MaterialXPackage {
+  if (!encoded || encoded.length > (limits.maxArchiveBytes * 4) / 3 || !/^[\w-]+$/.test(encoded))
     throw new Error('Invalid or oversized shared material link.');
   const raw = atob(encoded.replaceAll('-', '+').replaceAll('_', '/'));
   const bytes = Uint8Array.from(raw, (char) => char.charCodeAt(0));
-  const limits = {
-    maxArchiveBytes: MAX_SHARE_BYTES,
-    maxExpandedBytes: MAX_SHARE_EXPANDED_BYTES,
-    maxEntryBytes: MAX_SHARE_EXPANDED_BYTES,
-    maxXmlBytes: MAX_SHARE_EXPANDED_BYTES,
+  const archiveLimits = {
+    ...limits,
+    maxEntryBytes: limits.maxExpandedBytes,
+    maxXmlBytes: limits.maxExpandedBytes,
     maxArchiveEntries: 128,
   };
-  return packageFromArchive(inspectMaterialXZipArchive(bytes, limits), { limits });
+  return packageFromArchive(inspectMaterialXZipArchive(bytes, archiveLimits), { limits: archiveLimits });
 }
+/** Small snapshots travel in the fragment, which is not sent to the web server. */
+export const readEditorSnapshot = (hash: string): MaterialXPackage =>
+  decodeEditorSnapshot(hash.replace(/^#?material=/, ''));
 
 /** Supply sourceUrl only when the current document still matches that source. */
 export function editorShareUrl(
@@ -46,20 +64,6 @@ export function editorShareUrl(
   const url = new URL('/editor', origin);
   const state = editorSearch({ ...search, materialUrl: sourceUrl });
   for (const [key, value] of Object.entries(state)) if (value !== undefined) url.searchParams.set(key, String(value));
-  if (!sourceUrl) {
-    const entries = packageToEntries(pkg);
-    if (
-      entries.length > 128 ||
-      entries.reduce((sum, entry) => sum + entry.data.byteLength, 0) > MAX_SHARE_EXPANDED_BYTES
-    )
-      throw new Error(tooLarge);
-    const bytes = createMaterialXZipArchive(entries);
-    if (bytes.length > MAX_SHARE_BYTES) throw new Error(tooLarge);
-    const encoded = btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join(''))
-      .replaceAll('+', '-')
-      .replaceAll('/', '_')
-      .replace(/=+$/, '');
-    url.hash = `material=${encoded}`;
-  }
+  if (!sourceUrl) url.hash = `material=${encodeEditorSnapshot(pkg)}`;
   return url.href;
 }

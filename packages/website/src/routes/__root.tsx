@@ -40,6 +40,8 @@ function RootLayout() {
 function SiteLayout() {
   // Embed mode is chromeless (for iframe embedding), so skip the site header/footer for it.
   const isEmbed = useLocation({ select: (location) => location.pathname === '/embed' });
+  // The editor fills the viewport on desktop; every other page scrolls.
+  const isEditor = useLocation({ select: (location) => location.pathname === '/editor' });
   if (isEmbed) {
     return (
       <div className="flex min-h-svh flex-col">
@@ -49,7 +51,7 @@ function SiteLayout() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col">
+    <div className={`flex min-h-svh flex-col ${isEditor ? 'md:h-svh' : ''}`}>
       <header className="flex items-center justify-between gap-4 border-b border-border px-6 py-3">
         <div className="flex min-w-0 flex-wrap items-center gap-4">
           <Link to="/" className="flex items-center gap-4 font-semibold text-primary underline underline-offset-4">

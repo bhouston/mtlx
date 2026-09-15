@@ -1,4 +1,4 @@
-import { type MaterialXNodeSpec } from './model.js';
+import { nodeType, type MaterialXNodeSpec } from './model.js';
 import { getNodeFamilies } from './node-families.js';
 
 export type NodeCatalogEntry =
@@ -31,4 +31,30 @@ export function buildNodeCatalogTree(catalog: MaterialXNodeSpec[]): NodeCatalogE
     label: group,
     children: groups.get(group)!,
   }));
+}
+
+/** Families matching a free-text query by category, definition name, type or group; `accept` narrows the variants. */
+export function searchNodeCatalog(
+  catalog: MaterialXNodeSpec[],
+  query: string,
+  accept: (spec: MaterialXNodeSpec) => boolean = () => true,
+): NodeCatalogEntry[] {
+  const search = query.trim().toLowerCase();
+  // Exact category names rank first, then prefixes, then any other mention.
+  const rank = (node: MaterialXNodeSpec) => {
+    const category = node.category.toLowerCase();
+    if (category === search) return 0;
+    if (category.startsWith(search)) return 1;
+    return `${category} ${node.nodeDefName} ${nodeType(node)} ${node.nodeGroup}`.toLowerCase().includes(search) ? 2 : 3;
+  };
+  return getNodeFamilies(catalog)
+    .flatMap((family) => {
+      const variants = family.variants.filter(accept);
+      const score = Math.min(3, ...variants.map(rank));
+      return score < 3
+        ? [{ score, entry: { kind: 'node' as const, id: family.id, label: family.label, node: variants[0]! } }]
+        : [];
+    })
+    .toSorted((a, b) => a.score - b.score)
+    .map(({ entry }) => entry);
 }
