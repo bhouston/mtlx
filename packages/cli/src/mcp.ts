@@ -25,6 +25,8 @@ top-level scope) in scope; \`await\` is allowed. Use editor.graph('name') for a 
   const c = graph.addNode({ definition: 'ND_constant_color3' });
   graph.setInputValue(c, 'value', [0.8, 0.2, 0.1], { type: 'color3' });
   graph.connect({ node: c, output: 'out' }, { node: 'SR_wood1', input: 'base_color' })
+Always pass { type: 'float' } (or 'integer', 'color3', 'vector3') when setting a value on math and noise
+nodes such as multiply, add, or fractal3d; untyped scalars on those nodes are currently rejected.
 Edits are validated as they happen and throw with a code and message on an invalid change.`;
 
 export function createMcpServer(): McpServer {
@@ -115,7 +117,11 @@ export function createMcpServer(): McpServer {
           saved: args.file,
           changed: editor.getSnapshot().dirty,
           diagnostics: editor.getDiagnostics(),
-          nodes: editor.graph('').listNodes(),
+          // Names and definitions only: the full node projection runs to kilobytes per node.
+          nodes: editor
+            .graph('')
+            .listNodes()
+            .map((node) => ({ id: node.id, definition: node.definition })),
         });
       } catch (error) {
         return failure(error);
