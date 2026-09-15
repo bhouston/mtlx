@@ -50,7 +50,8 @@ export function createViewerRendering(
       scenePass.needsUpdate = true;
     }
     if (!settings || settings.bloom !== next.bloom || settings.ao !== next.ao) {
-      pipeline.outputNode = next.bloom ? color.add(glow) : color;
+      // Keep the scene pass's alpha so a null background stays transparent (used by `mtlx render`).
+      pipeline.outputNode = next.bloom ? TSL.vec4(color.rgb.add(glow.rgb), color.a) : color;
       pipeline.needsUpdate = true;
     }
     settings = { ...next };

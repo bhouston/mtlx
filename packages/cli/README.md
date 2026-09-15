@@ -106,6 +106,23 @@ mtlx view material.mtlx
 The preview's bottom controls toggle bloom and denoised GTAO and select tone mapping. Bloom and
 AO start enabled, with Neutral tone mapping. The totem rotates once every 40 seconds.
 
+### Render to an image
+
+```sh
+mtlx render material.mtlx -o material.png
+mtlx render material.mtlx -o sphere.png --geometry sphere --material Wood --size 512
+```
+
+Renders the same preview as `mtlx view` headlessly and writes a PNG. The backdrop is transparent by
+default so the model is the only thing in the image; `--background environment` shows the IBL instead.
+Rendering uses a Chromium-based browser
+already on the machine (Google Chrome, then Microsoft Edge, then a Playwright-installed Chromium).
+No browser is downloaded at install time; set `MTLX_BROWSER` or `--browser` to a specific executable.
+
+This is the capture step for AI coding agents such as Claude Code or Codex: the agent edits the
+`.mtlx` file (directly or with a script against `mtlx-core/session`), runs `mtlx check` for
+validation, renders it, looks at the image, and repeats until the material looks right.
+
 ### Pack and unpack
 
 ```sh
@@ -222,6 +239,8 @@ Commands:
   mtlx check <inputs..>      Run selected document checks on one or more .mtlx or .mtlx.zip files
                              (glob patterns accepted)
   mtlx info <input>          Print information about a .mtlx or .mtlx.zip file
+  mtlx render <input>        Render a .mtlx or .mtlx.zip file to a PNG image using a local headless
+                             browser
   mtlx transform <inputs..>  Convert, combine, or resize/reformat textures across one or more .mtlx
                              / .mtlx.zip files (glob patterns accepted), writing --output. A
                              directory --output batch-converts each input separately instead of
@@ -262,6 +281,28 @@ Options:
   --version  Show version number                                                           [boolean]
   --help     Show help                                                                     [boolean]
   --format   Output format                       [choices: "text", "json", "yaml"] [default: "text"]
+```
+
+```text
+mtlx render <input>
+
+Render a .mtlx or .mtlx.zip file to a PNG image using a local headless browser
+
+Positionals:
+  input  Path to .mtlx or .mtlx.zip file                                         [string] [required]
+
+Options:
+      --version     Show version number                                                    [boolean]
+      --help        Show help                                                              [boolean]
+  -o, --output      PNG file to write                                            [string] [required]
+  -g, --geometry    Preview geometry        [choices: "totem", "sphere", "plane"] [default: "totem"]
+  -m, --material    Material name (default: last material in the document)                  [string]
+  -b, --background  Backdrop behind the model; none keeps the IBL lighting but leaves the PNG
+                    transparent                   [choices: "none", "environment"] [default: "none"]
+  -s, --size        Image width and height in pixels                         [number] [default: 800]
+      --browser     Chromium-based browser executable (default: installed Chrome, Edge, or
+                    Playwright Chromium)                                                    [string]
+      --timeout     Seconds to wait for the material to compile               [number] [default: 60]
 ```
 
 ```text

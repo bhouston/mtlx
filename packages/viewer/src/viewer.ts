@@ -24,6 +24,8 @@ export interface ViewerOptions {
   fileName: string;
   shaderBall: ArrayBuffer;
   settings: ViewerSettings;
+  /** `none` lights the scene with the IBL but leaves the backdrop transparent (clear alpha 0). */
+  background?: 'environment' | 'none';
   loadEnvironment(kind: string): Promise<THREE.Texture>;
   /** Host-configured geometries beyond totem/sphere/plane; `manager` resolves glTF sidecar files. */
   loadGeometry?(name: string): Promise<{ data: ArrayBuffer; manager?: THREE.LoadingManager }>;
@@ -114,7 +116,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       (texture) => pmrem.fromEquirectangular(texture),
       (texture) => {
         scene.environment = texture;
-        scene.background = texture;
+        scene.background = options.background === 'none' ? null : texture;
       },
     );
     scope.own(() => environments.dispose());

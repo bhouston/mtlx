@@ -29,6 +29,7 @@ const aoEl = element<HTMLInputElement>('ao');
 function showError(message: string): void {
   console.error(`[mtlx view] ${message}`);
   errorEl.textContent = message;
+  canvas.dataset.state = 'error';
 }
 window.addEventListener('error', (event) => showError(`Uncaught error: ${event.message}`));
 window.addEventListener('unhandledrejection', (event) => {
@@ -49,7 +50,16 @@ async function main(): Promise<void> {
     return;
   }
   toneMappingEl.replaceChildren(...TONE_MAPPING_OPTIONS.map(({ value, label }) => new Option(label, value)));
-  const settings: ViewerSettings = { ...DEFAULT_VIEWER_SETTINGS, ibl: 'studio', rotate: true };
+  // `mtlx render` drives the page headlessly through query parameters, e.g. ?geometry=sphere&rotate=false.
+  const query = new URLSearchParams(window.location.search);
+  const settings: ViewerSettings = {
+    ...DEFAULT_VIEWER_SETTINGS,
+    ibl: 'studio',
+    rotate: query.get('rotate') !== 'false',
+    geometry: query.get('geometry') ?? DEFAULT_VIEWER_SETTINGS.geometry,
+    materialName: query.get('material') ?? DEFAULT_VIEWER_SETTINGS.materialName,
+  };
+  geometryEl.value = settings.geometry;
   toneMappingEl.value = settings.toneMapping;
   bloomEl.checked = settings.bloom;
   aoEl.checked = settings.ao;
@@ -62,9 +72,13 @@ async function main(): Promise<void> {
     fileName,
     shaderBall,
     settings,
+    background: query.get('background') === 'none' ? 'none' : 'environment',
     loadEnvironment: () => parseEnvironmentFile(dataUrlToArrayBuffer(studioEnvironmentDataUrl), 'studio.png'),
     onLog: (message) => console.log(`[mtlx view] ${message}`),
     onError: showError,
+    onStage: (stage) => {
+      if (stage === 'ready') canvas.dataset.state = 'ready';
+    },
   });
   window.addEventListener('pagehide', () => viewer.dispose(), { once: true });
 
