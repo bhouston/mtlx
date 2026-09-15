@@ -86,6 +86,14 @@ function EditorPage() {
   }));
   const [session] = useState(() => createEditorSession({ document: loadedPackage.document }));
   const snapshot = useEditorSession(session);
+  // Browser-driving agents (Claude in Chrome, Playwright MCP) script edits through window.mtlx and
+  // read the result back with toXml(); see /agents.
+  useEffect(() => {
+    window.mtlx = session;
+    return () => {
+      delete window.mtlx;
+    };
+  }, [session]);
   // File/preview APIs use a detached document copy; all edits target the session.
   const documentCopy = useMemo(() => cloneMaterialXDocument(snapshot.document), [snapshot.document]);
   const pkg = useMemo(() => ({ ...loadedPackage, document: documentCopy }), [loadedPackage, documentCopy]);

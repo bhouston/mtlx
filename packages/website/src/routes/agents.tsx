@@ -49,6 +49,15 @@ const AGENT_INSTRUCTIONS = `# MaterialX materials in this repo
   deciding the material is done. Render the totem too when roughness, coat, or metalness matter.
 - Node definitions and their inputs are listed by \`mtlx info <file> --format json\`.`;
 
+const BROWSER_EXAMPLE = `// Run in the /editor page (Playwright evaluate, Claude in Chrome, or the devtools console)
+const graph = window.mtlx.graph('');
+window.mtlx.transaction('Warmer base color', () => {
+  const color = graph.addNode({ definition: 'ND_constant_color3' });
+  graph.setInputValue(color, 'value', [0.8, 0.2, 0.1], { type: 'color3' });
+  graph.connect({ node: color, output: 'out' }, { node: 'surface', input: 'base_color' });
+});
+window.mtlx.toXml(); // the edited document, ready to save`;
+
 const STEPS = [
   [
     'Edit',
@@ -154,8 +163,14 @@ function AgentsPage() {
           <Link to="/viewer" className="text-primary underline underline-offset-4">
             Viewer
           </Link>{' '}
-          here and take screenshots of the preview. That works for demos where a person watches along. For repeatable,
-          scriptable results the CLI loop above is the recommended path.
+          here and take screenshots of the preview. The editor page exposes its live session as <code>window.mtlx</code>
+          , so an agent can script edits with the same API as above instead of clicking through the graph, and the
+          canvas and node graph update as it works.
+        </p>
+        <CodeBlock code={BROWSER_EXAMPLE} />
+        <p className="text-sm text-muted-foreground">
+          That works for demos where a person watches along. For repeatable, scriptable results the CLI loop above is
+          the recommended path.
         </p>
       </section>
     </main>

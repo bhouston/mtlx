@@ -589,3 +589,22 @@ test('groups the selection into a node graph and adds interface ports inside it'
   expect(xml).toContain('nodegraph="nodegraph" output="out"');
   expect(errors).toEqual([]);
 });
+test('window.mtlx exposes the live session so browser agents can script edits and read the XML back', async () => {
+  const before = await page.evaluate(() => window.mtlx!.graph('').listNodes().length);
+  expect(before).toBe(2);
+  await page.evaluate(() => {
+    const graph = window.mtlx!.graph('');
+    window.mtlx!.transaction('Agent edit', () => {
+      const color = graph.addNode({ definition: 'ND_constant_color3' });
+      graph.setInputValue(color, 'value', [0.8, 0.2, 0.1], { type: 'color3' });
+      graph.connect({ node: color, output: 'out' }, { node: 'surface', input: 'base_color' });
+    });
+  });
+  // The UI follows the session: a third node appears and the surface input shows as connected.
+  await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
+  const xml = await page.evaluate(() => window.mtlx!.toXml());
+  expect(xml).toContain('<constant name="constant" type="color3"');
+  expect(xml).toContain('nodename="constant"');
+  expect(await page.evaluate(() => window.mtlx!.getSnapshot().canUndo)).toBe(true);
+  expect(errors).toEqual([]);
+});
