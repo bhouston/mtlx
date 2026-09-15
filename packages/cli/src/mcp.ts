@@ -153,11 +153,15 @@ export function createMcpServer(): McpServer {
           saved: args.file,
           changed: editor.getSnapshot().dirty,
           diagnostics: editor.getDiagnostics(),
-          // Names and definitions only: the full node projection runs to kilobytes per node.
+          // Ids and authored definition names only: the full node projection runs to kilobytes per
+          // node, and `node.definition` is a polymorphic fallback rather than the authored nodedef.
           nodes: editor
             .graph('')
             .listNodes()
-            .map((node) => ({ id: node.id, definition: node.definition })),
+            .map((node) => ({
+              id: node.id,
+              definition: node.element.attributes.nodedef ?? node.definition?.nodeDefName,
+            })),
         });
       } catch (error) {
         return failure(error);

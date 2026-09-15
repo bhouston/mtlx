@@ -66,6 +66,7 @@ describe('mtlx mcp', () => {
     })) as ToolResult;
     expect(ok.isError).toBeFalsy();
     expect(await readFile(wood, 'utf8')).toContain('<input name="in2" type="float" value="3"/>');
+    expect(JSON.parse(text(ok)).nodes).toContainEqual({ id: 'multiply', definition: 'ND_multiply_float' });
     // color3 * float exists, but no multiply variant takes color3 and vector3 together.
     const conflict = (await client.callTool({
       name: 'edit_material',
