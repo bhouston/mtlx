@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { MaterialXNodeSpec } from './model.js';
 import {
   buildNodeCatalogTree,
+  groupLabel,
   searchNodeCatalog,
   type NodeCatalogEntry,
   type NodeDefinition,
@@ -110,7 +111,7 @@ export function QuickAddMenu({ catalog, at, accept = () => true, placeholder, on
             >
               <span className="mtlx-catalog-label">{entry.label}</span>
               {entry.kind === 'node' ? (
-                <small>{entry.node.nodeGroup}</small>
+                <small>{entry.node.nodeGroup && groupLabel(entry.node.nodeGroup)}</small>
               ) : (
                 <ChevronRight size={14} aria-hidden="true" />
               )}

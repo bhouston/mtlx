@@ -575,6 +575,8 @@ function Graph({
               colorMode={colorMode}
               zoomOnDoubleClick={false}
               minZoom={0.08}
+              snapToGrid
+              snapGrid={[10, 10]}
               nodesDraggable={editable}
               nodesConnectable={editable}
               edgesReconnectable={false}

@@ -19,6 +19,14 @@ export function nodeCatalogLeaves(catalog: MaterialXNodeSpec[]): NodeCatalogEntr
     return isNodeDefinition(node) ? [{ kind: 'node' as const, id: family.id, label: family.label, node }] : [];
   });
 }
+const GROUP_LABELS: Record<string, string> = { pbr: 'PBR', npr: 'NPR', colortransform: 'Color Transform' };
+/** Human-readable name for a MaterialX nodegroup, e.g. `procedural2d` → `Procedural 2D`. */
+export function groupLabel(group: string): string {
+  const known = GROUP_LABELS[group];
+  if (known) return known;
+  const spaced = group.replace(/(\d)d$/, ' $1D');
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
 export function buildNodeCatalogTree(catalog: MaterialXNodeSpec[]): NodeCatalogEntry[] {
   const groups = new Map<string, NodeCatalogEntry[]>();
   for (const entry of nodeCatalogLeaves(catalog)) {
@@ -31,7 +39,7 @@ export function buildNodeCatalogTree(catalog: MaterialXNodeSpec[]): NodeCatalogE
     .map((group) => ({
       kind: 'group',
       id: group,
-      label: group,
+      label: groupLabel(group),
       children: groups.get(group)!,
     }));
 }

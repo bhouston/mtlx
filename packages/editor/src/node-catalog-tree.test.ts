@@ -10,7 +10,7 @@ test('collapses type variants to one family in catalog order', () => {
   expect(buildNodeCatalogTree([float, color, single])).toMatchObject([
     {
       kind: 'group',
-      label: 'procedural',
+      label: 'Procedural',
       children: [
         { kind: 'node', label: 'constant', node: float },
         { kind: 'node', label: 'single', node: single },

@@ -47,10 +47,10 @@ test('node library lists families directly and finds them by any variant name', 
   const library = page.getByRole('region', { name: 'MaterialX node library' });
   await page
     .getByRole('navigation', { name: 'Node categories' })
-    .getByRole('button', { name: 'procedural', exact: true })
+    .getByRole('button', { name: 'Procedural', exact: true })
     .click();
   const leaf = page
-    .getByRole('navigation', { name: 'procedural nodes' })
+    .getByRole('navigation', { name: 'Procedural nodes' })
     .getByRole('button', { name: 'constant', exact: true });
   expect(await leaf.getAttribute('draggable')).toBe('true');
   await leaf.click();
@@ -59,7 +59,7 @@ test('node library lists families directly and finds them by any variant name', 
   expect(await page.locator('.react-flow__node[data-id="constant"] .mtlx-node-header').textContent()).toBe('constant');
   await page
     .getByRole('navigation', { name: 'Node categories' })
-    .getByRole('button', { name: 'shader', exact: true })
+    .getByRole('button', { name: 'Shader', exact: true })
     .click();
   expect(await library.getByRole('navigation').count()).toBe(2);
   await page.getByLabel('Search nodes').fill('ND_constant_float');
@@ -76,7 +76,7 @@ test('context menu adds categorized nodes, clones and deletes the clicked node',
   await pane.click({ button: 'right', position: corner });
   expect(await page.getByRole('menuitem', { name: 'Clone', exact: true }).count()).toBe(0);
   await page.getByRole('menuitem', { name: 'Add node', exact: true }).hover();
-  await page.getByRole('menuitem', { name: 'procedural', exact: true }).hover();
+  await page.getByRole('menuitem', { name: 'Procedural', exact: true }).hover();
   await page.getByRole('menuitem', { name: 'constant', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
   await page.locator('.react-flow__node[data-id="surface"]').click();

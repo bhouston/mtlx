@@ -184,7 +184,7 @@
 .mtlx-port {
   position: relative;
   padding: 3px 12px;
-  font-size: 11px;
+  font-size: 12px;
   min-height: 22px;
 }
 .mtlx-output {
@@ -201,6 +201,7 @@
 .mtlx-port .react-flow__handle-right {
   right: 0;
 }
+.mtlx-graph .react-flow__edge:hover .react-flow__edge-path,
 .mtlx-graph .react-flow__edge.selected .react-flow__edge-path {
   stroke-width: 3;
   filter: drop-shadow(0 0 2px currentColor);
@@ -521,7 +522,7 @@
   gap: 5px;
 }
 .mtlx-component-label {
-  font-size: 10px;
+  font-size: 11px;
   opacity: 0.7;
 }
 .mtlx-number-field {
