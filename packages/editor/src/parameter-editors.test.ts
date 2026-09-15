@@ -41,6 +41,27 @@ describe('parameter editing', () => {
     expect(parseParameterNumber('1e-3')).toBe(0.001);
     expect(parseParameterNumber('1.5', true)).toBeUndefined();
   });
+  it('sizes the slider by the soft range while the field keeps the hard limits', () => {
+    act(() =>
+      root.render(
+        createElement(FloatParameterEditor, {
+          parameter: {
+            name: 'ior',
+            type: 'float',
+            attributes: { uimin: '0', uimax: '10', uisoftmin: '1', uisoftmax: '3' },
+          },
+          value: '1.5',
+          ariaLabel: 'ior',
+          onChange: vi.fn(),
+        }),
+      ),
+    );
+    const slider = container.querySelector('input[type="range"]') as HTMLInputElement;
+    expect([slider.min, slider.max]).toEqual(['1', '3']);
+    const field = container.querySelector('input[type="text"]')!;
+    fill(field, '8');
+    expect(field.getAttribute('aria-invalid')).not.toBe('true');
+  });
   it('validates drafts and ranges without committing invalid values', () => {
     const onChange = vi.fn();
     act(() =>
@@ -246,7 +267,7 @@ it('chooses a temporary parameter type and authors that type only after a value 
     );
   }
   act(render);
-  const selector = container.querySelector('[aria-label="Parameter type"]') as HTMLSelectElement;
+  const selector = container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement;
   expect(selector.options).toHaveLength(6);
   act(() => {
     selector.value = 'ND_tiledimage_vector3';
@@ -266,14 +287,12 @@ it('chooses a temporary parameter type and authors that type only after a value 
     type: 'vector3',
     value: '0.5, 0.0, 0.0',
   });
-  expect(container.querySelector('[aria-label="Parameter type"]')).toBeNull();
+  expect(container.querySelector('[aria-label="Edit as"]')).toBeNull();
   expect(container.textContent).not.toContain('View only. Editing a value can determine the node’s type.');
   act(() => (container.querySelector('[aria-label="Reset default"]') as HTMLButtonElement).click());
   expect(projectGraph(doc).nodes[0]?.type).toBeUndefined();
   expect(doc.nodes[0]?.inputs.map((p) => p.name)).toEqual(['file']);
-  expect((container.querySelector('[aria-label="Parameter type"]') as HTMLSelectElement).value).toBe(
-    'ND_tiledimage_vector3',
-  );
+  expect((container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement).value).toBe('ND_tiledimage_vector3');
 });
 
 it('labels mixed-input overloads distinctly and falls back when a connection invalidates the temporary choice', () => {
@@ -295,7 +314,7 @@ it('labels mixed-input overloads distinctly and falls back when a connection inv
     );
   }
   act(render);
-  const selector = container.querySelector('[aria-label="Parameter type"]') as HTMLSelectElement;
+  const selector = container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement;
   expect([...selector.options].filter((o) => o.label.startsWith('color3')).map((o) => o.label)).toEqual([
     'color3 (in2: color3)',
     'color3 (in2: float)',

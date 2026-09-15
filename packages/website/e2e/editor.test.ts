@@ -541,7 +541,7 @@ test('parameter type selection is temporary until a value is authored', async ()
   const image = page.locator('.react-flow__node[data-id="tiledimage"]');
   await image.locator('.mtlx-node-header').click();
   const original = await downloadText();
-  const selector = page.getByRole('combobox', { name: 'Parameter type', exact: true });
+  const selector = page.getByRole('combobox', { name: 'Edit as', exact: true });
   await selector.selectOption({ label: 'vector3' });
   expect(await image.locator('.mtlx-node-header').textContent()).toBe('tiledimage');
   expect(await downloadText()).toBe(original);

@@ -99,7 +99,7 @@ Inference propagates in both directions through connected nodes. Disconnect, res
 delete, replacement connections, and undo recompute from the remaining constraints.
 An authored typed value remains a constraint even if it equals a definition's default.
 New nodes author no defaults; resetting an input removes its authored value. The
-**Parameter type** dropdown temporarily selects the inspector's controls and defaults.
+**Edit as** dropdown temporarily selects the inspector's controls and defaults.
 Changing it does not change the graph, preview, export, or undo history. Editing a value
 authors the input type used by those controls; that value can then constrain the node.
 Only compatible variants are offered, with input-type differences shown for overloads

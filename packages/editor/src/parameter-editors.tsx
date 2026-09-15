@@ -58,10 +58,19 @@ export function parseParameterNumber(value: string, integer = false): number | u
   const number = Number(value);
   return Number.isFinite(number) && (!integer || Number.isSafeInteger(number)) ? number : undefined;
 }
+/** Hard limits for typed values. */
 function bounds(parameter: MaterialXNodePortSpec) {
   return {
     min: parseParameterNumber(parameter.attributes?.uimin ?? ''),
     max: parseParameterNumber(parameter.attributes?.uimax ?? ''),
+  };
+}
+/** The slider's range: the definition's soft range when present, else its hard limits. */
+function softBounds(parameter: MaterialXNodePortSpec) {
+  const hard = bounds(parameter);
+  return {
+    min: parseParameterNumber(parameter.attributes?.uisoftmin ?? '') ?? hard.min,
+    max: parseParameterNumber(parameter.attributes?.uisoftmax ?? '') ?? hard.max,
   };
 }
 function NumberField({
@@ -127,9 +136,10 @@ function NumberField({
 export const FloatParameterEditor: ParameterEditor = (props) => {
   const id = useId();
   const limits = bounds(props.parameter);
+  const soft = softBounds(props.parameter);
   const value = parseParameterNumber(props.value) ?? 0;
-  const min = limits.min ?? Math.min(0, value);
-  const max = limits.max ?? Math.max(1, value);
+  const min = soft.min ?? Math.min(0, value);
+  const max = soft.max ?? Math.max(1, value);
   const integer = props.parameter.type === 'integer';
   const gesture = useGesture();
   return (

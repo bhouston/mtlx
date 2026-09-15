@@ -44,10 +44,10 @@ export function NodeParameterEditor({ graph, node, projection, editable, commit,
       {node.id !== node.element.name && <p>{node.element.name}</p>}
       {candidates.length > 1 && definition && (
         <div className="mtlx-field">
-          <label>
-            Parameter type
+          <label title="Chooses which variant's controls and defaults the inspector shows. The graph changes only once you edit a value.">
+            Edit as
             <select
-              aria-label="Parameter type"
+              aria-label="Edit as"
               disabled={!editable}
               value={definition.nodeDefName}
               onChange={(event) => setView({ node: viewKey, definition: event.target.value })}
