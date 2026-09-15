@@ -1,13 +1,7 @@
 import { createEditorSession } from 'mtlx-core/session';
 import { createFileRoute, useLocation } from '@tanstack/react-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  cloneMaterialXDocument,
-  parseMaterialX,
-  relativeResourcePath,
-  serializeMaterialX,
-  type MaterialXPackage,
-} from 'mtlx-core';
+import { cloneMaterialXDocument, relativeResourcePath, serializeMaterialX, type MaterialXPackage } from 'mtlx-core';
 import {
   MaterialXNodeGraph,
   useEditorSession,
@@ -137,22 +131,9 @@ function EditorPage() {
   // The editor owns XML and resource bytes. The preview owns every Three.js object.
   // Layout changes do not alter this XML; semantic edits schedule a fresh compilation.
   useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        const data = exportMaterial(
-          { rootPath: pkg.rootPath, resources: pkg.resources, document: parseMaterialX(xml) },
-          pkg.resources.length > 0,
-        );
-        setSource({
-          name: pkg.resources.length ? 'preview.mtlx.zip' : pkg.rootPath,
-          data: new Uint8Array(data).buffer,
-        });
-      } catch (e) {
-        setPreviewError(e instanceof Error ? e.message : String(e));
-      }
-    }, 400);
+    const timer = setTimeout(() => setSource({ name: pkg.rootPath, data: new TextEncoder().encode(xml).buffer }), 400);
     return () => clearTimeout(timer);
-  }, [xml, pkg.resources, pkg.rootPath]);
+  }, [xml, pkg.rootPath]);
   useEffect(
     () => () => {
       generation.current++;
@@ -352,6 +333,7 @@ function EditorPage() {
         >
           <MaterialViewer
             source={source}
+            resources={pkg.resources}
             onError={setPreviewError}
             settings={viewerSettings(search)}
             onSettingsChange={(patch) =>

@@ -2,6 +2,7 @@ import { DEFAULT_VIEWER_SETTINGS, type ViewerSettings } from '@/lib/viewer-searc
 import { MaterialLoadingOverlay } from './MaterialLoadingOverlay';
 import type { MaterialLoadProgress } from '@/lib/material-load';
 import { useEffect, useRef, useState } from 'react';
+import { Cache } from 'three';
 import { MaterialSelect, ViewerSettingsPanel } from 'mtlx-viewer/react';
 import type { Viewer } from 'mtlx-viewer';
 import type { PreviewReport } from 'mtlx-viewer/diagnostics';
@@ -18,6 +19,11 @@ export interface MaterialSource {
 
 export interface MaterialViewerProps {
   source: MaterialSource | null;
+  /**
+   * Files the document references by archive-relative path, served to the loader as blob: URLs
+   * that stay stable while this array does, so an edited document reuses its decoded textures.
+   */
+  resources?: readonly { archivePath: string; data: Uint8Array }[];
   settings?: ViewerSettings;
   onSettingsChange?: (patch: Partial<ViewerSettings>) => void;
   loadProgress?: MaterialLoadProgress | null;
@@ -42,10 +48,17 @@ async function fetchBytes(url: string, signal: AbortSignal): Promise<ArrayBuffer
   return response.arrayBuffer();
 }
 
+/** The loader asks for the document's directory plus the reference; both forms name an archive path. */
+function resolveResource(urls: Map<string, string>, url: string): string | undefined {
+  const base = 'https://mtlx.invalid/';
+  return urls.get(url) ?? urls.get(decodeURI(new URL(url, base).href.slice(base.length)));
+}
+
 // three.js 0.186's MaterialXLoader (via mtlx-viewer) natively understands .mtlx and .mtlx.zip and
 // resolves textures embedded in the archive itself, so this component needs no zip handling.
 export function MaterialViewer({
   source,
+  resources,
   loadProgress,
   onError,
   onLog,
@@ -96,6 +109,25 @@ export function MaterialViewer({
     },
     [],
   );
+  const resourceUrls = useRef(new Map<string, string>());
+  useEffect(() => {
+    if (!resources?.length) return;
+    const urls = new Map(
+      resources.map((r) => [r.archivePath, URL.createObjectURL(new Blob([new Uint8Array(r.data)]))]),
+    );
+    resourceUrls.current = urls;
+    // three decodes each image URL once while its cache is on; the entries leave with their URLs.
+    Cache.enabled = true;
+    return () => {
+      resourceUrls.current = new Map();
+      for (const url of urls.values()) {
+        URL.revokeObjectURL(url);
+        Cache.remove(url);
+        Cache.remove(`image-bitmap:${url}`);
+      }
+      Cache.enabled = false;
+    };
+  }, [resources]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -146,6 +178,7 @@ export function MaterialViewer({
         fileName: source.name,
         shaderBall,
         settings: callbacks.current.settings,
+        resolveUrl: (url) => resolveResource(resourceUrls.current, url),
         loadEnvironment: async (kind) => {
           const url = ENVIRONMENT_URLS[kind] ?? ENVIRONMENT_URLS.studio!;
           return parseEnvironmentFile(await fetchBytes(url, abort.signal), url);
