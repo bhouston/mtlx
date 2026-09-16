@@ -172,13 +172,15 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       publish();
       onLog?.(`Failed to load resource: ${url}`);
     };
-    if (options.resolveUrl) manager.setURLModifier((url) => options.resolveUrl!(url) ?? url);
     registerHdrTextureHandler(manager);
     const mtlxScene = await createMtlxScene(camera, controls, {
       data: options.data,
       fileName: options.fileName,
       shaderBall: options.shaderBall,
       manager,
+      resolveUrl: options.resolveUrl,
+      onTranslationMessage: ({ severity, message: text }) =>
+        onLog?.(`WARNING: MaterialX translation ${severity} (material still rendered): ${text}`),
       autoRotate: applied.rotate,
       materialName: applied.materialName,
     });

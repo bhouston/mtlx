@@ -1,3 +1,4 @@
+import { createMaterialXZipArchive } from 'mtlx-core';
 import { expect, it, vi } from 'vitest';
 import * as THREE from 'three/webgpu';
 import { createMtlxScene } from './scene.js';
@@ -7,9 +8,20 @@ vi.mock('three/addons/loaders/MaterialXLoader.js', () => ({
     dispose() {
       loaderCalls.dispose();
     }
-    parseBuffer(data: ArrayBuffer, url: string) {
-      loaderCalls.parse(data, url);
+    parseBuffer(data: ArrayBuffer, url: string, options?: { throwOnErrors?: boolean }) {
+      loaderCalls.parse(data, url, options);
       if (url === 'empty.mtlx') return { materials: {} };
+      if (url === 'partial.mtlx')
+        return {
+          materials: { sample: new THREE.MeshStandardMaterial() },
+          log: [
+            { severity: 'error', message: 'Unsupported MaterialX node category "displacement" on "Displacement".' },
+            {
+              severity: 'warning',
+              message: 'standard_surface input "subsurface" is currently ignored in MaterialX translation.',
+            },
+          ],
+        };
       const names = url === 'two.mtlx' ? ['sample', 'other'] : ['sample'];
       return { materials: Object.fromEntries(names.map((name) => [name, new THREE.MeshStandardMaterial()])) };
     }
@@ -91,17 +103,35 @@ it('loads named geometry, applies the active material, resets it and releases or
 it('uses archive-local texture URLs and releases their blob resolver on disposal', async () => {
   loaderCalls.parse.mockClear();
   loaderCalls.dispose.mockClear();
-  const data = new Uint8Array([0x50, 0x4b, 3, 4]).buffer;
+  const mtlxText =
+    '<materialx><image name="sample"><input name="file" type="filename" value="textures/a.png"/></image></materialx>';
+  const zip = createMaterialXZipArchive([
+    { path: 'sample.mtlx', data: new TextEncoder().encode(mtlxText) },
+    { path: 'textures/a.png', data: new Uint8Array([1, 2, 3]) },
+  ]);
+  const data = zip.buffer.slice(zip.byteOffset, zip.byteOffset + zip.byteLength) as ArrayBuffer;
+  const createObjectURL = vi.spyOn(URL, 'createObjectURL');
+  const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL');
   const scene = await createMtlxScene(
     new THREE.PerspectiveCamera(45, 1),
     { target: new THREE.Vector3(), update: vi.fn() },
     { data, fileName: 'https://example.com/materials/compound.mtlx.zip', shaderBall: new ArrayBuffer(0) },
   );
-  expect(loaderCalls.parse).toHaveBeenCalledWith(data, '');
+  // Unpacked ourselves and fed the extracted document text through — not the raw archive bytes —
+  // so the .exr/.hdr handler (matched by manager.getHandler on the document's own reference
+  // strings) actually gets a chance to run for archive-embedded textures.
+  expect(loaderCalls.parse).toHaveBeenCalledWith(new TextEncoder().encode(mtlxText).buffer, '', {
+    throwOnErrors: false,
+  });
+  expect(createObjectURL).toHaveBeenCalledTimes(1);
   expect(loaderCalls.dispose).not.toHaveBeenCalled();
+  expect(revokeObjectURL).not.toHaveBeenCalled();
   scene.dispose();
   scene.dispose();
   expect(loaderCalls.dispose).toHaveBeenCalledTimes(1);
+  expect(revokeObjectURL).toHaveBeenCalledTimes(1);
+  createObjectURL.mockRestore();
+  revokeObjectURL.mockRestore();
 });
 
 it('replaces materials in place, keeping geometry, orientation and the selection when it still exists', async () => {
@@ -140,4 +170,26 @@ it('replaces materials in place, keeping geometry, orientation and the selection
   expect(mesh.material).toBe(current);
   scene.dispose();
   expect((current as THREE.Material).dispose).toBeDefined();
+});
+
+it('keeps the partial material and forwards loader errors instead of throwing', async () => {
+  const onTranslationMessage = vi.fn();
+  const scene = await createMtlxScene(
+    new THREE.PerspectiveCamera(),
+    { target: new THREE.Vector3(), update: () => {} },
+    {
+      data: new ArrayBuffer(0),
+      fileName: 'partial.mtlx',
+      shaderBall: new ArrayBuffer(0),
+      onTranslationMessage,
+    },
+  );
+  expect(loaderCalls.parse).toHaveBeenLastCalledWith(expect.anything(), 'partial.mtlx', { throwOnErrors: false });
+  expect(scene.materialNames).toEqual(['sample']);
+  expect(onTranslationMessage.mock.calls.map(([entry]) => entry.severity)).toEqual(['error', 'warning']);
+  expect(onTranslationMessage).toHaveBeenCalledWith({
+    severity: 'error',
+    message: 'Unsupported MaterialX node category "displacement" on "Displacement".',
+  });
+  scene.dispose();
 });

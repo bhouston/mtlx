@@ -9,22 +9,39 @@
  * Parsers take raw bytes rather than a URL — callers fetch/read the asset however fits their host
  * (Vite import, `vscode.workspace.fs.readFile`, etc.) and hand the bytes here.
  */
-import { EquirectangularReflectionMapping, SRGBColorSpace, Texture } from 'three';
-import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
+import { readExr, readHdr } from 'hdrify';
+import {
+  DataTexture,
+  EquirectangularReflectionMapping,
+  FloatType,
+  LinearSRGBColorSpace,
+  RGBAFormat,
+  SRGBColorSpace,
+  Texture,
+} from 'three';
+
+const EXR_MAGIC = [0x76, 0x2f, 0x31, 0x01];
+const isExrMagic = (bytes: Uint8Array): boolean => EXR_MAGIC.every((byte, i) => bytes[i] === byte);
 
 /** Parse an equirectangular IBL from its file extension (.hdr, .exr, .png, .jpg). */
 export async function parseEnvironmentFile(data: ArrayBuffer, source: string): Promise<Texture> {
   const path = source.split(/[?#]/)[0]!.toLowerCase();
   let texture: Texture;
   if (path.endsWith('.hdr') || path.endsWith('.exr')) {
-    // @types/three lags three's addon source: createDataTexture() (in-memory parse, no fetch)
-    // isn't in its DataTextureLoader typings yet.
-    const loader = (path.endsWith('.hdr')
-      ? new HDRLoader()
-      : new (await import('three/addons/loaders/EXRLoader.js')).EXRLoader()) as unknown as {
-      createDataTexture: (buffer: ArrayBuffer) => Texture;
-    };
-    texture = loader.createDataTexture(data);
+    // Decoded directly with hdrify rather than three's EXRLoader/HDRLoader: it covers every
+    // OpenEXR/Radiance HDR compression variant, and building the DataTexture ourselves avoids
+    // round-tripping through an EXR re-encode just to hand it back to a three.js decoder.
+    const bytes = new Uint8Array(data);
+    const image = isExrMagic(bytes) ? readExr(bytes) : readHdr(bytes);
+    texture = new DataTexture(image.data, image.width, image.height, RGBAFormat, FloatType);
+    texture.colorSpace = LinearSRGBColorSpace;
+    // DataTexture defaults flipY to false (unlike Texture, which defaults true and is what the
+    // .png/.jpg branch below relies on). hdrify's row 0 is the file's first scanline (top), so
+    // this needs the same GPU-upload flip as every other texture format here to come out right
+    // side up — matching three's own EXRLoader/HDRLoader, which instead pre-reverses scanlines at
+    // decode time and pairs that with flipY=false to the same visual effect.
+    texture.flipY = true;
+    texture.needsUpdate = true;
   } else if (/\.(png|jpe?g)$/.test(path)) {
     const bitmap = await createImageBitmap(new Blob([data]));
     texture = new Texture(bitmap);

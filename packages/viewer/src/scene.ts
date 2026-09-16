@@ -6,6 +6,7 @@
  * Callers own the renderer/camera/controls/animation-loop (each host has its own conventions for
  * that already) and just add `.root` to their scene and call `.update(deltaSeconds)` each frame.
  */
+import { inspectMaterialXZipArchive } from 'mtlx-core';
 import { collectDisposables } from './disposal.js';
 import * as THREE from 'three/webgpu';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -29,8 +30,16 @@ export interface MtlxSceneOptions {
   autoRotate?: boolean;
   /** The shaderball (`mtlx-viewer/assets/shaderball.glb`) used for the 'totem' geometry. */
   shaderBall: ArrayBuffer;
-  /** Supply your own if you need setURLModifier/onProgress/onError (e.g. for texture blobs). */
+  /** Supply your own if you need onProgress/onError wiring (e.g. for texture blobs). */
   manager?: THREE.LoadingManager;
+  /** Rewrite texture URLs the document references (e.g. to blob: URLs of bytes the host already read). */
+  resolveUrl?(url: string): string | undefined;
+  /**
+   * Loader translation log entries (e.g. an unsupported node or an ignored surface input). Errors
+   * never throw: parsing continues with a partial material, matching MaterialXView which ignores
+   * what it can't render.
+   */
+  onTranslationMessage?(entry: { severity: 'error' | 'warning'; message: string }): void;
 }
 
 /**
@@ -68,22 +77,69 @@ const ROTATION_RADIANS_PER_SECOND = (2 * Math.PI) / 40;
 
 interface MaterialXParseResult {
   materials: Record<string, THREE.Material>;
+  log?: { severity: 'error' | 'warning'; message: string }[];
   dispose(): void;
 }
 
-function parseMaterialX(manager: THREE.LoadingManager, data: ArrayBuffer, fileName: string): MaterialXParseResult {
+/**
+ * Unzips a `.mtlx.zip` archive into its root document text plus a blob URL per resource entry.
+ *
+ * Three's own vendored MaterialXLoader can unzip archives itself, but it resolves each texture to
+ * a blob URL *before* `manager.getHandler()` ever sees it — so our registered .exr/.hdr handler
+ * (which matches by file-extension regex) never matches an archive-embedded HDR texture, and it
+ * silently falls through to the default ImageBitmapLoader, which can't decode EXR/HDR at all. We
+ * unzip ourselves instead and feed the extracted document through the exact same blob-URL/handler
+ * pipeline already used for a loose `.mtlx`'s sibling textures, so archive-embedded and sibling
+ * textures behave identically.
+ */
+function unpackArchive(data: Uint8Array): { text: string; blobUrls: Map<string, string> } {
+  const archive = inspectMaterialXZipArchive(data);
+  if (!archive.rootEntry) {
+    throw new Error(archive.issues.map((issue) => issue.message).join('\n') || 'Invalid .mtlx.zip archive');
+  }
+  const blobUrls = new Map<string, string>();
+  for (const entry of archive.entries) {
+    if (entry.path === archive.rootEntry.path) continue;
+    blobUrls.set(entry.path, URL.createObjectURL(new Blob([entry.data.slice()])));
+  }
+  return { text: new TextDecoder().decode(archive.rootEntry.data), blobUrls };
+}
+
+/** `archiveUrls` is shared across every parse of one scene; repopulated (and the prior parse's
+ * blobs released) on each call, and must also be released when the scene itself is disposed. */
+function parseMaterialX(
+  manager: THREE.LoadingManager,
+  archiveUrls: Map<string, string>,
+  data: ArrayBuffer,
+  fileName: string,
+): MaterialXParseResult {
   // @types/three lags three's addon source: parseBuffer (native .mtlx.zip archive support) isn't
   // in its MaterialXLoader typings yet.
   const loader = new MaterialXLoader(manager) as unknown as {
-    parseBuffer: (data: ArrayBuffer, url?: string) => Pick<MaterialXParseResult, 'materials'>;
+    parseBuffer: (
+      data: ArrayBuffer,
+      url?: string,
+      options?: { throwOnErrors?: boolean },
+    ) => Pick<MaterialXParseResult, 'materials' | 'log'>;
     dispose(): void;
   };
   const signature = new Uint8Array(data, 0, Math.min(4, data.byteLength));
   const archive = signature[0] === 0x50 && signature[1] === 0x4b && signature[2] === 3 && signature[3] === 4;
+  for (const url of archiveUrls.values()) URL.revokeObjectURL(url);
+  archiveUrls.clear();
+  // Unsupported nodes (e.g. <displacement>) become logged errors, not a failed preview.
+  const parseOptions = { throwOnErrors: false };
   try {
-    // Archive textures resolve to blob URLs. ImageBitmapLoader prepends its path even to
-    // absolute URLs, so an archive must not inherit the document's HTTP/filesystem folder.
-    const result = loader.parseBuffer(data, archive ? '' : fileName);
+    if (archive) {
+      const { text, blobUrls } = unpackArchive(new Uint8Array(data));
+      for (const [path, url] of blobUrls) archiveUrls.set(path, url);
+      // Archive textures resolve to blob URLs via `archiveUrls`/`resolveUrl`. ImageBitmapLoader
+      // prepends its path even to absolute URLs, so an archive must not inherit the document's
+      // HTTP/filesystem folder.
+      const result = loader.parseBuffer(new TextEncoder().encode(text).buffer as ArrayBuffer, '', parseOptions);
+      return { ...result, dispose: () => loader.dispose() };
+    }
+    const result = loader.parseBuffer(data, fileName, parseOptions);
     return { ...result, dispose: () => loader.dispose() };
   } catch (error) {
     loader.dispose();
@@ -190,8 +246,11 @@ export async function createMtlxScene(
   options: MtlxSceneOptions,
 ): Promise<MtlxScene> {
   const manager = options.manager ?? new THREE.LoadingManager();
+  const archiveUrls = new Map<string, string>();
+  manager.setURLModifier((url) => archiveUrls.get(url) ?? options.resolveUrl?.(url) ?? url);
   const parse = (data: ArrayBuffer, fileName: string) => {
-    const parsed = parseMaterialX(manager, data, fileName);
+    const parsed = parseMaterialX(manager, archiveUrls, data, fileName);
+    for (const entry of parsed.log ?? []) options.onTranslationMessage?.(entry);
     if (Object.keys(parsed.materials).length === 0) {
       parsed.dispose();
       throw new Error('No materials found in this MaterialX document');
@@ -236,6 +295,8 @@ export async function createMtlxScene(
       if (disposed) return;
       disposed = true;
       document.dispose();
+      for (const url of archiveUrls.values()) URL.revokeObjectURL(url);
+      archiveUrls.clear();
       for (const dispose of additionalDisposers.splice(0)) dispose();
       root.removeFromParent();
       disposeGeometries();

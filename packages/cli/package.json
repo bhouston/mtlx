@@ -30,7 +30,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@sentry/node": "^10.74.0",
-    "hdrify": "^1.1.2",
+    "hdrify": "^1.1.4",
     "mtlx-core": "workspace:*",
     "mtlx-viewer": "workspace:*",
     "playwright-core": "^1.63.0",

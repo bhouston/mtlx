@@ -48,8 +48,8 @@ importers:
         specifier: ^10.74.0
         version: 10.74.0(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))
       hdrify:
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: ^1.1.4
+        version: 1.1.4
       mtlx-core:
         specifier: workspace:*
         version: link:../core
@@ -112,8 +112,8 @@ importers:
         specifier: ^0.8.3
         version: 0.8.3
       hdrify:
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: ^1.1.4
+        version: 1.1.4
       sharp:
         specifier: ^0.35.4
         version: 0.35.4(@types/node@22.20.1)
@@ -161,9 +161,15 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      hdrify:
+        specifier: ^1.1.4
+        version: 1.1.4
       lucide-react:
         specifier: ^0.544.0
         version: 0.544.0(react@19.3.0)
+      mtlx-core:
+        specifier: workspace:*
+        version: link:../core
       radix-ui:
         specifier: ^1.4.2
         version: 1.6.7(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -4079,8 +4085,8 @@ packages:
     resolution: {integrity: sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==}
     engines: {node: '>= 0.4'}
 
-  hdrify@1.1.2:
-    resolution: {integrity: sha512-ksrbv5OiC4tQ06przHF2pxhCiOfAMKGX/i2A4X81BQGinc3//hxVUmFDGUVa70pMBFbwNMeARAX43BiIqaMt0w==}
+  hdrify@1.1.4:
+    resolution: {integrity: sha512-aRVPVwV63yNG18ZqR/5bUlhUoUOiAyobmVzxwV7xTwJmKwIiLqLz+RE3pzTH9DX0IUUnKTpVgGGRhIhAtNGNdg==}
     engines: {node: '>=24.0.0'}
 
   hono@4.13.7:
@@ -9750,7 +9756,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hdrify@1.1.2:
+  hdrify@1.1.4:
     dependencies:
       buffer: 6.0.3
       fflate: 0.8.3
