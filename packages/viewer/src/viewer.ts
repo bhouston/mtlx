@@ -6,6 +6,7 @@
 import * as THREE from 'three/webgpu';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createEnvironmentSwitcher } from './environment.js';
+import { registerHdrTextureHandler } from './hdrTextureHandler.js';
 import { CleanupScope } from './lifecycle.js';
 import { createViewerRendering } from './rendering.js';
 import { IBL_OPTIONS, type ViewerSettings } from './renderingSettings.js';
@@ -172,6 +173,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       onLog?.(`Failed to load resource: ${url}`);
     };
     if (options.resolveUrl) manager.setURLModifier((url) => options.resolveUrl!(url) ?? url);
+    registerHdrTextureHandler(manager);
     const mtlxScene = await createMtlxScene(camera, controls, {
       data: options.data,
       fileName: options.fileName,

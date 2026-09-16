@@ -46,6 +46,7 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
     let disposed = false;
     let generation = 0;
     let ready = false;
+    let wasVisible = webviewPanel.visible;
     const assetAbort = new AbortController();
     const readSettings = () => {
       const config = vscode.workspace.getConfiguration('mtlx.preview', document.uri);
@@ -176,8 +177,11 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
       vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('mtlx.preview', document.uri)) scheduleRefresh();
       }),
+      // Fires on focus changes too; only a hidden panel becoming visible needs its data re-sent.
       webviewPanel.onDidChangeViewState(() => {
-        if (ready && webviewPanel.visible) void refresh();
+        const visible = webviewPanel.visible;
+        if (ready && visible && !wasVisible) void refresh();
+        wasVisible = visible;
       }),
     ];
     webviewPanel.onDidDispose(() => {

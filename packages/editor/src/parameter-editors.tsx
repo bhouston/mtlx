@@ -1,5 +1,5 @@
 import { DropdownMenu } from 'radix-ui';
-import { Diamond, Ellipsis, Link2, RefreshCw, Unplug, Upload } from 'lucide-react';
+import { Diamond, Ellipsis, Link2, RotateCcw, Unplug, Upload } from 'lucide-react';
 import { createContext, useContext, useId, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { RgbColorPicker, RgbaColorPicker } from 'react-colorful';
 import type { MaterialXNodePortSpec } from './model.js';
@@ -39,7 +39,7 @@ function ResetButton({ props }: { props: ParameterEditorProps }) {
       aria-label={`Reset ${props.parameter.name}`}
       onClick={props.onReset}
     >
-      <RefreshCw size={14} aria-hidden="true" />
+      <RotateCcw size={14} aria-hidden="true" />
     </button>
   );
 }

@@ -194,7 +194,12 @@ describe('preview lifecycle', () => {
     watcher().delete();
     await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(4));
     expect(host.postMessage.mock.calls[3]?.[0].textures).toHaveLength(0);
+    // A focus-only view state change (still visible) must not re-send the payload.
+    host.viewState();
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    expect(host.postMessage).toHaveBeenCalledTimes(4);
     (host.panel as unknown as { visible: boolean }).visible = false;
+    host.viewState();
     watcher().change();
     await new Promise((resolve) => setTimeout(resolve, 150));
     expect(host.postMessage).toHaveBeenCalledTimes(4);
