@@ -9,7 +9,8 @@
 Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca). Installs the `mtlx` command
 for validating, inspecting, packaging, previewing, and transforming MaterialX files
 (`.mtlx`, `.mtlx.zip`). Requires Node.js 22 or later. Texture conversion uses sharp's native image
-processing; browser-safe library imports are available separately through `mtlx-core`.
+processing for SDR formats (webp/png/jpg/avif) and hdrify for HDR formats (EXR/Radiance HDR);
+browser-safe library imports are available separately through `mtlx-core`.
 
 ```sh
 npm install --global mtlx-cli
@@ -61,7 +62,8 @@ under `dist/textures/`. `--texture-library` applies only to loose `.mtlx` output
 
 Check a source material before producing a portable artifact for a website or asset release.
 The `&&` runs packaging only if the selected checks pass; `--strict` treats warnings as
-failures too. The web profile resizes oversized textures and converts non-web image formats.
+failures too. The web profile resizes oversized textures and normalizes EXR compression to PIZ
+(the safest choice for Three.js/Babylon).
 
 ```sh
 mtlx check materials/wood.mtlx --rules basic structure types resources --strict &&
@@ -148,7 +150,11 @@ mtlx x material.mtlx.zip -o out/material.mtlx
 ```sh
 # Explicit format: re-encode textures as WebP and resize to 2048px.
 mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
-# Preset: resize to 2048px and preserve compatible image formats.
+# Multiple targets: SDR sources -> webp, HDR sources (EXR/Radiance HDR) -> EXR normalized to PIZ.
+# An HDR source is never sent to an SDR target implicitly; if no HDR target were given, it would
+# instead be linearly clipped to SDR (no tone mapping) rather than left as HDR.
+mtlx x material.mtlx -o material.mtlx.zip --image-format webp,exr:piz
+# Preset: resize to 2048px and normalize EXR compression to PIZ; otherwise preserve formats.
 mtlx x material.mtlx -o material.mtlx.zip --profile web
 ```
 
@@ -210,11 +216,35 @@ See [Processing pipelines](https://github.com/bhouston/mtlx/blob/main/packages/c
 `--profile <name>` is shorthand for a `--max-image-size`/`--image-format` pair. It's a filter,
 not a blanket re-encode: a texture already in an acceptable format and under the size ceiling
 passes through untouched, and only an incompatible or oversized texture is converted/resized.
-`--max-image-size`/`--image-format` each override the profile's value if also given.
+`--max-image-size`/`--image-format` each override the profile's value entirely if also given.
 
-| Profile | max size | format                                                                                                       |
-| ------- | -------- | ------------------------------------------------------------------------------------------------------------ |
-| `web`   | 2048px   | prefers webp (non-web sources default to webp; webp/png/jpg/avif sources keep their format unless oversized) |
+| Profile | max size | format                                                                                                                                  |
+| ------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `web`   | 2048px   | non-web SDR sources default to webp; EXR is normalized to PIZ compression (the safest for Three.js/Babylon); other formats pass through |
+
+### `--image-format`
+
+Comma-separated target formats: `webp`, `png`, `jpg`, `avif`, `exr`, `hdr`. Each source image
+converts to the target that shares its dynamic range:
+
+- SDR sources (webp/png/jpg/jpeg/avif and other 8-bit formats like tga/tiff/bmp) use the first
+  **SDR** target in the list. An SDR source with no SDR target given, and not already a web
+  format, still defaults to webp (so output always works directly in a browser).
+- HDR sources (EXR, Radiance `.hdr`) use the first **HDR** target in the list. Formats are never
+  cross-converted implicitly: `--image-format webp` alone never turns an EXR into a webp.
+- If an HDR source has no HDR target to go to (only SDR targets were requested), it's linearly
+  clipped to SDR: each channel is scaled by 255 and clamped to `[0, 255]`, with **no tone
+  mapping**. Highlights above 1.0 clip to white — expect blown-out results for genuinely HDR
+  content converted this way.
+
+Append `:<compression>` to `exr` to constrain its output compression, e.g. `exr:piz`. Supported
+codecs: `none`, `rle`, `zips`, `zip`, `piz`, `pxr24`, `b44`, `b44a`, `dwaa`, `dwab`. An EXR source
+already using the requested compression is left untouched; only a mismatch (e.g. a `b44` file
+with `exr:piz` requested) is re-encoded.
+
+```sh
+mtlx x material.mtlx -o material.mtlx.zip --image-format webp,exr:piz
+```
 
 ### `--texture-library`/`-tl`
 
@@ -339,12 +369,18 @@ patterns accepted), writing --output. A directory --output batch-converts each i
 instead of combining.
 
 Texture options:
-      --profile                Apply a named texture preset (e.g. "web": webp-preferred, 2048px
-                               max); only touches incompatible textures             [choices: "web"]
+      --profile                Apply a named texture preset (e.g. "web": webp-preferred, 2048px max,
+                               EXRs normalized to PIZ); only touches incompatible textures
+                                                                                    [choices: "web"]
       --max-image-size         Resize any texture whose longest edge exceeds this many pixels;
                                overrides --profile                                          [number]
-      --image-format           Convert textures to this image format; overrides --profile
-                                                             [choices: "webp", "png", "jpg", "avif"]
+      --image-format           Comma-separated target formats (webp,png,jpg,avif,exr,hdr); overrides
+                               --profile. Each source converts to the target sharing its dynamic
+                               range: SDR sources use the first SDR target, HDR sources (exr/hdr)
+                               use the first HDR target. An HDR source with no HDR target requested
+                               is linearly clipped to SDR (no tone mapping). Append ":<compression>"
+                               to exr (e.g. "exr:piz") to normalize EXR compression; supported:
+                               none, rle, zips, zip, piz, pxr24, b44, b44a, dwaa, dwab      [string]
       --image-quality          Quality for lossy image formats (webp/jpg/avif)[number] [default: 95]
       --texture-library, --tl  Loose .mtlx output only: copy textures into this directory (relative
                                to --output) instead of ./textures. Ignored for .mtlx.zip output,

@@ -15,8 +15,9 @@ The [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca) includes 
 mtlx works with loose `.mtlx` documents and `.mtlx.zip` archives. Try the
 [web viewer](https://mtlx.ben3d.ca), automate material preparation with the CLI, or embed the
 library in your application. The root `mtlx-core` API is browser-safe and has no filesystem or
-native imports. Node texture transforms use [sharp](https://sharp.pixelplumbing.com/), a native
-image-processing dependency installed with the package.
+native imports. Node texture transforms use [sharp](https://sharp.pixelplumbing.com/) for SDR
+formats (webp/png/jpg/avif) and [hdrify](https://www.npmjs.com/package/hdrify) for HDR formats
+(EXR/Radiance HDR), both installed with the package.
 
 Preview rendering uses three.js's MaterialX support. Validation checks selected document rules;
 neither a successful check nor a preview guarantees full MaterialX conformance or identical
@@ -68,8 +69,13 @@ import { resizeTextures } from 'mtlx-core/textures';
 // Load a .mtlx (with its textures) or .mtlx.zip into memory.
 const pkg = await loadMaterialXPackage('material.mtlx');
 
-// Apply transforms in order.
-await transform(pkg, resizeTextures({ maxImageSize: 2048, imageFormat: 'webp' }));
+// Apply transforms in order. Each source converts to the target sharing its dynamic range:
+// SDR sources (png/jpg/...) use the first SDR target, HDR sources (exr/hdr) use the first HDR
+// target. An HDR source with no HDR target requested is linearly clipped to SDR, no tone mapping.
+await transform(
+  pkg,
+  resizeTextures({ maxImageSize: 2048, targets: [{ format: 'webp' }, { format: 'exr', compression: 'piz' }] }),
+);
 
 // Write back out as either format.
 await writeMaterialXPackage(pkg, 'material.mtlx.zip');
@@ -99,7 +105,8 @@ mtlx info material.mtlx.zip --format json
 mtlx x material.mtlx -o material.mtlx.zip                         # pack
 mtlx x material.mtlx.zip -o out/material.mtlx                     # unpack
 mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
-mtlx x material.mtlx -o material.mtlx.zip --profile web           # resize; preserve compatible texture formats
+mtlx x material.mtlx -o material.mtlx.zip --image-format webp,exr:piz  # SDR->webp, HDR->EXR normalized to PIZ
+mtlx x material.mtlx -o material.mtlx.zip --profile web           # resize; normalizes EXR compression to PIZ
 mtlx x "{metal,wood,glass}.mtlx" -o combined.mtlx.zip             # combine
 mtlx x "materials/*.mtlx" -o out/                                 # batch: one output file per input
 ```

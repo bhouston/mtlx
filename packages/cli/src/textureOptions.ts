@@ -1,23 +1,44 @@
+import { EXR_COMPRESSIONS, type ExrCompression } from 'hdrify';
 import type { Transform } from 'mtlx-core';
-import { resizeTextures, type ImageFormat } from 'mtlx-core/textures';
+import { resizeTextures, type ImageFormat, type TextureTarget } from 'mtlx-core/textures';
 
-export const IMAGE_FORMATS = ['webp', 'png', 'jpg', 'avif'] as const;
+export const IMAGE_FORMATS = ['webp', 'png', 'jpg', 'avif', 'exr', 'hdr'] as const;
+const IMAGE_FORMAT_SET = new Set<string>(IMAGE_FORMATS);
+const EXR_COMPRESSION_SET = new Set<string>(EXR_COMPRESSIONS);
+
+/** Parses `--image-format webp,exr:piz` into targets. Only `exr` accepts a `:<compression>` suffix. */
+export const parseTextureTargets = (value: string): TextureTarget[] =>
+  value.split(',').map((entry) => {
+    const [format, compression] = entry.trim().split(':');
+    if (!format || !IMAGE_FORMAT_SET.has(format)) {
+      throw new Error(`Unknown --image-format "${format}"; expected one of ${IMAGE_FORMATS.join(', ')}`);
+    }
+    if (compression) {
+      if (format !== 'exr') {
+        throw new Error(`--image-format "${entry}": compression (":${compression}") is only valid for exr`);
+      }
+      if (!EXR_COMPRESSION_SET.has(compression)) {
+        throw new Error(`Unknown EXR compression "${compression}"; expected one of ${EXR_COMPRESSIONS.join(', ')}`);
+      }
+    }
+    return { format: format as ImageFormat, compression: compression as ExrCompression | undefined };
+  });
 
 /**
  * Named presets for `--profile`, each a shorthand for `--max-image-size`/`--image-format`.
- * `imageFormat` is deliberately left unset here: `resizeTextures`/`transformImage` in mtlx-core
- * already only reformat a texture whose extension isn't web-compatible (defaulting it to webp),
- * so leaving it unset keeps profile-driven conversion a filter (skip textures already fine)
- * rather than a blanket re-encode. An explicit `--image-format`/`--max-image-size` overrides the
- * profile.
+ * `web`'s targets only include an `exr:piz` entry (not a blanket SDR target): `resizeTextures`/
+ * `transformImage` in mtlx-core only reformat a texture whose extension isn't already a requested
+ * target, so this normalizes EXR compression to PIZ (the safest choice for Three.js/Babylon) and
+ * otherwise leaves textures whose classification has no explicit target alone. An explicit
+ * `--image-format`/`--max-image-size` overrides the profile entirely.
  */
 interface Profile {
   maxImageSize?: number;
-  imageFormat?: ImageFormat;
+  targets?: TextureTarget[];
 }
 
 export const PROFILES: Record<string, Profile> = {
-  web: { maxImageSize: 2048 },
+  web: { maxImageSize: 2048, targets: [{ format: 'exr', compression: 'piz' }] },
 };
 
 export const PROFILE_NAMES = Object.keys(PROFILES) as (keyof typeof PROFILES)[];
@@ -26,7 +47,7 @@ export const PROFILE_NAMES = Object.keys(PROFILES) as (keyof typeof PROFILES)[];
 export const textureTransformOptions = {
   profile: {
     describe:
-      'Apply a named texture preset (e.g. "web": webp-preferred, 2048px max); only touches incompatible textures',
+      'Apply a named texture preset (e.g. "web": webp-preferred, 2048px max, EXRs normalized to PIZ); only touches incompatible textures',
     choices: PROFILE_NAMES,
   },
   'max-image-size': {
@@ -34,8 +55,15 @@ export const textureTransformOptions = {
     type: 'number',
   },
   'image-format': {
-    describe: 'Convert textures to this image format; overrides --profile',
-    choices: IMAGE_FORMATS,
+    describe:
+      'Comma-separated target formats (webp,png,jpg,avif,exr,hdr); overrides --profile. ' +
+      'Each source converts to the target sharing its dynamic range: SDR sources use the first SDR ' +
+      'target, HDR sources (exr/hdr) use the first HDR target. An HDR source with no HDR target ' +
+      'requested is linearly clipped to SDR (no tone mapping). Append ":<compression>" to exr ' +
+      '(e.g. "exr:piz") to normalize EXR compression; supported: ' +
+      EXR_COMPRESSIONS.join(', '),
+    type: 'string',
+    coerce: parseTextureTargets,
   },
   'image-quality': {
     describe: 'Quality for lossy image formats (webp/jpg/avif)',
@@ -57,7 +85,7 @@ export const TEXTURE_OPTION_GROUP = 'Texture options:';
 export interface TextureTransformArgv {
   profile?: keyof typeof PROFILES;
   maxImageSize?: number;
-  imageFormat?: ImageFormat;
+  imageFormat?: TextureTarget[];
   imageQuality: number;
 }
 
@@ -66,8 +94,6 @@ export interface TextureTransformArgv {
 export const textureTransforms = (argv: TextureTransformArgv): Transform[] => {
   const profile = argv.profile ? PROFILES[argv.profile] : undefined;
   const maxImageSize = argv.maxImageSize ?? profile?.maxImageSize;
-  const imageFormat = argv.imageFormat ?? profile?.imageFormat;
-  return maxImageSize || imageFormat
-    ? [resizeTextures({ maxImageSize, imageFormat, imageQuality: argv.imageQuality })]
-    : [];
+  const targets = argv.imageFormat ?? profile?.targets;
+  return maxImageSize || targets ? [resizeTextures({ maxImageSize, targets, imageQuality: argv.imageQuality })] : [];
 };

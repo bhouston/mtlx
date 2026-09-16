@@ -41,16 +41,16 @@ describe('transformImage', () => {
     expect(result.extension).toBe('.png');
   });
 
-  it('converts format when imageFormat is given', async () => {
+  it('converts format when a matching target is given', async () => {
     const data = await makePng(16, 16);
-    const result = await transformImage(data, '.png', { imageFormat: 'webp' });
+    const result = await transformImage(data, '.png', { targets: [{ format: 'webp' }] });
     expect(result.changed).toBe(true);
     expect(result.extension).toBe('.webp');
     const metadata = await sharp(result.data).metadata();
     expect(metadata.format).toBe('webp');
   });
 
-  it('defaults non-web sources (tiff) to webp when no imageFormat is given', async () => {
+  it('defaults non-web sources (tiff) to webp when no SDR target is given', async () => {
     const tiff = await sharp({ create: { width: 16, height: 16, channels: 3, background: 'red' } })
       .tiff()
       .toBuffer();
@@ -65,16 +65,114 @@ describe('transformImage', () => {
     const data = await sharp({ create: { width: 128, height: 128, channels: 3, background: { r: 10, g: 200, b: 90 } } })
       .jpeg()
       .toBuffer();
-    const high = await transformImage(new Uint8Array(data), '.jpg', { imageFormat: 'jpg', imageQuality: 95 });
-    const low = await transformImage(new Uint8Array(data), '.jpg', { imageFormat: 'jpg', imageQuality: 10 });
+    const high = await transformImage(new Uint8Array(data), '.jpg', {
+      targets: [{ format: 'jpg' }],
+      imageQuality: 95,
+    });
+    const low = await transformImage(new Uint8Array(data), '.jpg', {
+      targets: [{ format: 'jpg' }],
+      imageQuality: 10,
+    });
     expect(low.data.byteLength).toBeLessThan(high.data.byteLength);
+  });
+
+  it('ignores an SDR target for an HDR source (dynamic-range classification keeps them apart)', async () => {
+    const { writeHdr } = await import('hdrify');
+    const hdr = writeHdr({
+      width: 2,
+      height: 2,
+      data: new Float32Array([2, 2, 2, 1, 0.5, 0.5, 0.5, 1, 2, 2, 2, 1, 0.5, 0.5, 0.5, 1]),
+      linearColorSpace: 'srgb-linear',
+    });
+    const result = await transformImage(hdr, '.hdr', { targets: [{ format: 'exr' }] });
+    expect(result.changed).toBe(true);
+    expect(result.extension).toBe('.exr');
+  });
+
+  it('linearly clips an HDR source to SDR (no tone mapping) when only an SDR target is requested', async () => {
+    const { writeHdr } = await import('hdrify');
+    const hdr = writeHdr({
+      width: 1,
+      height: 1,
+      data: new Float32Array([2, 0.5, 0, 1]),
+      linearColorSpace: 'srgb-linear',
+    });
+    const result = await transformImage(hdr, '.hdr', { targets: [{ format: 'png' }] });
+    expect(result.changed).toBe(true);
+    expect(result.extension).toBe('.png');
+    const raw = await sharp(result.data).raw().toBuffer();
+    expect(raw[0]).toBe(255); // 2.0 clips to 255
+    expect(raw[1]).toBeGreaterThanOrEqual(126); // ~0.5 * 255; RGBE encoding loses a little precision
+    expect(raw[1]).toBeLessThanOrEqual(128);
+    expect(raw[2]).toBeLessThanOrEqual(1); // ~0.0; RGBE can't represent exact 0
+  });
+
+  it('re-encodes EXR only when the requested compression differs from the source', async () => {
+    const { writeExr } = await import('hdrify');
+    const image = {
+      width: 2,
+      height: 2,
+      data: new Float32Array(16).fill(0.5),
+      linearColorSpace: 'srgb-linear' as const,
+    };
+    const b44 = writeExr(image, { compression: 'b44' });
+    const converted = await transformImage(b44, '.exr', { targets: [{ format: 'exr', compression: 'piz' }] });
+    expect(converted.changed).toBe(true);
+    expect(converted.extension).toBe('.exr');
+
+    const piz = writeExr(image, { compression: 'piz' });
+    const unchanged = await transformImage(piz, '.exr', { targets: [{ format: 'exr', compression: 'piz' }] });
+    expect(unchanged.changed).toBe(false);
+  });
+
+  it('resizes an oversized EXR whose longest edge exceeds maxImageSize', async () => {
+    const { readExr, writeExr } = await import('hdrify');
+    const exr = writeExr({
+      width: 8,
+      height: 4,
+      data: new Float32Array(8 * 4 * 4).fill(0.25),
+      linearColorSpace: 'srgb-linear',
+    });
+    const result = await transformImage(exr, '.exr', { maxImageSize: 4 });
+    expect(result.changed).toBe(true);
+    expect(result.extension).toBe('.exr');
+    const resized = readExr(result.data);
+    expect(resized.width).toBe(4);
+    expect(resized.height).toBe(2);
+  });
+
+  it('does not resize an EXR already under maxImageSize', async () => {
+    const { writeExr } = await import('hdrify');
+    const exr = writeExr({
+      width: 4,
+      height: 4,
+      data: new Float32Array(4 * 4 * 4).fill(0.25),
+      linearColorSpace: 'srgb-linear',
+    });
+    const result = await transformImage(exr, '.exr', { maxImageSize: 8 });
+    expect(result.changed).toBe(false);
+  });
+
+  it('resizes an oversized HDR source before linearly clipping it to SDR', async () => {
+    const { writeHdr } = await import('hdrify');
+    const hdr = writeHdr({
+      width: 8,
+      height: 4,
+      data: new Float32Array(8 * 4 * 4).fill(0.5),
+      linearColorSpace: 'srgb-linear',
+    });
+    const result = await transformImage(hdr, '.hdr', { maxImageSize: 4, targets: [{ format: 'png' }] });
+    expect(result.changed).toBe(true);
+    const metadata = await sharp(result.data).metadata();
+    expect(metadata.width).toBe(4);
+    expect(metadata.height).toBe(2);
   });
 });
 
 describe('resizeTextures', () => {
   it.each(['png', 'webp', 'avif'] as const)(
     'keeps colliding texture identities through %s conversion and archive roundtrip',
-    async (imageFormat) => {
+    async (format) => {
       const { parseMaterialX } = await import('./xml.js');
       const { packageToEntries, packageFromArchive } = await import('./package.js');
       const { createMaterialXZipArchive, inspectMaterialXZipArchive } = await import('./mtlxzip.js');
@@ -97,7 +195,7 @@ describe('resizeTextures', () => {
           },
         ],
       };
-      await resizeTextures({ imageFormat })(pkg);
+      await resizeTextures({ targets: [{ format }] })(pkg);
       const result = packageFromArchive(inspectMaterialXZipArchive(createMaterialXZipArchive(packageToEntries(pkg))));
       expect(new Set(result.resources.map((r) => r.archivePath)).size).toBe(2);
       const colors = await Promise.all(
@@ -128,7 +226,7 @@ describe('resizeTextures', () => {
       ],
     };
 
-    await transform(pkg, resizeTextures({ maxImageSize: 32, imageFormat: 'webp' }));
+    await transform(pkg, resizeTextures({ maxImageSize: 32, targets: [{ format: 'webp' }] }));
 
     expect(pkg.resources.map((resource) => resource.archivePath)).toEqual([
       'textures/albedo.webp',

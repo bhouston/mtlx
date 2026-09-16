@@ -72,7 +72,7 @@ export interface MaterialXResource {
  * import { resizeTextures } from 'mtlx-core/textures';
  *
  * const pkg = await loadMaterialXPackage('material.mtlx');
- * await transform(pkg, resizeTextures({ maxImageSize: 1024, imageFormat: 'webp' }));
+ * await transform(pkg, resizeTextures({ maxImageSize: 1024, targets: [{ format: 'webp' }] }));
  * await writeMaterialXPackage(pkg, 'material.mtlx.zip');
  * ```
  *
