@@ -1,7 +1,13 @@
 import { createEditorSession } from 'mtlx-core/session';
 import { createFileRoute, useLocation } from '@tanstack/react-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { cloneMaterialXDocument, relativeResourcePath, serializeMaterialX, type MaterialXPackage } from 'mtlx-core';
+import {
+  cloneMaterialXDocument,
+  createMaterialXDocument,
+  relativeResourcePath,
+  serializeMaterialX,
+  type MaterialXPackage,
+} from 'mtlx-core';
 import {
   MaterialXNodeGraph,
   useEditorSession,
@@ -79,9 +85,11 @@ function EditorPage() {
   const activeController = useRef<AbortController | null>(null);
   const [loadedSource, setLoadedSource] = useState<{ url?: string; xml: string; resources?: unknown }>({ xml: '' });
   const offeredDraft = useRef(false);
+  // A URL-sourced material starts empty rather than briefly showing the default material.
+  const hasUrlSource = Boolean(search.materialUrl) || hasEditorSnapshot(hash);
   const [loadedPackage, setPackage] = useState<MaterialXPackage>(() => ({
     rootPath: 'material.mtlx',
-    document: createDefaultDocument(),
+    document: hasUrlSource ? createMaterialXDocument({ version: '1.39' }) : createDefaultDocument(),
     resources: [],
   }));
   const [session] = useState(() => createEditorSession({ document: loadedPackage.document }));
@@ -102,7 +110,7 @@ function EditorPage() {
   const [error, setError] = useState('');
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [source, setSource] = useState<MaterialSource | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(hasUrlSource);
   const layout = search.layout ?? 'vertical';
   const setLayout = (next: EditorLayout) =>
     void navigate({
