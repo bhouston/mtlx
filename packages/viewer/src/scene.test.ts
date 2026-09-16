@@ -193,3 +193,22 @@ it('keeps the partial material and forwards loader errors instead of throwing', 
   });
   scene.dispose();
 });
+
+const bytes = (text: string) => new TextEncoder().encode(text).buffer as ArrayBuffer;
+it('flags documents that use time or frame nodes as animated, per parse', async () => {
+  const scene = await createMtlxScene(
+    new THREE.PerspectiveCamera(45, 1),
+    { target: new THREE.Vector3(), update: vi.fn() },
+    {
+      data: bytes('<materialx><time name="t" type="float" /></materialx>'),
+      fileName: 'a.mtlx',
+      shaderBall: new ArrayBuffer(0),
+    },
+  );
+  expect(scene.animated).toBe(true);
+  scene.replaceMaterials(bytes('<materialx><image name="frames" file="framerange.png" /></materialx>'), 'a.mtlx');
+  expect(scene.animated).toBe(false);
+  scene.replaceMaterials(bytes('<materialx><frame name="f" type="float"/></materialx>'), 'a.mtlx');
+  expect(scene.animated).toBe(true);
+  scene.dispose();
+});

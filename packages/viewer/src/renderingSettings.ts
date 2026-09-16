@@ -38,6 +38,9 @@ export const BACKGROUND_OPTIONS = [
 ] as const;
 export type BackgroundKind = (typeof BACKGROUND_OPTIONS)[number]['value'];
 
+/** `false` hides the play/pause control; `'play'`/`'pause'` set the initial state; undefined plays. */
+export type AnimationMode = false | 'play' | 'pause' | undefined;
+
 export const DEFAULT_VIEWER_SETTINGS = {
   ibl: 'bridge' as 'bridge' | 'studio',
   background: 'environment' as BackgroundKind,

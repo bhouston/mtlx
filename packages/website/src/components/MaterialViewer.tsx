@@ -1,9 +1,10 @@
 import { DEFAULT_VIEWER_SETTINGS, type ViewerSettings } from '@/lib/viewer-search';
+import type { AnimationMode } from 'mtlx-viewer/settings';
 import { MaterialLoadingOverlay } from './MaterialLoadingOverlay';
 import type { MaterialLoadProgress } from '@/lib/material-load';
 import { useEffect, useRef, useState } from 'react';
 import { Cache } from 'three';
-import { MaterialSelect, ViewerSettingsPanel } from 'mtlx-viewer/react';
+import { AnimationToggle, MaterialSelect, ViewerSettingsPanel } from 'mtlx-viewer/react';
 import type { Viewer } from 'mtlx-viewer';
 import type { PreviewReport } from 'mtlx-viewer/diagnostics';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
@@ -26,6 +27,8 @@ export interface MaterialViewerProps {
   resources?: readonly { archivePath: string; data: Uint8Array }[];
   settings?: ViewerSettings;
   onSettingsChange?: (patch: Partial<ViewerSettings>) => void;
+  /** Play/pause for `<time>`/`<frame>` materials: `false` hides the button; defaults to playing. */
+  animationMode?: AnimationMode;
   loadProgress?: MaterialLoadProgress | null;
   onError: (message: string | null) => void;
   /** Diagnostics for the log panel — mirrors the VS Code extension's webview log. */
@@ -65,6 +68,7 @@ export function MaterialViewer({
   onStatus,
   settings,
   onSettingsChange,
+  animationMode,
 }: MaterialViewerProps) {
   const [localSettings, setLocalSettings] = useState<ViewerSettings>(DEFAULT_VIEWER_SETTINGS);
   const currentSettings = settings ?? localSettings;
@@ -97,9 +101,9 @@ export function MaterialViewer({
   // Identifies the viewer being built or shown, so callbacks from a superseded build never show through.
   const owner = useRef<object | null>(null);
   // Callbacks and the initial settings are read from a ref so a new source never rebuilds the viewer.
-  const callbacks = useRef({ onError, onLog, onStatus, settings: currentSettings });
+  const callbacks = useRef({ onError, onLog, onStatus, settings: currentSettings, animationMode });
   useEffect(() => {
-    callbacks.current = { onError, onLog, onStatus, settings: currentSettings };
+    callbacks.current = { onError, onLog, onStatus, settings: currentSettings, animationMode };
   });
   useEffect(
     () => () => {
@@ -178,6 +182,7 @@ export function MaterialViewer({
         fileName: source.name,
         shaderBall,
         settings: callbacks.current.settings,
+        playing: callbacks.current.animationMode !== 'pause',
         resolveUrl: (url) => resolveResource(resourceUrls.current, url),
         loadEnvironment: async (kind) => {
           const url = ENVIRONMENT_URLS[kind] ?? ENVIRONMENT_URLS.studio!;
@@ -249,6 +254,7 @@ export function MaterialViewer({
         value={materialNames.includes(materialName) ? materialName : (viewer?.scene.activeMaterial ?? '')}
         onChange={(name) => updateSettings({ materialName: name })}
       />
+      <AnimationToggle viewer={viewer} mode={animationMode} />
       <output className="sr-only">Preview: {previewState}</output>
       <div
         ref={containerRef}

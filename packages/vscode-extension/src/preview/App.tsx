@@ -8,6 +8,7 @@ import {
   MaterialSelect,
   MaterialViewTabs,
   ViewerSettingsPanel,
+  AnimationToggle,
 } from 'mtlx-viewer/react';
 import { computeChecks, type CheckState } from 'mtlx-viewer/diagnostics';
 import type { ViewerSettings } from 'mtlx-viewer/settings';
@@ -126,6 +127,7 @@ export function PreviewApp() {
         ...normalized.settings,
         rotate: normalized.settings.rotate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
       },
+      playing: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
       camera: normalized.camera,
       onCamera: (camera) => updateState((current) => ({ ...current, camera })),
     })
@@ -237,6 +239,7 @@ export function PreviewApp() {
                 }
                 onChange={(name) => updateSettings({ materialName: name })}
               />
+              <AnimationToggle viewer={viewer} />
               {error ? (
                 <div
                   role="alert"

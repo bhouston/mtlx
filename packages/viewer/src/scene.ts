@@ -70,6 +70,8 @@ export interface MtlxScene {
   resetCamera(): void;
   /** Call every frame; advances the auto-rotation. */
   update(deltaSeconds: number): void;
+  /** The current document uses `<time>` or `<frame>` nodes, so it changes as time runs. */
+  animated: boolean;
 }
 
 // One full turn every 40s - slow enough to inspect the material, still reads as "spinning".
@@ -78,8 +80,12 @@ const ROTATION_RADIANS_PER_SECOND = (2 * Math.PI) / 40;
 interface MaterialXParseResult {
   materials: Record<string, THREE.Material>;
   log?: { severity: 'error' | 'warning'; message: string }[];
+  animated: boolean;
   dispose(): void;
 }
+
+// ponytail: document-level text sniff; per-material graph walk if a multi-material doc ever needs it.
+const usesTimeNodes = (text: string) => /<(time|frame)[\s/>]/.test(text);
 
 /**
  * Unzips a `.mtlx.zip` archive into its root document text plus a blob URL per resource entry.
@@ -137,10 +143,11 @@ function parseMaterialX(
       // prepends its path even to absolute URLs, so an archive must not inherit the document's
       // HTTP/filesystem folder.
       const result = loader.parseBuffer(new TextEncoder().encode(text).buffer as ArrayBuffer, '', parseOptions);
-      return { ...result, dispose: () => loader.dispose() };
+      return { ...result, animated: usesTimeNodes(text), dispose: () => loader.dispose() };
     }
     const result = loader.parseBuffer(data, fileName, parseOptions);
-    return { ...result, dispose: () => loader.dispose() };
+    const animated = usesTimeNodes(new TextDecoder().decode(data));
+    return { ...result, animated, dispose: () => loader.dispose() };
   } catch (error) {
     loader.dispose();
     throw error;
@@ -308,6 +315,7 @@ export async function createMtlxScene(
       options.materialName && materials[options.materialName] ? options.materialName : materialNames.at(-1)!,
     geometry: options.geometry && geometries[options.geometry] ? options.geometry : 'totem',
     autoRotate: options.autoRotate ?? true,
+    animated: document.animated,
     setMaterial(name) {
       const material = materials[name];
       if (!material) return;
@@ -321,6 +329,7 @@ export async function createMtlxScene(
       document.dispose();
       document = next;
       materials = next.materials;
+      scene.animated = next.animated;
       scene.materialNames = Object.keys(materials);
       scene.setMaterial(materials[scene.activeMaterial] ? scene.activeMaterial : scene.materialNames.at(-1)!);
     },

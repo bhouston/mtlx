@@ -16,6 +16,8 @@ export interface PreviewSceneOptions {
   shaderBall: ArrayBuffer;
   settings: PreviewSettings;
   viewerSettings: ViewerSettings;
+  /** Whether `<time>`/`<frame>` nodes run from the first frame. */
+  playing?: boolean;
   camera?: PreviewCamera;
   /** Called when the orbit ends and on disposal, so the camera survives the webview being recreated. */
   onCamera: (camera: PreviewCamera) => void;
@@ -51,6 +53,7 @@ export async function startPreviewScene(options: PreviewSceneOptions): Promise<V
       fileName: options.fileName,
       shaderBall: options.shaderBall,
       settings: options.viewerSettings,
+      playing: options.playing,
       resolveUrl: (url) => {
         const normalized = new URL(url, 'https://mtlx.invalid/').href.slice('https://mtlx.invalid/'.length);
         return textureUrls.get(url) ?? textureUrls.get(normalized);

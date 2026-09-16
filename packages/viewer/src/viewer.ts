@@ -4,6 +4,7 @@
  * only I/O (how to fetch environments and geometries, where to log) and UI.
  */
 import * as THREE from 'three/webgpu';
+import { frameId, time } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createEnvironmentSwitcher } from './environment.js';
 import { registerHdrTextureHandler } from './hdrTextureHandler.js';
@@ -25,6 +26,8 @@ export interface ViewerOptions {
   fileName: string;
   shaderBall: ArrayBuffer;
   settings: ViewerSettings;
+  /** Whether MaterialX `<time>`/`<frame>` nodes advance from the first frame; defaults to true. */
+  playing?: boolean;
   loadEnvironment(kind: string): Promise<THREE.Texture>;
   /** Host-configured geometries beyond totem/sphere/cube/plane; `manager` resolves glTF sidecar files. */
   loadGeometry?(name: string): Promise<{ data: ArrayBuffer; manager?: THREE.LoadingManager }>;
@@ -45,6 +48,9 @@ export interface Viewer {
   readonly scene: MtlxScene;
   readonly camera: THREE.PerspectiveCamera;
   readonly controls: OrbitControls;
+  /** Whether MaterialX `<time>`/`<frame>` nodes run forward; `scene.animated` says whether the document has any. */
+  readonly playing: boolean;
+  setPlaying(playing: boolean): void;
   /** Apply a full settings object; only changed fields do work. Resolves to what actually took effect. */
   setSettings(settings: ViewerSettings): Promise<ViewerSettings>;
   /**
@@ -231,10 +237,27 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     report.state = 'ready';
     publish();
     onStage?.('ready');
+    // MaterialX time/frame compile to three's shared `time`/`frameId` uniforms, which three advances
+    // from wall-clock on every render. Feed them from this clock instead so they can pause.
+    // ponytail: the uniforms are module singletons, so the newest viewer on a page owns them.
+    let playing = options.playing ?? true;
+    let animationTime = 0;
+    let animationFrame = 0;
+    time.onRenderUpdate(() => animationTime);
+    frameId.onRenderUpdate(() => animationFrame);
+    scope.own(() => {
+      time.onRenderUpdate((frame) => frame.time);
+      frameId.onRenderUpdate((frame) => frame.frameId);
+    });
     let clock = performance.now();
     renderer.setAnimationLoop(() => {
       const now = performance.now();
-      mtlxScene.update((now - clock) / 1000);
+      const delta = (now - clock) / 1000;
+      mtlxScene.update(delta);
+      if (playing) {
+        animationTime += delta;
+        animationFrame++;
+      }
       clock = now;
       controls.update();
       try {
@@ -254,6 +277,12 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       scene: mtlxScene,
       camera,
       controls,
+      get playing() {
+        return playing;
+      },
+      setPlaying(next) {
+        playing = next;
+      },
       async setSettings(next) {
         if (scope.disposed) return applied;
         applyRendering(next);

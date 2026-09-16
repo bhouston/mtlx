@@ -13,6 +13,8 @@
  * - `background`: `environment` (default) shows the IBL; `none` leaves the backdrop transparent.
  * - `tone-mapping`: one of {@link TONE_MAPPING_OPTIONS}; defaults to `neutral`.
  * - `exposure` (-2..2), `intensity` (0..2).
+ * - `animation`: `play` (default) | `pause` | `false` — for documents with `<time>`/`<frame>` nodes,
+ *   a play/pause button appears; `false` hides it and leaves the animation running.
  * - `settings-panel`: `open` | `closed` | `hidden` (default) — a built-in overlay for the above.
  *   `closed` shows just the toggle button; `hidden` shows nothing.
  *
@@ -53,12 +55,13 @@ const optionsHtml = (options: readonly SettingsOption[]) =>
 const PANEL_STYLE = `
   :host { position: relative; }
   .viewport { position: absolute; inset: 0; }
+  .play { position: absolute; right: 8px; top: 8px; z-index: 1; }
   .toggle {
     position: absolute; right: 8px; bottom: 8px; z-index: 1;
     width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer;
     background: rgba(20, 20, 24, 0.7); color: #fff; font-size: 16px; line-height: 1;
   }
-  .panel {
+  .play, .panel {
     position: absolute; right: 8px; bottom: 48px; z-index: 1; width: 220px;
     background: rgba(20, 20, 24, 0.85); color: #fff; border-radius: 8px; padding: 10px 12px;
     font: 12px system-ui, sans-serif; display: none; flex-direction: column; gap: 8px;
@@ -97,6 +100,7 @@ export class MaterialViewerElement extends HTMLElement {
       'tone-mapping',
       'exposure',
       'intensity',
+      'animation',
       'settings-panel',
     ];
   }
@@ -105,6 +109,7 @@ export class MaterialViewerElement extends HTMLElement {
   #generation = 0;
   readonly #viewportEl: HTMLDivElement;
   readonly #toggleEl: HTMLButtonElement;
+  readonly #playEl: HTMLButtonElement;
   readonly #panelEl: HTMLDivElement;
 
   constructor() {
@@ -121,11 +126,18 @@ export class MaterialViewerElement extends HTMLElement {
     this.#toggleEl.hidden = true;
     this.#toggleEl.setAttribute('aria-label', 'Viewer settings');
     this.#toggleEl.addEventListener('click', () => this.#panelEl.classList.toggle('open'));
+    this.#playEl = document.createElement('button');
+    this.#playEl.type = 'button';
+    this.#playEl.className = 'toggle play';
+    this.#playEl.hidden = true;
+    this.#playEl.addEventListener('click', () =>
+      this.setAttribute('animation', this.#viewer?.playing ? 'pause' : 'play'),
+    );
     this.#panelEl = document.createElement('div');
     this.#panelEl.className = 'panel';
     this.#panelEl.innerHTML = PANEL_HTML;
     this.#panelEl.querySelector('#tone-mapping')!.innerHTML = optionsHtml(TONE_MAPPING_OPTIONS);
-    shadow.append(style, this.#viewportEl, this.#toggleEl, this.#panelEl);
+    shadow.append(style, this.#viewportEl, this.#playEl, this.#toggleEl, this.#panelEl);
     this.#bindControls();
   }
 
@@ -139,6 +151,11 @@ export class MaterialViewerElement extends HTMLElement {
     if (!this.isConnected) return;
     if (name === 'settings-panel') {
       this.#syncPanelState();
+      return;
+    }
+    if (name === 'animation') {
+      this.#viewer?.setPlaying(this.#playing());
+      this.#syncPlayButton();
       return;
     }
     if (RELOAD_ATTRIBUTES.has(name)) {
@@ -174,6 +191,15 @@ export class MaterialViewerElement extends HTMLElement {
     bind('ao', 'ao', (el) => (el.checked ? null : 'false'));
     bind('exposure', 'exposure', (el) => el.value);
     bind('intensity', 'intensity', (el) => el.value);
+  }
+
+  #playing = () => this.getAttribute('animation') !== 'pause';
+
+  #syncPlayButton(): void {
+    const viewer = this.#viewer;
+    this.#playEl.hidden = !viewer?.scene.animated || this.getAttribute('animation') === 'false';
+    this.#playEl.textContent = viewer?.playing ? '❚❚' : '▶';
+    this.#playEl.setAttribute('aria-label', viewer?.playing ? 'Pause animation' : 'Play animation');
   }
 
   #syncPanelState(): void {
@@ -257,6 +283,7 @@ export class MaterialViewerElement extends HTMLElement {
         fileName: src,
         shaderBall,
         settings: this.#readSettings(),
+        playing: this.#playing(),
         loadEnvironment: async (kind) => {
           const asset = BUILTIN_IBLS[kind];
           return parseEnvironmentFile(await fetchBytes(asset ?? kind), asset ? asset.pathname : kind);
@@ -273,6 +300,7 @@ export class MaterialViewerElement extends HTMLElement {
       this.#viewer = viewer;
       this.#buildOptions();
       this.#syncControls();
+      this.#syncPlayButton();
       this.dispatchEvent(new Event('load'));
     } catch (error) {
       if (generation !== this.#generation) return;
