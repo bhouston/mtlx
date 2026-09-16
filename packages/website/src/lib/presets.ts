@@ -20,6 +20,7 @@ export const PRESET_MATERIALS: PresetMaterial[] = [
   { category: 'gltf_pbr', name: 'glass_dispersion' },
   { category: 'local', name: 'compound' },
   { category: 'local', name: 'compound_zip', format: 'mtlx.zip' },
+  { category: 'local', name: 'displacement' },
   // Intentionally invalid graphs for inspecting editor diagnostics.
   { category: 'local', name: 'error_invalid_values' },
   { category: 'local', name: 'error_connection_type' },
