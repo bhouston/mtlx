@@ -287,6 +287,60 @@ export function cloneNode(
     siblings.push(cloned);
   });
 }
+/** Shape check for elements arriving from outside the document, such as clipboard JSON. */
+const validElement = (e: unknown): e is MaterialXElement =>
+  typeof e === 'object' &&
+  e !== null &&
+  typeof (e as MaterialXElement).name === 'string' &&
+  typeof (e as MaterialXElement).attributes?.name === 'string' &&
+  Object.values((e as MaterialXElement).attributes).every((v) => typeof v === 'string') &&
+  Array.isArray((e as MaterialXElement).children) &&
+  (e as MaterialXElement).children.every(validElement);
+/** Insert copies of nodes into a scope: colliding names get suffixed, wires among them are kept, wires to anything else are dropped. */
+export function pasteNodes(
+  document: MaterialXDocument,
+  elements: readonly MaterialXElement[],
+  scope = '',
+  offset: Point = { x: 0, y: 0 },
+): MaterialXDocument {
+  if (!elements.length || !elements.every(validElement)) throw new Error('Clipboard does not hold MaterialX nodes.');
+  return edit(document, (copy) => {
+    const siblings = children(copy, scope);
+    const pasted = elements.map((element) => structuredClone(element) as MaterialXElement);
+    const renames = new Map<string, string>();
+    const taken = (name: string) =>
+      siblings.some((element) => element.attributes.name === name) || [...renames.values()].includes(name);
+    for (const element of pasted) {
+      if (['input', 'output'].includes(element.name) ? !scope : element.name === 'nodegraph' && scope)
+        throw new Error(
+          element.name === 'nodegraph'
+            ? 'Node graphs cannot be nested inside another node graph.'
+            : 'Interface inputs and outputs belong inside a node graph.',
+        );
+      const base = element.attributes.name!;
+      let name = base;
+      for (let i = 2; taken(name); i++) name = `${base}_${i}`;
+      renames.set(base, name);
+      element.attributes.name = name;
+      if (element.attributes.xpos !== undefined) {
+        element.attributes.xpos = String(Number(element.attributes.xpos) + offset.x);
+        element.attributes.ypos = String(Number(element.attributes.ypos) + offset.y);
+      }
+    }
+    // Only sibling references travel; anything pointing outside the pasted set becomes unconnected.
+    const ports = pasted.flatMap((element) =>
+      element.name === 'output' ? [element.attributes] : element.children.map((child) => child.attributes),
+    );
+    for (const attributes of ports)
+      for (const key of ['nodename', 'interfacename', 'nodegraph'] as const) {
+        if (attributes[key] === undefined) continue;
+        const target = renames.get(attributes[key]);
+        if (target) attributes[key] = target;
+        else clearConnection(attributes);
+      }
+    siblings.push(...pasted);
+  });
+}
 export function setInputValue(
   document: MaterialXDocument,
   node: string,

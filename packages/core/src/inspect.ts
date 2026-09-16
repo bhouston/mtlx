@@ -8,12 +8,24 @@ import { MATERIALX_VALIDATION_RULES, validateDocument } from './validate.js';
 import { validateMaterialXPackage } from './validate-package.js';
 import { parseMaterialX } from './xml.js';
 
+/** One file that makes up a material: the root document, a texture, or a nested document. @category Validation */
+export interface MaterialXAsset {
+  /** Relative to the root document's directory; for archives, the entry path. */
+  path: string;
+  /** Uncompressed size; undefined when the resource could not be read. */
+  bytes?: number;
+}
+
 /** Results of every available rule, with explicit resource coverage. @category Validation */
 export interface MaterialXInspection {
   issues: MaterialXValidationIssue[];
   summary?: MaterialXSummary;
   parseError?: string;
   resourcesChecked: boolean;
+  /** Root document first, then every dependency that was attempted. */
+  assets: MaterialXAsset[];
+  /** Sum of every readable asset. */
+  totalBytes: number;
   /** All attempted paths, including missing files, relative to the root document's directory. */
   resourcePaths: string[];
   /** Successfully read loose resources; hosts may reuse their bytes for rendering. */
@@ -32,7 +44,18 @@ export async function inspectMaterialX(
   fileName: string,
   options: { readResource?: ResourceReader; supportedCategories?: readonly string[] } = {},
 ): Promise<MaterialXInspection> {
-  const result: MaterialXInspection = { issues: [], resourcesChecked: false, resourcePaths: [], resources: [] };
+  const result: MaterialXInspection = {
+    issues: [],
+    resourcesChecked: false,
+    assets: [],
+    totalBytes: 0,
+    resourcePaths: [],
+    resources: [],
+  };
+  const addAsset = (path: string, bytes?: number) => {
+    result.assets.push(bytes === undefined ? { path } : { path, bytes });
+    result.totalBytes += bytes ?? 0;
+  };
   const validation = { rules: MATERIALX_VALIDATION_RULES, supportedCategories: options.supportedCategories };
   try {
     if ((raw[0] === 0x50 && raw[1] === 0x4b) || /\.mtlx\.zip(?:[?#]|$)/i.test(fileName)) {
@@ -42,6 +65,9 @@ export async function inspectMaterialX(
       if (!archive.rootEntry)
         throw new Error(result.issues.map((issue) => issue.message).join('\n') || 'No root MaterialX document');
       result.summary = summarizeMaterialX(fileName, parseMaterialX(new TextDecoder().decode(archive.rootEntry.data)));
+      addAsset(archive.rootEntry.path, archive.rootEntry.data.byteLength);
+      for (const entry of archive.entries)
+        if (entry !== archive.rootEntry && !entry.path.endsWith('/')) addAsset(entry.path, entry.data.byteLength);
       return result;
     }
     const document = parseMaterialX(new TextDecoder().decode(raw));
@@ -52,9 +78,11 @@ export async function inspectMaterialX(
       document,
       resources: result.resources,
     };
+    addAsset(pkg.rootPath, raw.byteLength);
     const initialEdges = buildResourceGraph(pkg).edges;
     if (!options.readResource && initialEdges.length) {
       result.resourcePaths = [...new Set(initialEdges.map((edge) => edge.targetPath))];
+      for (const target of result.resourcePaths) addAsset(target);
       result.issues = validateDocument(document, validation);
       return result;
     }
@@ -93,7 +121,9 @@ export async function inspectMaterialX(
           const resource: MaterialXResource = { id: target, archivePath: target, sourcePath: target, data };
           if (/\.mtlx(?:[?#]|$)/i.test(target)) resource.document = parseMaterialX(new TextDecoder().decode(data));
           result.resources.push(resource);
+          addAsset(target, data.byteLength);
         } catch (error) {
+          addAsset(target);
           result.issues.push({
             level: 'error',
             rule: 'resources',

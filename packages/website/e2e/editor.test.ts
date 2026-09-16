@@ -69,12 +69,13 @@ test('node library lists families directly and finds them by any variant name', 
   expect(await library.getByRole('button', { name: 'tiledimage', exact: true }).count()).toBe(1);
   expect(errors).toEqual([]);
 });
-test('context menu adds categorized nodes, clones and deletes the clicked node', async () => {
+test('context menu adds categorized nodes, copies, pastes and deletes the clicked node', async () => {
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   const pane = page.locator('.react-flow__pane');
   // Empty canvas near the bottom edge: clear of the breadcrumb overlay, the nodes and the zoom controls.
   const corner = { x: 120, y: (await pane.boundingBox())!.height - 30 };
   await pane.click({ button: 'right', position: corner });
-  expect(await page.getByRole('menuitem', { name: 'Clone', exact: true }).count()).toBe(0);
+  expect(await page.getByRole('menuitem', { name: 'Copy', exact: true }).count()).toBe(0);
   await page.getByRole('menuitem', { name: 'Add node', exact: true }).hover();
   await page.getByRole('menuitem', { name: 'Procedural', exact: true }).hover();
   await page.getByRole('menuitem', { name: 'constant', exact: true }).click();
@@ -84,17 +85,19 @@ test('context menu adds categorized nodes, clones and deletes the clicked node',
   await page.locator('.react-flow__node[data-id="surface"]').click();
   await page.locator('.react-flow__node[data-id="constant"]').click({ button: 'right' });
   expect(await page.getByRole('menuitem', { name: 'Add node', exact: true }).count()).toBe(0);
-  await page.getByRole('menuitem', { name: 'Clone', exact: true }).click();
-  await expect.poll(() => page.locator('.react-flow__node[data-id="constant_copy"]').count()).toBe(1);
+  await page.getByRole('menuitem', { name: 'Copy', exact: true }).click();
+  await pane.click({ button: 'right', position: corner });
+  await page.getByRole('menuitem', { name: 'Paste', exact: true }).click();
+  await expect.poll(() => page.locator('.react-flow__node[data-id="constant_2"]').count()).toBe(1);
   await page.getByRole('button', { name: 'Fit View', exact: true }).click();
-  await page.locator('.react-flow__node[data-id="constant_copy"]').click({ button: 'right' });
+  await page.locator('.react-flow__node[data-id="constant_2"]').click({ button: 'right' });
   await page.getByRole('menuitem', { name: 'Delete', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
   await page.getByRole('button', { name: 'Undo', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(4);
   await pane.click({ button: 'right', position: corner });
   expect(await page.getByRole('menuitem', { name: 'Add node', exact: true }).isVisible()).toBe(true);
-  expect(await page.getByRole('menuitem', { name: 'Clone', exact: true }).count()).toBe(0);
+  expect(await page.getByRole('menuitem', { name: 'Copy', exact: true }).count()).toBe(0);
   await page.keyboard.press('Escape');
   expect(await page.getByRole('menu').count()).toBe(0);
   expect(errors).toEqual([]);
@@ -569,7 +572,7 @@ test('parameter type selection is temporary until a value is authored', async ()
 });
 test('groups the selection into a node graph and adds interface ports inside it', async () => {
   await page.locator('.react-flow__node[data-id="surface"]').click({ button: 'right' });
-  await page.getByRole('menuitem', { name: 'Group into node graph', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Group', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node[data-id="nodegraph"]').count()).toBe(1);
   expect(await page.locator('.react-flow__node[data-id="surface"]').count()).toBe(0);
   await page.getByRole('button', { name: 'Expand nodegraph', exact: true }).click();

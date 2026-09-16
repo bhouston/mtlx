@@ -106,13 +106,14 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
         const current = await this.openCustomDocument(document.uri);
         if (disposed || request !== generation) return;
         watchResources(current);
-        const { issues, summary, parseError, resourcesChecked, resources } = current.analysis;
+        const { issues, summary, assets, parseError, resourcesChecked, resources } = current.analysis;
         await webviewPanel.webview.postMessage({
           settings: readSettings(),
           fileName: current.fileName,
           fileSize: current.raw.length,
           issues,
           summary,
+          assets,
           parseError,
           resourcesChecked,
           data: current.raw.slice().buffer,

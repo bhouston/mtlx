@@ -108,6 +108,14 @@ describe('mtlx', () => {
       const info = JSON.parse(result.stdout);
       expect(info.materials).toEqual([{ name: 'M_test', category: 'surfacematerial' }]);
       expect(info.referencedTextures).toEqual(['textures/albedo.png']);
+      expect(info.assets).toEqual([
+        { path: 'material.mtlx', bytes: Buffer.byteLength(fixtureXml) },
+        { path: 'textures/albedo.png', bytes: 4 },
+      ]);
+      expect(info.totalBytes).toBe(Buffer.byteLength(fixtureXml) + 4);
+      const text = await cli.run(['info', fixture.materialPath], { timeout: 8_000 });
+      expect(text).toHaveStdout(/Assets \(2, \d+ B\):/);
+      expect(text).toHaveStdout(/textures\/albedo\.png\s+4 B/);
     } finally {
       await rm(fixture.tempDir, { recursive: true, force: true });
     }

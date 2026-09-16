@@ -1,7 +1,7 @@
 import { inspectMaterialX, DEFAULT_MATERIALX_READ_LIMITS } from 'mtlx-core';
 import { supportedMaterialXCategories } from 'mtlx-viewer/capabilities';
 import { readBoundedResponse } from './material-bytes';
-import type { MaterialXSummary, MaterialXValidationIssue } from 'mtlx-core';
+import type { MaterialXAsset, MaterialXSummary, MaterialXValidationIssue } from 'mtlx-core';
 
 export interface MaterialXAnalysis {
   issues: MaterialXValidationIssue[];
@@ -9,6 +9,7 @@ export interface MaterialXAnalysis {
   parseError?: string;
   resourcesChecked?: boolean;
   resourcePaths?: string[];
+  assets?: MaterialXAsset[];
 }
 
 export async function analyzeBytes(

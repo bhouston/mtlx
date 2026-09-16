@@ -110,9 +110,11 @@ needs them must render its own provider around a different React Flow instance.
 With the pointer over the canvas: **Shift+A** or double-click opens quick-add at the
 cursor; releasing a dragged wire on empty canvas opens it filtered to compatible
 nodes. **Ctrl/Cmd+D** duplicates the selection, **Ctrl/Cmd+G** groups it into a node
-graph, **F** frames the selection, **Escape** deselects, **Delete** removes nodes or
-wires. Shift-drag or Shift-click selects several nodes; the inspector edits the last
-one and the context menu's Clone and Delete act on the whole selection. The website
+graph, **Ctrl/Cmd+C**, **X** and **V** copy, cut and paste it through the system
+clipboard as typed JSON (so nodes travel between browser tabs or a text file), **F**
+frames the selection, **Escape** deselects, **Delete** removes nodes or wires.
+Shift-drag or Shift-click selects several nodes; the inspector edits a single selected
+node and the context menu's Copy, Cut and Delete act on the whole selection. The website
 adds **Ctrl/Cmd+Z** and **Shift+Ctrl/Cmd+Z** for the session's undo and redo.
 
 ## Prototype workflows

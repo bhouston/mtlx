@@ -1,10 +1,28 @@
-import { summarizeMaterialX, type MaterialXSummary } from 'mtlx-core';
-import { loadMaterialXDocument } from 'mtlx-core/node';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+import { humanizeBytes } from 'humanize-units';
+import { inspectMaterialX, type MaterialXAsset, type MaterialXSummary } from 'mtlx-core';
 import { defineCommand } from 'yargs-file-commands';
 import { formatOption, printOutput } from '../output.js';
 
-const renderText = (info: MaterialXSummary): string =>
-  [
+export interface MaterialXInfo extends MaterialXSummary {
+  assets: MaterialXAsset[];
+  totalBytes: number;
+}
+
+/** Summary plus the size of every file the material is made of, read relative to `input`. */
+export const loadInfo = async (input: string): Promise<MaterialXInfo> => {
+  const dir = path.dirname(input);
+  const result = await inspectMaterialX(await readFile(input), input, {
+    readResource: (rel) => readFile(path.join(dir, ...rel.split('/'))),
+  });
+  if (!result.summary) throw new Error(result.parseError ?? `Could not read ${input}`);
+  return { ...result.summary, path: input, assets: result.assets, totalBytes: result.totalBytes };
+};
+
+const renderText = (info: MaterialXInfo): string => {
+  const width = Math.max(...info.assets.map((asset) => asset.path.length));
+  return [
     `Path: ${info.path}`,
     `Version: ${info.version ?? 'unknown'}`,
     `Colorspace: ${info.colorspace ?? 'unknown'}`,
@@ -14,7 +32,13 @@ const renderText = (info: MaterialXSummary): string =>
     `Materials (surfaces/volumes): ${info.materials.map((m) => `${m.name ?? '(unnamed)'} [${m.category}]`).join(', ') || '(none)'}`,
     `Referenced textures: ${info.referencedTextures.join(', ') || '(none)'}`,
     `Internal nodes: ${info.nodes.map((n) => `${n.name ?? '(unnamed)'} [${n.category}]`).join(', ') || '(none)'}`,
+    `Assets (${info.assets.length}, ${humanizeBytes(info.totalBytes, { unitSeparator: ' ' })}):`,
+    ...info.assets.map(
+      (asset) =>
+        `  ${asset.path.padEnd(width)}  ${asset.bytes === undefined ? '(missing)' : humanizeBytes(asset.bytes, { unitSeparator: ' ' })}`,
+    ),
   ].join('\n');
+};
 
 export const command = defineCommand({
   command: 'info <input>',
@@ -28,8 +52,7 @@ export const command = defineCommand({
       })
       .options(formatOption),
   handler: async (argv) => {
-    const { document } = await loadMaterialXDocument(argv.input);
-    const info = summarizeMaterialX(argv.input, document);
+    const info = await loadInfo(argv.input);
     printOutput(info, argv.format, () => renderText(info));
   },
 });

@@ -103,6 +103,7 @@ function ViewerPage() {
             fileName={fileMeta?.name}
             fileSize={fileMeta?.size}
             summary={analysis?.summary}
+            assets={analysis?.assets}
             issues={analysis?.issues ?? []}
             parseError={analysis?.parseError}
             viewerError={source ? viewerError : null}

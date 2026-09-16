@@ -23,6 +23,7 @@ import {
   type EditorMode,
   type GraphConnection,
   type MaterialXDocument,
+  type MaterialXElement,
   type MaterialXNodeSpec,
 } from './model.js';
 import { validateGraph } from './validation.js';
@@ -44,6 +45,8 @@ import {
 } from './ui/breadcrumb.js';
 
 const EMPTY_RESOURCES: ParameterResources = { files: [] };
+/** Tag on the clipboard JSON so paste can tell node data from other text. */
+export const MATERIALX_CLIPBOARD_TYPE = 'mtlx-editor/nodes';
 type Point = { x: number; y: number };
 type LooseEnd = { node: string; handle: string; side: 'output' | 'input'; type?: string };
 /** A right-clicked port, or the input end of a right-clicked wire. */
@@ -135,7 +138,7 @@ function Graph({
       }),
     [projection, portType, invalidEdges, selectedEdges],
   );
-  /** Selected node ids in selection order; the inspector shows the last one. */
+  /** Selected node ids in selection order; the inspector shows a lone selection. */
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [showAll, setShowAll] = useState<ReadonlySet<string>>(new Set());
   const toggleInputs = useCallback(
@@ -240,6 +243,41 @@ function Graph({
       }),
     );
   };
+  /** Copy the given nodes to the system clipboard as typed JSON, with their canvas positions baked in. */
+  const copy = async (ids: readonly string[]) => {
+    const elements = projection.nodes
+      .filter((node) => ids.includes(node.id))
+      .map((node) => ({
+        ...node.element,
+        attributes: { ...node.element.attributes, xpos: String(node.position.x), ypos: String(node.position.y) },
+      }));
+    if (!elements.length) return false;
+    await navigator.clipboard.writeText(
+      JSON.stringify({ type: MATERIALX_CLIPBOARD_TYPE, version: 1, nodes: elements }, null, 2),
+    );
+    return true;
+  };
+  const cut = (ids: readonly string[]) =>
+    copy(ids)
+      .then((copied) => copied && commit(() => session.transaction('Cut nodes', () => operations.removeNodes(ids))))
+      .catch((failure) => setError(failure instanceof Error ? failure.message : String(failure)));
+  /** Paste with the pasted group's top-left at `at`, or nudged from the originals when no point is given. */
+  const paste = (at?: Point) =>
+    navigator.clipboard
+      .readText()
+      .then((text) => {
+        const data = JSON.parse(text) as { type?: string; nodes?: MaterialXElement[] };
+        if (data?.type !== MATERIALX_CLIPBOARD_TYPE || !Array.isArray(data.nodes))
+          throw new Error('Clipboard does not hold MaterialX nodes.');
+        const placed = data.nodes.filter((node) => node?.attributes?.xpos !== undefined);
+        const origin = {
+          x: Math.min(...placed.map((node) => Number(node.attributes.xpos))),
+          y: Math.min(...placed.map((node) => Number(node.attributes.ypos))),
+        };
+        const offset = at && placed.length ? { x: at.x - origin.x, y: at.y - origin.y } : { x: 40, y: 40 };
+        commit(() => setSelected(operations.pasteNodes(data.nodes!, offset)));
+      })
+      .catch((failure) => setError(failure instanceof Error ? failure.message : String(failure)));
   /** The nodes a node-targeted action applies to: the whole selection when the target is part of it. */
   const targets = (nodeId: string) => (selected.includes(nodeId) ? selected : [nodeId]);
   const group = () => {
@@ -304,7 +342,13 @@ function Graph({
     if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
     if (!element.matches(':hover') && !element.contains(target)) return;
     const meta = event.metaKey || event.ctrlKey;
-    if (meta && event.key.toLowerCase() === 'd' && selected.length) duplicate(selected);
+    const key = event.key.toLowerCase();
+    // Text selected on the canvas (for example in the error log) keeps the browser's own copy.
+    const copyable = selected.length && !window.getSelection()?.toString();
+    if (meta && key === 'c' && copyable) void copy(selected).catch(() => {});
+    else if (meta && key === 'x' && copyable) void cut(selected);
+    else if (meta && key === 'v') void paste();
+    else if (meta && event.key.toLowerCase() === 'd' && selected.length) duplicate(selected);
     else if (meta && event.key.toLowerCase() === 'g' && !scope) group();
     else if (event.shiftKey && !meta && event.key.toLowerCase() === 'a') {
       const rect = element.getBoundingClientRect();
@@ -355,7 +399,8 @@ function Graph({
         explicit && !incoming.length ? () => commit(() => operations.resetInput(wire.node, wire.name)) : undefined,
     };
   };
-  const inspected = projection.nodes.find((node) => node.id === selected.at(-1));
+  // The inspector edits one node; a multi-selection has nothing sensible to show.
+  const inspected = selected.length === 1 ? projection.nodes.find((node) => node.id === selected[0]) : undefined;
   const rootLabel = fileName?.split(/[\\/]/).at(-1) || 'material.mtlx';
   return (
     <section className={`mtlx-editor mtlx-graph ${className}`} aria-label="MaterialX node graph">
@@ -440,9 +485,13 @@ function Graph({
             nodeId={context.nodeId}
             onAdd={(spec) => add(spec, context.position)}
             onSearch={() => openQuickAdd(context.client)}
-            onClone={() => {
-              if (context.nodeId) duplicate(targets(context.nodeId));
+            onCopy={() => {
+              if (context.nodeId) void copy(targets(context.nodeId)).catch(() => {});
             }}
+            onCut={() => {
+              if (context.nodeId) void cut(targets(context.nodeId));
+            }}
+            onPaste={() => void paste(context.nodeId ? undefined : context.position)}
             onDelete={() => {
               if (context.nodeId) commit(() => operations.removeNodes(targets(context.nodeId!)));
             }}

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- List every asset a material is made of (root document, textures, nested documents) with its size
+  and a total: `mtlx info` and the MCP `inspect_material` tool report `assets` and `totalBytes`,
+  and the website and VS Code info panels show each reference with its size and a total in the
+  References section. `inspectMaterialX`
+  now returns `assets` and `totalBytes`; byte sizes are formatted with humanize-units.
+
 - Add a Background setting (environment or none/transparent) to the website viewer, the viewer
   settings panel, the `<material-viewer>` element (`background` attribute) and the VS Code extension
   (`mtlx.preview.background`). It is now part of `ViewerSettings` and applies live.

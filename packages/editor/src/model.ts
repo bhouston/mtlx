@@ -41,7 +41,7 @@ export {
   type Point,
 } from 'mtlx-core/session';
 export { nodeType, findNodeSpec } from 'mtlx-core';
-export type { MaterialXDocument, MaterialXNodeSpec, MaterialXNodePortSpec } from 'mtlx-core';
+export type { MaterialXDocument, MaterialXElement, MaterialXNodeSpec, MaterialXNodePortSpec } from 'mtlx-core';
 export { getNodeFamilies } from './node-families.js';
 export { autoLayout, visibleInputs } from './auto-layout.js';
 export type EditorMode = 'view' | 'edit';

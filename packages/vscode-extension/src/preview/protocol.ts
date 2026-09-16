@@ -1,4 +1,4 @@
-import type { MaterialXSummary, MaterialXValidationIssue } from 'mtlx-core';
+import type { MaterialXAsset, MaterialXSummary, MaterialXValidationIssue } from 'mtlx-core';
 import type { PreviewSettings } from '../previewSettings.js';
 export interface PreviewTexture {
   path: string;
@@ -11,6 +11,7 @@ export interface PreviewPayload {
   fileSize: number;
   issues: MaterialXValidationIssue[];
   summary?: MaterialXSummary;
+  assets?: MaterialXAsset[];
   parseError?: string;
   data?: ArrayBuffer;
   textures: PreviewTexture[];

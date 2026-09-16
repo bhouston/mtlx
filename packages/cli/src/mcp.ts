@@ -5,11 +5,11 @@
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { MATERIALX_VALIDATION_RULES, materialXNodeRegistry, parseMaterialX, summarizeMaterialX } from 'mtlx-core';
-import { loadMaterialXDocument } from 'mtlx-core/node';
+import { MATERIALX_VALIDATION_RULES, materialXNodeRegistry, parseMaterialX } from 'mtlx-core';
 import { createEditorSession } from 'mtlx-core/session';
 import { z } from 'zod';
 import { runCheck } from './commands/check.js';
+import { loadInfo } from './commands/info.js';
 import { GEOMETRIES, renderMaterial } from './commands/render.js';
 
 const file = z.string().describe('Path to a .mtlx or .mtlx.zip file');
@@ -97,13 +97,12 @@ export function createMcpServer(): McpServer {
     'inspect_material',
     {
       description:
-        'Summarize a MaterialX file: version, colorspace, materials, referenced textures, node graphs, and nodes.',
+        'Summarize a MaterialX file: version, colorspace, materials, referenced textures, node graphs, nodes, and the size of every asset.',
       inputSchema: { file },
     },
     async (args) => {
       try {
-        const { document } = await loadMaterialXDocument(args.file);
-        return json(summarizeMaterialX(args.file, document));
+        return json(await loadInfo(args.file));
       } catch (error) {
         return failure(error);
       }

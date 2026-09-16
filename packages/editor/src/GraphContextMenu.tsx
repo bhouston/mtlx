@@ -18,7 +18,9 @@ export function GraphContextMenu({
   nodeId,
   onAdd,
   onSearch,
-  onClone,
+  onCopy,
+  onCut,
+  onPaste,
   onDelete,
   onGroup,
   wire,
@@ -29,7 +31,9 @@ export function GraphContextMenu({
   nodeId?: string;
   onAdd: (spec: NodeDefinition) => void;
   onSearch: () => void;
-  onClone: () => void;
+  onCopy: () => void;
+  onCut: () => void;
+  onPaste: () => void;
   onDelete: () => void;
   /** Offered at the root scope only; collapses the selection into a node graph. */
   onGroup?: () => void;
@@ -55,7 +59,12 @@ export function GraphContextMenu({
               {!wire.onDisconnect && !wire.onReset && <ContextMenuItem disabled>Not connected</ContextMenuItem>}
             </>
           )}
-          {!wire && !nodeId && <ContextMenuItem onSelect={onSearch}>Search nodes…</ContextMenuItem>}
+          {!wire && !nodeId && (
+            <>
+              <ContextMenuItem onSelect={onPaste}>Paste</ContextMenuItem>
+              <ContextMenuItem onSelect={onSearch}>Search nodes…</ContextMenuItem>
+            </>
+          )}
           {!wire && !nodeId && (
             <ContextMenuSub>
               <ContextMenuSubTrigger disabled={!groups.length}>Add node</ContextMenuSubTrigger>
@@ -66,8 +75,10 @@ export function GraphContextMenu({
           )}
           {!wire && nodeId && (
             <>
-              <ContextMenuItem onSelect={onClone}>Clone</ContextMenuItem>
-              {onGroup && <ContextMenuItem onSelect={onGroup}>Group into node graph</ContextMenuItem>}
+              <ContextMenuItem onSelect={onCopy}>Copy</ContextMenuItem>
+              <ContextMenuItem onSelect={onCut}>Cut</ContextMenuItem>
+              <ContextMenuItem onSelect={onPaste}>Paste</ContextMenuItem>
+              {onGroup && <ContextMenuItem onSelect={onGroup}>Group</ContextMenuItem>}
               <ContextMenuItem variant="destructive" onSelect={onDelete}>
                 Delete
               </ContextMenuItem>

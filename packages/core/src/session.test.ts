@@ -455,3 +455,33 @@ describe('grouping nodes into a node graph', () => {
     expect(cyclic.getSnapshot().canUndo).toBe(false);
   });
 });
+
+describe('pasting nodes', () => {
+  it('renames collisions, keeps wires among the pasted set and drops wires to the rest', () => {
+    const session = create();
+    const graph = session.graph();
+    const elements = ['surface', 'material'].map((id) => graph.getNode(id).element);
+    const ids = graph.pasteNodes(elements, { x: 10, y: 20 });
+    expect(ids).toEqual(['surface_2', 'material_2']);
+    expect(graph.getConnection({ node: 'material_2', input: 'surfaceshader' })).toEqual({
+      node: 'surface_2',
+      output: 'out',
+    });
+    expect(graph.getNode('surface_2').element.attributes).toMatchObject({ xpos: '10', ypos: '20' });
+    // Only the material travels: its wire pointed outside the set, so it is dropped.
+    const [lone] = graph.pasteNodes([graph.getNode('material').element]);
+    expect(graph.getConnection({ node: lone!, input: 'surfaceshader' })).toBeUndefined();
+    expect(session.getSnapshot().undoLabel).toBe('Paste nodes');
+    session.undo();
+    session.undo();
+    expect(graph.listNodes().map((node) => node.id)).toEqual(['surface', 'material']);
+  });
+  it('rejects malformed clipboard data and misplaced structural nodes', () => {
+    const session = create();
+    expect(() => session.graph().pasteNodes([{ name: 'x' } as never])).toThrow(EditorError);
+    expect(() =>
+      session.graph().pasteNodes([{ name: 'input', attributes: { name: 'i', type: 'float' }, children: [] }]),
+    ).toThrow(/inside a node graph/);
+    expect(session.getSnapshot().canUndo).toBe(false);
+  });
+});

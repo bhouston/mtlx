@@ -1,4 +1,6 @@
-import { formatFileSize, summarizeInternalNodes } from '../diagnostics.js';
+import { Fragment } from 'react';
+import { humanizeBytes } from 'humanize-units';
+import { summarizeInternalNodes } from '../diagnostics.js';
 import { ValidityChecks } from './ValidityChecks.js';
 import type { PreviewReport, ValidationIssue } from '../diagnostics.js';
 
@@ -13,10 +15,20 @@ export interface MaterialSummary {
   referencedTextures: string[];
 }
 
+/** Structural subset of mtlx-core's MaterialXAsset. */
+export interface MaterialAsset {
+  path: string;
+  bytes?: number;
+}
+
+const formatBytes = (bytes: number) => humanizeBytes(bytes, { unitSeparator: ' ' });
+
 export interface InfoPanelProps {
   fileName?: string;
   fileSize?: number;
   summary?: MaterialSummary;
+  /** Root document first, then every dependency; sizes are uncompressed. */
+  assets?: MaterialAsset[];
   issues: ValidationIssue[];
   parseError?: string;
   viewerError?: string | null;
@@ -52,10 +64,43 @@ function Section({
   );
 }
 
+/** Dependencies with sizes when the host inspected them; the root document is excluded. */
+function ReferencesSection({ assets, fallback }: { assets?: MaterialAsset[]; fallback: string[] }) {
+  if (!assets?.length) return <Section title="References" items={fallback} />;
+  const references = assets.slice(1);
+  const total = references.reduce((sum, asset) => sum + (asset.bytes ?? 0), 0);
+  return (
+    <details>
+      <summary className="cursor-pointer select-none font-semibold">
+        References ({references.length}, {formatBytes(total)})
+      </summary>
+      {references.length ? (
+        <dl className="mt-1 grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-0.5">
+          {references.map((asset) => (
+            <Fragment key={asset.path}>
+              <dt>{asset.path}</dt>
+              <dd className="text-right tabular-nums">
+                {asset.bytes === undefined ? (
+                  <span className="text-muted-foreground">(missing)</span>
+                ) : (
+                  formatBytes(asset.bytes)
+                )}
+              </dd>
+            </Fragment>
+          ))}
+        </dl>
+      ) : (
+        <p className="mt-1 text-muted-foreground">(none)</p>
+      )}
+    </details>
+  );
+}
+
 export function InfoPanel({
   fileName,
   fileSize,
   summary,
+  assets,
   issues,
   parseError,
   viewerError,
@@ -79,7 +124,7 @@ export function InfoPanel({
             {fileSize !== undefined ? (
               <>
                 <dt>Size</dt>
-                <dd>{formatFileSize(fileSize)}</dd>
+                <dd>{formatBytes(fileSize)}</dd>
               </>
             ) : null}
             {summary ? (
@@ -104,7 +149,7 @@ export function InfoPanel({
             expanded={summary.materials.length > 1}
             items={summary.materials.map((material) => `${material.name ?? '(unnamed)'} [${material.category}]`)}
           />
-          <Section title="References" items={summary.referencedTextures} />
+          <ReferencesSection assets={assets} fallback={summary.referencedTextures} />
           <Section
             title="Internal Nodes"
             count={internalNodeCount}

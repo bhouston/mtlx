@@ -1,6 +1,12 @@
 import { cloneMaterialXDocument, serializeMaterialX } from './xml.js';
 import { validateDocument } from './validate.js';
-import type { DeepReadonly, MaterialXDocument, MaterialXNodeSpec, ReadonlyMaterialXDocument } from './types.js';
+import type {
+  DeepReadonly,
+  MaterialXDocument,
+  MaterialXElement,
+  MaterialXNodeSpec,
+  ReadonlyMaterialXDocument,
+} from './types.js';
 import {
   addNode,
   cloneNode,
@@ -13,6 +19,7 @@ import {
   setInterfacePort,
   structuralSpecs,
   moveNodes,
+  pasteNodes,
   readGraph,
   removeNodes,
   renameNode,
@@ -434,6 +441,29 @@ export class EditorSession {
         });
         return cloned;
       },
+      /** Insert copies of node elements (for example from the clipboard) and return their ids. */
+      pasteNodes: (elements: readonly MaterialXElement[], offset?: Point): string[] => {
+        this.assertScope(scope);
+        const ids = new Set(this.projection(scope).nodes.map((node) => node.id));
+        let created: string[] = [];
+        try {
+          this.apply('Paste nodes', () => {
+            const next = pasteNodes(this.current, elements, scope, offset);
+            created = readGraph(next, scope, this.catalog())
+              .nodes.filter((node) => !ids.has(node.id))
+              .map((node) => node.id);
+            return next;
+          });
+        } catch (error) {
+          if (error instanceof EditorError) throw error;
+          throw new EditorError({
+            code: 'INVALID_ARGUMENT',
+            scope,
+            message: error instanceof Error ? error.message : String(error),
+          });
+        }
+        return created;
+      },
       removeNodes: (ids: readonly string[]) => {
         this.assertScope(scope);
         for (const id of ids) this.node(scope, id);
@@ -563,6 +593,7 @@ export {
   moveNodes,
   nonNodes,
   readGraph,
+  pasteNodes,
   removeNodes,
   renameNode,
   resetInput,

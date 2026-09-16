@@ -271,6 +271,7 @@ export function PreviewApp() {
             fileName={payload?.fileName}
             fileSize={payload?.fileSize}
             summary={payload?.summary}
+            assets={payload?.assets}
             issues={payload?.issues ?? []}
             parseError={payload?.parseError}
             viewerError={viewerError}

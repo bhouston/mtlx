@@ -62,6 +62,6 @@ export type { MaterialXReadLimits } from './limits.js';
 export { validateMaterialXPackage } from './validate-package.js';
 
 export { inspectMaterialX } from './inspect.js';
-export type { MaterialXInspection } from './inspect.js';
+export type { MaterialXInspection, MaterialXAsset } from './inspect.js';
 
 export { nodeType, getNodeCatalog, findNodeSpec, getNodeGraphScope } from './node-catalog.js';
