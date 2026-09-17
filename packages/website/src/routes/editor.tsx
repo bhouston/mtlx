@@ -9,7 +9,10 @@ import {
   type MaterialXPackage,
 } from 'mtlx-core';
 import {
+  GraphToolbar,
   MaterialXNodeGraph,
+  NodeParameterEditor,
+  useCommandShortcuts,
   useEditorSession,
   createDefaultDocument,
   exportMaterial,
@@ -42,7 +45,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { Columns2, Download, Layers, Redo2, Rows2, Undo2 } from 'lucide-react';
+import { Columns2, Download, Layers, Rows2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
@@ -180,21 +183,7 @@ function EditorPage() {
     },
     [],
   );
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
-      const target = event.target as HTMLElement;
-      if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
-      const key = event.key.toLowerCase();
-      if (key === 'z' && event.shiftKey) session.redo();
-      else if (key === 'z') session.undo();
-      else if (key === 'y') session.redo();
-      else return;
-      event.preventDefault();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [session]);
+  useCommandShortcuts(session);
   const load = useCallback(
     async (input?: File | string | { snapshot: string } | { draft: string }) => {
       const run = ++generation.current;
@@ -296,69 +285,10 @@ function EditorPage() {
     >
       <h1 className="sr-only">MaterialX editor</h1>
       <MaterialLoadControls materialUrl={search.materialUrl} onLoadFile={loadFromFile} onLoadUrl={loadFromUrl}>
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-8 px-0"
-          aria-label="Undo"
-          title={snapshot.undoLabel ? `Undo ${snapshot.undoLabel.toLowerCase()}` : 'Undo'}
-          disabled={!snapshot.canUndo}
-          onClick={session.undo}
-        >
-          <Undo2 aria-hidden="true" />
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-8 px-0"
-          aria-label="Redo"
-          title={snapshot.redoLabel ? `Redo ${snapshot.redoLabel.toLowerCase()}` : 'Redo'}
-          disabled={!snapshot.canRedo}
-          onClick={session.redo}
-        >
-          <Redo2 aria-hidden="true" />
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-8 px-0"
-          aria-label="Download .mtlx.zip"
-          title="Download .mtlx.zip"
-          onClick={download}
-          disabled={loading}
-        >
+        <Button variant="ghost" size="sm" title="Download .mtlx.zip" onClick={download} disabled={loading}>
           <Download aria-hidden="true" />
+          Download
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" aria-label="Layout" title="Preview layout">
-              {(() => {
-                const Icon = LAYOUT_ICONS[layout];
-                return <Icon aria-hidden="true" />;
-              })()}
-              Layout
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {EDITOR_LAYOUTS.map((value) => {
-              const Icon = LAYOUT_ICONS[value];
-              return (
-                <DropdownMenuItem key={value} onSelect={() => setLayout(value)}>
-                  <Icon aria-hidden="true" />
-                  {LAYOUT_LABELS[value]}
-                </DropdownMenuItem>
-              );
-            })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        {dirty && (
-          <span
-            className="text-xs text-muted-foreground"
-            title="Edits are kept as a local draft until you download them"
-          >
-            Unsaved
-          </span>
-        )}
         <EditorShareMenu
           disabled={loading}
           getUrl={() =>
@@ -370,6 +300,36 @@ function EditorPage() {
             )
           }
         />
+        {dirty && (
+          <span
+            className="ml-auto text-xs text-muted-foreground"
+            title="Edits are kept as a local draft until you download them"
+          >
+            Unsaved
+          </span>
+        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className={dirty ? '' : 'ml-auto'} title="Preview layout">
+              {(() => {
+                const Icon = LAYOUT_ICONS[layout];
+                return <Icon aria-hidden="true" />;
+              })()}
+              Layout
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {EDITOR_LAYOUTS.map((value) => {
+              const Icon = LAYOUT_ICONS[value];
+              return (
+                <DropdownMenuItem key={value} onSelect={() => setLayout(value)}>
+                  <Icon aria-hidden="true" />
+                  {LAYOUT_LABELS[value]}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </MaterialLoadControls>
       {error && <p role="alert">{error}</p>}
       {(() => {
@@ -397,33 +357,50 @@ function EditorPage() {
             )}
           </>
         );
+        // The toolbar and inspector follow the session, so they sit beside the canvas rather than inside it.
         const graph = (
-          <MaterialXNodeGraph
-            key={documentId}
-            className="mtlx-fill"
+          <div key={documentId} className="mtlx-graph-frame mtlx-fill">
+            <MaterialXNodeGraph
+              session={session}
+              fileName={pkg.rootPath}
+              mode="edit"
+              scope={scope}
+              colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
+              onScopeChange={(nextScope) => {
+                void navigate({
+                  to: '.',
+                  search: (previous) => ({ ...previous, scope: nextScope || undefined }),
+                  hash: true,
+                  replace: true,
+                  resetScroll: false,
+                });
+              }}
+            >
+              {layout === 'overlay' && preview}
+            </MaterialXNodeGraph>
+            <GraphToolbar session={session} />
+            {layout === 'overlay' && <NodeParameterEditor session={session} resources={resources} />}
+          </div>
+        );
+        // Vertical and horizontal keep the inspector docked in place; overlay floats it over the graph on demand.
+        const inspector = (
+          <NodeParameterEditor
             session={session}
-            fileName={pkg.rootPath}
-            mode="edit"
-            scope={scope}
-            colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
             resources={resources}
-            onScopeChange={(nextScope) => {
-              void navigate({
-                to: '.',
-                search: (previous) => ({ ...previous, scope: nextScope || undefined }),
-                hash: true,
-                replace: true,
-                resetScroll: false,
-              });
-            }}
-          >
-            {layout === 'overlay' && preview}
-          </MaterialXNodeGraph>
+            className="mtlx-inspector-docked"
+            placeholder="Select a single node to edit its properties."
+          />
         );
         return (
           <div className={`min-h-0 flex-1 mtlx-editor-body mtlx-editor-body-${layout}`}>
-            {layout === 'vertical' && <div className="mtlx-preview-pane">{preview}</div>}
+            {layout === 'vertical' && (
+              <div className="mtlx-preview-pane">
+                {preview}
+                {inspector}
+              </div>
+            )}
             {graph}
+            {layout === 'horizontal' && inspector}
             {layout === 'horizontal' && <div className="mtlx-preview-pane">{preview}</div>}
           </div>
         );

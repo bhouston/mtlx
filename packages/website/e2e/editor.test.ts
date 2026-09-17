@@ -34,7 +34,7 @@ async function ready() {
 }
 async function downloadText() {
   const waiting = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Download .mtlx.zip' }).click();
+  await page.getByRole('button', { name: 'Download', exact: true }).click();
   const download = await waiting;
   expect(download.suggestedFilename()).toMatch(/\.mtlx\.zip$/);
   const { importMaterial } = await import('mtlx-editor/model');
@@ -81,7 +81,7 @@ test('context menu adds categorized nodes, copies, pastes and deletes the clicke
   await page.getByRole('menuitem', { name: 'constant', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
   // Adding no longer refits the viewport, so bring the edge-placed node fully into view first.
-  await page.getByRole('button', { name: 'Fit View', exact: true }).click();
+  await page.getByRole('button', { name: 'Fit view', exact: true }).click();
   await page.locator('.react-flow__node[data-id="surface"]').click();
   await page.locator('.react-flow__node[data-id="constant"]').click({ button: 'right' });
   expect(await page.getByRole('menuitem', { name: 'Add node', exact: true }).count()).toBe(0);
@@ -89,7 +89,7 @@ test('context menu adds categorized nodes, copies, pastes and deletes the clicke
   await pane.click({ button: 'right', position: corner });
   await page.getByRole('menuitem', { name: 'Paste', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node[data-id="constant_2"]').count()).toBe(1);
-  await page.getByRole('button', { name: 'Fit View', exact: true }).click();
+  await page.getByRole('button', { name: 'Fit view', exact: true }).click();
   await page.locator('.react-flow__node[data-id="constant_2"]').click({ button: 'right' });
   await page.getByRole('menuitem', { name: 'Delete', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
@@ -197,7 +197,7 @@ test('imports a ZIP, edits a nested graph, and downloads resources intact', asyn
     .getByRole('button', { name: 'constant', exact: true })
     .click();
   const waiting = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Download .mtlx.zip' }).click();
+  await page.getByRole('button', { name: 'Download', exact: true }).click();
   const download = await waiting;
   expect(download.suggestedFilename()).toMatch(/\.mtlx\.zip$/);
   const { importMaterial } = await import('mtlx-editor/model');
@@ -270,15 +270,15 @@ test('query URLs, URL dialog, sample selection and reference share links use the
   await expect.poll(() => page.locator('main').innerText()).toContain('copper.mtlx');
   await ready();
   const loaded = reads;
-  await page.getByText('Viewer settings', { exact: true }).click();
+  await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
   await page.getByRole('combobox', { name: 'Geometry', exact: true }).selectOption('plane');
   expect(reads).toBe(loaded);
-  await page.getByRole('button', { name: 'Sample materials' }).click();
+  await page.getByRole('button', { name: 'Sample', exact: true }).click();
   await page.getByRole('menuitem', { name: 'chrome', exact: true }).click();
   await expect.poll(() => new URL(page.url()).searchParams.get('materialUrl')).toContain('/chrome/chrome.mtlx');
   await expect.poll(() => page.locator('main').innerText()).toContain('chrome.mtlx');
   expect(new URL(page.url()).searchParams.get('geometry')).toBe('plane');
-  await page.getByRole('button', { name: 'Load URL', exact: true }).click();
+  await page.getByRole('button', { name: 'Open URL', exact: true }).click();
   await page
     .getByRole('textbox', { name: 'Material URL' })
     .fill(`http://localhost:${PORT}/materials/compound_zip/compound_zip.mtlx.zip`);
@@ -317,7 +317,7 @@ test('share captures edits and layout, and changing settings preserves a restore
   expect(new URL(page.url()).hash).toBe(shared.hash);
   expect(await downloadText()).toContain('value="0.2, 0.6, 0.1"');
   await ready();
-  await page.getByText('Viewer settings', { exact: true }).click();
+  await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
   await page.getByRole('combobox', { name: 'Geometry', exact: true }).selectOption('sphere');
   expect(new URL(page.url()).hash).toBe(shared.hash);
   expect(await downloadText()).toContain('value="0.2, 0.6, 0.1"');
@@ -338,7 +338,7 @@ test('URL texture dependencies are included in ZIP downloads and failed replacem
   await page.goto(`http://localhost:${PORT}/editor?materialUrl=${encodeURIComponent(base + 'wood_grain.mtlx')}`);
   await expect.poll(() => page.getByRole('button', { name: /^Expand / }).count()).toBeGreaterThan(0);
   const wait = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Download .mtlx.zip' }).click();
+  await page.getByRole('button', { name: 'Download', exact: true }).click();
   const download = await wait;
   const { importMaterial } = await import('mtlx-editor/model');
   const pkg = importMaterial(new Uint8Array(await readFile((await download.path())!)), download.suggestedFilename());
@@ -347,7 +347,7 @@ test('URL texture dependencies are included in ZIP downloads and failed replacem
     expect(resource.data).toEqual(new Uint8Array(await readFile(resolve(materialPath, '..', resource.archivePath))));
   const nodeCount = await page.locator('.react-flow__node').count();
   await page.route('https://materials.test/missing.mtlx', (route) => route.fulfill({ status: 404, body: 'missing' }));
-  await page.getByRole('button', { name: 'Load URL', exact: true }).click();
+  await page.getByRole('button', { name: 'Open URL', exact: true }).click();
   await page.getByRole('textbox', { name: 'Material URL' }).fill('https://materials.test/missing.mtlx');
   await page.getByRole('button', { name: 'Load material', exact: true }).click();
   await expect
@@ -495,7 +495,7 @@ test('error samples load from the sample picker and display their intended graph
     ['error_cycle', 'forms a cycle', 2],
     ['error_missing_output', 'Cannot resolve output', 1],
   ] as const) {
-    await page.getByRole('button', { name: 'Sample materials' }).click();
+    await page.getByRole('button', { name: 'Sample', exact: true }).click();
     await page.getByRole('menuitem', { name: name.replaceAll('_', ' '), exact: true }).click();
     await expect.poll(() => page.getByRole('region', { name: 'Graph errors' }).textContent()).toContain(message);
     await expect.poll(() => page.locator('.mtlx-edge-error').count()).toBe(wires);
@@ -584,6 +584,8 @@ test('groups the selection into a node graph and adds interface ports inside it'
   expect(await page.getByRole('menuitem', { name: 'nodegraph', exact: true }).count()).toBe(0);
   await page.getByRole('menuitem', { name: 'input', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node[data-id="input"]').count()).toBe(1);
+  // The node was placed at the canvas edge; bring it fully into view before clicking it.
+  await page.getByRole('button', { name: 'Fit view', exact: true }).click();
   await page.locator('.react-flow__node[data-id="input"]').click();
   await page.getByLabel('Port type', { exact: true }).selectOption('color3');
   const xml = await downloadText();

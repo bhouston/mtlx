@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { createEditorSession } from 'mtlx-core/session';
 import { importMaterial } from './model.js';
 import { MaterialXNodeGraph } from './MaterialXNodeGraph.js';
+import { NodeParameterEditor } from './NodeParameterEditor.js';
+import { GraphToolbar } from './GraphToolbar.js';
 
 /** Read-only inspection of a MaterialX file or archive, independent of 3D rendering. */
 export function MaterialXGraphView({ data, fileName }: { data?: ArrayBuffer; fileName?: string }) {
@@ -16,7 +18,6 @@ export function MaterialXGraphView({ data, fileName }: { data?: ArrayBuffer; fil
       return { error: error instanceof Error ? error.message : String(error) };
     }
   }, [data, fileName]);
-  const [selectedScope, setScope] = useState('');
   if (!result) return <p className="p-6 text-sm text-muted-foreground">Load a MaterialX file to inspect its graph.</p>;
   if (!result.session)
     return (
@@ -24,16 +25,11 @@ export function MaterialXGraphView({ data, fileName }: { data?: ArrayBuffer; fil
         {result.error}
       </p>
     );
-  const scope = result.session.listScopes().includes(selectedScope) ? selectedScope : '';
   return (
-    <div className="mtlx-graph-view">
-      <MaterialXNodeGraph
-        session={result.session}
-        fileName={result.fileName}
-        scope={scope}
-        onScopeChange={setScope}
-        mode="view"
-      />
+    <div className="mtlx-graph-view mtlx-graph-frame">
+      <MaterialXNodeGraph session={result.session} fileName={result.fileName} mode="view" />
+      <GraphToolbar session={result.session} editable={false} />
+      <NodeParameterEditor session={result.session} editable={false} />
     </div>
   );
 }

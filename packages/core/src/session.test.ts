@@ -485,3 +485,44 @@ describe('pasting nodes', () => {
     expect(session.getSnapshot().canUndo).toBe(false);
   });
 });
+
+describe('shared view state', () => {
+  it('publishes scope, selection and error outside undo history', () => {
+    const session = create();
+    const listener = vi.fn();
+    session.subscribe(listener);
+    const ids = session
+      .graph()
+      .listNodes()
+      .map((node) => node.id);
+    session.select([ids[0]!, 'missing']);
+    expect(session.getSnapshot().selection).toEqual([ids[0]]);
+    expect(session.getSnapshot().canUndo).toBe(false);
+    session.select([ids[0]!]);
+    expect(listener).toHaveBeenCalledTimes(1);
+    session.setError('boom');
+    expect(session.getSnapshot().error).toBe('boom');
+    session.setError();
+    expect(session.getSnapshot().error).toBeUndefined();
+    session.setScope('nope');
+    expect(session.getSnapshot().scope).toBe('');
+    expect(session.getSnapshot().selection).toEqual([]);
+  });
+  it('drops selected ids when their nodes are removed and publishes once per transaction', () => {
+    const session = create();
+    const id = session.graph().listNodes()[0]!.id;
+    session.select([id]);
+    const listener = vi.fn();
+    session.subscribe(listener);
+    session.transaction('Add and select', () => {
+      const added = session.graph().addNode({ definition: 'ND_constant_float' });
+      session.select([added]);
+    });
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(session.getSnapshot().selection).toEqual([session.getSnapshot().selection[0]]);
+    session.graph().removeNodes(session.getSnapshot().selection);
+    expect(session.getSnapshot().selection).toEqual([]);
+    session.replaceDocument(createDefaultDocument());
+    expect(session.getSnapshot().scope).toBe('');
+  });
+});

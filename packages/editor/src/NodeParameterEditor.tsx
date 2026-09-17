@@ -1,23 +1,56 @@
 import { createElement, useState } from 'react';
+import type { EditorSession } from 'mtlx-core/session';
 import { NodeNameField } from './NodeNameField.js';
-import { ConnectedParameterEditor, GeometryParameterEditor, getParameterEditor } from './parameter-editors.js';
-import { nodeType, type MaterialXNodeSpec, type GraphNode, type GraphEdge } from './model.js';
-import type { EditorGraph } from 'mtlx-core/session';
+import {
+  ConnectedParameterEditor,
+  GeometryParameterEditor,
+  getParameterEditor,
+  ParameterResourcesContext,
+  type ParameterResources,
+} from './parameter-editors.js';
+import { nodeType, type MaterialXNodeSpec } from './model.js';
+import { attempt, useCommandContext } from './commands.js';
 import { socketTypeNames } from './socket-colors.js';
 
+const EMPTY_RESOURCES: ParameterResources = { files: [] };
 export interface NodeParameterEditorProps {
-  graph: EditorGraph;
-  node?: GraphNode;
-  projection: { nodes: GraphNode[]; edges: GraphEdge[] };
-  editable: boolean;
-  commit: (operation: () => unknown) => void;
-  onRename?: (name: string) => void;
+  session: EditorSession;
+  editable?: boolean;
+  /** Package files offered by filename inputs, and an optional upload hook. */
+  resources?: ParameterResources;
+  className?: string;
+  /** Shown in place of the panel when no single node is selected; without it the panel unmounts. */
+  placeholder?: string;
 }
 
-/** The selected node's typed parameter editors, connections and reset actions. */
-export function NodeParameterEditor({ graph, node, projection, editable, commit, onRename }: NodeParameterEditorProps) {
+/** The selected node's typed parameter editors, connections and reset actions. Follows the session's selection. */
+export function NodeParameterEditor({
+  session,
+  editable = true,
+  resources,
+  className = '',
+  placeholder,
+}: NodeParameterEditorProps) {
+  const { snapshot, projection } = useCommandContext(session, { editable });
   const [view, setView] = useState<{ node: string; definition: string }>();
-  if (!node) return null;
+  // The inspector edits one node; a multi-selection has nothing sensible to show.
+  const node =
+    snapshot.selection.length === 1 ? projection.nodes.find((n) => n.id === snapshot.selection[0]) : undefined;
+  if (!node)
+    return placeholder ? (
+      <aside className={`mtlx-editor mtlx-inspector ${className}`} aria-label="Node parameters">
+        <p className="mtlx-inspector-empty">{placeholder}</p>
+      </aside>
+    ) : null;
+  const graph = session.graph(snapshot.scope);
+  const commit = (operation: () => unknown) => {
+    if (editable) attempt(session, operation);
+  };
+  const onRename = (name: string) =>
+    commit(() => {
+      graph.renameNode(node.id, name);
+      session.select([name]);
+    });
   const viewKey = `${graph.scope}/${node.id}`;
   const candidates = node.candidates ?? [];
   const definition =
@@ -37,8 +70,8 @@ export function NodeParameterEditor({ graph, node, projection, editable, commit,
     const type = node.element.attributes.type ?? 'float';
     const value = node.element.attributes.value ?? '';
     return (
-      <aside className="mtlx-inspector" aria-label="Node parameters">
-        <h2>{editable && onRename ? <NodeNameField key={node.id} name={node.id} onRename={onRename} /> : node.id}</h2>
+      <aside className={`mtlx-editor mtlx-inspector ${className}`} aria-label="Node parameters">
+        <h2>{editable ? <NodeNameField key={node.id} name={node.id} onRename={onRename} /> : node.id}</h2>
         <p>{node.element.name === 'input' ? 'Graph input' : 'Graph output'}</p>
         <div className="mtlx-field">
           <label>
@@ -72,78 +105,80 @@ export function NodeParameterEditor({ graph, node, projection, editable, commit,
     );
   }
   return (
-    <aside className="mtlx-inspector" aria-label="Node parameters">
-      <h2>
-        {editable && onRename ? <NodeNameField key={node.id} name={node.id} onRename={onRename} /> : node.id}
-        {node.type && <span className="mtlx-node-type"> ({node.type})</span>}
-      </h2>
-      {node.id !== node.element.name && <p>{node.element.name}</p>}
-      {candidates.length > 1 && definition && (
-        <div className="mtlx-field">
-          <label title="Chooses which variant's controls and defaults the inspector shows. The graph changes only once you edit a value.">
-            Edit as
-            <select
-              aria-label="Edit as"
-              disabled={!editable}
-              value={definition.nodeDefName}
-              onChange={(event) => setView({ node: viewKey, definition: event.target.value })}
-            >
-              {candidates.map((spec) => (
-                <option key={spec.nodeDefName} value={spec.nodeDefName}>
-                  {optionLabel(spec)}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      )}
-      {node.inputs.map((socket) => {
-        const fallback = [...(definition?.inputs ?? []), ...(definition?.parameters ?? [])].find(
-          (port) => port.name === socket.name,
-        );
-        const explicit = node.element.children.find(
-          (child) => ['input', 'parameter'].includes(child.name) && child.attributes.name === socket.name,
-        );
-        const attrs = explicit?.attributes;
-        const input = fallback ? { ...fallback, attributes: { ...fallback.attributes, ...attrs } } : socket;
-        const connection = attrs?.nodename ?? attrs?.nodegraph ?? attrs?.interfacename;
-        const edge = projection.edges.find((edge) => edge.target === node.id && edge.targetHandle === input.name);
-        const value = attrs?.value ?? input.value ?? '';
-        const Editor =
-          input.attributes?.defaultgeomprop && attrs?.value === undefined && input.value === undefined
-            ? GeometryParameterEditor
-            : getParameterEditor(input);
-        return (
-          <div className="mtlx-field" key={`${input.name}/${input.type}`}>
-            {connection ? (
-              <ConnectedParameterEditor
-                parameter={input}
-                value={value}
-                ariaLabel={`${node.id} ${input.name} value`}
+    <ParameterResourcesContext.Provider value={resources ?? EMPTY_RESOURCES}>
+      <aside className={`mtlx-editor mtlx-inspector ${className}`} aria-label="Node parameters">
+        <h2>
+          {editable ? <NodeNameField key={node.id} name={node.id} onRename={onRename} /> : node.id}
+          {node.type && <span className="mtlx-node-type"> ({node.type})</span>}
+        </h2>
+        {node.id !== node.element.name && <p>{node.element.name}</p>}
+        {candidates.length > 1 && definition && (
+          <div className="mtlx-field">
+            <label title="Chooses which variant's controls and defaults the inspector shows. The graph changes only once you edit a value.">
+              Edit as
+              <select
+                aria-label="Edit as"
                 disabled={!editable}
-                onChange={() => {}}
-                source={
-                  edge
-                    ? `${edge.source}.${edge.sourceHandle}`
-                    : `${connection}${attrs?.output ? `.${attrs.output}` : ''}`
-                }
-                onDisconnect={() => commit(() => graph.disconnectInput(node.id, input.name))}
-              />
-            ) : (
-              <Editor
-                parameter={input}
-                value={value}
-                ariaLabel={`${node.id} ${input.name} value`}
-                disabled={!editable || !!connection}
-                onReset={editable && explicit ? () => commit(() => graph.resetInput(node.id, input.name)) : undefined}
-                onChange={(nextValue, options) =>
-                  commit(() => graph.setInputValue(node.id, input.name, nextValue, { type: input.type, ...options }))
-                }
-              />
-            )}
+                value={definition.nodeDefName}
+                onChange={(event) => setView({ node: viewKey, definition: event.target.value })}
+              >
+                {candidates.map((spec) => (
+                  <option key={spec.nodeDefName} value={spec.nodeDefName}>
+                    {optionLabel(spec)}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
-        );
-      })}
-    </aside>
+        )}
+        {node.inputs.map((socket) => {
+          const fallback = [...(definition?.inputs ?? []), ...(definition?.parameters ?? [])].find(
+            (port) => port.name === socket.name,
+          );
+          const explicit = node.element.children.find(
+            (child) => ['input', 'parameter'].includes(child.name) && child.attributes.name === socket.name,
+          );
+          const attrs = explicit?.attributes;
+          const input = fallback ? { ...fallback, attributes: { ...fallback.attributes, ...attrs } } : socket;
+          const connection = attrs?.nodename ?? attrs?.nodegraph ?? attrs?.interfacename;
+          const edge = projection.edges.find((edge) => edge.target === node.id && edge.targetHandle === input.name);
+          const value = attrs?.value ?? input.value ?? '';
+          const Editor =
+            input.attributes?.defaultgeomprop && attrs?.value === undefined && input.value === undefined
+              ? GeometryParameterEditor
+              : getParameterEditor(input);
+          return (
+            <div className="mtlx-field" key={`${input.name}/${input.type}`}>
+              {connection ? (
+                <ConnectedParameterEditor
+                  parameter={input}
+                  value={value}
+                  ariaLabel={`${node.id} ${input.name} value`}
+                  disabled={!editable}
+                  onChange={() => {}}
+                  source={
+                    edge
+                      ? `${edge.source}.${edge.sourceHandle}`
+                      : `${connection}${attrs?.output ? `.${attrs.output}` : ''}`
+                  }
+                  onDisconnect={() => commit(() => graph.disconnectInput(node.id, input.name))}
+                />
+              ) : (
+                <Editor
+                  parameter={input}
+                  value={value}
+                  ariaLabel={`${node.id} ${input.name} value`}
+                  disabled={!editable || !!connection}
+                  onReset={editable && explicit ? () => commit(() => graph.resetInput(node.id, input.name)) : undefined}
+                  onChange={(nextValue, options) =>
+                    commit(() => graph.setInputValue(node.id, input.name, nextValue, { type: input.type, ...options }))
+                  }
+                />
+              )}
+            </div>
+          );
+        })}
+      </aside>
+    </ParameterResourcesContext.Provider>
   );
 }

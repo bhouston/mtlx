@@ -26,11 +26,11 @@ export function EditorShareMenu({ getUrl, disabled }: { getUrl: () => string; di
     }
   };
   return (
-    <div className="ml-auto flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-0.5">
       <output className={message ? 'max-w-sm text-xs text-muted-foreground' : 'sr-only'}>{message}</output>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" disabled={disabled}>
+          <Button variant="ghost" size="sm" disabled={disabled}>
             <Share2 />
             Share
           </Button>

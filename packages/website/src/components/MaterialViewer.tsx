@@ -260,13 +260,7 @@ export function MaterialViewer({
         ref={containerRef}
         className="relative aspect-square w-full shrink-0 overflow-hidden sm:h-full [&>canvas]:absolute [&>canvas]:inset-0"
       />
-      {viewer ? (
-        <ViewerSettingsPanel
-          className="m-3 sm:absolute sm:right-3 sm:bottom-3 sm:left-3 sm:m-0"
-          settings={currentSettings}
-          onChange={updateSettings}
-        />
-      ) : null}
+      {viewer ? <ViewerSettingsPanel settings={currentSettings} onChange={updateSettings} /> : null}
       <output
         className={
           environmentMessage ? 'absolute bottom-16 left-2 rounded bg-black/80 p-2 text-xs text-white' : 'sr-only'

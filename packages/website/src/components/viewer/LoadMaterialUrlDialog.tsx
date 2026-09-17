@@ -43,7 +43,7 @@ export function LoadMaterialUrlDialog({
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm">
           <Link2 />
-          Load URL
+          Open URL
         </Button>
       </DialogTrigger>
       <DialogContent>

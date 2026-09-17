@@ -255,7 +255,6 @@ export function PreviewApp() {
                 {diagnostics.environmentStatus}
               </output>
               <ViewerSettingsPanel
-                className="absolute right-3 bottom-3 left-3 z-10"
                 settings={viewerSettings}
                 onChange={updateSettings}
                 geometries={geometries}

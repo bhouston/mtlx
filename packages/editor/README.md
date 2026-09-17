@@ -5,22 +5,27 @@ A functional MaterialX graph editor, with no dependency on Three.js or the websi
 ```tsx
 import { useState } from 'react';
 import { createEditorSession } from 'mtlx-core/session';
-import { MaterialXNodeGraph, MaterialXNodeLib, createDefaultDocument, useEditorSession } from 'mtlx-editor';
+import {
+  GraphToolbar,
+  MaterialXNodeGraph,
+  MaterialXNodeLib,
+  NodeParameterEditor,
+  createDefaultDocument,
+  useCommandShortcuts,
+} from 'mtlx-editor';
 import 'mtlx-editor/styles.css';
 
 function Editor() {
   const [editor] = useState(() => createEditorSession({ document: createDefaultDocument() }));
-  const snapshot = useEditorSession(editor);
+  useCommandShortcuts(editor);
   return (
     <>
-      <button disabled={!snapshot.canUndo} onClick={editor.undo}>
-        Undo
-      </button>
-      <button disabled={!snapshot.canRedo} onClick={editor.redo}>
-        Redo
-      </button>
       <MaterialXNodeLib onAdd={(spec) => editor.graph().addNode({ definition: spec.nodeDefName })} />
-      <MaterialXNodeGraph session={editor} mode="edit" />
+      <div className="mtlx-graph-frame">
+        <MaterialXNodeGraph session={editor} mode="edit" />
+        <GraphToolbar session={editor} />
+        <NodeParameterEditor session={editor} />
+      </div>
     </>
   );
 }
@@ -62,10 +67,24 @@ for display positions or the node's XML attributes for persisted `xpos`/`ypos`.
   React Flow nodes and edges. `MaterialXNodeGraph` takes only a `session`; a host that
   starts from a document creates one with `useState(() => createEditorSession(...))`.
   `MaterialXGraphView` does this internally for read-only file inspection.
-  `mode="view"` disables UI edits (headless callers can still edit their session). `scope` selects the
-  document (`''`) or a named nodegraph. Compound nodes expose **Expand**, with breadcrumbs
-  above the canvas to return to parent graphs. `onScopeChange` synchronizes navigation
-  with a host scope selector or node library; without it, navigation is managed internally.
+  `mode="view"` disables UI edits (headless callers can still edit their session). The session
+  owns the view state every surface shares: `scope` (the document `''` or a named nodegraph),
+  `selection` and the last command `error`, published in its snapshot beside the document.
+  `session.setScope`, `session.select` and `session.setError` change them without touching
+  history. The `scope` prop controls the session's scope from a host selector or URL, and
+  `onScopeChange` reports navigation back; without them the session manages navigation.
+  Compound nodes expose **Expand**, with breadcrumbs above the canvas to return to parent graphs.
+- **Commands** (the `commands` namespace export) are stateless objects with a `state(context)` function
+  (visible, enabled, title) and a `run(context)` function. `GraphToolbar`, the canvas context
+  menu and `useCommandShortcuts` all read the same command lists (`TOOLBAR_COMMANDS`,
+  `CONTEXT_MENU_COMMANDS`, `SHORTCUT_COMMANDS`); `resolveCommands` keeps the visible ones and
+  collapses dividers. `GraphToolbar` and `NodeParameterEditor` take only a `session`, so a host
+  places them anywhere; wrapping them with the graph in a `.mtlx-graph-frame` overlays the
+  toolbar bottom-center and the inspector on the right; `NodeParameterEditor` unmounts when no single node is selected unless given a `placeholder`, which keeps the panel in place with that message. The toolbar offers add node, undo, redo,
+  cut, copy, paste, group, delete, zoom, fit and arrange; fit frames the selected nodes, or everything when nothing is selected; the canvas lends it zoom, fit and
+  add-node through `registerCanvas`, so those hide until a graph for the session mounts. Mount
+  `useCommandShortcuts(session)` once per page for undo, redo, cut, copy, paste, duplicate and
+  group keys.
   Expansion works in view mode and for local node definition implementations. Nested
   graph scopes use slash-separated paths. `MaterialXNodeList` is shared between category
   browsing and search results. The drag payload contains only a nodedef identifier.
@@ -220,7 +239,7 @@ These are editor checks, not full MaterialX conformance or renderer compilation 
 
 ### Parameter editors
 
-`NodeParameterEditor` renders the selected node's inputs (output nodes have no parameter panel).
+`NodeParameterEditor` follows the session's selection and renders the selected node's inputs (output nodes have no parameter panel).
 `ParameterEditor` is a React component type with `parameter`, `value`, `onChange`, `disabled`,
 and `ariaLabel` props. Implementations render their own layout using the shared `ParameterLabel`.
 `getParameterEditor` selects float/integer sliders, boolean toggles, enums, color pickers,
@@ -234,7 +253,7 @@ Enter or blur, preserving alpha. No color-space conversion is applied. Labels om
 Connected inputs use `ConnectedParameterEditor`, with a source indicator and disconnect action.
 Reset uses a refresh icon with an accessible label. Create connections by dragging graph ports.
 
-The **Sample materials** picker includes deliberately invalid examples:
+The **Sample** picker includes deliberately invalid examples:
 
 | Sample                  | Error                                     | Suggested fix                                                       |
 | ----------------------- | ----------------------------------------- | ------------------------------------------------------------------- |

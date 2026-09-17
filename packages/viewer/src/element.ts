@@ -70,9 +70,15 @@ const PANEL_STYLE = `
   .panel label { display: flex; flex-direction: column; gap: 2px; }
   .panel label.row { flex-direction: row; align-items: center; justify-content: space-between; }
   .panel select, .panel input[type="range"] { width: 100%; }
+  .panel .close {
+    position: absolute; right: 6px; top: 6px; width: 22px; height: 22px; border: none; border-radius: 4px;
+    background: transparent; color: #fff; cursor: pointer; font-size: 14px; line-height: 1;
+  }
+  .panel .close:hover { background: rgba(255, 255, 255, 0.15); }
 `;
 
 const PANEL_HTML = `
+  <button type="button" class="close" aria-label="Close viewer settings">✕</button>
   <label>Geometry<select id="geometry"></select></label>
   <label>Environment<select id="ibl"></select></label>
   <label>Material<select id="material"></select></label>
@@ -137,13 +143,22 @@ export class MaterialViewerElement extends HTMLElement {
     this.#panelEl.className = 'panel';
     this.#panelEl.innerHTML = PANEL_HTML;
     this.#panelEl.querySelector('#tone-mapping')!.innerHTML = optionsHtml(TONE_MAPPING_OPTIONS);
+    this.#panelEl.querySelector('.close')!.addEventListener('click', () => this.#panelEl.classList.remove('open'));
     shadow.append(style, this.#viewportEl, this.#playEl, this.#toggleEl, this.#panelEl);
     this.#bindControls();
   }
 
+  /** A click outside the element or Escape closes an open panel. */
+  readonly #closePanel = (event: Event) => {
+    if (event instanceof KeyboardEvent ? event.key === 'Escape' : !event.composedPath().includes(this))
+      this.#panelEl.classList.remove('open');
+  };
+
   connectedCallback(): void {
     if (!this.style.display) this.style.display = 'block';
     this.#syncPanelState();
+    document.addEventListener('pointerdown', this.#closePanel);
+    document.addEventListener('keydown', this.#closePanel);
     void this.#load();
   }
 
@@ -167,6 +182,8 @@ export class MaterialViewerElement extends HTMLElement {
   }
 
   disconnectedCallback(): void {
+    document.removeEventListener('pointerdown', this.#closePanel);
+    document.removeEventListener('keydown', this.#closePanel);
     this.#generation++;
     this.#viewer?.dispose();
     this.#viewer = null;

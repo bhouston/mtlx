@@ -1,12 +1,8 @@
 import { isStructural, structuralSpecs, type EditorSession } from 'mtlx-core/session';
 import { useEditorSession } from './useEditorSession.js';
-import { NodeParameterEditor } from './NodeParameterEditor.js';
-import { ParameterResourcesContext, type ParameterResources } from './parameter-editors.js';
 import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { LayoutGrid, Plus } from 'lucide-react';
 import {
   Background,
-  Controls,
   ReactFlow,
   ReactFlowProvider,
   useNodesState,
@@ -17,14 +13,12 @@ import {
   type Edge,
 } from '@xyflow/react';
 import {
-  autoLayout,
   graphScopes,
-  projectGraph,
   type EditorMode,
   type GraphConnection,
   type MaterialXDocument,
-  type MaterialXElement,
   type MaterialXNodeSpec,
+  type Point,
 } from './model.js';
 import { validateGraph } from './validation.js';
 import { socketColor, socketTypes } from './socket-colors.js';
@@ -34,7 +28,7 @@ import { QuickAddMenu } from './QuickAddMenu.js';
 import { isNodeDefinition, type NodeDefinition } from './node-catalog-tree.js';
 import { nodeTypes, type FlowNode } from './MaterialNode.js';
 import { edgeTypes, MaterialConnectionLine } from './MaterialEdge.js';
-
+import { attempt, registerCanvas, useCommandContext, type WireTarget } from './commands.js';
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -44,13 +38,8 @@ import {
   BreadcrumbSeparator,
 } from './ui/breadcrumb.js';
 
-const EMPTY_RESOURCES: ParameterResources = { files: [] };
-/** Tag on the clipboard JSON so paste can tell node data from other text. */
-export const MATERIALX_CLIPBOARD_TYPE = 'mtlx-editor/nodes';
-type Point = { x: number; y: number };
+export { MATERIALX_CLIPBOARD_TYPE } from './commands.js';
 type LooseEnd = { node: string; handle: string; side: 'output' | 'input'; type?: string };
-/** A right-clicked port, or the input end of a right-clicked wire. */
-type WireTarget = { node: string; side: 'output' | 'input'; name: string };
 /** Definitions that could take the loose end of a dragged wire. */
 const accepts = (from?: LooseEnd) => (spec: MaterialXNodeSpec) => {
   if (!from?.type) return true;
@@ -64,6 +53,7 @@ export interface MaterialXNodeGraphProps {
   /** Material file name or path, shown at the root of the breadcrumbs. */
   fileName?: string;
   mode?: EditorMode;
+  /** Controls the session's scope; without it the session owns navigation. */
   scope?: string;
   onScopeChange?: (scope: string) => void;
   className?: string;
@@ -71,8 +61,6 @@ export interface MaterialXNodeGraphProps {
   colorMode?: ColorMode;
   /** Rendered over the canvas, for example a material preview. */
   children?: ReactNode;
-  /** Package files offered by filename inputs, and an optional upload hook. */
-  resources?: ParameterResources;
 }
 function asConnection(connection: Connection | Edge): GraphConnection {
   return {
@@ -83,30 +71,30 @@ function asConnection(connection: Connection | Edge): GraphConnection {
   };
 }
 function Graph({
-  document,
   fileName,
   session,
   mode = 'edit',
-  scope = '',
-  catalog,
   className = '',
   colorMode = 'system',
   children,
-  resources,
   path,
   onNavigate,
 }: MaterialXNodeGraphProps & {
-  document: MaterialXDocument;
-  catalog: MaterialXNodeSpec[];
   path: string[];
   onNavigate: (path: string[]) => void;
 }) {
+  const editable = mode === 'edit';
+  const commands = useCommandContext(session, { editable });
+  const { snapshot, projection } = commands;
+  const document = snapshot.document as MaterialXDocument;
+  const catalog = session.getCatalog() as MaterialXNodeSpec[];
+  const scope = snapshot.scope;
+  const selected = snapshot.selection;
   // Menus offer a node graph at the root and interface ports inside one, alongside the definitions.
   const menuCatalog = useMemo(
     () => [...catalog, ...structuralSpecs.filter((spec) => (spec.category === 'nodegraph') === !scope)],
     [catalog, scope],
   );
-  const projection = useMemo(() => projectGraph(document, scope, catalog), [document, scope, catalog]);
   const portType = useMemo(() => socketTypes(projection.nodes, projection.edges), [projection]);
   const diagnostics = useMemo(
     () => validateGraph(document, scope, catalog, projection),
@@ -138,8 +126,6 @@ function Graph({
       }),
     [projection, portType, invalidEdges, selectedEdges],
   );
-  /** Selected node ids in selection order; the inspector shows a lone selection. */
-  const [selected, setSelected] = useState<readonly string[]>([]);
   const [showAll, setShowAll] = useState<ReadonlySet<string>>(new Set());
   const toggleInputs = useCallback(
     (id: string) =>
@@ -150,14 +136,12 @@ function Graph({
       }),
     [],
   );
-  const [error, setError] = useState('');
   const [context, setContext] = useState<{ nodeId?: string; wire?: WireTarget; position: Point; client: Point }>({
     position: { x: 0, y: 0 },
     client: { x: 0, y: 0 },
   });
-  const editable = mode === 'edit';
   const operations = session.graph(scope);
-  const { screenToFlowPosition, fitView } = useReactFlow();
+  const { screenToFlowPosition, fitView, zoomIn, zoomOut } = useReactFlow();
   const canvas = useRef<HTMLDivElement>(null);
   /** A wire released on empty canvas remembers its loose end so the added node connects to it. */
   const [quickAdd, setQuickAdd] = useState<{ at: Point; position: Point; from?: LooseEnd }>();
@@ -167,7 +151,31 @@ function Graph({
     const at = { x: Math.max(0, client.x - rect.left), y: Math.max(0, client.y - rect.top) };
     setQuickAdd({ at, position: screenToFlowPosition(client), from });
   };
-  const nodeCount = projection.nodes.length;
+  /** Frames the given nodes, or everything when none are given. */
+  const fit = (nodeIds?: readonly string[]) =>
+    void fitView({
+      padding: 0.15,
+      duration: 200,
+      ...(nodeIds?.length ? { nodes: nodeIds.map((id) => ({ id })) } : {}),
+    });
+  // The floating toolbar lives outside the canvas, so the canvas lends it these through the session.
+  const canvasActions = useRef({ openQuickAdd, fit });
+  useEffect(() => {
+    canvasActions.current = { openQuickAdd, fit };
+  });
+  useEffect(
+    () =>
+      registerCanvas(session, {
+        addNode: () => {
+          const rect = canvas.current?.getBoundingClientRect();
+          if (rect) canvasActions.current.openQuickAdd({ x: rect.left + rect.width / 2, y: rect.top + 80 });
+        },
+        fitView: (nodeIds) => canvasActions.current.fit(nodeIds),
+        zoomIn: () => void zoomIn({ duration: 200 }),
+        zoomOut: () => void zoomOut({ duration: 200 }),
+      }),
+    [session, zoomIn, zoomOut],
+  );
   // React Flow fits on init; any later container resize (hidden tabs, mobile, editor layout switch) refits.
   useEffect(() => {
     const element = canvas.current;
@@ -179,8 +187,14 @@ function Graph({
     observer.observe(element);
     return () => observer.disconnect();
   }, [fitView]);
-  // Node data is memoized on the projection, so port menus reach the latest openContext through a ref.
-  const portContext = useRef<(event: { clientX: number; clientY: number }, wire: WireTarget) => void>(() => {});
+  // A port right-click notes its wire here; the node's context-menu handler, which follows in the same
+  // dispatch, opens the menu with it. Stopping propagation instead would also stop the menu trigger.
+  const pendingWire = useRef<WireTarget>(undefined);
+  const takeWire = () => {
+    const wire = pendingWire.current;
+    pendingWire.current = undefined;
+    return wire;
+  };
   const projectedNodes = useMemo(
     () =>
       projection.nodes.map(
@@ -195,9 +209,8 @@ function Graph({
             mode: editable ? 'edit' : 'view',
             showAll: showAll.has(graph.id),
             onToggleInputs: () => toggleInputs(graph.id),
-            onPortContextMenu: (event, side, name) => {
-              event.stopPropagation();
-              portContext.current(event, { node: graph.id, side, name });
+            onPortContextMenu: (_, side, name) => {
+              pendingWire.current = { node: graph.id, side, name };
             },
             onExpand:
               graph.compoundScope !== undefined && !path.includes(graph.compoundScope)
@@ -213,81 +226,16 @@ function Graph({
   const [nodes, setNodes, onNodesChange] = useNodesState(projectedNodes);
   useLayoutEffect(() => setNodes(projectedNodes), [projectedNodes, setNodes]);
   const commit = (operation: () => unknown) => {
-    if (!editable) return;
-    try {
-      operation();
-      setError('');
-    } catch (failure) {
-      setError(failure instanceof Error ? failure.message : String(failure));
-    }
+    if (editable) attempt(session, operation);
   };
   const add = (spec: NodeDefinition, position: Point) =>
     commit(() =>
       session.transaction('Add node', () => {
         const id = operations.addNode({ definition: spec.nodeDefName });
         session.layout.moveNodes({ [id]: position }, scope);
-        setSelected([id]);
+        session.select([id]);
       }),
     );
-  const duplicate = (ids: readonly string[]) => {
-    const sources = projection.nodes.filter((node) => ids.includes(node.id));
-    if (!sources.length) return;
-    commit(() =>
-      session.transaction(sources.length === 1 ? 'Clone node' : 'Clone nodes', () => {
-        const clones = sources.map((source) => {
-          const cloned = operations.cloneNode(source.id);
-          session.layout.moveNodes({ [cloned]: { x: source.position.x + 40, y: source.position.y + 40 } }, scope);
-          return cloned;
-        });
-        setSelected(clones);
-      }),
-    );
-  };
-  /** Copy the given nodes to the system clipboard as typed JSON, with their canvas positions baked in. */
-  const copy = async (ids: readonly string[]) => {
-    const elements = projection.nodes
-      .filter((node) => ids.includes(node.id))
-      .map((node) => ({
-        ...node.element,
-        attributes: { ...node.element.attributes, xpos: String(node.position.x), ypos: String(node.position.y) },
-      }));
-    if (!elements.length) return false;
-    await navigator.clipboard.writeText(
-      JSON.stringify({ type: MATERIALX_CLIPBOARD_TYPE, version: 1, nodes: elements }, null, 2),
-    );
-    return true;
-  };
-  const cut = (ids: readonly string[]) =>
-    copy(ids)
-      .then((copied) => copied && commit(() => session.transaction('Cut nodes', () => operations.removeNodes(ids))))
-      .catch((failure) => setError(failure instanceof Error ? failure.message : String(failure)));
-  /** Paste with the pasted group's top-left at `at`, or nudged from the originals when no point is given. */
-  const paste = (at?: Point) =>
-    navigator.clipboard
-      .readText()
-      .then((text) => {
-        const data = JSON.parse(text) as { type?: string; nodes?: MaterialXElement[] };
-        if (data?.type !== MATERIALX_CLIPBOARD_TYPE || !Array.isArray(data.nodes))
-          throw new Error('Clipboard does not hold MaterialX nodes.');
-        const placed = data.nodes.filter((node) => node?.attributes?.xpos !== undefined);
-        const origin = {
-          x: Math.min(...placed.map((node) => Number(node.attributes.xpos))),
-          y: Math.min(...placed.map((node) => Number(node.attributes.ypos))),
-        };
-        const offset = at && placed.length ? { x: at.x - origin.x, y: at.y - origin.y } : { x: 40, y: 40 };
-        commit(() => setSelected(operations.pasteNodes(data.nodes!, offset)));
-      })
-      .catch((failure) => setError(failure instanceof Error ? failure.message : String(failure)));
-  /** The nodes a node-targeted action applies to: the whole selection when the target is part of it. */
-  const targets = (nodeId: string) => (selected.includes(nodeId) ? selected : [nodeId]);
-  const group = () => {
-    if (!selected.length || scope) return;
-    commit(() =>
-      session.transaction('Group nodes', () => {
-        setSelected([operations.groupNodes(selected)]);
-      }),
-    );
-  };
   const addAndConnect = (spec: NodeDefinition) => {
     const pending = quickAdd;
     setQuickAdd(undefined);
@@ -308,7 +256,7 @@ function Graph({
           const port = outputs.find((output) => output.type === from.type) ?? outputs[0];
           if (port) operations.connect({ node: id, output: port.name }, { node: from.node, input: from.handle });
         }
-        setSelected([id]);
+        session.select([id]);
       }),
     );
   };
@@ -328,38 +276,21 @@ function Graph({
     if (!editable) return;
     const client = { x: event.clientX, y: event.clientY };
     setContext({ nodeId, wire, position: screenToFlowPosition(client), client });
-    if (nodeId ? !selected.includes(nodeId) : selected.length) setSelected(nodeId ? [nodeId] : []);
+    if (nodeId ? !selected.includes(nodeId) : selected.length) session.select(nodeId ? [nodeId] : []);
   };
-  useEffect(() => {
-    portContext.current = (event, wire) => openContext(event, wire.node, wire);
-  });
-  // The pane never takes focus, so shortcuts apply while the pointer or focus is on the canvas.
+  /** Canvas-only keys; editing shortcuts come from `useCommandShortcuts`, which the host mounts once. */
   const shortcuts = useRef<(event: KeyboardEvent) => void>(() => {});
   const onShortcut = (event: KeyboardEvent) => {
     const element = canvas.current;
-    if (!editable || quickAdd || !element) return;
+    if (!editable || quickAdd || !element || event.metaKey || event.ctrlKey) return;
     const target = event.target as HTMLElement;
     if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
     if (!element.matches(':hover') && !element.contains(target)) return;
-    const meta = event.metaKey || event.ctrlKey;
-    const key = event.key.toLowerCase();
-    // Text selected on the canvas (for example in the error log) keeps the browser's own copy.
-    const copyable = selected.length && !window.getSelection()?.toString();
-    if (meta && key === 'c' && copyable) void copy(selected).catch(() => {});
-    else if (meta && key === 'x' && copyable) void cut(selected);
-    else if (meta && key === 'v') void paste();
-    else if (meta && event.key.toLowerCase() === 'd' && selected.length) duplicate(selected);
-    else if (meta && event.key.toLowerCase() === 'g' && !scope) group();
-    else if (event.shiftKey && !meta && event.key.toLowerCase() === 'a') {
+    if (event.shiftKey && event.key.toLowerCase() === 'a') {
       const rect = element.getBoundingClientRect();
       openQuickAdd({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
-    } else if (event.key === 'f' && !meta)
-      void fitView({
-        padding: 0.15,
-        duration: 200,
-        ...(selected.length ? { nodes: selected.map((id) => ({ id })) } : {}),
-      });
-    else if (event.key === 'Escape') setSelected([]);
+    } else if (event.key === 'f') fit(selected);
+    else if (event.key === 'Escape') session.select([]);
     else return;
     event.preventDefault();
   };
@@ -371,37 +302,8 @@ function Graph({
     window.addEventListener('keydown', listener);
     return () => window.removeEventListener('keydown', listener);
   }, []);
-  /** Disconnect and reset actions for the right-clicked wire or port, when they apply. */
-  const wireActions = (wire: WireTarget) => {
-    const incoming = projection.edges.filter((edge) => edge.target === wire.node && edge.targetHandle === wire.name);
-    const outgoing = projection.edges.filter((edge) => edge.source === wire.node && edge.sourceHandle === wire.name);
-    const explicit = projection.nodes
-      .find((node) => node.id === wire.node)
-      ?.element.children.some(
-        (child) => ['input', 'parameter'].includes(child.name) && child.attributes.name === wire.name,
-      );
-    if (wire.side === 'output')
-      return {
-        label: outgoing.length > 1 ? `Disconnect ${outgoing.length} wires` : 'Disconnect',
-        onDisconnect: outgoing.length
-          ? () =>
-              commit(() =>
-                session.transaction('Disconnect inputs', () => {
-                  for (const edge of outgoing) operations.disconnectInput(edge.target, edge.targetHandle ?? 'in');
-                }),
-              )
-          : undefined,
-      };
-    return {
-      label: 'Disconnect',
-      onDisconnect: incoming.length ? () => commit(() => operations.disconnectInput(wire.node, wire.name)) : undefined,
-      onReset:
-        explicit && !incoming.length ? () => commit(() => operations.resetInput(wire.node, wire.name)) : undefined,
-    };
-  };
-  // The inspector edits one node; a multi-selection has nothing sensible to show.
-  const inspected = selected.length === 1 ? projection.nodes.find((node) => node.id === selected[0]) : undefined;
   const rootLabel = fileName?.split(/[\\/]/).at(-1) || 'material.mtlx';
+  const error = snapshot.error;
   return (
     <section className={`mtlx-editor mtlx-graph ${className}`} aria-label="MaterialX node graph">
       <div className="mtlx-graph-main">
@@ -447,56 +349,18 @@ function Graph({
               ))}
             </BreadcrumbList>
           </Breadcrumb>
-          {editable && (
-            <div className="mtlx-toolbar-overlay nodrag nopan">
-              <button
-                type="button"
-                className="mtlx-toolbar-button"
-                title="Add node"
-                onClick={() => {
-                  const rect = canvas.current?.getBoundingClientRect();
-                  if (rect) openQuickAdd({ x: rect.left + rect.width / 2, y: rect.top + 80 });
-                }}
-              >
-                <Plus size={14} aria-hidden="true" />
-                Add node
-              </button>
-              <button
-                type="button"
-                className="mtlx-toolbar-button"
-                title="Arrange nodes by data flow"
-                disabled={!nodeCount}
-                onClick={() =>
-                  commit(() => {
-                    session.layout.moveNodes(autoLayout(projection.nodes, projection.edges), scope);
-                    requestAnimationFrame(() => void fitView({ padding: 0.15, duration: 200 }));
-                  })
-                }
-              >
-                <LayoutGrid size={14} aria-hidden="true" />
-                Arrange
-              </button>
-            </div>
-          )}
           {/* The menu trigger wraps only the flow, so right-clicking the overlays never opens it. */}
           <GraphContextMenu
             catalog={menuCatalog}
-            editable={editable}
-            nodeId={context.nodeId}
+            context={{
+              ...commands,
+              // Pasting onto a node nudges from the originals; pasting on the canvas lands at the pointer.
+              at: context.nodeId ? undefined : context.position,
+              client: context.client,
+              wire: context.wire,
+              openQuickAdd,
+            }}
             onAdd={(spec) => add(spec, context.position)}
-            onSearch={() => openQuickAdd(context.client)}
-            onCopy={() => {
-              if (context.nodeId) void copy(targets(context.nodeId)).catch(() => {});
-            }}
-            onCut={() => {
-              if (context.nodeId) void cut(targets(context.nodeId));
-            }}
-            onPaste={() => void paste(context.nodeId ? undefined : context.position)}
-            onDelete={() => {
-              if (context.nodeId) commit(() => operations.removeNodes(targets(context.nodeId!)));
-            }}
-            onGroup={scope ? undefined : group}
-            wire={context.wire && wireActions(context.wire)}
           >
             <div className="mtlx-flow">
               <ReactFlow<FlowNode>
@@ -506,6 +370,7 @@ function Graph({
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 fitView
+                proOptions={{ hideAttribution: true }}
                 colorMode={colorMode}
                 zoomOnDoubleClick={false}
                 minZoom={0.08}
@@ -532,15 +397,14 @@ function Graph({
                 }
                 onNodesChange={(changes) => {
                   const selections = changes.filter((change) => change.type === 'select');
-                  if (selections.length)
-                    setSelected((current) => {
-                      const next = current.filter(
-                        (id) => !selections.some((change) => change.id === id && !change.selected),
-                      );
-                      for (const change of selections)
-                        if (change.selected && !next.includes(change.id)) next.push(change.id);
-                      return next;
-                    });
+                  if (selections.length) {
+                    const next = session
+                      .getSnapshot()
+                      .selection.filter((id) => !selections.some((change) => change.id === id && !change.selected));
+                    for (const change of selections)
+                      if (change.selected && !next.includes(change.id)) next.push(change.id);
+                    session.select(next);
+                  }
                   const positions = Object.fromEntries(
                     changes.flatMap((change) =>
                       change.type === 'position' && change.dragging === false && change.position
@@ -559,9 +423,9 @@ function Graph({
                     return next;
                   })
                 }
-                onPaneClick={() => setSelected([])}
-                onNodeContextMenu={(event, node) => openContext(event, node.id)}
-                onSelectionContextMenu={(event, chosen) => openContext(event, chosen[0]?.id)}
+                onPaneClick={() => session.select([])}
+                onNodeContextMenu={(event, node) => openContext(event, node.id, takeWire())}
+                onSelectionContextMenu={(event, chosen) => openContext(event, chosen[0]?.id, takeWire())}
                 onPaneContextMenu={(event) => openContext(event)}
                 onEdgeContextMenu={(event, edge) =>
                   openContext(event, undefined, { node: edge.target, side: 'input', name: edge.targetHandle ?? 'in' })
@@ -588,7 +452,6 @@ function Graph({
                 onConnectEnd={onConnectEnd}
               >
                 <Background />
-                <Controls showInteractive={false} />
               </ReactFlow>
             </div>
           </GraphContextMenu>
@@ -615,52 +478,39 @@ function Graph({
           )}
         </div>
       </div>
-      <ParameterResourcesContext.Provider value={resources ?? EMPTY_RESOURCES}>
-        <NodeParameterEditor
-          key={`${scope}/${inspected?.id ?? ''}`}
-          graph={operations}
-          node={inspected}
-          projection={projection}
-          editable={editable}
-          commit={commit}
-          onRename={(name) =>
-            commit(() => {
-              operations.renameNode(inspected!.id, name);
-              setSelected([name]);
-            })
-          }
-        />
-      </ParameterResourcesContext.Provider>
     </section>
   );
 }
+/** The breadcrumb trail for a scope when it was not reached by navigating. */
+const defaultPath = (scope: string) => [
+  '',
+  ...scope
+    .split('/')
+    .filter(Boolean)
+    .map((_, index, parts) => parts.slice(0, index + 1).join('/')),
+];
 /** Renders and edits one scope of the session's document; the `ReactFlowProvider` is created internally. */
 export function MaterialXNodeGraph(props: MaterialXNodeGraphProps) {
-  const snapshot = useEditorSession(props.session);
-  // Projection utilities take MaterialXDocument; the session's frozen tree is only ever read here.
-  const document = snapshot.document as MaterialXDocument;
-  const catalog = props.session.getCatalog() as MaterialXNodeSpec[];
-  const scopes = graphScopes(document);
-  const externalScope = scopes.includes(props.scope ?? '') ? (props.scope ?? '') : '';
-  const defaultPath = [
-    '',
-    ...externalScope
-      .split('/')
-      .filter(Boolean)
-      .map((_, index, parts) => parts.slice(0, index + 1).join('/')),
-  ];
-  const [navigation, setNavigation] = useState({ externalScope, path: defaultPath });
-  const validPath = navigation.path.every((value) => scopes.includes(value));
-  const path = navigation.externalScope === externalScope && validPath ? navigation.path : defaultPath;
-  const scope = path[path.length - 1]!;
+  const { session } = props;
+  const snapshot = useEditorSession(session);
+  const scopes = graphScopes(snapshot.document as MaterialXDocument);
+  const externalScope = props.scope !== undefined && scopes.includes(props.scope) ? props.scope : undefined;
+  useLayoutEffect(() => {
+    if (externalScope !== undefined) session.setScope(externalScope);
+  }, [externalScope, session]);
+  const scope = snapshot.scope;
+  // Compound nodes navigate to scopes their path does not spell, so the trail is kept while it leads here.
+  const [trail, setTrail] = useState<string[]>([]);
+  const path = trail.at(-1) === scope ? trail : defaultPath(scope);
   const onNavigate = (next: string[]) => {
     const nextScope = next[next.length - 1]!;
-    setNavigation({ externalScope: props.onScopeChange ? nextScope : externalScope, path: next });
+    setTrail(next);
+    session.setScope(nextScope);
     props.onScopeChange?.(nextScope);
   };
   return (
     <ReactFlowProvider key={scope}>
-      <Graph {...props} document={document} catalog={catalog} scope={scope} path={path} onNavigate={onNavigate} />
+      <Graph {...props} path={path} onNavigate={onNavigate} />
     </ReactFlowProvider>
   );
 }

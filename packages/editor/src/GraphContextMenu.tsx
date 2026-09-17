@@ -1,88 +1,64 @@
 import { useMemo, type ReactElement } from 'react';
 import { buildNodeCatalogTree, type NodeCatalogEntry, type NodeDefinition } from './node-catalog-tree.js';
 import { nodeType, type MaterialXNodeSpec } from './model.js';
+import { CONTEXT_MENU_COMMANDS, execute, resolveCommands, type CommandContext, type CommandEntry } from './commands.js';
 import {
   ContextMenu,
   ContextMenuTrigger,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
 } from './ui/context-menu.js';
 
+/** Right-click menu driven by commands; the node catalog submenu joins them on an empty canvas. */
 export function GraphContextMenu({
   children,
   catalog,
-  editable,
-  nodeId,
+  context,
+  entries = CONTEXT_MENU_COMMANDS,
   onAdd,
-  onSearch,
-  onCopy,
-  onCut,
-  onPaste,
-  onDelete,
-  onGroup,
-  wire,
 }: {
   children: ReactElement;
   catalog: MaterialXNodeSpec[];
-  editable: boolean;
-  nodeId?: string;
+  /** The command context for where the menu opened: its targets, canvas point and wire. */
+  context: CommandContext;
+  entries?: readonly CommandEntry[];
   onAdd: (spec: NodeDefinition) => void;
-  onSearch: () => void;
-  onCopy: () => void;
-  onCut: () => void;
-  onPaste: () => void;
-  onDelete: () => void;
-  /** Offered at the root scope only; collapses the selection into a node graph. */
-  onGroup?: () => void;
-  /** Actions for a right-clicked wire or port; the menu shows these instead of the node or pane items. */
-  wire?: { label: string; onDisconnect?: () => void; onReset?: () => void };
 }) {
   const groups = useMemo(() => buildNodeCatalogTree(catalog), [catalog]);
+  const items = resolveCommands(entries, context);
+  const showCatalog = !context.wire && !context.targets.length;
   return (
     <ContextMenu>
-      <ContextMenuTrigger asChild disabled={!editable}>
+      <ContextMenuTrigger asChild disabled={!context.editable}>
         {children}
       </ContextMenuTrigger>
-      {editable && (
+      {context.editable && (
         <ContextMenuContent collisionPadding={8}>
-          {wire && (
-            <>
-              {wire.onDisconnect && (
-                <ContextMenuItem variant="destructive" onSelect={wire.onDisconnect}>
-                  {wire.label}
-                </ContextMenuItem>
-              )}
-              {wire.onReset && <ContextMenuItem onSelect={wire.onReset}>Reset to default</ContextMenuItem>}
-              {!wire.onDisconnect && !wire.onReset && <ContextMenuItem disabled>Not connected</ContextMenuItem>}
-            </>
+          {items.map((item, index) =>
+            item === 'divider' ? (
+              <ContextMenuSeparator key={index} />
+            ) : (
+              <ContextMenuItem
+                key={item.id}
+                variant={item.variant}
+                disabled={!item.enabled}
+                onSelect={() => void execute(item, context)}
+              >
+                {item.title}
+              </ContextMenuItem>
+            ),
           )}
-          {!wire && !nodeId && (
-            <>
-              <ContextMenuItem onSelect={onPaste}>Paste</ContextMenuItem>
-              <ContextMenuItem onSelect={onSearch}>Search nodes…</ContextMenuItem>
-            </>
-          )}
-          {!wire && !nodeId && (
+          {showCatalog && (
             <ContextMenuSub>
               <ContextMenuSubTrigger disabled={!groups.length}>Add node</ContextMenuSubTrigger>
               <ContextMenuSubContent>
                 <CatalogMenu entries={groups} onAdd={onAdd} />
               </ContextMenuSubContent>
             </ContextMenuSub>
-          )}
-          {!wire && nodeId && (
-            <>
-              <ContextMenuItem onSelect={onCopy}>Copy</ContextMenuItem>
-              <ContextMenuItem onSelect={onCut}>Cut</ContextMenuItem>
-              <ContextMenuItem onSelect={onPaste}>Paste</ContextMenuItem>
-              {onGroup && <ContextMenuItem onSelect={onGroup}>Group</ContextMenuItem>}
-              <ContextMenuItem variant="destructive" onSelect={onDelete}>
-                Delete
-              </ContextMenuItem>
-            </>
           )}
         </ContextMenuContent>
       )}

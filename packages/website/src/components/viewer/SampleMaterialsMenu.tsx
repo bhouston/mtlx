@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react';
+import { Box } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -19,8 +19,8 @@ export function SampleMaterialsMenu({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm">
-          Sample materials
-          <ChevronRight />
+          <Box />
+          Sample
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">

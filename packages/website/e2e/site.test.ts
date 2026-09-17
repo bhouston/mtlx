@@ -91,7 +91,7 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await page.setInputFiles('input[type=file]', materialPath);
   await expectReady();
   expect(await page.getByLabel('Rotate', { exact: true }).isVisible()).toBe(false);
-  await page.getByText('Viewer settings', { exact: true }).click();
+  await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
   const rotation = page.getByRole('checkbox', { name: 'Rotate' });
   expect(await rotation.isChecked()).toBe(false);
   await rotation.focus();
@@ -134,24 +134,24 @@ test('sample menu and URL dialog preserve rendering settings through navigation'
     `http://localhost:${PORT}/viewer?materialUrl=${encodeURIComponent(copper)}&bloom=false&geometry=sphere`,
   );
   expect(await page.getByLabel('Material URL', { exact: true }).count()).toBe(0);
-  await page.getByRole('button', { name: 'Sample materials' }).click();
+  await page.getByRole('button', { name: 'Sample', exact: true }).click();
   await page.getByRole('menuitem', { name: 'chrome', exact: true }).click();
   await expect.poll(() => new URL(page.url()).searchParams.get('materialUrl')).toContain('/chrome/chrome.mtlx');
   expect(new URL(page.url()).searchParams.get('bloom')).toBe('false');
   await page.goBack();
   await expect.poll(() => new URL(page.url()).searchParams.get('materialUrl')).toBe(copper);
-  await page.getByRole('button', { name: 'Load URL', exact: true }).click();
+  await page.getByRole('button', { name: 'Open URL', exact: true }).click();
   await expect.poll(() => page.getByLabel('Material URL', { exact: true }).inputValue()).toBe(copper);
   await page.getByLabel('Material URL', { exact: true }).fill('https://raw.githubusercontent.com/custom/material.mtlx');
   await page.getByRole('button', { name: 'Load material', exact: true }).click();
   await expect.poll(() => page.getByRole('dialog').count()).toBe(0);
   expect(new URL(page.url()).searchParams.get('geometry')).toBe('sphere');
-  await page.getByRole('button', { name: 'Load URL', exact: true }).click();
+  await page.getByRole('button', { name: 'Open URL', exact: true }).click();
   await page.keyboard.press('Escape');
   await expect
     .poll(() =>
       page
-        .getByRole('button', { name: 'Load URL', exact: true })
+        .getByRole('button', { name: 'Open URL', exact: true })
         .evaluate((element) => element === document.activeElement),
     )
     .toBe(true);
@@ -164,7 +164,7 @@ test('locally hosted CLI compound sample validates, switches materials, and surv
     if (response.ok() && response.url().includes('/materials/compound/textures/')) textures.add(response.url());
   });
   await page.goto(`http://localhost:${PORT}/viewer`);
-  await page.getByRole('button', { name: 'Sample materials' }).click();
+  await page.getByRole('button', { name: 'Sample', exact: true }).click();
   await page.getByRole('menuitem', { name: 'compound', exact: true }).click();
   await expectReady();
   const materialsSection = page
@@ -185,11 +185,11 @@ test('locally hosted CLI compound sample validates, switches materials, and surv
   await expectReady();
   await page.reload();
   await expectReady();
-  expect(await page.getByRole('button', { name: 'Sample materials' }).count()).toBe(1);
+  expect(await page.getByRole('button', { name: 'Sample', exact: true }).count()).toBe(1);
   expect(await material.locator('option').count()).toBe(2);
   await page.goto(`http://localhost:${PORT}/viewer?materialUrl=/materials/compound/compound.mtlx`);
   await expectReady();
-  expect(await page.getByRole('button', { name: 'Sample materials' }).count()).toBe(1);
+  expect(await page.getByRole('button', { name: 'Sample', exact: true }).count()).toBe(1);
   expect(await page.getByRole('textbox', { name: 'Material URL' }).count()).toBe(0);
 });
 
@@ -205,7 +205,7 @@ test('rendering effects default on and toggle without replacing the scene', asyn
   await expectReady();
   if (process.env.MTLX_WEBGPU) expect(await page.locator('main').innerText()).toContain('backend: WebGPU');
   const canvas = await page.locator('canvas').elementHandle();
-  await page.getByText('Viewer settings', { exact: true }).click();
+  await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
   const toneMapping = page.getByRole('combobox', { name: 'Tone mapping' });
   const bloom = page.getByRole('checkbox', { name: 'Bloom', exact: true });
   const ao = page.getByRole('checkbox', { name: 'Ambient occlusion' });
@@ -243,7 +243,7 @@ test('CLI ZIP sample renders both materials from bundled textures and restores i
     return route.abort();
   });
   await page.goto(`http://localhost:${PORT}/viewer`);
-  await page.getByRole('button', { name: 'Sample materials' }).click();
+  await page.getByRole('button', { name: 'Sample', exact: true }).click();
   await page.getByRole('menuitem', { name: 'compound zip', exact: true }).click();
   await expectReady();
   const url = `http://localhost:${PORT}/materials/compound_zip/compound_zip.mtlx.zip`;
@@ -260,7 +260,7 @@ test('CLI ZIP sample renders both materials from bundled textures and restores i
   await expect.poll(async () => (await page.locator('canvas').screenshot()).equals(wood)).toBe(false);
   await page.reload();
   await expectReady();
-  expect(await page.getByRole('button', { name: 'Sample materials' }).count()).toBe(1);
+  expect(await page.getByRole('button', { name: 'Sample', exact: true }).count()).toBe(1);
   expect(externalTextures).toEqual([]);
 });
 
@@ -301,7 +301,7 @@ test('material loading overlays a streamed progress bar and clears it on success
     finishDownload?.();
     await expectReady();
     await expect.poll(() => progress.count()).toBe(0);
-    await page.getByRole('button', { name: 'Load URL', exact: true }).click();
+    await page.getByRole('button', { name: 'Open URL', exact: true }).click();
     await page.getByRole('textbox', { name: 'Material URL' }).fill(`${origin}/missing.mtlx`);
     await page.getByRole('button', { name: 'Load material', exact: true }).click();
     await expect.poll(() => page.locator('main').innerText()).toContain('HTTP 404');
@@ -375,7 +375,7 @@ test('shared embed restores rendering state and controls update without rebuildi
     .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
     .toBe('ready');
   expect(await page.getByLabel('Rotate', { exact: true }).isVisible()).toBe(false);
-  await page.getByText('Viewer settings', { exact: true }).click();
+  await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
   expect(await page.getByLabel('IBL environment').inputValue()).toBe('studio');
   expect(await page.getByLabel('Bloom', { exact: true }).isChecked()).toBe(false);
   expect(await page.getByLabel('Ambient occlusion').isChecked()).toBe(false);

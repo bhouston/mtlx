@@ -18,10 +18,10 @@ export function MaterialLoadControls({
 }) {
   const fileInput = useRef<HTMLInputElement>(null);
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-muted/30 p-2 shadow-sm">
-      <Button size="sm" onClick={() => fileInput.current?.click()}>
+    <div className="flex flex-wrap items-center gap-0.5 rounded-lg border bg-background p-1 shadow-sm">
+      <Button variant="ghost" size="sm" onClick={() => fileInput.current?.click()}>
         <Upload />
-        Choose file
+        Upload
       </Button>
       <input
         ref={fileInput}

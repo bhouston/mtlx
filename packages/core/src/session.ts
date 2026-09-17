@@ -70,6 +70,12 @@ export interface EditorSnapshot {
   readonly dirty: boolean;
   readonly undoLabel?: string;
   readonly redoLabel?: string;
+  /** View state shared by every surface (canvas, toolbar, inspector); never part of undo history. */
+  readonly scope: string;
+  /** Selected node ids in the current scope, in selection order. Ids of removed nodes drop out. */
+  readonly selection: readonly string[];
+  /** Message from the last failed command, until the next command succeeds or clears it. */
+  readonly error?: string;
 }
 export interface EditorSessionOptions {
   document: ReadonlyMaterialXDocument;
@@ -115,6 +121,8 @@ export class EditorSession {
   private future: { document: MaterialXDocument; label: string }[] = [];
   private listeners = new Set<() => void>();
   private depth = 0;
+  private view: { scope: string; selection: readonly string[]; error?: string } = { scope: '', selection: [] };
+  private viewDirty = false;
   private snapshot: EditorSnapshot;
   private specViews = new WeakMap<MaterialXNodeSpec, DeepReadonly<MaterialXNodeSpec>>();
   private catalogViews = new WeakMap<MaterialXNodeSpec[], DeepReadonly<MaterialXNodeSpec[]>>();
@@ -174,6 +182,9 @@ export class EditorSession {
     };
   };
   private makeSnapshot(): EditorSnapshot {
+    const scope = graphScopes(this.current).includes(this.view.scope) ? this.view.scope : '';
+    const ids = new Set(readGraph(this.current, scope, this.catalog()).nodes.map((node) => node.id));
+    const selection = this.view.selection.filter((id) => ids.has(id));
     return Object.freeze({
       document: this.current,
       canUndo: !!this.past.length,
@@ -181,9 +192,36 @@ export class EditorSession {
       dirty: this.current !== this.clean,
       undoLabel: this.past.at(-1)?.label,
       redoLabel: this.future.at(-1)?.label,
+      scope,
+      selection: Object.freeze(selection),
+      error: this.view.error,
     });
   }
+  /** Show the given scope; selection belongs to a scope, so it clears. */
+  setScope = (scope: string) => {
+    if (scope === this.view.scope) return;
+    this.view = { ...this.view, scope, selection: [] };
+    this.publishView();
+  };
+  select = (ids: readonly string[]) => {
+    const current = this.viewDirty ? this.view.selection : this.snapshot.selection;
+    if (ids.length === current.length && ids.every((id, index) => id === current[index])) return;
+    this.view = { ...this.view, selection: [...ids] };
+    this.publishView();
+  };
+  /** Record a failed command for whichever surface shows errors; no argument clears it. */
+  setError = (message?: string) => {
+    if ((message || undefined) === this.view.error) return;
+    this.view = { ...this.view, error: message || undefined };
+    this.publishView();
+  };
+  /** View changes inside a transaction publish with it, so subscribers never see a working document. */
+  private publishView() {
+    if (this.depth) this.viewDirty = true;
+    else this.publish();
+  }
   private publish() {
+    this.viewDirty = false;
     this.snapshot = this.makeSnapshot();
     // Snapshot the listeners so subscriptions created during notification wait for the next commit.
     // oxlint-disable-next-line unicorn/no-useless-spread
@@ -214,12 +252,14 @@ export class EditorSession {
         throw new EditorError({ code: 'ASYNC_TRANSACTION', message: 'Transactions must be synchronous.' });
     } catch (error) {
       this.current = before;
-      throw asEditorError(error);
-    } finally {
       this.depth--;
+      if (!this.depth && this.viewDirty) this.publish();
+      throw asEditorError(error);
     }
+    this.depth--;
     if (sameDocument(before, this.current)) this.current = before;
     else if (!this.depth) this.record(before, label);
+    if (!this.depth && this.viewDirty) this.publish();
     return result;
   }
   private outsideTransaction() {
@@ -236,6 +276,7 @@ export class EditorSession {
     this.clean = this.current;
     this.past = [];
     this.future = [];
+    this.view = { scope: '', selection: [] };
     this.publish();
   }
   undo = () => {

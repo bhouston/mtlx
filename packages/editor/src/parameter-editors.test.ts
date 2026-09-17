@@ -114,37 +114,25 @@ describe('parameter editing', () => {
     );
     const session = createEditorSession({ document: doc });
     const render = (id: string, editable = true) => {
-      doc = cloneMaterialXDocument(session.getDocument());
-      const projection = projectGraph(doc);
-      root.render(
-        createElement(NodeParameterEditor, {
-          graph: session.graph(),
-          projection,
-          node: projection.nodes.find((n) => n.id === id),
-          editable,
-          commit: (operation) => {
-            operation();
-            render(id, editable);
-          },
-        }),
-      );
+      session.select([id]);
+      root.render(createElement(NodeParameterEditor, { session, editable }));
     };
     act(() => render('b'));
-    expect(container.querySelector('input')).toBeNull();
+    expect(container.querySelector('.mtlx-field input')).toBeNull();
     expect(container.querySelector('output')?.textContent).toBe('a.out');
     act(() => render('b', false));
     expect(container.querySelector('[aria-label="Disconnect value"]')).toBeNull();
     expect(container.querySelector('output')?.textContent).toBe('a.out');
     act(() => render('a', false));
     expect(container.querySelector('[aria-label="Reset value"]')).toBeNull();
-    expect(container.querySelectorAll('input').length).toBeGreaterThan(0);
-    for (const input of container.querySelectorAll('input')) expect(input.disabled).toBe(true);
+    expect(container.querySelectorAll('.mtlx-field input').length).toBeGreaterThan(0);
+    for (const input of container.querySelectorAll('.mtlx-field input')) expect(input.disabled).toBe(true);
     act(() => render('b'));
     act(() => (container.querySelector('[aria-label="Disconnect value"]') as HTMLButtonElement).click());
-    expect(container.querySelector('input')).not.toBeNull();
+    expect(container.querySelector('.mtlx-field input')).not.toBeNull();
     expect(container.querySelector('output')).toBeNull();
     act(() => render('out'));
-    expect(container.querySelector('input')).toBeNull();
+    expect(container.querySelector('.mtlx-field input')).toBeNull();
     expect((container.querySelector('[aria-label="Port type"]') as HTMLSelectElement).value).toBe('float');
   });
 });
@@ -166,7 +154,7 @@ it('keeps colors compact and validates hex edits while preserving alpha and HDR 
   act(() => root.render(createElement(Host)));
   const swatch = container.querySelector('button')!;
   expect(swatch.getAttribute('aria-expanded')).toBe('false');
-  expect(container.querySelector('input')).toBeNull();
+  expect(container.querySelector('.mtlx-field input')).toBeNull();
   expect(container.textContent).not.toContain('color4');
   act(() => swatch.click());
   const red = container.querySelector('[aria-label="tint R"]') as HTMLInputElement;
@@ -182,7 +170,7 @@ it('keeps colors compact and validates hex edits while preserving alpha and HDR 
   expect(hex.value).toBe('#00ff88');
   expect(red.value).toBe('0');
   act(() => swatch.click());
-  expect(container.querySelector('input')).toBeNull();
+  expect(container.querySelector('.mtlx-field input')).toBeNull();
   act(() => swatch.click());
   expect((container.querySelector('[aria-label="tint hex"]') as HTMLInputElement).value).toBe('#00ff88');
 });
@@ -200,23 +188,11 @@ it('distinguishes geometry defaults, literals and connections, including reset a
   </materialx>`);
   const session = createEditorSession({ document: doc });
   const render = (editable = true) => {
-    doc = cloneMaterialXDocument(session.getDocument());
-    const projection = projectGraph(doc);
-    root.render(
-      createElement(NodeParameterEditor, {
-        graph: session.graph(),
-        projection,
-        node: projection.nodes.find((n) => n.id === 'surface'),
-        editable,
-        commit: (operation) => {
-          operation();
-          render(editable);
-        },
-      }),
-    );
+    session.select(['surface']);
+    root.render(createElement(NodeParameterEditor, { session, editable }));
   };
   act(() => render());
-  expect(container.querySelectorAll('input')).toHaveLength(0);
+  expect(container.querySelectorAll('.mtlx-field input')).toHaveLength(0);
   expect(container.textContent).toContain('World-space normal');
   expect(container.textContent).toContain('World-space tangent');
   expect(container.textContent).toContain('Geometry: customUV');
@@ -225,9 +201,9 @@ it('distinguishes geometry defaults, literals and connections, including reset a
     render();
   });
   expect(container.querySelector('[aria-label="normal geometry source"]')).toBeNull();
-  expect(container.querySelectorAll('input')).toHaveLength(3);
+  expect(container.querySelectorAll('.mtlx-field input')).toHaveLength(3);
   act(() => (container.querySelector('[aria-label="Reset normal"]') as HTMLButtonElement).click());
-  expect(container.querySelectorAll('input')).toHaveLength(0);
+  expect(container.querySelectorAll('.mtlx-field input')).toHaveLength(0);
   expect(container.querySelector('[aria-label="normal geometry source"]')).not.toBeNull();
   act(() => {
     session.graph().connect({ node: 'direction', output: 'out' }, { node: 'surface', input: 'normal' });
@@ -249,22 +225,10 @@ it('chooses a temporary parameter type and authors that type only after a value 
   const session = createEditorSession({ document: doc });
   const original = serializeMaterialX(doc);
   const preview = previewXml(doc);
-  const commit = vi.fn((operation: () => unknown) => {
-    operation();
-    render();
-  });
+  const current = () => (doc = cloneMaterialXDocument(session.getDocument()));
   function render() {
-    doc = cloneMaterialXDocument(session.getDocument());
-    const projection = projectGraph(doc);
-    root.render(
-      createElement(NodeParameterEditor, {
-        graph: session.graph(),
-        projection,
-        node: projection.nodes[0],
-        editable: true,
-        commit,
-      }),
-    );
+    session.select(['image']);
+    root.render(createElement(NodeParameterEditor, { session }));
   }
   act(render);
   const selector = container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement;
@@ -274,15 +238,15 @@ it('chooses a temporary parameter type and authors that type only after a value 
     selector.dispatchEvent(new Event('change', { bubbles: true }));
   });
   expect(container.querySelectorAll('[aria-label^="image default value"]')).toHaveLength(3);
-  expect(commit).not.toHaveBeenCalled();
-  expect(serializeMaterialX(doc)).toBe(original);
+  expect(session.getSnapshot().canUndo).toBe(false);
+  expect(serializeMaterialX(current())).toBe(original);
   expect(previewXml(doc)).toBe(preview);
   expect(projectGraph(doc).nodes[0]?.type).toBeUndefined();
   fill(container.querySelector('[aria-label="image file value"]') as HTMLInputElement, 'texture.png');
-  expect(projectGraph(doc).nodes[0]?.type).toBeUndefined();
+  expect(projectGraph(current()).nodes[0]?.type).toBeUndefined();
   const inputs = container.querySelectorAll<HTMLInputElement>('[aria-label^="image default value"]');
   fill(inputs[0]!, '0.5');
-  expect(projectGraph(doc).nodes[0]?.type).toBe('vector3');
+  expect(projectGraph(current()).nodes[0]?.type).toBe('vector3');
   expect(doc.nodes[0]?.inputs.find((p) => p.name === 'default')).toMatchObject({
     type: 'vector3',
     value: '0.5, 0.0, 0.0',
@@ -290,7 +254,7 @@ it('chooses a temporary parameter type and authors that type only after a value 
   expect(container.querySelector('[aria-label="Edit as"]')).toBeNull();
   expect(container.textContent).not.toContain('View only. Editing a value can determine the node’s type.');
   act(() => (container.querySelector('[aria-label="Reset default"]') as HTMLButtonElement).click());
-  expect(projectGraph(doc).nodes[0]?.type).toBeUndefined();
+  expect(projectGraph(current()).nodes[0]?.type).toBeUndefined();
   expect(doc.nodes[0]?.inputs.map((p) => p.name)).toEqual(['file']);
   expect((container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement).value).toBe('ND_tiledimage_vector3');
 });
@@ -301,17 +265,8 @@ it('labels mixed-input overloads distinctly and falls back when a connection inv
   );
   const session = createEditorSession({ document: doc });
   function render() {
-    doc = cloneMaterialXDocument(session.getDocument());
-    const projection = projectGraph(doc);
-    root.render(
-      createElement(NodeParameterEditor, {
-        graph: session.graph(),
-        projection,
-        node: projection.nodes[0],
-        editable: true,
-        commit: () => {},
-      }),
-    );
+    session.select(['a']);
+    root.render(createElement(NodeParameterEditor, { session }));
   }
   act(render);
   const selector = container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement;
@@ -337,22 +292,14 @@ it('shares live state and undo between scripts and parameter controls', () => {
       '<materialx version="1.39"><constant name="value" type="float"><input name="value" type="float" value="0.1"/></constant></materialx>',
     ),
   });
+  session.select(['value']);
   function Host() {
     const snapshot = useEditorSession(session);
-    const projection = projectGraph(cloneMaterialXDocument(snapshot.document));
     return createElement(
       'div',
       null,
       createElement('button', { id: 'undo', disabled: !snapshot.canUndo, onClick: session.undo }, 'Undo'),
-      createElement(NodeParameterEditor, {
-        graph: session.graph(),
-        projection,
-        node: projection.nodes[0],
-        editable: true,
-        commit: (operation) => {
-          operation();
-        },
-      }),
+      createElement(NodeParameterEditor, { session }),
     );
   }
   act(() => root.render(createElement(Host)));

@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Editor commands: undo, redo, cut, copy, paste, duplicate, group, delete and wire actions are
+  stateless `Command` objects shared by a new floating `GraphToolbar`, the canvas context menu and
+  the `useCommandShortcuts` hook. The session now publishes `scope`, `selection` and `error` in its
+  snapshot (`setScope`, `select`, `setError`), so `GraphToolbar` and `NodeParameterEditor` take
+  only a `session` and mount anywhere; `MaterialXNodeGraph` no longer renders the inspector, the
+  add/arrange buttons or the React Flow zoom controls, and no longer takes `resources`. Right-clicking
+  a port now opens its wire menu.
+
 - List every asset a material is made of (root document, textures, nested documents) with its size
   and a total: `mtlx info` and the MCP `inspect_material` tool report `assets` and `totalBytes`,
   and the website and VS Code info panels show each reference with its size and a total in the

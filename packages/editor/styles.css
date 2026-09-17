@@ -3,6 +3,8 @@
    others may override the --mtlx-* values directly. */
 .mtlx-editor,
 .mtlx-context-menu,
+.mtlx-command-bar,
+.mtlx-tooltip,
 .mtlx-quick-add {
   --mtlx-bg: var(--background, #fff);
   --mtlx-fg: var(--foreground, #20252c);
@@ -217,9 +219,24 @@
   overflow: auto;
   padding: 12px;
   background: var(--mtlx-bg);
+  border: 0;
   border-left: 1px solid var(--mtlx-border);
+  border-radius: 0;
   box-shadow: var(--mtlx-shadow);
   z-index: 5;
+}
+/* Hosts stack the graph, toolbar and inspector inside this frame; the overlays anchor to it. */
+.mtlx-graph-frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.mtlx-graph-frame > .mtlx-graph {
+  flex: 1;
+  min-height: 0;
+  height: auto;
 }
 .mtlx-field {
   padding: 10px 0;
@@ -240,13 +257,11 @@
   align-self: start;
 }
 @media (max-width: 700px) {
-  .mtlx-graph {
-    height: 850px;
-    grid-template-rows: 500px 350px;
-  }
   .mtlx-inspector {
     position: static;
+    flex: none;
     width: auto;
+    max-height: 40%;
     border-left: none;
     border-top: 1px solid var(--mtlx-border);
     box-shadow: none;
@@ -275,13 +290,12 @@
   min-width: 150px;
 }
 @media (max-width: 500px) {
-  .mtlx-graph-view .mtlx-graph {
-    grid-template-rows: minmax(280px, 1fr) 180px;
-  }
   .mtlx-graph-view .mtlx-inspector {
     position: static;
+    flex: none;
     width: auto;
     min-width: 0;
+    max-height: 180px;
     border-left: none;
     border-top: 1px solid var(--mtlx-border);
     box-shadow: none;
@@ -356,8 +370,31 @@
 .mtlx-preview-pane {
   display: flex;
   flex: 1;
+  gap: 12px;
   min-width: 0;
   min-height: 0;
+}
+/* A host that places the inspector beside the preview instead of over the graph. */
+.mtlx-inspector-docked {
+  position: static;
+  flex: none;
+  width: 285px;
+  border: 1px solid var(--mtlx-border);
+  border-radius: 8px;
+  box-shadow: none;
+}
+.mtlx-inspector-empty {
+  margin: 0;
+  color: var(--mtlx-muted-fg);
+}
+@media (max-width: 700px) {
+  .mtlx-preview-pane {
+    flex-direction: column;
+  }
+  .mtlx-inspector-docked {
+    width: auto;
+    max-height: 40%;
+  }
 }
 .mtlx-preview-pane .viewer-frame {
   flex: 1;
@@ -464,8 +501,8 @@
 .mtlx-error-log {
   position: absolute;
   z-index: 5;
-  bottom: 12px;
-  left: 52px;
+  bottom: 60px;
+  left: 12px;
   right: 12px;
   max-height: 35%;
   display: flex;
@@ -668,21 +705,71 @@
   justify-content: space-between;
 }
 
-.mtlx-toolbar-overlay {
+/* Floating command bar; hosts reposition it by overriding inset and transform. */
+.mtlx-command-bar {
   position: absolute;
-  z-index: 5;
-  top: 12px;
-  right: 12px;
+  z-index: 6;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-}
-.mtlx-editor .mtlx-toolbar-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  gap: 2px;
+  padding: 4px;
+  color: var(--mtlx-fg);
+  background: var(--mtlx-bg);
+  border: 1px solid var(--mtlx-border);
+  border-radius: 8px;
   box-shadow: var(--mtlx-shadow);
+}
+.mtlx-command-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.mtlx-command-button:hover:not(:disabled),
+.mtlx-command-button:focus-visible {
+  background: var(--mtlx-accent);
+  color: var(--mtlx-accent-fg);
+}
+.mtlx-command-button[data-variant='destructive']:hover:not(:disabled) {
+  color: var(--mtlx-error);
+}
+.mtlx-command-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.mtlx-command-bar-divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 3px;
+  border: 0;
+  background: var(--mtlx-border);
+}
+.mtlx-tooltip {
+  z-index: 60;
+  padding: 4px 8px;
+  font:
+    12px/1.4 system-ui,
+    sans-serif;
+  color: var(--mtlx-popover-fg);
+  background: var(--mtlx-popover);
+  border: 1px solid var(--mtlx-border);
+  border-radius: 6px;
+  box-shadow: var(--mtlx-shadow);
+}
+.mtlx-tooltip kbd {
+  margin-left: 8px;
+  font: inherit;
+  opacity: 0.6;
 }
 .mtlx-editor .mtlx-toggle-inputs {
   display: flex;
@@ -716,7 +803,7 @@
 .mtlx-canvas-overlay {
   position: absolute;
   z-index: 5;
-  right: 12px;
+  left: 12px;
   bottom: 12px;
   width: clamp(200px, 30%, 380px);
 }
