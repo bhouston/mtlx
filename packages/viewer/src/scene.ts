@@ -68,6 +68,8 @@ export interface MtlxScene {
   addGeometry(name: string, data: ArrayBuffer, manager?: THREE.LoadingManager): Promise<void>;
   /** Restore every geometry's orientation and the initial camera framing. */
   resetCamera(): void;
+  /** After the viewport aspect changes, re-fit the object while keeping the user's orbit direction and relative zoom. */
+  reframe(): void;
   /** Call every frame; advances the auto-rotation. */
   update(deltaSeconds: number): void;
   /** The current document uses `<time>` or `<frame>` nodes, so it changes as time runs. */
@@ -219,12 +221,19 @@ function normalizeToUnitCube(object: THREE.Object3D): THREE.Group {
 
 const UNIT_RADIUS = 0.5;
 
+/** Camera distance at which the unit cube fits both dimensions: the narrower of the vertical and horizontal fov wins. */
+function fitDistance(camera: THREE.PerspectiveCamera): number {
+  const halfFovY = THREE.MathUtils.degToRad(camera.fov / 2);
+  const halfFovX = Math.atan(Math.tan(halfFovY) * camera.aspect);
+  return (UNIT_RADIUS / Math.sin(Math.min(halfFovX, halfFovY))) * 1.4;
+}
+
 /** Frames the unit cube every geometry is normalized into: above and back, looking down at the origin. */
 function frameCamera(
   camera: THREE.PerspectiveCamera,
   controls: { target: THREE.Vector3; update: () => void; enableDamping?: boolean },
-): void {
-  const distance = (UNIT_RADIUS / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2))) * 1.4;
+): number {
+  const distance = fitDistance(camera);
   const elevation = THREE.MathUtils.degToRad(35); // looking down at the object, not head-on
   camera.position.set(0, distance * Math.sin(elevation), distance * Math.cos(elevation));
   camera.near = Math.max(distance / 100, 0.01);
@@ -233,6 +242,7 @@ function frameCamera(
   controls.target.set(0, 0, 0);
   camera.lookAt(controls.target);
   controls.update();
+  return distance;
 }
 
 /**
@@ -377,7 +387,16 @@ export async function createMtlxScene(
       }
       for (const [object, rotation] of originalRotations) object.rotation.copy(rotation);
       camera.zoom = 1;
-      frameCamera(camera, controls);
+      fitted = frameCamera(camera, controls);
+    },
+    reframe() {
+      const next = fitDistance(camera);
+      camera.position
+        .sub(controls.target)
+        .multiplyScalar(next / fitted)
+        .add(controls.target);
+      fitted = next;
+      controls.update();
     },
     update(deltaSeconds) {
       if (scene.autoRotate) {
@@ -388,7 +407,7 @@ export async function createMtlxScene(
 
   applyVisibility(scene.geometry);
   applyMaterial(geometries[scene.geometry]!, materials[scene.activeMaterial]!);
-  frameCamera(camera, controls);
+  let fitted = frameCamera(camera, controls);
 
   return scene;
 }

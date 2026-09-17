@@ -156,7 +156,8 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     controls.enableDamping = true;
     controls.listenToKeyEvents(canvas);
     scope.own(() => controls.dispose());
-    observeViewerResize(scope, options.canvas ?? container, renderer, camera, !options.canvas);
+    let reframe = () => {};
+    observeViewerResize(scope, options.canvas ?? container, renderer, camera, !options.canvas, () => reframe());
 
     onStage?.('material');
     onLog?.(`Parsing MaterialX document (${options.fileName})...`);
@@ -191,6 +192,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       materialName: applied.materialName,
     });
     scope.own(() => mtlxScene.dispose());
+    reframe = () => mtlxScene.reframe();
     if (scope.disposed) throw new Error('Viewer disposed');
     scene.add(mtlxScene.root);
     applied.materialName = mtlxScene.activeMaterial;

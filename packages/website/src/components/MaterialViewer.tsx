@@ -247,7 +247,7 @@ export function MaterialViewer({
     <div
       aria-busy={!!progress}
       data-preview-state={previewState}
-      className="viewer-frame relative flex w-full flex-col sm:aspect-square overflow-hidden rounded-xl border border-border bg-zinc-950 shadow-sm"
+      className="viewer-frame relative flex w-full flex-col sm:aspect-square overflow-hidden rounded-lg border border-border bg-zinc-950 shadow-sm"
     >
       <MaterialSelect
         names={materialNames}

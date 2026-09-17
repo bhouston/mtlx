@@ -192,10 +192,17 @@
 .mtlx-output {
   text-align: right;
 }
-.mtlx-port .react-flow__handle {
+.mtlx-port .react-flow__handle,
+.mtlx-socket-dot {
   width: 10px;
   height: 10px;
   border: 1px solid var(--mtlx-fg);
+}
+/* Type marker on inspector rows: same dot as the node's socket, minus the wiring. */
+.mtlx-socket-dot {
+  flex: none;
+  box-sizing: border-box;
+  border-radius: 50%;
 }
 .mtlx-port .react-flow__handle-left {
   left: 0;
@@ -352,52 +359,51 @@
   background: var(--mtlx-border);
 }
 
-.mtlx-editor-body {
-  display: flex;
-  min-height: 0;
-  gap: 12px;
-}
-.mtlx-editor-body-vertical {
-  flex-direction: column;
-}
-.mtlx-editor-body-overlay {
-  display: block;
-}
 .mtlx-preview-pane .viewer-frame {
   aspect-ratio: auto;
   height: 100%;
+  flex: 1;
 }
 .mtlx-preview-pane {
   display: flex;
-  flex: 1;
-  gap: 12px;
+  height: 100%;
   min-width: 0;
   min-height: 0;
 }
 /* A host that places the inspector beside the preview instead of over the graph. */
 .mtlx-inspector-docked {
   position: static;
-  flex: none;
-  width: 285px;
-  border: 1px solid var(--mtlx-border);
+  width: 100%;
+  height: 100%;
+  border: 0;
   border-radius: 8px;
   box-shadow: none;
+}
+/* The inspector mimics the selected node: outline, flush header, element name, divider, then the inputs. */
+.mtlx-inspector {
+  outline: 1px solid var(--mtlx-border);
+  outline-offset: -1px;
+}
+.mtlx-inspector.mtlx-selected {
+  outline: 2px solid var(--mtlx-primary);
+  outline-offset: -2px;
+}
+.mtlx-inspector .mtlx-node-header {
+  margin: -12px -12px 0;
+  border-radius: 0;
+}
+.mtlx-inspector > small {
+  display: block;
+  padding: 4px 0;
+}
+.mtlx-inspector-fields {
+  margin: 0 -12px;
+  padding: 0 12px;
+  border-top: 1px solid var(--mtlx-border);
 }
 .mtlx-inspector-empty {
   margin: 0;
   color: var(--mtlx-muted-fg);
-}
-@media (max-width: 700px) {
-  .mtlx-preview-pane {
-    flex-direction: column;
-  }
-  .mtlx-inspector-docked {
-    width: auto;
-    max-height: 40%;
-  }
-}
-.mtlx-preview-pane .viewer-frame {
-  flex: 1;
 }
 
 .mtlx-graph-main {
@@ -553,8 +559,8 @@
 }
 .mtlx-parameter-label {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
   font-weight: 500;
   overflow-wrap: anywhere;

@@ -3,6 +3,7 @@ import { Diamond, Ellipsis, Link2, RotateCcw, Unplug, Upload } from 'lucide-reac
 import { createContext, useContext, useId, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { RgbColorPicker, RgbaColorPicker } from 'react-colorful';
 import type { MaterialXNodePortSpec } from './model.js';
+import { socketColor } from './socket-colors.js';
 
 export interface ParameterEditorProps {
   parameter: MaterialXNodePortSpec;
@@ -25,6 +26,7 @@ export type ParameterEditor = ComponentType<ParameterEditorProps>;
 export function ParameterLabel({ parameter, htmlFor }: { parameter: MaterialXNodePortSpec; htmlFor: string }) {
   return (
     <label className="mtlx-parameter-label" htmlFor={htmlFor} title={parameter.attributes?.doc ?? parameter.name}>
+      <span className="mtlx-socket-dot" style={{ background: socketColor(parameter.type) }} />
       <span>{parameter.attributes?.uiname || parameter.name}</span>
     </label>
   );

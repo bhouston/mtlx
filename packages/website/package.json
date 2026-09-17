@@ -28,6 +28,7 @@
     "radix-ui": "^1.4.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "react-resizable-panels": "^4.12.4",
     "sonner": "^2.0.8",
     "tanstack-router-ga4": "^1.6.0",
     "three": "^0.186.0",

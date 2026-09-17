@@ -1,6 +1,7 @@
 import { createEditorSession } from 'mtlx-core/session';
-import { createFileRoute, useLocation } from '@tanstack/react-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createFileRoute, Link, useLocation } from '@tanstack/react-router';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useDefaultLayout, type GroupProps } from 'react-resizable-panels';
 import {
   cloneMaterialXDocument,
   createMaterialXDocument,
@@ -39,6 +40,7 @@ import { viewerSettings } from '@/lib/viewer-search';
 import { MaterialLoadControls } from '@/components/viewer/MaterialLoadControls';
 import { EditorShareMenu } from '@/components/editor/EditorShareMenu';
 import { Button } from '@/components/ui/button';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -56,6 +58,57 @@ const LAYOUT_LABELS: Record<EditorLayout, string> = {
   overlay: 'Overlay',
 };
 const MAX_UPLOAD_BYTES = 16 * 1024 * 1024;
+/** Below this the graph, inspector and preview cannot share a screen; the overlay layout is the compact option. */
+const MIN_EDITOR_WIDTH = 900;
+const wideScreen = () => matchMedia(`(min-width: ${MIN_EDITOR_WIDTH}px)`);
+const useWideScreen = () =>
+  useSyncExternalStore(
+    (notify) => {
+      const query = wideScreen();
+      query.addEventListener('change', notify);
+      return () => query.removeEventListener('change', notify);
+    },
+    () => wideScreen().matches,
+    () => true,
+  );
+/** Divider positions persist per group id as percentages, so they survive window resizes. */
+const PANEL_GROUPS = ['editor-horizontal', 'editor-vertical', 'editor-vertical-top'] as const;
+const panelStorage = {
+  getItem: (key: string) => {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  setItem: (key: string, value: string) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      // Private windows and full quotas simply skip remembering the dividers.
+    }
+  },
+};
+const resetPanels = () => {
+  for (const id of PANEL_GROUPS) {
+    try {
+      localStorage.removeItem(`react-resizable-panels:${id}`);
+    } catch {
+      // Nothing saved.
+    }
+  }
+};
+function SavedPanelGroup({ id, ...props }: GroupProps & { id: (typeof PANEL_GROUPS)[number] }) {
+  const saved = useDefaultLayout({ id, storage: panelStorage, onlySaveAfterUserInteractions: true });
+  return (
+    <ResizablePanelGroup
+      id={id}
+      defaultLayout={saved.defaultLayout}
+      onLayoutChanged={saved.onLayoutChanged}
+      {...props}
+    />
+  );
+}
 const DRAFT_KEY = 'mtlx-editor-draft';
 const readDraft = () => {
   try {
@@ -115,7 +168,12 @@ function EditorPage() {
   const [source, setSource] = useState<MaterialSource | null>(null);
   const [loading, setLoading] = useState(hasUrlSource);
   const layout = search.layout ?? 'vertical';
-  const setLayout = (next: EditorLayout) =>
+  const wide = useWideScreen();
+  // Choosing a layout, even the current one, returns its dividers to their defaults.
+  const [panelEpoch, setPanelEpoch] = useState(0);
+  const setLayout = (next: EditorLayout) => {
+    resetPanels();
+    setPanelEpoch((epoch) => epoch + 1);
     void navigate({
       to: '.',
       search: (previous) => ({ ...previous, layout: next === 'vertical' ? undefined : next }),
@@ -123,6 +181,7 @@ function EditorPage() {
       replace: true,
       resetScroll: false,
     });
+  };
   const generation = useRef(0);
   const documentXml = useMemo(() => serializeMaterialX(pkg.document), [pkg.document]);
   const dirty = documentXml !== loadedSource.xml || loadedPackage.resources !== loadedSource.resources;
@@ -332,79 +391,117 @@ function EditorPage() {
         </DropdownMenu>
       </MaterialLoadControls>
       {error && <p role="alert">{error}</p>}
-      {(() => {
-        const preview = (
-          <>
-            <MaterialViewer
-              source={source}
-              resources={pkg.resources}
-              onError={setPreviewError}
-              settings={viewerSettings(search)}
-              onSettingsChange={(patch) =>
-                void navigate({
-                  to: '.',
-                  search: (previous) => ({ ...previous, ...patch }),
-                  hash: true,
-                  replace: true,
-                  resetScroll: false,
-                })
-              }
-            />
-            {previewError && (
-              <p role="alert" className="mt-1 rounded bg-background/90 px-2 py-1 text-xs">
-                Preview: {previewError}
-              </p>
-            )}
-          </>
-        );
-        // The toolbar and inspector follow the session, so they sit beside the canvas rather than inside it.
-        const graph = (
-          <div key={documentId} className="mtlx-graph-frame mtlx-fill">
-            <MaterialXNodeGraph
+      {!wide && (
+        <p className="m-auto max-w-sm text-center text-sm text-muted-foreground">
+          The MaterialX editor needs a window at least {MIN_EDITOR_WIDTH}px wide. Try a larger screen, or{' '}
+          <Link
+            to="/viewer"
+            search={search.materialUrl ? { materialUrl: search.materialUrl } : {}}
+            className="text-primary underline underline-offset-4"
+          >
+            open the viewer
+          </Link>{' '}
+          instead.
+        </p>
+      )}
+      {wide &&
+        (() => {
+          const preview = (
+            <>
+              <MaterialViewer
+                source={source}
+                resources={pkg.resources}
+                onError={setPreviewError}
+                settings={viewerSettings(search)}
+                onSettingsChange={(patch) =>
+                  void navigate({
+                    to: '.',
+                    search: (previous) => ({ ...previous, ...patch }),
+                    hash: true,
+                    replace: true,
+                    resetScroll: false,
+                  })
+                }
+              />
+              {previewError && (
+                <p role="alert" className="mt-1 rounded bg-background/90 px-2 py-1 text-xs">
+                  Preview: {previewError}
+                </p>
+              )}
+            </>
+          );
+          // The toolbar and inspector follow the session, so they sit beside the canvas rather than inside it.
+          const graph = (
+            <div key={documentId} className="mtlx-graph-frame mtlx-fill">
+              <MaterialXNodeGraph
+                session={session}
+                fileName={pkg.rootPath}
+                mode="edit"
+                scope={scope}
+                colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
+                onScopeChange={(nextScope) => {
+                  void navigate({
+                    to: '.',
+                    search: (previous) => ({ ...previous, scope: nextScope || undefined }),
+                    hash: true,
+                    replace: true,
+                    resetScroll: false,
+                  });
+                }}
+              >
+                {layout === 'overlay' && preview}
+              </MaterialXNodeGraph>
+              <GraphToolbar session={session} />
+              {layout === 'overlay' && <NodeParameterEditor session={session} resources={resources} />}
+            </div>
+          );
+          // Vertical and horizontal keep the inspector docked in place; overlay floats it over the graph on demand.
+          const inspector = (
+            <NodeParameterEditor
               session={session}
-              fileName={pkg.rootPath}
-              mode="edit"
-              scope={scope}
-              colorMode={resolvedTheme === 'dark' ? 'dark' : 'light'}
-              onScopeChange={(nextScope) => {
-                void navigate({
-                  to: '.',
-                  search: (previous) => ({ ...previous, scope: nextScope || undefined }),
-                  hash: true,
-                  replace: true,
-                  resetScroll: false,
-                });
-              }}
-            >
-              {layout === 'overlay' && preview}
-            </MaterialXNodeGraph>
-            <GraphToolbar session={session} />
-            {layout === 'overlay' && <NodeParameterEditor session={session} resources={resources} />}
-          </div>
-        );
-        // Vertical and horizontal keep the inspector docked in place; overlay floats it over the graph on demand.
-        const inspector = (
-          <NodeParameterEditor
-            session={session}
-            resources={resources}
-            className="mtlx-inspector-docked"
-            placeholder="Select a single node to edit its properties."
-          />
-        );
-        return (
-          <div className={`min-h-0 flex-1 mtlx-editor-body mtlx-editor-body-${layout}`}>
-            {layout === 'vertical' && (
-              <div className="mtlx-preview-pane">
-                {preview}
-                {inspector}
-              </div>
-            )}
-            {graph}
-            {layout === 'horizontal' && inspector}
-            {layout === 'horizontal' && <div className="mtlx-preview-pane">{preview}</div>}
-          </div>
-        );
-      })()}
+              resources={resources}
+              className="mtlx-inspector-docked"
+              placeholder="Select a single node to edit its properties."
+            />
+          );
+          const previewPane = <div className="mtlx-preview-pane">{preview}</div>;
+          if (layout === 'overlay') return <div className="min-h-0 flex-1">{graph}</div>;
+          if (layout === 'horizontal')
+            return (
+              <SavedPanelGroup key={panelEpoch} id="editor-horizontal" className="min-h-0 flex-1">
+                <ResizablePanel id="graph" defaultSize="50" minSize={300}>
+                  {graph}
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel id="inspector" defaultSize="20" minSize={220}>
+                  {inspector}
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel id="preview" defaultSize="30" minSize={200}>
+                  {previewPane}
+                </ResizablePanel>
+              </SavedPanelGroup>
+            );
+          return (
+            <SavedPanelGroup key={panelEpoch} id="editor-vertical" orientation="vertical" className="min-h-0 flex-1">
+              <ResizablePanel id="top" defaultSize="45" minSize={160}>
+                <SavedPanelGroup id="editor-vertical-top">
+                  <ResizablePanel id="preview" defaultSize="80" minSize={200}>
+                    {previewPane}
+                  </ResizablePanel>
+                  <ResizableHandle />
+                  <ResizablePanel id="inspector" defaultSize="20" minSize={220}>
+                    {inspector}
+                  </ResizablePanel>
+                </SavedPanelGroup>
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel id="graph" defaultSize="55" minSize={200}>
+                {graph}
+              </ResizablePanel>
+            </SavedPanelGroup>
+          );
+        })()}
     </main>
   );
 }

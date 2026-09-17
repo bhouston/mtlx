@@ -74,15 +74,18 @@ it('updates the camera and backing buffer when the host resizes and disconnects 
   const scope = new CleanupScope();
   const renderer = await createViewerRenderer(scope, { width: 400, height: 400 });
   const camera = { aspect: 1, updateProjectionMatrix: vi.fn() };
+  const onResize = vi.fn();
   observeViewerResize(
     scope,
     { clientWidth: 800, clientHeight: 400 } as HTMLElement,
     renderer,
     camera as unknown as PerspectiveCamera,
     false,
+    onResize,
   );
   resized();
   expect(camera.aspect).toBe(2);
+  expect(onResize).toHaveBeenCalledOnce();
   expect(camera.updateProjectionMatrix).toHaveBeenCalledOnce();
   expect(mock.setSize).toHaveBeenLastCalledWith(800, 400, false);
   scope.dispose();

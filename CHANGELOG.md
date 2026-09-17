@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- The website editor's horizontal and vertical layouts now have draggable dividers between the
+  graph, inspector and preview. Positions are saved per layout as percentages, so they hold when
+  the window is resized; picking a layout from the menu, including the current one, restores the
+  defaults. The editor now requires a window at least 900px wide and links to the viewer below that.
+
 - Editor commands: undo, redo, cut, copy, paste, duplicate, group, delete and wire actions are
   stateless `Command` objects shared by a new floating `GraphToolbar`, the canvas context menu and
   the `useCommandShortcuts` hook. The session now publishes `scope`, `selection` and `error` in its

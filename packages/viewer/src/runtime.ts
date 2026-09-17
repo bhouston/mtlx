@@ -28,6 +28,7 @@ export function observeViewerResize(
   renderer: WebGPURenderer,
   camera: PerspectiveCamera,
   updateStyle = true,
+  onResize?: () => void,
 ): void {
   const observer = new ResizeObserver(() => {
     const width = element.clientWidth || 512;
@@ -35,6 +36,7 @@ export function observeViewerResize(
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, updateStyle);
+    onResize?.();
   });
   scope.own(() => observer.disconnect());
   observer.observe(element);
