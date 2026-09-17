@@ -2,6 +2,14 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    maxWorkers: 4,
+    coverage: {
+      provider: 'v8',
+      include: ['packages/*/src/**/*.{ts,tsx}'],
+      exclude: ['**/*.test.ts', '**/*.d.ts', '**/generated/**', '**/routeTree.gen.ts'],
+      reporter: ['text', 'json-summary', 'lcov'],
+      thresholds: { statements: 56, branches: 53, functions: 49, lines: 57 },
+    },
     projects: [
       { test: { name: 'editor', include: ['packages/editor/src/**/*.test.ts'], environment: 'node' } },
       {
@@ -17,6 +25,7 @@ export default defineConfig({
       {
         test: {
           name: 'cli',
+          testTimeout: 30_000,
           include: ['packages/cli/src/**/*.test.ts'],
           environment: 'node',
         },

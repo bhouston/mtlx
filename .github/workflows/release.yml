@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+# Enable only after all three npm trusted publishers have been configured.
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    permissions:
+      contents: write
+    uses: ./.github/workflows/ci.yml
+  release:
+    name: Publish npm packages
+    needs: checks
+    if: vars.NPM_TRUSTED_PUBLISHING_READY == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Require an OIDC-capable npm CLI
+        run: node -e "const v = require('child_process').execFileSync('npm', ['--version'], {encoding:'utf8'}).trim().split('.').map(Number); if(v[0] < 11 || (v[0] === 11 && (v[1] < 5 || (v[1] === 5 && v[2] < 1)))) process.exit(1)"
+      - name: Release verified tarballs
+        run: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Preserve verified release artifacts for recovery
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: |
+            publish/*.tgz
+            CHANGELOG.md

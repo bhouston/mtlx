@@ -1,6 +1,13 @@
 name: ci
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [dev]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
   unit:
@@ -37,7 +44,20 @@ jobs:
         run: pnpm lint
 
       - name: Unit tests
-        run: pnpm test
+        run: pnpm test:coverage && pnpm test:workflow
+
+      - name: Bundle size budgets
+        run: pnpm size
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
+      - name: Dependency audit
+        run: pnpm audit --audit-level high
 
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
@@ -47,3 +67,40 @@ jobs:
 
       - name: Verify production package contents and installation
         run: pnpm pack:release && pnpm check:release
+
+  coverage-badge:
+    name: Update coverage badge
+    needs: unit
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('node:fs');
+            const percent = JSON.parse(fs.readFileSync('coverage/coverage-summary.json')).total.lines.pct;
+            const { owner, repo } = context.repo;
+            const branch = 'coverage';
+            const path = 'coverage.json';
+            try {
+              await github.rest.git.getRef({ owner, repo, ref: `heads/${branch}` });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.git.createRef({ owner, repo, ref: `refs/heads/${branch}`, sha: context.sha });
+            }
+            let sha;
+            try {
+              const result = await github.rest.repos.getContent({ owner, repo, path, ref: branch });
+              sha = result.data.sha;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+            const badge = { schemaVersion: 1, label: 'coverage', message: `${percent}%`, color: percent >= 80 ? 'brightgreen' : 'yellow' };
+            await github.rest.repos.createOrUpdateFileContents({ owner, repo, path, branch, sha,
+              message: 'chore: update coverage badge', content: Buffer.from(JSON.stringify(badge)).toString('base64') });

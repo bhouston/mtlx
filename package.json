@@ -23,19 +23,34 @@
     "pack:release": "pnpm make-release:core && pnpm make-release:viewer && pnpm make-release:cli",
     "check:release": "node scripts/check-release.mjs",
     "generate:nodes": "pnpm --filter mtlx-core build && node scripts/generate-node-registry.mjs",
-    "check:nodes": "pnpm --filter mtlx-core build && node scripts/generate-node-registry.mjs --check"
+    "check:nodes": "pnpm --filter mtlx-core build && node scripts/generate-node-registry.mjs --check",
+    "test:coverage": "pnpm test --coverage",
+    "size": "size-limit",
+    "release": "semantic-release",
+    "test:workflow": "node --test scripts/workflow.test.mjs"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/github": "^12.0.9",
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "@size-limit/file": "^14.0.0",
     "@types/node": "^22.20.0",
+    "@vitest/coverage-v8": "4.1.11",
+    "conventional-changelog-conventionalcommits": "^10.4.0",
     "husky": "^9.1.7",
     "jsdom": "^25.0.0",
     "lint-staged": "^17.3.0",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.73.0",
     "playwright": "^1.63.0",
+    "semantic-release": "^25.0.9",
+    "size-limit": "^14.0.0",
     "typescript": "^5.7.0",
     "vite": "^8.1.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [
@@ -44,6 +59,22 @@
     ],
     "*.{json,jsonc,md,mdx,css,html,yml,yaml}": "oxfmt"
   },
+  "size-limit": [
+    {
+      "name": "Core JavaScript (gzip, excluding dependencies)",
+      "path": "packages/core/dist/**/*.js",
+      "limit": "120 kB",
+      "gzip": true,
+      "brotli": false
+    },
+    {
+      "name": "CLI preview bundle (gzip, includes dependencies)",
+      "path": "packages/cli/dist/view/viewer.js",
+      "limit": "800 kB",
+      "gzip": true,
+      "brotli": false
+    }
+  ],
   "engines": {
     "node": ">=22.0.0"
   },
