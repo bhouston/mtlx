@@ -278,7 +278,7 @@ const { document: loadedDocument, rootPath, format } = await loadMaterialXDocume
 
 // Load a full package (document + resources) from either format...
 const pkg = await loadMaterialXPackage('material.mtlx');
-await transform(pkg, resizeTextures({ maxImageSize: 2048, imageFormat: 'webp' }));
+await transform(pkg, resizeTextures({ maxImageSize: 2048, targets: [{ format: 'webp' }] }));
 // ...and write it back out as either — the extension picks the format. Packing and
 // unpacking are just a load followed by a write to the other extension.
 await writeMaterialXPackage(pkg, 'material.mtlx.zip');
@@ -303,7 +303,7 @@ Backed by [sharp](https://sharp.pixelplumbing.com/); never pulled into a browser
 import { transform } from 'mtlx-core';
 import { resizeTextures } from 'mtlx-core/textures';
 
-await transform(pkg, resizeTextures({ maxImageSize: 2048, imageFormat: 'webp', imageQuality: 90 }));
+await transform(pkg, resizeTextures({ maxImageSize: 2048, targets: [{ format: 'webp' }], imageQuality: 90 }));
 ```
 
 This standalone Node example converts a one-pixel PNG to WebP:
@@ -317,7 +317,7 @@ const pngBytes = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADUlEQVQImWP4////fwAJ+wP9CNHoHgAAAABJRU5ErkJggg==',
   'base64',
 );
-const { data, extension } = await transformImage(pngBytes, '.png', { imageFormat: 'webp' });
+const { data, extension } = await transformImage(pngBytes, '.png', { targets: [{ format: 'webp' }] });
 if (extension !== '.webp' || data.byteLength === 0) throw new Error('Image conversion failed');
 ```
 
