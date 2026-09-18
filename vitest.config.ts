@@ -19,6 +19,9 @@ export default defineConfig({
           name: 'cli',
           include: ['packages/cli/src/**/*.test.ts'],
           environment: 'node',
+          // These tests shell out to the CLI with an internal 8s timeout; on a
+          // shared CI runner that alone can exceed vitest's 5s default.
+          testTimeout: 20_000,
         },
       },
       {
