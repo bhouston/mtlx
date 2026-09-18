@@ -14,9 +14,8 @@ workflow, for every contributor including Claude and Codex.
    `feature/42-batch-export`. Never commit directly to `main`.
 3. Implement and validate the acceptance criteria. Every commit must use Conventional Commits
    (see below). Reference the issue in the commit body where useful.
-4. Run `pnpm build`, `pnpm tsc`, `pnpm lint`, `pnpm test`, and `pnpm docs:cli --check`. Run
-   `pnpm audit --audit-level=high` and review findings. Format changed files with
-   `pnpm exec oxfmt <files>`.
+4. Run the checks under [Setup](#setup) below, plus `pnpm audit --audit-level=high` (review
+   findings) and `pnpm exec oxfmt <files>` on changed files.
 5. Push the branch and open a PR against **main**. Give the PR a Conventional Commit title and
    include `Closes #<issue>`, a description of the resulting behavior, and validation results.
    Do not merge your own work unless the maintainer requested a merge.
@@ -50,10 +49,16 @@ setup.
 
 ```sh
 pnpm install
-pnpm build   # builds every package; the website build also regenerates the docs
-pnpm test    # type-check + vitest across all packages
+pnpm build          # builds every package; the website build also regenerates the docs
+pnpm test           # type-check + vitest across all packages
 pnpm lint
+pnpm docs:cli --check  # fails if generated CLI help (packages/cli/README.md) is stale
 ```
+
+`pnpm install` enables Husky's pre-commit (oxfmt/oxlint on staged files) and commit-msg
+(commitlint) hooks. CI runs the same checks, using the Node version in `.nvmrc` and the pnpm
+version pinned in `package.json`, plus a `contribution` job that validates branch naming, the
+linked issue, and Conventional Commit PR titles/commits.
 
 To use a local build of the CLI:
 
@@ -126,7 +131,6 @@ on npm. Keep them current when you change an export's signature or behavior.
   `Textures`. `@internal` hides a symbol from the type declarations.
 
 ```sh
-pnpm docs:cli --check # fail if generated CLI help is stale (also runs in CI)
 pnpm docs:cli    # splice `mtlx --help` output into packages/cli/README.md (commit the result)
 ```
 
@@ -147,12 +151,5 @@ part of the standard release (see [RELEASING.md](RELEASING.md)), not a separate 
 
 The website deploys to Cloud Run from `main` via GitHub Actions.
 
-## Development and CI
-
-Use the Node version in `.nvmrc` and the pinned pnpm version in `package.json`, then run
-`pnpm install --frozen-lockfile`.
-
-CI checks build, types, lint, tests, generated CLI docs, and a dependency audit (findings
-appear as warnings, so existing advisories stay visible without blocking unrelated fixes). A
-separate `contribution` job validates branch naming, the linked issue, and Conventional Commit
-PR titles and commits.
+Dependency audit findings appear as warnings in CI, so existing advisories stay visible
+without blocking unrelated fixes.
