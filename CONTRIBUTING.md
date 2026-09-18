@@ -9,9 +9,8 @@ workflow, for every contributor including Claude and Codex.
 1. Before starting a feature or other tracked change, create a GitHub issue using the
    feature/change template. Include what changes, why, constraints, and testable acceptance
    criteria. Reuse an existing issue when it already covers the request.
-2. Fetch origin and branch from `origin/main`. Use `feature/<issue>-<short-description>` for
-   features; `fix/`, `chore/`, `docs/`, `refactor/`, and `test/` are also accepted. Example:
-   `feature/42-batch-export`. Never commit directly to `main`.
+2. Fetch origin and branch from `origin/main`. Branch names are not restricted; use whatever is
+   convenient. Never commit directly to `main`.
 3. Implement and validate the acceptance criteria. Every commit must use Conventional Commits
    (see below). Reference the issue in the commit body where useful.
 4. Run the checks under [Setup](#setup) below, plus `pnpm audit --audit-level=high` (review
@@ -57,8 +56,8 @@ pnpm docs:cli --check  # fails if generated CLI help (packages/cli/README.md) is
 
 `pnpm install` enables Husky's pre-commit (oxfmt/oxlint on staged files) and commit-msg
 (commitlint) hooks. CI runs the same checks, using the Node version in `.nvmrc` and the pnpm
-version pinned in `package.json`, plus a `contribution` job that validates branch naming, the
-linked issue, and Conventional Commit PR titles/commits.
+version pinned in `package.json`, plus a `contribution` job that validates the linked issue and
+Conventional Commit PR titles/commits.
 
 To use a local build of the CLI:
 
