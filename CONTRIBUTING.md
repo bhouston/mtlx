@@ -142,7 +142,8 @@ verification of the exact tarballs without publishing anything.
 The extension build creates a bundled host entry; `pnpm tsc` can replace it with unbundled
 compiler output, so always use the package script (which rebuilds) when preparing a VSIX.
 Build the extension separately with `pnpm --filter mtlx-vscode-extension package`; test that VSIX
-in VS Code before publishing it through the extension Marketplace workflow.
+in VS Code before merging. Publishing to the VS Code Marketplace and Open VSX is automated as
+part of the standard release (see [RELEASING.md](RELEASING.md)), not a separate manual step.
 
 The website deploys to Cloud Run from `main` via GitHub Actions.
 
