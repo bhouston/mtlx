@@ -12,6 +12,7 @@ packages/cli/media
 coverage
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 packages/website/src/generated/api-docs
 REVIEW-2026-09-11.md
 submodules
