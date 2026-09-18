@@ -30,8 +30,6 @@ jobs:
     secrets: inherit
   release:
     needs: checks
-    # Enable only after the three npm trusted publishers are configured (see RELEASING.md).
-    if: vars.NPM_RELEASE_ENABLED == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write

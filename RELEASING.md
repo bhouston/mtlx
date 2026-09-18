@@ -12,7 +12,7 @@ Add `-f dry_run=true` to validate versioning, the changelog, and staged packages
 
 ## One-time activation
 
-The workflow is installed in `.github/workflows/release.yml`. Publishing is disabled until the repository Actions variable `NPM_RELEASE_ENABLED` is set to `true`.
+The workflow is installed in `.github/workflows/release.yml`.
 
 1. On npmjs.com, open Settings → Trusted Publisher for **each** package: `mtlx-core`, `mtlx-viewer`, and `mtlx-cli`. Select GitHub Actions and enter:
 
@@ -27,7 +27,7 @@ The workflow is installed in `.github/workflows/release.yml`. Publishing is disa
 
 2. If any of `mtlx-core`, `mtlx-viewer`, or `mtlx-cli` are already published on npm from before this workflow existed, tag the commit that matches the currently published versions as a release baseline (for example `git tag v0.4.0 <sha> && git push origin v0.4.0`) before the first dispatch, so semantic-release resumes versioning from there instead of restarting at `1.0.0`. Skip this step if none of the three packages have ever been published; semantic-release will then start at `1.0.0`.
 3. `main` is protected: PRs, an up-to-date `ci` check, and resolved conversations are required, including for administrators. Force pushes and deletion are disabled. Merge commits are enabled; linear history is not required. `main` is the default branch so GitHub closes delivered issues on merge.
-4. Configure the npm publishers before activation, then set `gh variable set NPM_RELEASE_ENABLED --body true`. Dispatch `Release` on `main` (see above) when ready to publish.
+4. Configure the npm publishers before the first release, then dispatch `Release` on `main` (see above) when ready to publish.
 5. Configure the repository `VSCE_PAT` (Azure DevOps personal access token for the `benhouston3d` publisher) and `OVSX_PAT` (Open VSX access token) secrets so the release job can publish the VS Code extension.
 
 ## Versioning and artifacts
