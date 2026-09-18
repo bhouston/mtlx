@@ -23,8 +23,8 @@
     "./styles.css": "./styles.css"
   },
   "scripts": {
-    "build": "tsc -b",
-    "dev": "tsc -b -w --preserveWatchOutput"
+    "build": "tsc",
+    "dev": "tsc -w --preserveWatchOutput"
   },
   "dependencies": {
     "@xyflow/react": "^12.10.0",
