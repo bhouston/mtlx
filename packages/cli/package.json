@@ -22,8 +22,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc -b && node scripts/build-viewer.mjs",
-    "dev": "tsc -b -w --preserveWatchOutput",
+    "build": "tsc && node scripts/build-viewer.mjs",
+    "dev": "tsc -w --preserveWatchOutput",
     "start": "node bin/cli.js",
     "test": "vitest run"
   },

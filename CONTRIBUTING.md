@@ -92,6 +92,7 @@ commit. Once that commit is tracked, CI can check out the submodule and run `pnp
 
 Before adding a feature, please open an issue to discuss it. Changes with test coverage are
 strongly preferred. Test fixtures live under `assets/` and are shared by every package's tests.
+PRs are merged with merge commits; do not squash.
 
 ### Node and web compatibility
 

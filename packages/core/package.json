@@ -49,8 +49,8 @@
     }
   },
   "scripts": {
-    "build": "tsc -b",
-    "dev": "tsc -b -w --preserveWatchOutput",
+    "build": "tsc",
+    "dev": "tsc -w --preserveWatchOutput",
     "test": "vitest run"
   },
   "dependencies": {
