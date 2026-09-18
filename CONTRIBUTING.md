@@ -1,7 +1,50 @@
 # Contributing
 
 mtlx is a pnpm monorepo. All code is TypeScript (ESM), formatted with oxfmt and linted with
-oxlint; both run on staged files via husky.
+oxlint; both run on staged files via husky. This file is the single source of truth for the
+workflow, for every contributor including Claude and Codex.
+
+## Issue → branch → implementation → PR
+
+1. Before starting a feature or other tracked change, create a GitHub issue using the
+   feature/change template. Include what changes, why, constraints, and testable acceptance
+   criteria. Reuse an existing issue when it already covers the request.
+2. Fetch origin and branch from `origin/main`. Use `feature/<issue>-<short-description>` for
+   features; `fix/`, `chore/`, `docs/`, `refactor/`, and `test/` are also accepted. Example:
+   `feature/42-batch-export`. Never commit directly to `main`.
+3. Implement and validate the acceptance criteria. Every commit must use Conventional Commits
+   (see below). Reference the issue in the commit body where useful.
+4. Run `pnpm build`, `pnpm tsc`, `pnpm lint`, `pnpm test`, and `pnpm docs:cli --check`. Run
+   `pnpm audit --audit-level=high` and review findings. Format changed files with
+   `pnpm exec oxfmt <files>`.
+5. Push the branch and open a PR against **main**. Give the PR a Conventional Commit title and
+   include `Closes #<issue>`, a description of the resulting behavior, and validation results.
+   Do not merge your own work unless the maintainer requested a merge.
+6. Merging a PR runs CI but never publishes. The maintainer publishes separately by dispatching
+   the `Release` workflow on `main` (see [RELEASING.md](RELEASING.md)); there is no promotion or
+   sync-back branch to keep aligned.
+
+GitHub automatically closes referenced issues when their closing commits reach the default
+branch (`main`).
+
+## Commit format and versions
+
+Use `type(optional-scope): description`. Allowed types are `feat`, `fix`, `perf`, `docs`,
+`chore`, `refactor`, `test`, `style`, `build`, `ci`, and `revert`.
+
+- `feat: add batch export` triggers a minor release.
+- `fix(cli): handle missing input` and `perf:` trigger patch releases.
+- `feat!: remove the legacy loader` or a `BREAKING CHANGE: explanation` footer triggers a major
+  release, including when attached to another type.
+- Other types do not normally trigger a release. Reverts are interpreted by the release analyzer.
+
+Use an imperative, concise description. Add a blank line before a body or footer. Husky
+validates commit messages after `pnpm install`; CI validates feature commits and PR titles too.
+Git-generated merge commits are exempt from commitlint.
+
+Do not manually bump versions or write changelog entries. `mtlx-core`, `mtlx-viewer`, and
+`mtlx-cli` release together. See [RELEASING.md](RELEASING.md) for the release mechanics and
+setup.
 
 ## Setup
 
@@ -88,27 +131,26 @@ pnpm docs:cli    # splice `mtlx --help` output into packages/cli/README.md (comm
 
 ## Releasing
 
-Update `CHANGELOG.md` and package versions, then prepare and verify the actual npm tarballs:
+`mtlx-core`, `mtlx-viewer`, and `mtlx-cli` release together via a manually dispatched GitHub
+Actions workflow, never on every push. See [RELEASING.md](RELEASING.md) for the release
+mechanics and one-time npm trusted publishing setup.
 
-```sh
-pnpm pack:release
-pnpm check:release
-```
+`pnpm pack:release` and `pnpm check:release` remain available for local, pre-publish
+verification of the exact tarballs without publishing anything.
 
-The individual `make-release:core`, `make-release:viewer`, and `make-release:cli` commands
-build and pack into the root `publish/` directory. They never publish. Packing uses pnpm's
-workspace-aware packer, preserving each package's declared files and resolving workspace versions.
-The check installs all three tarballs with production dependencies in a temporary consumer,
-then exercises CLI help, validation, packing/unpacking, preview HTTP assets, and viewer exports.
-Marked standalone README examples are compiled and executed in that installed consumer too.
-It requires registry access for external dependencies and never opens a browser.
-
-After reviewing the artifacts, publish the exact checked tarballs explicitly with
-`npm publish publish/<package>-<version>.tgz --access public`, in dependency order:
-`mtlx-core`, `mtlx-viewer`, then `mtlx-cli`. Do not rebuild between verification and publication.
 The extension build creates a bundled host entry; `pnpm tsc` can replace it with unbundled
 compiler output, so always use the package script (which rebuilds) when preparing a VSIX.
 Build the extension separately with `pnpm --filter mtlx-vscode-extension package`; test that VSIX
 in VS Code before publishing it through the extension Marketplace workflow.
 
 The website deploys to Cloud Run from `main` via GitHub Actions.
+
+## Development and CI
+
+Use the Node version in `.nvmrc` and the pinned pnpm version in `package.json`, then run
+`pnpm install --frozen-lockfile`.
+
+CI checks build, types, lint, tests, generated CLI docs, and a dependency audit (findings
+appear as warnings, so existing advisories stay visible without blocking unrelated fixes). A
+separate `contribution` job validates branch naming, the linked issue, and Conventional Commit
+PR titles and commits.
