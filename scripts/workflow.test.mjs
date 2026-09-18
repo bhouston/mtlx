@@ -90,7 +90,7 @@ test('release preparation checks before publishing and uses synchronized exact t
     assert.deepEqual(
       readFileSync(join(temp, 'commands'), 'utf8').trim().split('\n').slice(3),
       ['core', 'viewer', 'cli'].map(
-        (name) => `npm publish publish/mtlx-${name}-1.2.3.tgz --access public --provenance`,
+        (name) => `pnpm publish publish/mtlx-${name}-1.2.3.tgz --access public --provenance`,
       ),
     );
     writeFileSync(join(temp, 'bin', 'pnpm'), '#!/bin/sh\nexit 1\n');

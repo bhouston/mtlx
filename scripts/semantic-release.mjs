@@ -35,7 +35,7 @@ export async function prepare(_config, { cwd, nextRelease, lastRelease }) {
 export function publish(_config, { cwd, nextRelease }) {
   for (const name of packages) {
     run(
-      'npm',
+      'pnpm',
       ['publish', `publish/mtlx-${name}-${nextRelease.version}.tgz`, '--access', 'public', '--provenance'],
       cwd,
     );
