@@ -277,3 +277,7 @@ source indicator with an “Override with constant…” menu. Normal overrides 
 tangents at `1, 0, 0`; these are editable starting constants, not sampled geometry values.
 Reset removes the override and restores the geometry source. Connected inputs continue to
 use `ConnectedParameterEditor`; read-only geometry rows have no override menu.
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).

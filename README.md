@@ -128,3 +128,7 @@ The library design inspired by Don McCurdy's [glTF Transform](https://gltf-trans
 ## License
 
 MIT
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).
