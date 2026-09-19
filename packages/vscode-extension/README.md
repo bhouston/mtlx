@@ -139,4 +139,4 @@ to type-check it separately from the extension host, and `build:preview` to crea
 
 ## Author
 
-[Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).
