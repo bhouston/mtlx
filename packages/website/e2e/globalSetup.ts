@@ -4,7 +4,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 // Serves the production build (`pnpm --filter website build` must have run first), because the
 // react/react-dom version mismatch only surfaces in the SSR bundle, not the vite dev server.
 // Allow independent browser runs to use separate servers.
-export const PORT = Number(process.env.MTLX_E2E_PORT ?? 3123);
+export const PORT = Number(process.env.MTLX_E2E_PORT ?? 3803);
 
 export default async function () {
   const server = spawn('node', ['.output/server/index.mjs'], {
