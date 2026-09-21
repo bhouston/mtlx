@@ -217,7 +217,7 @@ pnpm test
 pnpm --filter website build
 pnpm --filter website test:e2e
 # For concurrent browser runs, choose a separate port:
-MTLX_E2E_PORT=3137 pnpm --filter website test:e2e
+MTLX_E2E_PORT=3804 pnpm --filter website test:e2e
 ```
 
 Core session tests cover deep immutability, sequential scripts, transaction rollback, nested
