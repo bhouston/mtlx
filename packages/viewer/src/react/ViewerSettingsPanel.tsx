@@ -52,20 +52,24 @@ export function ViewerSettingsPanel({
     };
   }, [open]);
   return (
-    <div ref={root} className={cn('absolute right-3 bottom-3 z-10 text-xs text-white', className)} {...props}>
+    <div
+      ref={root}
+      className={cn('pointer-events-none absolute inset-3 z-10 ml-auto max-w-md text-xs text-white', className)}
+      {...props}
+    >
       <button
         type="button"
         aria-label="Viewer settings"
         aria-expanded={open}
         title="Viewer settings"
         onClick={() => setOpen((current) => !current)}
-        className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-zinc-950/85 text-white/80 shadow-lg backdrop-blur-xl hover:bg-zinc-800/90 hover:text-white focus-visible:outline-2 focus-visible:outline-ring"
+        className="pointer-events-auto absolute right-0 bottom-0 flex size-9 items-center justify-center rounded-full border border-white/15 bg-zinc-950/85 text-white/80 shadow-lg backdrop-blur-xl hover:bg-zinc-800/90 hover:text-white focus-visible:outline-2 focus-visible:outline-ring"
       >
         <Settings className="size-4" />
       </button>
       <div
         hidden={!open}
-        className="viewer-controls absolute right-0 bottom-11 w-[min(28rem,calc(100vw-2rem))] rounded-xl border border-white/15 bg-zinc-950/85 shadow-lg backdrop-blur-xl"
+        className="viewer-controls pointer-events-auto absolute right-0 bottom-11 max-h-[calc(100%-2.75rem)] w-full overflow-y-auto rounded-xl border border-white/15 bg-zinc-950/85 shadow-lg backdrop-blur-xl"
       >
         <div className="flex items-center gap-2 px-4 py-2 font-medium">
           Viewer settings
