@@ -22,9 +22,27 @@ const TAG_MARKUP = `<material-viewer
   style="width: 100%; height: 100%">
 </material-viewer>`;
 
-const EMBED_EXAMPLE = `<script type="module" src="https://unpkg.com/mtlx-viewer/dist/material-viewer.js"></script>
+const EMBED_SCRIPT_SRC = 'https://unpkg.com/mtlx-viewer/dist/material-viewer.js';
+
+const EMBED_EXAMPLE = `<script type="module" src="${EMBED_SCRIPT_SRC}"></script>
 
 ${TAG_MARKUP}`;
+
+// Production dogfoods the published bundle exactly as the snippet does; dev uses the workspace build
+// so local viewer changes show up. Vite replaces import.meta.env.PROD statically, so the unused
+// branch (and the local element chunk) drops out of the production build.
+function registerElement(): Promise<unknown> {
+  if (!import.meta.env.PROD) return import('mtlx-viewer/element');
+  if (customElements.get('material-viewer')) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = EMBED_SCRIPT_SRC;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Failed to load ${EMBED_SCRIPT_SRC}`));
+    document.head.append(script);
+  });
+}
 
 const ATTRIBUTES: Array<[string, string]> = [
   ['src', 'Required. The .mtlx or .mtlx.zip file to preview.'],
@@ -54,7 +72,7 @@ function LiveDemo() {
     const host = hostRef.current;
     if (!host) return;
     let cancelled = false;
-    void import('mtlx-viewer/element').then(() => {
+    void registerElement().then(() => {
       if (cancelled) return;
       host.innerHTML = TAG_MARKUP;
     });
