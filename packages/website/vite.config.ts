@@ -31,6 +31,8 @@ export default defineConfig({
         '/viewer-assets/**': {
           headers: { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=86400' },
         },
+        // Sample materials referenced by the <material-viewer> docs snippet.
+        '/materials/**': { headers: { 'Access-Control-Allow-Origin': '*' } },
       },
     }),
     tailwindcss(),

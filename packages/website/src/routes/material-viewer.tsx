@@ -15,15 +15,16 @@ export const Route = createFileRoute('/material-viewer')({
   component: MaterialViewerTagPage,
 });
 
-const DEMO_SRC = '/materials/compound_zip/compound_zip.mtlx.zip';
+// The demo below renders exactly this markup (the site bundles the element, so it skips the script tag).
+const TAG_MARKUP = `<material-viewer
+  src="https://mtlx.ben3d.ca/materials/compound_zip/compound_zip.mtlx.zip"
+  settings-panel="closed"
+  style="width: 100%; height: 100%">
+</material-viewer>`;
 
 const EMBED_EXAMPLE = `<script type="module" src="https://unpkg.com/mtlx-viewer/dist/material-viewer.js"></script>
 
-<material-viewer
-  src="https://example.com/material.mtlx.zip"
-  settings-panel="closed"
-  style="width: 480px; height: 480px">
-</material-viewer>`;
+${TAG_MARKUP}`;
 
 const ATTRIBUTES: Array<[string, string]> = [
   ['src', 'Required. The .mtlx or .mtlx.zip file to preview.'],
@@ -46,7 +47,7 @@ function CodeBlock({ code }: { code: string }) {
   );
 }
 
-/** Mounts the real custom element client-side; avoids typing a global JSX intrinsic for one demo. */
+/** Registers the custom element client-side, then inserts the documented tag markup verbatim. */
 function LiveDemo() {
   const hostRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -55,12 +56,7 @@ function LiveDemo() {
     let cancelled = false;
     void import('mtlx-viewer/element').then(() => {
       if (cancelled) return;
-      const el = document.createElement('material-viewer');
-      el.setAttribute('src', DEMO_SRC);
-      el.setAttribute('settings-panel', 'closed');
-      el.style.width = '100%';
-      el.style.height = '100%';
-      host.replaceChildren(el);
+      host.innerHTML = TAG_MARKUP;
     });
     return () => {
       cancelled = true;
@@ -102,7 +98,10 @@ function MaterialViewerTagPage() {
 
       <div className="flex flex-col gap-3">
         <LiveDemo />
-        <p className="text-sm text-muted-foreground">Live demo — click the gear to open the settings panel.</p>
+        <p className="text-sm text-muted-foreground">
+          Live demo of the tag below — click the gear to open the settings panel. Paste the snippet into any HTML page
+          to get the same result.
+        </p>
         <CodeBlock code={EMBED_EXAMPLE} />
       </div>
 
