@@ -28,7 +28,7 @@ export interface MtlxSceneOptions {
   geometry?: string;
   /** Defaults to true. */
   autoRotate?: boolean;
-  /** The shaderball (`mtlx-viewer/assets/shaderball.glb`) used for the 'totem' geometry. */
+  /** The shaderball (https://mtlx.ben3d.ca/viewer-assets/shaderball.glb) used for the 'totem' geometry. */
   shaderBall: ArrayBuffer;
   /** Supply your own if you need onProgress/onError wiring (e.g. for texture blobs). */
   manager?: THREE.LoadingManager;

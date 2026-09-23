@@ -32,13 +32,14 @@ import {
   type ViewerSettings,
 } from './renderingSettings.js';
 
-// Each asset is resolved directly from import.meta.url (not via a shared base URL variable) because
-// that's the exact `new URL('literal', import.meta.url)` pattern bundlers (Vite, esbuild, webpack)
-// statically detect and rewrite to a fingerprinted/served path; an indirect base loses that.
-const SHADERBALL_URL = new URL('../assets/shaderball.glb', import.meta.url);
+// The large built-ins (shaderball 1.4 MB, bridge HDR 6 MB) are served by the mtlx website rather
+// than shipped in this package, so a script-tag embed from any CDN fetches them from one place.
+const HOSTED_ASSETS = 'https://mtlx.ben3d.ca/viewer-assets/';
+const SHADERBALL_URL = new URL('shaderball.glb', HOSTED_ASSETS);
 const BUILTIN_IBLS: Record<string, URL> = {
+  // Resolved from import.meta.url so bundlers (Vite, esbuild, webpack) rewrite it to a served path.
   studio: new URL('../assets/studio-environment.png', import.meta.url),
-  bridge: new URL('../assets/default-environment.hdr', import.meta.url),
+  bridge: new URL('default-environment.hdr', HOSTED_ASSETS),
 };
 const RELOAD_ATTRIBUTES = new Set(['src', 'model']);
 const PANEL_STATES = new Set(['open', 'closed']);
