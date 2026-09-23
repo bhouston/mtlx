@@ -141,6 +141,8 @@ test.each([false, true])(
       await page.goto(`http://localhost:${PORT}/__extension-test__/index.html`);
       await send();
       await checkGraphTabs(page);
+      // Graph navigation clicks outside the settings popover and dismisses it.
+      await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
       expect(await page.getByRole('checkbox', { name: 'Rotate', exact: true }).isChecked()).toBe(false);
       expect(await page.getByRole('combobox', { name: 'Geometry' }).inputValue()).toBe(custom ? 'bust' : 'totem');
       expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe(
