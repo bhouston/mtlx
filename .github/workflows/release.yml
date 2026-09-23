@@ -29,7 +29,11 @@ jobs:
     uses: ./.github/workflows/ci.yml
     secrets: inherit
   release:
-    needs: checks
+    needs: [guard, checks]
+    # `checks` reports `skipped` (not `success`) outside pull requests because
+    # ci.yml's `contribution` job is skipped, so the default success() gate would
+    # never let this job run.
+    if: ${{ !cancelled() && needs.guard.result == 'success' && needs.checks.result != 'failure' && needs.checks.result != 'cancelled' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
