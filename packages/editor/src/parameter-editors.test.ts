@@ -259,6 +259,33 @@ it('chooses a temporary parameter type and authors that type only after a value 
   expect((container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement).value).toBe('ND_tiledimage_vector3');
 });
 
+it('discards temporary type choices after another selection without authoring the document', () => {
+  const session = createEditorSession({
+    document: parseMaterialX(
+      '<materialx version="1.39"><tiledimage name="image" type="color3" nodedef="ND_tiledimage_color3"/><constant name="other" type="float"/></materialx>',
+    ),
+  });
+  act(() => {
+    session.select(['image']);
+    root.render(createElement(NodeParameterEditor, { session, placeholder: 'Select a node' }));
+  });
+  const original = serializeMaterialX(session.getDocument());
+  for (const selection of [['other'], [], ['image', 'other']]) {
+    act(() => {
+      const selector = container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement;
+      selector.value = 'ND_tiledimage_vector3';
+      selector.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    expect((container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement).value).toBe(
+      'ND_tiledimage_vector3',
+    );
+    act(() => session.select(selection));
+    act(() => session.select(['image']));
+    expect((container.querySelector('[aria-label="Edit as"]') as HTMLSelectElement).value).toBe('ND_tiledimage_color3');
+    expect(serializeMaterialX(session.getDocument())).toBe(original);
+  }
+});
+
 it('labels mixed-input overloads distinctly and falls back when a connection invalidates the temporary choice', () => {
   let doc = parseMaterialX(
     '<materialx version="1.39"><add name="a" type="float"/><output name="out" type="color3"/></materialx>',

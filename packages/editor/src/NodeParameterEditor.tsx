@@ -37,6 +37,9 @@ export function NodeParameterEditor({
   // The inspector edits one node; a multi-selection has nothing sensible to show.
   const node =
     snapshot.selection.length === 1 ? projection.nodes.find((n) => n.id === snapshot.selection[0]) : undefined;
+  const viewKey = node ? `${snapshot.scope}/${node.id}` : '';
+  // A docked inspector stays mounted; a temporary type choice belongs only to the current selection.
+  if (view && view.node !== viewKey) setView(undefined);
   if (!node)
     return placeholder ? (
       <aside className={`mtlx-editor mtlx-inspector ${className}`} aria-label="Node parameters">
@@ -52,7 +55,6 @@ export function NodeParameterEditor({
       graph.renameNode(node.id, name);
       session.select([name]);
     });
-  const viewKey = `${graph.scope}/${node.id}`;
   // Same header as the node on the canvas, so the inspector reads as the node it edits.
   const accent = categoryColor(node.definition?.nodeGroup);
   const header = (
