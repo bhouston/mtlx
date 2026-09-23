@@ -323,7 +323,7 @@ test('validity checks collapse successes, expand failures, and remain keyboard a
   expect(await sections.locator(':scope > summary').allTextContents()).toEqual([
     'File details',
     'Materials (1)',
-    'References (0)',
+    'References (0, 0 B)',
     'Internal Nodes (1)',
     'Validity Checks ✓Passed',
   ]);
