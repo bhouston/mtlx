@@ -40,6 +40,9 @@ await esbuild.build({
 
 // The shaderball ("totem" geometry, ~1.4MB) is too big to inline as a data URL — copied into
 // media/ instead and served at /__mtlx_view__/shaderball.glb (see ../src/view/server.ts).
-copyFileSync(fileURLToPath(import.meta.resolve('mtlx-viewer/assets/shaderball.glb')), join(mediaDir, 'shaderball.glb'));
+copyFileSync(
+  join(root, '..', 'website', 'public', 'viewer-assets', 'shaderball.glb'),
+  join(mediaDir, 'shaderball.glb'),
+);
 
 console.log('Built viewer.js');

@@ -79,7 +79,6 @@ import { readFile } from 'node:fs/promises';
 import { startViewServer } from './node_modules/mtlx-cli/dist/view/server.js';
 import { parseMaterialX } from 'mtlx-core';
 assert.equal(parseMaterialX('<materialx version="1.39"/>').attributes.version, '1.39');
-await readFile(new URL(import.meta.resolve('mtlx-viewer/assets/shaderball.glb')));
 await readFile(new URL(import.meta.resolve('mtlx-viewer/assets/studio-environment.png')));
 const server = await startViewServer('sample.mtlx');
 try {

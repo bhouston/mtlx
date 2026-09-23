@@ -26,6 +26,12 @@ export default defineConfig({
         gzip: true,
         brotli: false,
       },
+      routeRules: {
+        // Fetched cross-origin by <material-viewer> embeds on other sites.
+        '/viewer-assets/**': {
+          headers: { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=86400' },
+        },
+      },
     }),
     tailwindcss(),
   ],

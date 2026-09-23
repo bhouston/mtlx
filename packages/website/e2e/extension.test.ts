@@ -36,7 +36,7 @@ test.each([false, true])(
         }),
       );
       await page.route('**/__extension-test__/default-environment.hdr', (route) =>
-        route.fulfill({ path: resolve(import.meta.dirname, '../../viewer/assets/default-environment.hdr') }),
+        route.fulfill({ path: resolve(import.meta.dirname, '../public/viewer-assets/default-environment.hdr') }),
       );
       const customPng = (
         await readFile(resolve(import.meta.dirname, '../../viewer/assets/studio-environment.png'))
@@ -108,7 +108,7 @@ test.each([false, true])(
         : undefined;
       const [raw, shaderBall] = await Promise.all([
         readFile(resolve(import.meta.dirname, '../../../assets/copper/copper.mtlx')),
-        readFile(resolve(import.meta.dirname, '../../viewer/assets/shaderball.glb')),
+        readFile(resolve(import.meta.dirname, '../public/viewer-assets/shaderball.glb')),
       ]);
       const send = async () => {
         await page.waitForFunction(() =>

@@ -8,8 +8,6 @@ import { AnimationToggle, MaterialSelect, ViewerSettingsPanel } from 'mtlx-viewe
 import type { Viewer } from 'mtlx-viewer';
 import type { PreviewReport } from 'mtlx-viewer/diagnostics';
 import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
-import bridgeEnvironmentUrl from 'mtlx-viewer/assets/default-environment.hdr?url';
-import shaderBallUrl from 'mtlx-viewer/assets/shaderball.glb?url';
 
 export type { PreviewReport } from 'mtlx-viewer/diagnostics';
 
@@ -36,7 +34,12 @@ export interface MaterialViewerProps {
   onStatus?: (report: PreviewReport) => void;
 }
 
-const ENVIRONMENT_URLS: Record<string, string> = { studio: studioEnvironmentUrl, bridge: bridgeEnvironmentUrl };
+// Served from public/viewer-assets (also used by the <material-viewer> element on other sites).
+const shaderBallUrl = '/viewer-assets/shaderball.glb';
+const ENVIRONMENT_URLS: Record<string, string> = {
+  studio: studioEnvironmentUrl,
+  bridge: '/viewer-assets/default-environment.hdr',
+};
 const STAGE_PROGRESS = {
   renderer: { value: 80, label: 'Preparing preview…' },
   environment: { value: 85, label: 'Loading lighting…' },

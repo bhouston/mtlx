@@ -4,9 +4,9 @@
  * dist/material-viewer.js with three, hdrify and mtlx-core inlined. The tsc output in dist/
  * stays as-is for bundler consumers (`import 'mtlx-viewer/element'`).
  *
- * Built-in assets are not copied: the bundle keeps `new URL('../assets/…', import.meta.url)`
- * intact, and `assets/` ships in the package next to `dist/`, so the same relative paths work
- * from a CDN.
+ * The shaderball and bridge HDR are fetched from the mtlx website (see src/element.ts); the small
+ * studio PNG keeps its `new URL('../assets/…', import.meta.url)` reference, and `assets/` ships in
+ * the package next to `dist/`, so that relative path works from a CDN too.
  */
 import * as esbuild from 'esbuild';
 
