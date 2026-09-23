@@ -80,7 +80,10 @@ test('context menu adds categorized nodes, copies, pastes and deletes the clicke
   await page.getByRole('menuitem', { name: 'Procedural', exact: true }).hover();
   await page.getByRole('menuitem', { name: 'constant', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node').count()).toBe(3);
-  // Adding no longer refits the viewport, so bring the edge-placed node fully into view first.
+  // Fit view frames the selection when present. Clear it to bring every node into view.
+  await pane.hover();
+  await page.keyboard.press('Escape');
+  await expect.poll(() => page.locator('.react-flow__node.selected').count()).toBe(0);
   await page.getByRole('button', { name: 'Fit view', exact: true }).click();
   await page.locator('.react-flow__node[data-id="surface"]').click();
   await page.locator('.react-flow__node[data-id="constant"]').click({ button: 'right' });
@@ -89,6 +92,9 @@ test('context menu adds categorized nodes, copies, pastes and deletes the clicke
   await pane.click({ button: 'right', position: corner });
   await page.getByRole('menuitem', { name: 'Paste', exact: true }).click();
   await expect.poll(() => page.locator('.react-flow__node[data-id="constant_2"]').count()).toBe(1);
+  await pane.hover();
+  await page.keyboard.press('Escape');
+  await expect.poll(() => page.locator('.react-flow__node.selected').count()).toBe(0);
   await page.getByRole('button', { name: 'Fit view', exact: true }).click();
   await page.locator('.react-flow__node[data-id="constant_2"]').click({ button: 'right' });
   await page.getByRole('menuitem', { name: 'Delete', exact: true }).click();
