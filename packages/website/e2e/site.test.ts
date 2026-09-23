@@ -206,6 +206,19 @@ test('rendering effects default on and toggle without replacing the scene', asyn
   if (process.env.MTLX_WEBGPU) expect(await page.locator('main').innerText()).toContain('backend: WebGPU');
   const canvas = await page.locator('canvas').elementHandle();
   await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
+  // The popover scrolls within short frames; each control must be reachable without clipping.
+  for (const control of await page
+    .locator('.viewer-controls input, .viewer-controls select, .viewer-controls button')
+    .all()) {
+    await control.scrollIntoViewIfNeeded();
+    expect(
+      await control.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        const hit = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+        return !!hit && element.contains(hit);
+      }),
+    ).toBe(true);
+  }
   const toneMapping = page.getByRole('combobox', { name: 'Tone mapping' });
   const bloom = page.getByRole('checkbox', { name: 'Bloom', exact: true });
   const ao = page.getByRole('checkbox', { name: 'Ambient occlusion' });
@@ -323,7 +336,7 @@ test('validity checks collapse successes, expand failures, and remain keyboard a
   expect(await sections.locator(':scope > summary').allTextContents()).toEqual([
     'File details',
     'Materials (1)',
-    'References (0)',
+    'References (0, 0 B)',
     'Internal Nodes (1)',
     'Validity Checks ✓Passed',
   ]);
