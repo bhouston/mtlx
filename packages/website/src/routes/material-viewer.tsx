@@ -17,7 +17,7 @@ export const Route = createFileRoute('/material-viewer')({
 
 const DEMO_SRC = '/materials/compound_zip/compound_zip.mtlx.zip';
 
-const EMBED_EXAMPLE = `<script type="module" src="https://unpkg.com/mtlx-viewer/dist/element.js"></script>
+const EMBED_EXAMPLE = `<script type="module" src="https://unpkg.com/mtlx-viewer/dist/material-viewer.js"></script>
 
 <material-viewer
   src="https://example.com/material.mtlx.zip"
