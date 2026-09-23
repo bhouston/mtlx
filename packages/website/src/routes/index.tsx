@@ -175,7 +175,7 @@ function HomePage() {
           </CardHeader>
           <CardContent className="flex flex-1 flex-col gap-3">
             <CodeBlock
-              code={`<script type="module" src=".../mtlx-viewer/dist/element.js"></script>\n<material-viewer src="material.mtlx.zip"></material-viewer>`}
+              code={`<script type="module" src=".../mtlx-viewer/dist/material-viewer.js"></script>\n<material-viewer src="material.mtlx.zip"></material-viewer>`}
             />
             <PackageLinks
               github="https://github.com/bhouston/mtlx/blob/main/packages/viewer/README.md"
