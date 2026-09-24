@@ -7,7 +7,8 @@ export const Route = createFileRoute('/extension')({
       { title: 'Mtlx Viewer — VS Code extension' },
       {
         name: 'description',
-        content: 'Preview, inspect, and convert .mtlx and .mtlx.zip files directly in VS Code.',
+        content:
+          'Open .mtlx and .mtlx.zip files in VS Code for a live 3D preview, an interactive node graph, and full validation.',
       },
     ],
   }),
@@ -18,10 +19,21 @@ const VSCODE_MARKETPLACE_URL = 'https://marketplace.visualstudio.com/items?itemN
 const OPEN_VSX_URL = 'https://open-vsx.org/extension/benhouston3d/mtlx-vscode-extension';
 
 const FEATURES = [
-  'Opens .mtlx and .mtlx.zip files with totem, sphere, cube, plane, or custom glTF preview geometry.',
-  'Configurable IBL lighting, geometry and rotation defaults; San Giuseppe Bridge lighting by default.',
-  'Stats panel: version, materials (surfaces/volumes), referenced textures, internal node list, validity/issues.',
-  'Right-click a .mtlx or .mtlx.zip file in the Explorer to convert it to the other format.',
+  [
+    'Real-time 3D preview',
+    'Totem, sphere, cube, plane or your own glTF model, lit by HDR environments with bloom, AO and tone mapping.',
+  ],
+  ['Node graph view', 'Pan, zoom and click through nodes and nested node graphs to inspect every parameter.'],
+  [
+    'Validation at a glance',
+    'Structure, types, dependencies, textures and renderer support are checked as the file opens.',
+  ],
+  ['Live reload', 'Save the material or any texture it uses and the preview updates.'],
+  [
+    'One-click packaging',
+    'Right-click in Explorer to bundle a .mtlx and its textures into a .mtlx.zip, or unpack one.',
+  ],
+  ['Your lighting, your models', 'Add HDR/EXR environments and glTF/GLB geometry from disk or a URL.'],
 ];
 
 const SETTINGS_EXAMPLE = `{
@@ -47,12 +59,17 @@ function ExtensionPage() {
     <main className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-6 p-6 py-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold">Mtlx Viewer for VS Code</h1>
-        <p className="text-muted-foreground">
-          Preview, inspect, and convert{' '}
+        <p className="text-lg">
+          See your{' '}
           <a href="https://materialx.org" className="underline underline-offset-4">
             MaterialX
           </a>{' '}
-          files directly in VS Code, built on the same <code>mtlx-core</code> library as the CLI and this site's viewer.
+          materials without leaving the editor.
+        </p>
+        <p className="text-muted-foreground">
+          Open any <code>.mtlx</code> or <code>.mtlx.zip</code> file and get a live, physically based 3D preview, an
+          interactive node graph, and a full validation report, all in one tab. Free and open source, built on the same{' '}
+          <code>mtlx-core</code> library as the CLI and this site's viewer.
         </p>
         <p className="text-sm text-muted-foreground">
           Part of the{' '}
@@ -63,43 +80,42 @@ function ExtensionPage() {
         </p>
       </div>
 
+      <div className="flex flex-wrap gap-3">
+        <a href={VSCODE_MARKETPLACE_URL} className={buttonVariants()}>
+          Install from the VS Code Marketplace
+        </a>
+        <a href={OPEN_VSX_URL} className={buttonVariants({ variant: 'outline' })}>
+          Install from Open VSX
+        </a>
+      </div>
+
       <img
-        src="/extension.webp"
-        alt="Mtlx Viewer extension screenshot"
-        className="aspect-video rounded-md border border-border bg-muted object-contain"
+        src="/extension.gif"
+        alt="Mtlx Viewer switching between the 3D preview and the node graph"
+        width={1200}
+        height={1004}
+        className="h-auto w-full rounded-md border border-border bg-muted"
       />
 
-      <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-        {FEATURES.map((feature) => (
-          <li key={feature} className="flex gap-2">
-            <span aria-hidden>•</span>
-            {feature}
+      <ul className="grid gap-4 sm:grid-cols-2">
+        {FEATURES.map(([title, description]) => (
+          <li key={title} className="flex flex-col gap-1">
+            <span className="font-medium">{title}</span>
+            <span className="text-sm text-muted-foreground">{description}</span>
           </li>
         ))}
       </ul>
 
-      <div className="flex flex-wrap gap-3">
-        <a href={VSCODE_MARKETPLACE_URL} className={buttonVariants({ size: 'sm' })}>
-          Get it on the VS Code Marketplace
-        </a>
-        <a href={OPEN_VSX_URL} className={buttonVariants({ size: 'sm', variant: 'outline' })}>
-          Get it on Open VSX
-        </a>
-      </div>
       <p className="text-xs text-muted-foreground">
-        Two separate stores, since not every VS Code-based editor (e.g. VSCodium) can use the Microsoft Marketplace.
+        Use Open VSX for Cursor, VSCodium and other VS Code-compatible editors that can't use the Microsoft Marketplace.
+        Requires desktop VS Code 1.85+ with GPU acceleration.
       </p>
       <section id="settings" className="flex min-w-0 flex-col gap-4 scroll-mt-6">
         <h2 className="text-xl font-semibold">Viewer settings</h2>
         <p className="text-sm text-muted-foreground">
-          Configure the extension under <strong>Settings → Mtlx Viewer</strong>, or in user/workspace{' '}
-          <code>settings.json</code>. San Giuseppe Bridge is the default IBL in both the website and extension. These
-          settings customize the extension's previews.
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Bottom controls toggle Bloom and AO and select Tone mapping. Bloom and AO default on; tone mapping defaults to
-          Neutral. AO uses full-resolution, 32-sample GTAO with denoising and affects indirect lighting. Bloom runs
-          before tone mapping. Auto-rotation completes one turn every 40 seconds.
+          Set preview defaults under <strong>Settings → Mtlx Viewer</strong>, or in user/workspace{' '}
+          <code>settings.json</code>. Everything can also be changed per preview from the{' '}
+          <strong>Viewer settings</strong> panel.
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
