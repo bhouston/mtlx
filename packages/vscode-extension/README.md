@@ -1,4 +1,4 @@
-# Mtlx Viewer
+# Mtlx Viewer for MaterialX
 
 **See your [MaterialX](https://materialx.org) materials without leaving VS Code.** Open any `.mtlx` or
 `.mtlx.zip` file and get a live, physically based 3D preview, an interactive node graph, and a full
@@ -26,7 +26,7 @@ Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca).
 
 ## Get started
 
-1. Install **Mtlx Viewer** from the
+1. Install **Mtlx Viewer for MaterialX** from the
    [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=benhouston3d.mtlx-vscode-extension)
    or [Open VSX](https://open-vsx.org/extension/benhouston3d/mtlx-vscode-extension).
 2. Open a `.mtlx` or `.mtlx.zip` file. It opens in the viewer automatically.
