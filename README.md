@@ -6,6 +6,7 @@
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bhouston/mtlx/blob/main/LICENSE)
 [![Live demo](https://img.shields.io/badge/viewer-mtlx.ben3d.ca-blue)](https://mtlx.ben3d.ca)
+[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
 
 _A TypeScript/JavaScript [MaterialX](https://materialx.org) toolkit for inspecting,
 packaging, transforming, and previewing materials._

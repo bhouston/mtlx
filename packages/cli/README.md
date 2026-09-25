@@ -5,6 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
 [![npm downloads](https://img.shields.io/npm/dm/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
+[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
 
 Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca). Installs the `mtlx` command
 for validating, inspecting, packaging, previewing, and transforming MaterialX files

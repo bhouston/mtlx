@@ -6,7 +6,8 @@ validation report, all in one tab.
 
 ![Mtlx Viewer switching between the 3D preview and the node graph](https://raw.githubusercontent.com/bhouston/mtlx/main/assets/extension.gif)
 
-Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca).
+Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca). Join the
+[Discord](https://discord.gg/wzQWaBBxup) for questions, feedback, and updates.
 
 ## Features
 
