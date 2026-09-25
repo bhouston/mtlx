@@ -1,162 +1,59 @@
 # Contributing
 
-mtlx is a pnpm monorepo. All code is TypeScript (ESM), formatted with oxfmt and linted with
-oxlint; both run on staged files via husky. This file is the single source of truth for the
-workflow, for every contributor including Claude and Codex.
+These rules apply to every contributor, human or AI agent (Claude, Codex, and others). This file is the single source of truth for the workflow; `AGENTS.md` and `CLAUDE.md` only point here.
 
-## Issue → branch → implementation → PR
+## Issue → branch → PR
 
-1. Before starting a feature or other tracked change, create a GitHub issue using the
-   feature/change template. Include what changes, why, constraints, and testable acceptance
-   criteria. Reuse an existing issue when it already covers the request.
-2. Fetch origin and branch from `origin/main`. Branch names are not restricted; use whatever is
-   convenient. Never commit directly to `main`.
-3. Implement and validate the acceptance criteria. Every commit must use Conventional Commits
-   (see below). Reference the issue in the commit body where useful.
-4. Run the checks under [Setup](#setup) below, plus `pnpm audit --audit-level=high` (review
-   findings) and `pnpm exec oxfmt <files>` on changed files.
-5. Push the branch and open a PR against **main**. Give the PR a Conventional Commit title and
-   include `Closes #<issue>`, a description of the resulting behavior, and validation results.
-   Do not merge your own work unless the maintainer requested a merge.
-6. Merging a PR runs CI but never publishes. The maintainer publishes separately by dispatching
-   the `Release` workflow on `main` (see [RELEASING.md](RELEASING.md)); there is no promotion or
-   sync-back branch to keep aligned.
+1. **Start with an issue.** Before a feature, fix, or other tracked change, open a GitHub issue (or reuse one that already covers it) with the problem, motivation, constraints, and testable acceptance criteria. Agents use `gh issue create` with the same sections.
+2. **Branch from `main`.** Fetch and branch from current `origin/main`, named `<type>/<issue>-<short-description>` (for example `feat/42-batch-export`). Never commit directly to `main`. Use a separate worktree when you have unrelated local changes.
+3. **Commit with Conventional Commits** (see below). Reference the issue in the commit body where useful.
+4. **Run the local checks** below and fix failures before opening the PR.
+5. **Open a PR against `main`** with a Conventional Commit title, `Closes #<issue>` in the body, a description of the resulting behavior, and the validation you ran.
+6. **Merge only on green CI.** Every required check must pass. PRs are merged with merge commits (`gh pr merge --merge`); never squash or rebase-merge. Do not merge your own PR unless the maintainer asked you to.
 
-GitHub automatically closes referenced issues when their closing commits reach the default
-branch (`main`).
+`main` is the default branch and the only integration branch. There are no long-lived release, promotion, or sync branches.
 
-## Commit format and versions
+## Commit format
 
-Use `type(optional-scope): description`. Allowed types are `feat`, `fix`, `perf`, `docs`,
-`chore`, `refactor`, `test`, `style`, `build`, `ci`, and `revert`.
+Use `type(optional-scope): description` in the imperative mood. Allowed types: `feat`, `fix`, `perf`, `docs`, `chore`, `refactor`, `test`, `style`, `build`, `ci`, `revert`.
 
-- `feat: add batch export` triggers a minor release.
-- `fix(cli): handle missing input` and `perf:` trigger patch releases.
-- `feat!: remove the legacy loader` or a `BREAKING CHANGE: explanation` footer triggers a major
-  release, including when attached to another type.
-- Other types do not normally trigger a release. Reverts are interpreted by the release analyzer.
+- `feat:` produces a minor release.
+- `fix:` and `perf:` produce a patch release.
+- `feat!:` (any type with `!`) or a `BREAKING CHANGE:` footer produces a major release.
+- Other types do not trigger a release on their own.
 
-Use an imperative, concise description. Add a blank line before a body or footer. Husky
-validates commit messages after `pnpm install`; CI validates feature commits and PR titles too.
-Git-generated merge commits are exempt from commitlint.
+Husky runs commitlint on every commit after `pnpm install`. CI checks the PR title and every commit in the PR. Git-generated merge commits are exempt.
 
-Do not manually bump versions or write changelog entries. `mtlx-core`, `mtlx-viewer`, and
-`mtlx-cli` release together. See [RELEASING.md](RELEASING.md) for the release mechanics and
-setup.
+## Local checks
 
-## Setup
+Use the Node version in `.nvmrc` and the pnpm version pinned in `package.json` (`packageManager`).
 
 ```sh
-pnpm install
-pnpm build          # builds every package; the website build also regenerates the docs
-pnpm test           # type-check + vitest across all packages
+pnpm install --frozen-lockfile
+pnpm build
+pnpm tsc
 pnpm lint
-pnpm docs:cli --check  # fails if generated CLI help (packages/cli/README.md) is stale
-pnpm docs:opencli --check  # fails if the generated OpenCLI document (packages/cli/opencli.json) is stale
+pnpm test
 ```
 
-`pnpm install` enables Husky's pre-commit (oxfmt/oxlint on staged files) and commit-msg
-(commitlint) hooks. CI runs the same checks, using the Node version in `.nvmrc` and the pnpm
-version pinned in `package.json`, plus a `contribution` job that validates the linked issue and
-Conventional Commit PR titles/commits.
+The Husky pre-commit hook formats and lints staged files (`oxfmt`, `oxlint --fix`) and type-checks the workspace. CI runs the same checks plus any repository-specific gates, such as coverage floors, bundle-size budgets, package-content checks, and a dependency audit; see `.github/workflows/ci.yml`. Explain any intentional threshold change in the PR.
 
-To use a local build of the CLI:
+## Releases
+
+Merging to `main` never publishes. A release is a separate, deliberate step that the maintainer triggers whenever the changes accumulated on `main` should ship:
 
 ```sh
-node packages/cli/bin/cli.js check material.mtlx
+gh workflow run release.yml --ref main                  # release
+gh workflow run release.yml --ref main -f dry_run=true  # preview only, publishes nothing
 ```
 
-or `npm link` inside `packages/cli` so `mtlx` resolves to your checkout.
+The Release workflow refuses any ref other than `main`, re-runs CI on the dispatched commit, and then uses semantic-release to compute the next version from the Conventional Commits since the last release tag, generate release notes, create the tag and GitHub Release, and publish:
 
-## Updating MaterialX node definitions
+- npm packages, through npm trusted publishing (GitHub OIDC, no `NPM_TOKEN`);
+- VS Code extensions, where the repository has one, to the VS Code Marketplace and Open VSX.
 
-Keep upstream MaterialX sources in `submodules/MaterialX`. This is currently a local source
-copy, not a registered Git submodule. It is needed only when updating or checking generated
-node definitions; normal builds and runtime use the committed TypeScript registry.
+When there are no release-worthy commits, the run is a no-op. Never bump versions, edit changelogs, or push release tags by hand.
 
-```sh
-pnpm generate:nodes  # build core's parser, regenerate the registry, and copy the upstream license
-pnpm check:nodes     # verify generated files without rewriting them
-# An alternate source tree can also be supplied:
-pnpm generate:nodes /path/to/MaterialX
-```
+## Security
 
-The generator reads `libraries/**/*.mtlx`, resolves nodedef inheritance, and retains port
-types, defaults, groups, and UI metadata. It rejects duplicate names, missing parents, and
-inheritance cycles. The output records the version from `CMakeLists.txt` and a SHA-256
-fingerprint of that file and the library XML inputs. Review and commit the generated registry
-and license with any matching core model changes; run `pnpm test` after regeneration.
-
-Upstream sources are excluded from our formatter and linter. Update those sources using the
-upstream project's workflow. The source copy currently supplied here contains a `.git` file
-pointing to unavailable metadata; generation works without Git metadata. Before registering
-it as a real submodule, preserve local changes, establish a valid checkout, and pin an upstream
-commit. Once that commit is tracked, CI can check out the submodule and run `pnpm check:nodes`.
-
-## Pull requests
-
-Before adding a feature, please open an issue to discuss it. Changes with test coverage are
-strongly preferred. Test fixtures live under `assets/` and are shared by every package's tests.
-PRs are merged with merge commits; do not squash.
-
-### Node and web compatibility
-
-The root `mtlx-core` entry must stay pure: no `node:` imports, no `Buffer`, no native modules.
-Platform resources are injected by the caller, never created by the library. Concretely:
-
-- Filesystem helpers go in `packages/core/src/node.ts` (`mtlx-core/node`).
-- Anything that needs sharp goes in `packages/core/src/textures.ts` (`mtlx-core/textures`).
-- Pure functions take bytes (`Uint8Array`), text, or a reader callback such as `ResourceReader`.
-
-The website imports only the root entry, which is the check that this rule holds.
-
-### API conventions
-
-- Functions, not classes. Plain interfaces for data.
-- A function that takes options has an `XOptions` interface and, when any option has a default,
-  an `X_DEFAULTS` const.
-- Anything that operates on a whole material is a `Transform` (`(pkg: MaterialXPackage) => void |
-Promise<void>`) so it composes with `transform(pkg, ...)`.
-- Validation returns `MaterialXValidationIssue[]`; it never throws on bad input.
-
-## Documentation
-
-Each published package documents itself: `packages/core/README.md`, `packages/cli/README.md`, and
-`packages/viewer/README.md` list and demonstrate their key exported APIs, and that's what users see
-on npm. Keep them current when you change an export's signature or behavior.
-
-- Open with an italic one-line summary, then prose, then a fenced `ts` example, when adding a doc
-  comment to an exported symbol.
-- Tag every export with `@category`: `Parsing`, `Validation`, `Packaging`, `Transforms`, or
-  `Textures`. `@internal` hides a symbol from the type declarations.
-
-```sh
-pnpm docs:cli    # splice `mtlx --help` output into packages/cli/README.md (commit the result)
-pnpm docs:opencli  # regenerate packages/cli/opencli.json, the CLI's OpenCLI spec (commit the result)
-```
-
-`packages/cli/opencli.json` is an [OpenCLI](https://github.com/bcdxn/opencli) document generated
-by `mtlx docgen` (via [clidoc](https://clidoc.dev)) from the CLI's own Yargs command tree. CI
-validates it with [`bhouston/clidoc-action`](https://github.com/bhouston/clidoc-action) and fails
-if it's stale (`pnpm docs:opencli --check`); regenerate and commit it whenever a command, flag, or
-positional changes.
-
-## Releasing
-
-`mtlx-core`, `mtlx-viewer`, and `mtlx-cli` release together via a manually dispatched GitHub
-Actions workflow, never on every push. See [RELEASING.md](RELEASING.md) for the release
-mechanics and one-time npm trusted publishing setup.
-
-`pnpm pack:release` and `pnpm check:release` remain available for local, pre-publish
-verification of the exact tarballs without publishing anything.
-
-The extension build creates a bundled host entry; `pnpm tsc` can replace it with unbundled
-compiler output, so always use the package script (which rebuilds) when preparing a VSIX.
-Build the extension separately with `pnpm --filter mtlx-vscode-extension package`; test that VSIX
-in VS Code before merging. Publishing to the VS Code Marketplace and Open VSX is automated as
-part of the standard release (see [RELEASING.md](RELEASING.md)), not a separate manual step.
-
-The website deploys to Cloud Run from `main` via GitHub Actions.
-
-Dependency audit findings appear as warnings in CI, so existing advisories stay visible
-without blocking unrelated fixes.
+Report vulnerabilities privately through GitHub's private vulnerability reporting (see `SECURITY.md` where present), never in a public issue.
