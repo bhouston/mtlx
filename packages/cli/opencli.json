@@ -111,14 +111,18 @@
         {
           "name": "output",
           "type": "string",
-          "aliases": ["o"],
+          "aliases": [
+            "o"
+          ],
           "summary": "PNG file to write",
           "required": true
         },
         {
           "name": "geometry",
           "type": "string",
-          "aliases": ["g"],
+          "aliases": [
+            "g"
+          ],
           "summary": "Preview geometry",
           "choices": [
             {
@@ -139,13 +143,17 @@
         {
           "name": "material",
           "type": "string",
-          "aliases": ["m"],
+          "aliases": [
+            "m"
+          ],
           "summary": "Material name (default: last material in the document)"
         },
         {
           "name": "background",
           "type": "string",
-          "aliases": ["b"],
+          "aliases": [
+            "b"
+          ],
           "summary": "Backdrop behind the model; none keeps the IBL lighting but leaves the PNG transparent",
           "choices": [
             {
@@ -160,7 +168,9 @@
         {
           "name": "size",
           "type": "number",
-          "aliases": ["s"],
+          "aliases": [
+            "s"
+          ],
           "summary": "Image width and height in pixels",
           "default": 800
         },
@@ -179,7 +189,9 @@
     },
     "mtlx transform": {
       "summary": "Convert, combine, or resize/reformat textures across one or more .mtlx / .mtlx.zip files (glob patterns accepted), writing --output. A directory --output batch-converts each input separately instead of combining.",
-      "aliases": ["x"],
+      "aliases": [
+        "x"
+      ],
       "args": [
         {
           "name": "inputs",
@@ -191,7 +203,9 @@
         {
           "name": "output",
           "type": "string",
-          "aliases": ["o"],
+          "aliases": [
+            "o"
+          ],
           "summary": "Output path; a .mtlx/.mtlx.zip path combines every input into one file, a directory converts each input separately (same basename, same format) into that directory",
           "required": true
         },
@@ -236,7 +250,9 @@
         {
           "name": "texture-library",
           "type": "string",
-          "aliases": ["tl"],
+          "aliases": [
+            "tl"
+          ],
           "summary": "Loose .mtlx output only: copy textures into this directory (relative to --output) instead of ./textures. Ignored for .mtlx.zip output, whose resources remain inside the archive."
         },
         {
@@ -275,7 +291,9 @@
         {
           "name": "output",
           "type": "string",
-          "aliases": ["o"],
+          "aliases": [
+            "o"
+          ],
           "summary": "Output file; defaults to stdout"
         },
         {
