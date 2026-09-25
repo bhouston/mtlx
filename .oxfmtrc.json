@@ -5,6 +5,7 @@
   "ignorePatterns": [
     "**/routeTree.gen.ts",
     "packages/core/src/generated/node-registry.generated.ts",
+    "packages/cli/opencli.json",
     "packages/vscode-extension/dist/**",
     "packages/vscode-extension/media/**",
     "submodules/**"

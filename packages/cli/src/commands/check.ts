@@ -45,8 +45,7 @@ export const command = defineCommand({
         type: 'string',
         array: true,
         choices: [...MATERIALX_VALIDATION_RULES],
-        default: ['basic'],
-        describe: 'Rule groups to run; renderer checks require a capability inventory',
+        describe: 'Rule groups to run (default: basic); renderer checks require a capability inventory',
       })
       .options(formatOption),
   handler: async (argv) => {

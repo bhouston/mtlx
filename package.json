@@ -16,6 +16,7 @@
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
     "docs:cli": "node scripts/docs-cli.mjs",
+    "docs:opencli": "node scripts/docs-opencli.mjs",
     "make-release:core": "node scripts/make-release.mjs packages/core",
     "make-release:cli": "node scripts/make-release.mjs packages/cli",
     "gcloud": "gcloud auth application-default login && gcloud config set account \"neuralsoft@gmail.com\" && gcloud config set project bhouston-general-hosting && gcloud config set run/region us-central1",

@@ -52,6 +52,7 @@ pnpm build          # builds every package; the website build also regenerates t
 pnpm test           # type-check + vitest across all packages
 pnpm lint
 pnpm docs:cli --check  # fails if generated CLI help (packages/cli/README.md) is stale
+pnpm docs:opencli --check  # fails if the generated OpenCLI document (packages/cli/opencli.json) is stale
 ```
 
 `pnpm install` enables Husky's pre-commit (oxfmt/oxlint on staged files) and commit-msg
@@ -131,7 +132,14 @@ on npm. Keep them current when you change an export's signature or behavior.
 
 ```sh
 pnpm docs:cli    # splice `mtlx --help` output into packages/cli/README.md (commit the result)
+pnpm docs:opencli  # regenerate packages/cli/opencli.json, the CLI's OpenCLI spec (commit the result)
 ```
+
+`packages/cli/opencli.json` is an [OpenCLI](https://github.com/bcdxn/opencli) document generated
+by `mtlx docgen` (via [clidoc](https://clidoc.dev)) from the CLI's own Yargs command tree. CI
+validates it with [`bhouston/clidoc-action`](https://github.com/bhouston/clidoc-action) and fails
+if it's stale (`pnpm docs:opencli --check`); regenerate and commit it whenever a command, flag, or
+positional changes.
 
 ## Releasing
 
