@@ -1,4 +1,4 @@
-import { generatedNodeRegistry } from './generated/node-registry.generated.js';
+import { generatedNodeRegistry } from './generated/node-registry.gen.js';
 import type { MaterialXNodeSpec } from './types.js';
 
 const builtInNodeSpecs: MaterialXNodeSpec[] = [
