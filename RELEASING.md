@@ -36,7 +36,7 @@ Semantic-release analyzes Conventional Commits since the last `v*` tag. `feat` p
 
 `mtlx-core`, `mtlx-viewer`, and `mtlx-cli` share one version and publish in dependency order via `pnpm publish` (through `@anolilab/semantic-release-pnpm`, one plugin instance per package), which updates each `package.json` version and rewrites any `workspace:*` internal dependency to a resolved semver range natively. The VS Code extension (`packages/vscode-extension`) shares the same version stream — `release.config.js` pins its `package.json` version to `nextRelease.version` alongside the npm packages — but is never `npm publish`'d; instead it's built, packaged with `vsce`, and published to the VS Code Marketplace and Open VSX Registry (`scripts/release-vscode-extension.mjs`), requiring the `VSCE_PAT` and `OVSX_PAT` repository secrets. The website retains its existing delivery path. Source package versions are development snapshots; the authoritative released version is the Git tag/npm version. It does not write version commits to protected branches.
 
-Each GitHub Release contains generated release notes, a `CHANGELOG.md` for that release, and all three npm tarballs. The release job waits for the complete reusable CI suite and only runs from a manual dispatch against `main`. Releases are serialized and never cancel an in-progress publish.
+Each GitHub Release contains generated release notes and all three npm tarballs; [GitHub Releases](https://github.com/bhouston/mtlx/releases) is the cumulative changelog of record. The release job waits for the complete reusable CI suite and only runs from a manual dispatch against `main`. Releases are serialized and never cancel an in-progress publish.
 
 ## Validation and recovery
 

@@ -14,7 +14,6 @@ export default {
   plugins: [
     ['@semantic-release/commit-analyzer', { preset: 'conventionalcommits' }],
     ['@semantic-release/release-notes-generator', { preset: 'conventionalcommits' }],
-    ['@semantic-release/changelog', { changelogFile: 'CHANGELOG.md' }],
     // pkgRoot only (no tarballDir): @anolilab/semantic-release-pnpm's tarballDir option
     // shells out to `pnpm pack <pkgRoot>`, which pnpm packs from the cwd instead — pack
     // explicitly below, once all three packages have their final bumped version.
@@ -44,7 +43,7 @@ export default {
     [
       '@semantic-release/github',
       {
-        assets: ['CHANGELOG.md', 'release-artifacts/*.tgz'],
+        assets: ['release-artifacts/*.tgz'],
         successComment: false,
         failComment: false,
         releasedLabels: false,
