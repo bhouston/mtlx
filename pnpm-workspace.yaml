@@ -7,10 +7,10 @@ allowBuilds:
   esbuild: true
   keytar: true
 minimumReleaseAgeExclude:
-  - hdrify@1.1.4
-  - tanstack-router-ga4@1.6.0
-  - '@clidoc/core@1.0.0'
-  - '@clidoc/yargs@0.1.1'
-  - humanize-units@2.0.4
-  - vitest-command-line@0.9.0
-  - yargs-file-commands@1.2.2
+  - hdrify
+  - tanstack-router-ga4
+  - '@clidoc/core'
+  - '@clidoc/yargs'
+  - humanize-units
+  - vitest-command-line
+  - yargs-file-commands
