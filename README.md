@@ -119,7 +119,7 @@ See the [mtlx-cli README](https://www.npmjs.com/package/mtlx-cli) for the full r
 See [CONTRIBUTING.md](https://github.com/bhouston/mtlx/blob/main/CONTRIBUTING.md) for the
 issue/branch/PR workflow, [docs/DEVELOPMENT.md](https://github.com/bhouston/mtlx/blob/main/docs/DEVELOPMENT.md)
 for setup, the MaterialX node-definition generator, and repo conventions, and
-[CHANGELOG.md](https://github.com/bhouston/mtlx/blob/main/CHANGELOG.md) for what has changed.
+[GitHub Releases](https://github.com/bhouston/mtlx/releases) for what has changed.
 
 ## Credits
 
