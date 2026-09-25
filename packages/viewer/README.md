@@ -5,6 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
 [![npm downloads](https://img.shields.io/npm/dm/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
+[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
 
 Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca).
 Provides three.js MaterialX scenes and IBL environment assets used by the website, CLI preview, and VS Code
