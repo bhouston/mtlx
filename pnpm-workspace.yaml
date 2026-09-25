@@ -6,4 +6,11 @@ allowBuilds:
   '@vscode/vsce-sign': true
   esbuild: true
   keytar: true
-minimumReleaseAge: 0
+minimumReleaseAgeExclude:
+  - hdrify
+  - tanstack-router-ga4
+  - '@clidoc/core'
+  - '@clidoc/yargs'
+  - humanize-units
+  - vitest-command-line
+  - yargs-file-commands
