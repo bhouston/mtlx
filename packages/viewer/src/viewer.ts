@@ -13,6 +13,7 @@ import { createViewerRendering } from './rendering.js';
 import { IBL_OPTIONS, type ViewerSettings } from './renderingSettings.js';
 import { applyViewerRenderingSettings, createViewerRenderer, observeViewerResize } from './runtime.js';
 import { createMtlxScene, type MtlxScene } from './scene.js';
+import { registerTiffTextureHandler } from './tiffTextureHandler.js';
 import type { PreviewReport } from './diagnostics.js';
 
 export interface ViewerOptions {
@@ -180,6 +181,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       onLog?.(`Failed to load resource: ${url}`);
     };
     registerHdrTextureHandler(manager);
+    registerTiffTextureHandler(manager);
     const mtlxScene = await createMtlxScene(camera, controls, {
       data: options.data,
       fileName: options.fileName,
