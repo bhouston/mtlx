@@ -139,6 +139,18 @@ calls them as tools instead of shelling out: `check_material`, `inspect_material
 `mtlx-core/session` API and saves the file. Invalid edits are rejected and leave the file unchanged.
 Rendering needs the same Chrome or Edge as `mtlx render`.
 
+### OpenCLI specification
+
+```sh
+mtlx docgen --output cli.json                # OpenCLI document as JSON (default)
+mtlx docgen --format markdown --output cli.md  # ...or as Markdown
+```
+
+`mtlx docgen` writes an [OpenCLI](https://github.com/bcdxn/opencli) document generated from the
+CLI's own command definitions, via [clidoc](https://clidoc.dev). The repository's committed copy,
+`packages/cli/opencli.json`, is validated in CI with
+[`clidoc-action`](https://github.com/bhouston/clidoc-action).
+
 ### Pack and unpack
 
 ```sh
@@ -292,6 +304,7 @@ Commands:
                              directory --output batch-converts each input separately instead of
                              combining.                                                 [aliases: x]
   mtlx view <input>          Open a local 3D preview of a .mtlx or .mtlx.zip file in your browser
+  mtlx docgen                Write the OpenCLI document to a file, or stdout if --output is omitted
 
 Options:
   --version  Show version number                                                           [boolean]
@@ -309,9 +322,8 @@ Options:
   --version  Show version number                                                           [boolean]
   --help     Show help                                                                     [boolean]
   --strict   Fail on warnings as well as errors                           [boolean] [default: false]
-  --rules    Rule groups to run; renderer checks require a capability inventory
-         [array] [choices: "basic", "structure", "types", "resources", "renderer-support"] [default:
-                                                                                          ["basic"]]
+  --rules    Rule groups to run (default: basic); renderer checks require a capability inventory
+                   [array] [choices: "basic", "structure", "types", "resources", "renderer-support"]
   --format   Output format                       [choices: "text", "json", "yaml"] [default: "text"]
 ```
 
@@ -411,6 +423,18 @@ Positionals:
 Options:
   --version  Show version number                                                           [boolean]
   --help     Show help                                                                     [boolean]
+```
+
+```text
+mtlx docgen
+
+Write the OpenCLI document to a file, or stdout if --output is omitted
+
+Options:
+      --version  Show version number                                                       [boolean]
+      --help     Show help                                                                 [boolean]
+  -o, --output   Output file; defaults to stdout                                            [string]
+      --format   Output format      [string] [choices: "json", "yaml", "markdown"] [default: "json"]
 ```
 
 <!-- end:cli_help -->

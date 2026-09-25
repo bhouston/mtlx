@@ -28,6 +28,14 @@ jobs:
       - run: pnpm test
       - name: Verify generated CLI documentation
         run: pnpm docs:cli --check
+      - name: Verify generated OpenCLI document
+        run: pnpm docs:opencli --check
+      - name: Validate OpenCLI document
+        uses: bhouston/clidoc-action@v1
+        with:
+          files: packages/cli/opencli.json
+          specification: bcdxn
+          format: json
       - name: Audit dependencies
         id: audit
         continue-on-error: true

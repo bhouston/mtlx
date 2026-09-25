@@ -1,0 +1,301 @@
+{
+  "opencliVersion": "1.0.0-alpha.14",
+  "info": {
+    "title": "mtlx-cli",
+    "binary": "mtlx",
+    "version": "0.6.0"
+  },
+  "commands": {
+    "mtlx check": {
+      "summary": "Run selected document checks on one or more .mtlx or .mtlx.zip files (glob patterns accepted)",
+      "args": [
+        {
+          "name": "inputs",
+          "required": true,
+          "variadic": true
+        }
+      ],
+      "flags": [
+        {
+          "name": "strict",
+          "type": "boolean",
+          "summary": "Fail on warnings as well as errors",
+          "default": false
+        },
+        {
+          "name": "rules",
+          "type": "string",
+          "summary": "Rule groups to run (default: basic); renderer checks require a capability inventory",
+          "variadic": true,
+          "choices": [
+            {
+              "value": "basic"
+            },
+            {
+              "value": "structure"
+            },
+            {
+              "value": "types"
+            },
+            {
+              "value": "resources"
+            },
+            {
+              "value": "renderer-support"
+            }
+          ]
+        },
+        {
+          "name": "format",
+          "type": "string",
+          "summary": "Output format",
+          "choices": [
+            {
+              "value": "text"
+            },
+            {
+              "value": "json"
+            },
+            {
+              "value": "yaml"
+            }
+          ],
+          "default": "text"
+        }
+      ]
+    },
+    "mtlx info": {
+      "summary": "Print information about a .mtlx or .mtlx.zip file",
+      "args": [
+        {
+          "name": "input",
+          "required": true,
+          "type": "string",
+          "summary": "Path to .mtlx or .mtlx.zip file"
+        }
+      ],
+      "flags": [
+        {
+          "name": "format",
+          "type": "string",
+          "summary": "Output format",
+          "choices": [
+            {
+              "value": "text"
+            },
+            {
+              "value": "json"
+            },
+            {
+              "value": "yaml"
+            }
+          ],
+          "default": "text"
+        }
+      ]
+    },
+    "mtlx mcp": {
+      "summary": "Run a Model Context Protocol server over stdio (check, inspect, render, and edit tools for AI agents)"
+    },
+    "mtlx render": {
+      "summary": "Render a .mtlx or .mtlx.zip file to a PNG image using a local headless browser",
+      "args": [
+        {
+          "name": "input",
+          "required": true,
+          "type": "string",
+          "summary": "Path to .mtlx or .mtlx.zip file"
+        }
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "type": "string",
+          "aliases": ["o"],
+          "summary": "PNG file to write",
+          "required": true
+        },
+        {
+          "name": "geometry",
+          "type": "string",
+          "aliases": ["g"],
+          "summary": "Preview geometry",
+          "choices": [
+            {
+              "value": "totem"
+            },
+            {
+              "value": "sphere"
+            },
+            {
+              "value": "cube"
+            },
+            {
+              "value": "plane"
+            }
+          ],
+          "default": "totem"
+        },
+        {
+          "name": "material",
+          "type": "string",
+          "aliases": ["m"],
+          "summary": "Material name (default: last material in the document)"
+        },
+        {
+          "name": "background",
+          "type": "string",
+          "aliases": ["b"],
+          "summary": "Backdrop behind the model; none keeps the IBL lighting but leaves the PNG transparent",
+          "choices": [
+            {
+              "value": "none"
+            },
+            {
+              "value": "environment"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "aliases": ["s"],
+          "summary": "Image width and height in pixels",
+          "default": 800
+        },
+        {
+          "name": "browser",
+          "type": "string",
+          "summary": "Chromium-based browser executable (default: installed Chrome, Edge, or Playwright Chromium)"
+        },
+        {
+          "name": "timeout",
+          "type": "number",
+          "summary": "Seconds to wait for the material to compile",
+          "default": 60
+        }
+      ]
+    },
+    "mtlx transform": {
+      "summary": "Convert, combine, or resize/reformat textures across one or more .mtlx / .mtlx.zip files (glob patterns accepted), writing --output. A directory --output batch-converts each input separately instead of combining.",
+      "aliases": ["x"],
+      "args": [
+        {
+          "name": "inputs",
+          "required": true,
+          "variadic": true
+        }
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "type": "string",
+          "aliases": ["o"],
+          "summary": "Output path; a .mtlx/.mtlx.zip path combines every input into one file, a directory converts each input separately (same basename, same format) into that directory",
+          "required": true
+        },
+        {
+          "name": "verbose",
+          "type": "boolean",
+          "summary": "Batch mode: print every file written instead of just a one-line summary",
+          "default": false
+        },
+        {
+          "name": "dry-run",
+          "type": "boolean",
+          "summary": "Transform and validate in memory, report planned files, and create no output",
+          "default": false
+        },
+        {
+          "name": "profile",
+          "type": "string",
+          "summary": "Apply a named texture preset (e.g. \"web\": webp-preferred, 2048px max, EXRs normalized to PIZ); only touches incompatible textures",
+          "choices": [
+            {
+              "value": "web"
+            }
+          ]
+        },
+        {
+          "name": "max-image-size",
+          "type": "number",
+          "summary": "Resize any texture whose longest edge exceeds this many pixels; overrides --profile"
+        },
+        {
+          "name": "image-format",
+          "type": "string",
+          "summary": "Comma-separated target formats (webp,png,jpg,avif,exr,hdr); overrides --profile. Each source converts to the target sharing its dynamic range: SDR sources use the first SDR target, HDR sources (exr/hdr) use the first HDR target. An HDR source with no HDR target requested is linearly clipped to SDR (no tone mapping). Append \":<compression>\" to exr (e.g. \"exr:piz\") to normalize EXR compression; supported: none, rle, zips, zip, piz, pxr24, b44, b44a, dwaa, dwab"
+        },
+        {
+          "name": "image-quality",
+          "type": "number",
+          "summary": "Quality for lossy image formats (webp/jpg/avif)",
+          "default": 95
+        },
+        {
+          "name": "texture-library",
+          "type": "string",
+          "aliases": ["tl"],
+          "summary": "Loose .mtlx output only: copy textures into this directory (relative to --output) instead of ./textures. Ignored for .mtlx.zip output, whose resources remain inside the archive."
+        },
+        {
+          "name": "format",
+          "type": "string",
+          "summary": "Output format",
+          "choices": [
+            {
+              "value": "text"
+            },
+            {
+              "value": "json"
+            },
+            {
+              "value": "yaml"
+            }
+          ],
+          "default": "text"
+        }
+      ]
+    },
+    "mtlx view": {
+      "summary": "Open a local 3D preview of a .mtlx or .mtlx.zip file in your browser",
+      "args": [
+        {
+          "name": "input",
+          "required": true,
+          "type": "string",
+          "summary": "Path to .mtlx or .mtlx.zip file"
+        }
+      ]
+    },
+    "mtlx docgen": {
+      "summary": "Write the OpenCLI document to a file, or stdout if --output is omitted",
+      "flags": [
+        {
+          "name": "output",
+          "type": "string",
+          "aliases": ["o"],
+          "summary": "Output file; defaults to stdout"
+        },
+        {
+          "name": "format",
+          "type": "string",
+          "summary": "Output format",
+          "choices": [
+            {
+              "value": "json"
+            },
+            {
+              "value": "yaml"
+            },
+            {
+              "value": "markdown"
+            }
+          ],
+          "default": "json"
+        }
+      ]
+    }
+  }
+}

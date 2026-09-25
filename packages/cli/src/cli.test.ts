@@ -100,6 +100,16 @@ describe('mtlx', () => {
     expect(result).toHaveStdout(/transform/);
   });
 
+  it('docgen writes a valid OpenCLI document covering every command', async () => {
+    const result = await cli.run(['docgen'], { timeout: 8_000 });
+    expect(result).toSucceed();
+    const document = JSON.parse(result.stdout);
+    expect(document.info).toMatchObject({ binary: 'mtlx' });
+    expect(Object.keys(document.commands)).toEqual(
+      expect.arrayContaining(['mtlx check', 'mtlx info', 'mtlx transform', 'mtlx docgen']),
+    );
+  });
+
   it('info --format json reports materials and referenced textures', async () => {
     const fixture = await makePackFixture();
     try {
