@@ -14,3 +14,7 @@ minimumReleaseAgeExclude:
   - humanize-units
   - vitest-command-line
   - yargs-file-commands
+  - '@vitest/coverage-v8'
+  - '@vitest/mocker'
+  - '@vitest/spy'
+  - vitest
