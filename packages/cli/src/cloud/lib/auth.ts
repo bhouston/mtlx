@@ -300,8 +300,8 @@ export async function loginWithToken(host: string, token: string, deps: CliDeps)
 /**
  * Get current authentication status
  */
-export async function getAuthStatus(host: string, deps: CliDeps): Promise<void> {
-  const config = await deps.persistentConfig.get();
+export async function getAuthStatus(config: Config, deps: CliDeps): Promise<void> {
+  const { host } = config;
   const auth = config.auth;
 
   if (!auth) {
