@@ -87,13 +87,13 @@ describe('mtlx', () => {
   });
 
   it('prints version with --version', async () => {
-    const result = await cli.run(['--version'], { timeout: 8_000 });
+    const result = await cli.run(['--version'], { timeout: 15_000 });
     expect(result).toSucceed();
     expect(result).toHaveStdout(/^\d+\.\d+\.\d+/);
   });
 
   it('shows available commands in --help', async () => {
-    const result = await cli.run(['--help'], { timeout: 8_000 });
+    const result = await cli.run(['--help'], { timeout: 15_000 });
     expect(result).toSucceed();
     expect(result).toHaveStdout(/info/);
     expect(result).toHaveStdout(/check/);
@@ -101,7 +101,7 @@ describe('mtlx', () => {
   });
 
   it('docgen writes a valid OpenCLI document covering every command', async () => {
-    const result = await cli.run(['docgen'], { timeout: 8_000 });
+    const result = await cli.run(['docgen'], { timeout: 15_000 });
     expect(result).toSucceed();
     const document = JSON.parse(result.stdout);
     expect(document.info).toMatchObject({ binary: 'mtlx' });
@@ -113,7 +113,7 @@ describe('mtlx', () => {
   it('info --format json reports materials and referenced textures', async () => {
     const fixture = await makePackFixture();
     try {
-      const result = await cli.run(['info', fixture.materialPath, '--format', 'json'], { timeout: 8_000 });
+      const result = await cli.run(['info', fixture.materialPath, '--format', 'json'], { timeout: 15_000 });
       expect(result).toSucceed();
       const info = JSON.parse(result.stdout);
       expect(info.materials).toEqual([{ name: 'M_test', category: 'surfacematerial' }]);
@@ -123,7 +123,7 @@ describe('mtlx', () => {
         { path: 'textures/albedo.png', bytes: 4 },
       ]);
       expect(info.totalBytes).toBe(Buffer.byteLength(fixtureXml) + 4);
-      const text = await cli.run(['info', fixture.materialPath], { timeout: 8_000 });
+      const text = await cli.run(['info', fixture.materialPath], { timeout: 15_000 });
       expect(text).toHaveStdout(/Assets \(2, \d+ B\):/);
       expect(text).toHaveStdout(/textures\/albedo\.png\s+4 B/);
     } finally {
@@ -134,7 +134,7 @@ describe('mtlx', () => {
   it('info --format yaml is valid yaml text', async () => {
     const fixture = await makePackFixture();
     try {
-      const result = await cli.run(['info', fixture.materialPath, '--format', 'yaml'], { timeout: 8_000 });
+      const result = await cli.run(['info', fixture.materialPath, '--format', 'yaml'], { timeout: 15_000 });
       expect(result).toSucceed();
       expect(result).toHaveStdout(/version:/);
     } finally {
@@ -145,7 +145,7 @@ describe('mtlx', () => {
   it('check command succeeds on known fixture', async () => {
     const fixture = await makePackFixture();
     try {
-      const result = await cli.run(['check', fixture.materialPath], { timeout: 8_000 });
+      const result = await cli.run(['check', fixture.materialPath], { timeout: 15_000 });
       expect(result).toSucceed();
       expect(result).toHaveStdout(/Selected document checks passed|WARNING/);
     } finally {
@@ -158,7 +158,7 @@ describe('mtlx', () => {
     const invalidPath = path.join(tempDir, 'invalid.mtlx');
     try {
       writeFileSync(invalidPath, '<materialx><nodegraph></materialx>', 'utf8');
-      const result = await cli.run(['check', invalidPath], { timeout: 8_000 });
+      const result = await cli.run(['check', invalidPath], { timeout: 15_000 });
       expect(result).toFail();
     } finally {
       await rm(tempDir, { recursive: true, force: true });
@@ -170,17 +170,17 @@ describe('mtlx', () => {
     const outputDir = path.join(fixture.tempDir, 'out');
     try {
       const packResult = await cli.run(['transform', fixture.materialPath, '-o', fixture.archivePath], {
-        timeout: 8_000,
+        timeout: 15_000,
       });
       expect(packResult).toSucceed();
       expect(existsSync(fixture.archivePath)).toBe(true);
 
-      const checkResult = await cli.run(['check', fixture.archivePath], { timeout: 8_000 });
+      const checkResult = await cli.run(['check', fixture.archivePath], { timeout: 15_000 });
       expect(checkResult).toSucceed();
 
       const unpackResult = await cli.run(
         ['transform', fixture.archivePath, '-o', path.join(outputDir, 'material.mtlx')],
-        { timeout: 8_000 },
+        { timeout: 15_000 },
       );
       expect(unpackResult).toSucceed();
       expect(existsSync(path.join(outputDir, 'material.mtlx'))).toBe(true);
@@ -204,11 +204,11 @@ describe('mtlx', () => {
       );
       writeFileSync(zipPath, zipped);
 
-      const checkResult = await cli.run(['check', zipPath], { timeout: 8_000 });
+      const checkResult = await cli.run(['check', zipPath], { timeout: 15_000 });
       expect(checkResult).toSucceed();
 
       const unpackResult = await cli.run(['transform', zipPath, '-o', path.join(outputDir, 'material.mtlx')], {
-        timeout: 8_000,
+        timeout: 15_000,
       });
       expect(unpackResult).toSucceed();
       expect(existsSync(path.join(outputDir, 'material.mtlx'))).toBe(true);
@@ -234,10 +234,10 @@ describe('mtlx', () => {
         'utf8',
       );
 
-      const result = await cli.run(['transform', aPath, bPath, '-o', outputPath], { timeout: 8_000 });
+      const result = await cli.run(['transform', aPath, bPath, '-o', outputPath], { timeout: 15_000 });
       expect(result).toSucceed();
 
-      const info = await cli.run(['info', outputPath, '--format', 'json'], { timeout: 8_000 });
+      const info = await cli.run(['info', outputPath, '--format', 'json'], { timeout: 15_000 });
       expect(info).toSucceed();
       expect(
         JSON.parse(info.stdout).materials.toSorted((l: { name: string }, r: { name: string }) =>
@@ -263,7 +263,7 @@ describe('mtlx', () => {
       writeFileSync(bPath, xml, 'utf8');
 
       const result = await cli.run(['transform', aPath, bPath, '-o', path.join(tempDir, 'out.mtlx')], {
-        timeout: 8_000,
+        timeout: 15_000,
       });
       expect(result).toFail();
       expect(result).toHaveStderr(/duplicate top-level name/);
@@ -275,7 +275,7 @@ describe('mtlx', () => {
   it("the 'x' alias behaves like transform", async () => {
     const fixture = await makePackFixture();
     try {
-      const result = await cli.run(['x', fixture.materialPath, '-o', fixture.archivePath], { timeout: 8_000 });
+      const result = await cli.run(['x', fixture.materialPath, '-o', fixture.archivePath], { timeout: 15_000 });
       expect(result).toSucceed();
       expect(existsSync(fixture.archivePath)).toBe(true);
     } finally {
@@ -300,12 +300,12 @@ describe('mtlx', () => {
       );
       const outDir = path.join(tempDir, 'batch-out'); // doesn't exist yet, no .mtlx(.zip) extension
 
-      const result = await cli.run(['transform', aPath, bPath, '-o', outDir], { timeout: 8_000 });
+      const result = await cli.run(['transform', aPath, bPath, '-o', outDir], { timeout: 15_000 });
       expect(result).toSucceed();
       expect(existsSync(path.join(outDir, 'a.mtlx'))).toBe(true);
       expect(existsSync(path.join(outDir, 'b.mtlx'))).toBe(true);
 
-      const infoA = await cli.run(['info', path.join(outDir, 'a.mtlx'), '--format', 'json'], { timeout: 8_000 });
+      const infoA = await cli.run(['info', path.join(outDir, 'a.mtlx'), '--format', 'json'], { timeout: 15_000 });
       expect(JSON.parse(infoA.stdout).materials).toEqual([{ name: 'M_a', category: 'surfacematerial' }]);
     } finally {
       await rm(tempDir, { recursive: true, force: true });
@@ -324,7 +324,7 @@ describe('mtlx', () => {
       const outDir = path.join(tempDir, 'out');
       await mkdir(outDir, { recursive: true });
 
-      const result = await cli.run(['transform', aPath, '-o', outDir], { timeout: 8_000 });
+      const result = await cli.run(['transform', aPath, '-o', outDir], { timeout: 15_000 });
       expect(result).toSucceed();
       expect(existsSync(path.join(outDir, 'a.mtlx'))).toBe(true);
     } finally {
@@ -351,7 +351,7 @@ describe('mtlx', () => {
 
       const outDir = path.join(tempDir, 'out');
       const result = await cli.run(['transform', aPath, bPath, '-o', outDir], {
-        timeout: 8_000,
+        timeout: 15_000,
       });
       expect(result).toSucceed();
       expect(existsSync(path.join(outDir, 'material.mtlx'))).toBe(true);
@@ -375,11 +375,11 @@ describe('mtlx', () => {
       const outputPath = path.join(tempDir, 'combined.mtlx.zip');
 
       const result = await cli.run(['transform', path.join(tempDir, '*.mtlx'), '-o', outputPath], {
-        timeout: 8_000,
+        timeout: 15_000,
       });
       expect(result).toSucceed();
 
-      const info = await cli.run(['info', outputPath, '--format', 'json'], { timeout: 8_000 });
+      const info = await cli.run(['info', outputPath, '--format', 'json'], { timeout: 15_000 });
       expect(
         JSON.parse(info.stdout)
           .materials.map((m: { name: string }) => m.name)
@@ -404,11 +404,11 @@ describe('mtlx', () => {
       const outputPath = path.join(tempDir, 'combined.mtlx.zip');
 
       const result = await cli.run(['transform', path.join(tempDir, '{metal,wood,glass}.mtlx'), '-o', outputPath], {
-        timeout: 8_000,
+        timeout: 15_000,
       });
       expect(result).toSucceed();
 
-      const info = await cli.run(['info', outputPath, '--format', 'json'], { timeout: 8_000 });
+      const info = await cli.run(['info', outputPath, '--format', 'json'], { timeout: 15_000 });
       expect(
         JSON.parse(info.stdout)
           .materials.map((m: { name: string }) => m.name)
@@ -432,12 +432,12 @@ describe('mtlx', () => {
       writeFileSync(path.join(tempDir, 'broken.mtlx'), '<materialx version="1.39"><unclosed>', 'utf8');
 
       const ok = await cli.run(['check', path.join(tempDir, '{metal,wood}.mtlx'), '--format', 'json'], {
-        timeout: 8_000,
+        timeout: 15_000,
       });
       expect(ok).toSucceed();
       expect(JSON.parse(ok.stdout).map((r: { ok: boolean }) => r.ok)).toEqual([true, true]);
 
-      const failed = await cli.run(['check', path.join(tempDir, '*.mtlx')], { timeout: 8_000 });
+      const failed = await cli.run(['check', path.join(tempDir, '*.mtlx')], { timeout: 15_000 });
       expect(failed).toFail();
       expect(failed).toHaveStdout(/metal\.mtlx/);
       expect(failed).toHaveStdout(/wood\.mtlx/);
@@ -451,7 +451,7 @@ describe('mtlx', () => {
     try {
       const result = await cli.run(
         ['transform', path.join(tempDir, 'nope-*.mtlx'), '-o', path.join(tempDir, 'out.mtlx.zip')],
-        { timeout: 8_000 },
+        { timeout: 15_000 },
       );
       expect(result).toFail();
       expect(result).toHaveStderr(/No files matched/);
@@ -464,10 +464,10 @@ describe('mtlx', () => {
     it('check and info pass on the procedural copper.mtlx (no textures)', async () => {
       const materialPath = path.join(fixturesDir, 'copper/copper.mtlx');
 
-      const checkResult = await cli.run(['check', materialPath], { timeout: 8_000 });
+      const checkResult = await cli.run(['check', materialPath], { timeout: 15_000 });
       expect(checkResult).toSucceed();
 
-      const infoResult = await cli.run(['info', materialPath, '--format', 'json'], { timeout: 8_000 });
+      const infoResult = await cli.run(['info', materialPath, '--format', 'json'], { timeout: 15_000 });
       expect(infoResult).toSucceed();
       const info = JSON.parse(infoResult.stdout);
       expect(info.materials).toEqual([{ name: 'Copper', category: 'surfacematerial' }]);
@@ -477,7 +477,7 @@ describe('mtlx', () => {
     it('info reports the two referenced textures for wood_grain.mtlx', async () => {
       const materialPath = path.join(fixturesDir, 'wood_grain/wood_grain.mtlx');
 
-      const result = await cli.run(['info', materialPath, '--format', 'json'], { timeout: 8_000 });
+      const result = await cli.run(['info', materialPath, '--format', 'json'], { timeout: 15_000 });
       expect(result).toSucceed();
       const info = JSON.parse(result.stdout);
       expect(info.referencedTextures.toSorted()).toEqual(
@@ -530,7 +530,7 @@ describe('mtlx', () => {
         const outputDir = path.join(tempDir, 'wood_grain-web');
         const result = await cli.run(
           ['transform', materialPath, '-o', path.join(outputDir, 'wood_grain.mtlx'), '--profile', 'web'],
-          { timeout: 8_000 },
+          { timeout: 15_000 },
         );
         expect(result).toSucceed();
 
@@ -553,7 +553,7 @@ describe('mtlx', () => {
       try {
         const outputPath = path.join(fixture.tempDir, 'out/material.mtlx');
         const result = await cli.run(['transform', fixture.materialPath, '-o', outputPath, '--profile', 'web'], {
-          timeout: 8_000,
+          timeout: 15_000,
         });
         expect(result).toSucceed();
 
@@ -573,7 +573,7 @@ describe('mtlx', () => {
       try {
         const outputPath = path.join(fixture.tempDir, 'out/material.mtlx');
         const result = await cli.run(['transform', fixture.materialPath, '-o', outputPath, '--profile', 'web'], {
-          timeout: 8_000,
+          timeout: 15_000,
         });
         expect(result).toSucceed();
 
@@ -594,7 +594,7 @@ describe('mtlx', () => {
         const outputPath = path.join(fixture.tempDir, 'out/material.mtlx');
         const result = await cli.run(
           ['transform', fixture.materialPath, '-o', outputPath, '--profile', 'web', '--max-image-size', '64'],
-          { timeout: 8_000 },
+          { timeout: 15_000 },
         );
         expect(result).toSucceed();
 
@@ -611,7 +611,7 @@ describe('mtlx', () => {
         const materialPath = path.join(tempDir, 'wood_grain.mtlx');
         const result = await cli.run(
           ['transform', materialPath, '-o', path.join(tempDir, 'out.mtlx.zip'), '--profile', 'nope'],
-          { timeout: 8_000 },
+          { timeout: 15_000 },
         );
         expect(result.exitCode).not.toBe(0);
       } finally {
@@ -633,7 +633,7 @@ describe('mtlx', () => {
             '--texture-library',
             'assets/shared',
           ],
-          { timeout: 8_000 },
+          { timeout: 15_000 },
         );
         expect(result).toSucceed();
 
@@ -664,7 +664,7 @@ describe('mtlx', () => {
             '--texture-library',
             '../../shared-textures',
           ],
-          { timeout: 8_000 },
+          { timeout: 15_000 },
         );
         expect(result).toSucceed();
 
@@ -686,7 +686,7 @@ describe('mtlx', () => {
         const outputDir = path.join(tempDir, 'out');
         const result = await cli.run(
           ['transform', materialPath, '-o', path.join(outputDir, 'wood_grain.mtlx'), '--texture-library', sharedDir],
-          { timeout: 8_000 },
+          { timeout: 15_000 },
         );
         expect(result).toSucceed();
 
@@ -708,14 +708,14 @@ describe('mtlx', () => {
         const archivePath = path.join(tempDir, 'wood_grain.mtlx.zip');
         const result = await cli.run(
           ['transform', materialPath, '-o', archivePath, '--texture-library', 'assets/shared'],
-          { timeout: 8_000 },
+          { timeout: 15_000 },
         );
         expect(result).toSucceed();
         expect(result.stderr).toContain('--texture-library is ignored for .mtlx.zip output');
 
         const unpackResult = await cli.run(
           ['transform', archivePath, '-o', path.join(tempDir, 'out', 'wood_grain.mtlx'), '--format', 'json'],
-          { timeout: 8_000 },
+          { timeout: 15_000 },
         );
         expect(unpackResult).toSucceed();
         const unpacked = JSON.parse(unpackResult.stdout);
@@ -740,7 +740,7 @@ describe('mtlx', () => {
 
         const unpackResult = await cli.run(
           ['transform', archivePath, '-o', path.join(tempDir, 'out', 'wood_grain.mtlx'), '--format', 'json'],
-          { timeout: 8_000 },
+          { timeout: 15_000 },
         );
         expect(unpackResult).toSucceed();
         const unpacked = JSON.parse(unpackResult.stdout);

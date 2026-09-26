@@ -1,0 +1,52 @@
+{
+  "name": "mtlx-sdk",
+  "version": "0.1.0",
+  "description": "SDK for MTLX.ai REST API",
+  "keywords": [
+    "3d",
+    "api",
+    "assets",
+    "mtlx-ai",
+    "sdk"
+  ],
+  "homepage": "https://mtlx.ai",
+  "bugs": {
+    "url": "https://github.com/bhouston/mtlx/issues"
+  },
+  "license": "MIT",
+  "author": "Ben Houston <ben@mtlx.ai>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhouston/mtlx.git",
+    "directory": "packages/sdk"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "!dist/**/*.tsbuildinfo"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "axios": "^1.18.0",
+    "axios-eventsource": "^0.2.1",
+    "source-map-support": "~0.5.21",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.0",
+    "@types/source-map-support": "^0.5.10"
+  },
+  "engines": {
+    "node": ">=23.0.0"
+  }
+}

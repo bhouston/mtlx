@@ -64,6 +64,37 @@
         }
       ]
     },
+    "mtlx download": {
+      "summary": "Download a material file",
+      "args": [
+        {
+          "name": "userMaterial",
+          "required": false,
+          "type": "string",
+          "summary": "<user>/<name>, e.g. alice/copper"
+        }
+      ],
+      "flags": [
+        {
+          "name": "name",
+          "type": "string",
+          "summary": "Material name (alternative to <user>/<name>)"
+        },
+        {
+          "name": "output",
+          "type": "string",
+          "aliases": [
+            "o"
+          ],
+          "summary": "Output file path (defaults to the material name)"
+        },
+        {
+          "name": "user",
+          "type": "string",
+          "summary": "User name"
+        }
+      ]
+    },
     "mtlx info": {
       "summary": "Print information about a .mtlx or .mtlx.zip file",
       "args": [
@@ -93,6 +124,27 @@
           "default": "text"
         }
       ]
+    },
+    "mtlx login": {
+      "summary": "Authenticate with the MTLX.ai platform",
+      "flags": [
+        {
+          "name": "token",
+          "type": "string",
+          "aliases": [
+            "t"
+          ],
+          "summary": "Secret API token (st_...) for service account authentication"
+        },
+        {
+          "name": "host",
+          "type": "string",
+          "summary": "API host URL (overrides config)"
+        }
+      ]
+    },
+    "mtlx logout": {
+      "summary": "Clear stored authentication"
     },
     "mtlx mcp": {
       "summary": "Run a Model Context Protocol server over stdio (check, inspect, render, and edit tools for AI agents)"
@@ -271,6 +323,92 @@
             }
           ],
           "default": "text"
+        }
+      ]
+    },
+    "mtlx upload": {
+      "summary": "Upload a .mtlx.zip (or .mtlx) file as a new material",
+      "args": [
+        {
+          "name": "file",
+          "required": true,
+          "type": "string",
+          "summary": "Path to a .mtlx.zip (or .mtlx) file"
+        }
+      ],
+      "flags": [
+        {
+          "name": "name",
+          "type": "string",
+          "summary": "Material name",
+          "required": true
+        },
+        {
+          "name": "keywords",
+          "type": "string",
+          "summary": "Keywords"
+        },
+        {
+          "name": "user",
+          "type": "string",
+          "summary": "User name"
+        },
+        {
+          "name": "visibility",
+          "type": "string",
+          "summary": "Material visibility",
+          "choices": [
+            {
+              "value": "PRIVATE"
+            },
+            {
+              "value": "UNLISTED"
+            },
+            {
+              "value": "PUBLIC"
+            }
+          ]
+        },
+        {
+          "name": "license",
+          "type": "string",
+          "summary": "Share license",
+          "choices": [
+            {
+              "value": "NONE"
+            },
+            {
+              "value": "CC_0"
+            },
+            {
+              "value": "CC_BY"
+            },
+            {
+              "value": "CC_BY_SA"
+            },
+            {
+              "value": "CC_BY_NC"
+            },
+            {
+              "value": "CC_BY_NC_SA"
+            },
+            {
+              "value": "CC_BY_ND"
+            },
+            {
+              "value": "CC_BY_NC_ND"
+            }
+          ]
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "summary": "Description"
+        },
+        {
+          "name": "metadata",
+          "type": "string",
+          "summary": "Metadata as a string (max 10240 characters)"
         }
       ]
     },

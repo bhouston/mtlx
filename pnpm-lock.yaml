@@ -83,21 +83,42 @@ importers:
       '@sentry/node':
         specifier: ^10.74.0
         version: 10.74.0(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(supports-color@10.2.2)
+      chalk:
+        specifier: ^5.3.0
+        version: 5.6.2
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
       hdrify:
         specifier: ^1.1.4
         version: 1.1.4
       humanize-units:
         specifier: ^2.0.4
         version: 2.0.4
+      js-yaml:
+        specifier: ^4.1.1
+        version: 4.3.2
       mtlx-core:
         specifier: workspace:*
         version: link:../core
+      mtlx-sdk:
+        specifier: workspace:*
+        version: link:../sdk
       mtlx-viewer:
         specifier: workspace:*
         version: link:../viewer
+      open:
+        specifier: ^10.1.0
+        version: 10.2.0
+      p-limit:
+        specifier: ^5.0.0
+        version: 5.0.0
       playwright-core:
         specifier: ^1.63.0
         version: 1.63.0
+      source-map-support:
+        specifier: ~0.5.21
+        version: 0.5.21
       type-fest:
         specifier: ^5.1.0
         version: 5.9.0
@@ -114,12 +135,18 @@ importers:
         specifier: ^4.6.5
         version: 4.6.5
     devDependencies:
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
       '@types/node':
         specifier: ^22.20.0
         version: 22.20.1
+      '@types/source-map-support':
+        specifier: ^0.5.10
+        version: 0.5.10
       '@types/three':
-        specifier: ^0.180.0
-        version: 0.180.0
+        specifier: ^0.186.0
+        version: 0.186.0
       '@types/yargs':
         specifier: ^17.0.35
         version: 17.0.35
@@ -132,9 +159,6 @@ importers:
       sharp:
         specifier: ^0.35.4
         version: 0.35.4(@types/node@22.20.1)
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
       three:
         specifier: ^0.186.0
         version: 0.186.0
@@ -179,6 +203,9 @@ importers:
         specifier: ^5.8.1
         version: 5.8.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
     devDependencies:
+      '@types/node':
+        specifier: ^22.20.0
+        version: 22.20.1
       '@types/react':
         specifier: ^19.2.0
         version: 19.2.18
@@ -191,6 +218,28 @@ importers:
       react-dom:
         specifier: ^19.3.0
         version: 19.3.0(react@19.3.0)
+
+  packages/sdk:
+    dependencies:
+      axios:
+        specifier: ^1.18.0
+        version: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+      axios-eventsource:
+        specifier: ^0.2.1
+        version: 0.2.4(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.3.6)
+      source-map-support:
+        specifier: ~0.5.21
+        version: 0.5.21
+      zod:
+        specifier: 4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.0
+        version: 22.20.1
+      '@types/source-map-support':
+        specifier: ^0.5.10
+        version: 0.5.10
 
   packages/viewer:
     dependencies:
@@ -219,6 +268,9 @@ importers:
         specifier: ^3.0.2
         version: 3.6.0
     devDependencies:
+      '@types/node':
+        specifier: ^22.20.0
+        version: 22.20.1
       '@types/react':
         specifier: ^19.2.0
         version: 19.2.18
@@ -226,8 +278,8 @@ importers:
         specifier: ^19.2.0
         version: 19.2.7(@types/react@19.2.18)
       '@types/three':
-        specifier: ^0.180.0
-        version: 0.180.0
+        specifier: ^0.186.0
+        version: 0.186.0
       esbuild:
         specifier: ^0.27.3
         version: 0.27.7
@@ -3691,6 +3743,9 @@ packages:
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
 
+  '@types/js-yaml@4.0.9':
+    resolution: {integrity: sha512-k4MGaQl5TGo/iipqb2UDG2UwjXziSWkh0uysQelTlJpX1qGlpUZYm8PnO4DxG1qBomtJUdYJ6qR6xdIah10JLg==}
+
   '@types/node@22.20.1':
     resolution: {integrity: sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==}
 
@@ -3711,11 +3766,17 @@ packages:
   '@types/sarif@2.1.7':
     resolution: {integrity: sha512-kRz0VEkJqWLf1LLVN4pT1cg1Z9wAuvI6L97V3m2f5B76Tg8d413ddvLBPTEHAZJlnn4XSvu0FkZtViCQGVyrXQ==}
 
+  '@types/source-map-support@0.5.10':
+    resolution: {integrity: sha512-tgVP2H469x9zq34Z0m/fgPewGhg/MLClalNOiPIzQlXrSS2YrKu/xCdSCKnEDwkFha51VKEKB6A9wW26/ZNwzA==}
+
   '@types/stats.js@0.17.4':
     resolution: {integrity: sha512-jIBvWWShCvlBqBNIZt0KAshWpvSjhkwkEu4ZUcASoAvhmrgAUI2t1dXrjSL4xXVLB4FznPrIsX3nKXFl/Dt4vA==}
 
   '@types/three@0.180.0':
     resolution: {integrity: sha512-ykFtgCqNnY0IPvDro7h+9ZeLY+qjgUWv+qEvUt84grhenO60Hqd4hScHE7VTB9nOQ/3QM8lkbNE+4vKjEpUxKg==}
+
+  '@types/three@0.186.0':
+    resolution: {integrity: sha512-mxYSBpDC+D0pLfSP6sW4WZTcT+nrtmZcimMqnVmy36Hte3XpeYSrvgg4TRdaM1GemGog1AWzI5qL2VoIfMXbJQ==}
 
   '@types/vscode@1.137.0':
     resolution: {integrity: sha512-0dc/BBWxkyUsJzXIZ7PkKSalThmS4xiBT+8YEDiWdCefRKHGVV5ZNkM5NB5ULYamallYJujIfncNoXWFlyzL8A==}
@@ -4161,6 +4222,16 @@ packages:
 
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
+
+  axios-eventsource@0.2.4:
+    resolution: {integrity: sha512-bp7oAzXSauSTMWPhnyb2nriteVV2MZ1M97+bzHHAfAXWV+YiXH+NcEUuGVudPw4XUV8S025KLHhIQq+ack8haQ==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      axios: '>=1'
+      zod: '>=4'
+
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   azure-devops-node-api@12.5.0:
     resolution: {integrity: sha512-R5eFskGvOm3U/GzeAuxRkUsAl0hrAwGgWn6zAd2KrZmrEhWZVqLew4OOupbQlXUuojUzpGtq62SmdhJ06N88og==}
@@ -5914,6 +5985,9 @@ packages:
   meshoptimizer@0.22.0:
     resolution: {integrity: sha512-IebiK79sqIy+E4EgOr+CAw+Ke8hAspXKzBd0JdgEmPHiAwmvEj2S4h1rfvo+o/BnfEYd/jAOg5IeeIjzlzSnDg==}
 
+  meshoptimizer@1.1.1:
+    resolution: {integrity: sha512-oRFNWJRDA/WTrVj7NWvqa5HqE1t9MYDj2VaWirQCzCCrAd2GHrqR/sQezCxiWATPNlKTcRaPRHPJwIRoPBAp5g==}
+
   micromatch@4.0.8:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
@@ -6282,6 +6356,10 @@ packages:
     resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
     engines: {node: '>=10'}
 
+  p-limit@5.0.0:
+    resolution: {integrity: sha512-/Eaoq+QyLSiXQ4lyYV23f14mZRQcXnxfHrN0vCai+ak9G0pp9iEQukIIZq5NccEvwRB8PUnZT0KsOoDCINS1qQ==}
+    engines: {node: '>=18'}
+
   p-locate@2.0.0:
     resolution: {integrity: sha512-nQja7m7gSKuewoVRen45CtVfODR3crN3goVQ0DDZ9N3yHxgpkuBhZqsaiotSQRrADUrne346peY7kT3TSACykg==}
     engines: {node: '>=4'}
@@ -6514,6 +6592,10 @@ packages:
 
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+
+  proxy-from-env@2.1.0:
+    resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
+    engines: {node: '>=10'}
 
   pump@3.0.4:
     resolution: {integrity: sha512-VS7sjc6KR7e1ukRFhQSY5LM2uBWAUPiOPa/A3mkKmiMwSmRFUITt0xuj+/lesgnCv+dPIEYlkzrcyXgquIHMcA==}
@@ -7802,6 +7884,10 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
+  yocto-queue@1.2.2:
+    resolution: {integrity: sha512-4LCcse/U2MHZ63HAJVE+v71o7yOdIe4cZ70Wpf8D/IyjDKYQLV5GD46B+hSTjJsvV5PztjvHoU580EftxjDZFQ==}
+    engines: {node: '>=12.20'}
+
   yoctocolors-cjs@2.1.3:
     resolution: {integrity: sha512-U/PBtDf35ff0D8X8D0jfdzHYEPFxAI7jJlxZXwCSez5M3190m+QobIfh+sWDWSHMCWWJN2AWamkegn6vr6YBTw==}
     engines: {node: '>=18'}
@@ -7825,8 +7911,8 @@ packages:
     peerDependencies:
       zod: ^3.25.28 || ^4
 
-  zod@4.5.4:
-    resolution: {integrity: sha512-sC95tT5iHHH9gtpj6A81kh+NEaRAUFN+qlUPDUbRfOMvNf5QCBqsb3WgvnpVtK5Y+4UfA6KqufotuTvMGiTlsA==}
+  zod@4.3.6:
+    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
   zod@4.6.5:
     resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
@@ -10780,7 +10866,7 @@ snapshots:
       jiti: 2.7.0
       magic-string: 0.30.21
       prettier: 3.9.6
-      zod: 4.5.4
+      zod: 4.6.5
     transitivePeerDependencies:
       - supports-color
 
@@ -10794,7 +10880,7 @@ snapshots:
       '@tanstack/router-utils': 1.162.2(supports-color@10.2.2)
       chokidar: 5.0.0
       unplugin: 3.3.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.1)(vite@8.3.1(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0))
-      zod: 4.5.4
+      zod: 4.6.5
     optionalDependencies:
       '@tanstack/react-router': 1.170.17(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       vite: 8.3.1(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0)
@@ -10851,7 +10937,7 @@ snapshots:
       ufo: 1.6.4
       vitefu: 1.1.3(vite@8.3.1(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0))
       xmlbuilder2: 4.0.3
-      zod: 4.5.4
+      zod: 4.6.5
     optionalDependencies:
       vite: 8.3.1(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0)
     transitivePeerDependencies:
@@ -10969,6 +11055,8 @@ snapshots:
 
   '@types/estree@1.0.9': {}
 
+  '@types/js-yaml@4.0.9': {}
+
   '@types/node@22.20.1':
     dependencies:
       undici-types: 6.21.0
@@ -10987,6 +11075,10 @@ snapshots:
 
   '@types/sarif@2.1.7': {}
 
+  '@types/source-map-support@0.5.10':
+    dependencies:
+      source-map: 0.6.1
+
   '@types/stats.js@0.17.4': {}
 
   '@types/three@0.180.0':
@@ -10998,6 +11090,15 @@ snapshots:
       '@webgpu/types': 0.1.72
       fflate: 0.8.3
       meshoptimizer: 0.22.0
+
+  '@types/three@0.186.0':
+    dependencies:
+      '@dimforge/rapier3d-compat': 0.12.0
+      '@tweenjs/tween.js': 23.1.3
+      '@types/stats.js': 0.17.4
+      '@types/webxr': 0.5.24
+      fflate: 0.8.3
+      meshoptimizer: 1.1.1
 
   '@types/vscode@1.137.0': {}
 
@@ -11409,6 +11510,22 @@ snapshots:
   async@3.2.6: {}
 
   asynckit@0.4.0: {}
+
+  axios-eventsource@0.2.4(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(zod@4.3.6):
+    dependencies:
+      axios: 1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+      eventsource-parser: 3.1.1
+      zod: 4.3.6
+
+  axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2):
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@10.2.2))
+      form-data: 4.0.6
+      https-proxy-agent: 5.0.1(supports-color@10.2.2)
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
+      - supports-color
 
   azure-devops-node-api@12.5.0:
     dependencies:
@@ -13163,6 +13280,8 @@ snapshots:
 
   meshoptimizer@0.22.0: {}
 
+  meshoptimizer@1.1.1: {}
+
   micromatch@4.0.8:
     dependencies:
       braces: 3.0.3
@@ -13569,6 +13688,10 @@ snapshots:
     dependencies:
       yocto-queue: 0.1.0
 
+  p-limit@5.0.0:
+    dependencies:
+      yocto-queue: 1.2.2
+
   p-locate@2.0.0:
     dependencies:
       p-limit: 1.3.0
@@ -13761,6 +13884,8 @@ snapshots:
   proxy-agent-negotiate@1.1.0: {}
 
   proxy-from-env@1.1.0: {}
+
+  proxy-from-env@2.1.0: {}
 
   pump@3.0.4:
     dependencies:
@@ -15125,6 +15250,8 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
+  yocto-queue@1.2.2: {}
+
   yoctocolors-cjs@2.1.3: {}
 
   yoctocolors@2.2.0: {}
@@ -15152,7 +15279,7 @@ snapshots:
     dependencies:
       zod: 4.6.5
 
-  zod@4.5.4: {}
+  zod@4.3.6: {}
 
   zod@4.6.5: {}
 
