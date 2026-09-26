@@ -7,6 +7,7 @@ export default defineConfig({
       reporter: ['text', 'lcov'],
     },
     projects: [
+      { test: { name: 'sdk', include: ['packages/sdk/src/**/*.test.ts'], environment: 'node' } },
       { test: { name: 'editor', include: ['packages/editor/src/**/*.test.ts'], environment: 'node' } },
       {
         test: { name: 'viewer', include: ['packages/viewer/src/**/*.test.ts'], environment: 'node' },

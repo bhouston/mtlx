@@ -1,0 +1,6 @@
+*.test.*
+*.test.d.ts
+*.test.js.map
+.tsbuildinfo
+tsconfig.json
+dist/.tsbuildinfo

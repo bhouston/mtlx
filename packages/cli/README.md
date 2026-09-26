@@ -7,11 +7,16 @@
 [![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 [![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
 
-Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca). Installs the `mtlx` command
+Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca). Installs the `mtlx` and `mtlx-ai` commands
 for validating, inspecting, packaging, previewing, and transforming MaterialX files
 (`.mtlx`, `.mtlx.zip`). Requires Node.js 22 or later. Texture conversion uses sharp's native image
 processing for SDR formats (webp/png/jpg/avif) and hdrify for HDR formats (EXR/Radiance HDR);
 browser-safe library imports are available separately through `mtlx-core`.
+
+The same CLI can also connect to [MTLX.ai](https://mtlx.ai). Run `mtlx login` for browser or token authentication,
+then use `mtlx upload`, `mtlx download`, and `mtlx search`. The full cloud command set includes
+`mtlx auth`, `materials`, `comments`, `notifications`, `api-tokens`, `users`, and `config`.
+See [the platform command reference](PLATFORM.md) for options and examples.
 
 ```sh
 npm install --global mtlx-cli

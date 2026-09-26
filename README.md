@@ -48,7 +48,8 @@ fallback, including the extension's bundled webview; real editor/GPU combination
 | Package                                                                                         | Description                                                                                                                                                   |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`mtlx-core`](https://github.com/bhouston/mtlx/tree/main/packages/core)                         | Parse, validate, package, and transform MaterialX. Pure and browser-safe; Node helpers under `mtlx-core/node`, texture processing under `mtlx-core/textures`. |
-| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command: `check`, `info`, `view`, and `transform`/`x` (convert, pack, unpack, combine, resize textures).                                           |
+| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command for local validation, preview, conversion, and MTLX.ai cloud login, upload, download, and search.                                          |
+| [`mtlx-sdk`](https://github.com/bhouston/mtlx/tree/main/packages/sdk)                           | Public TypeScript client for the MTLX.ai REST API.                                                                                                            |
 | [`website`](https://github.com/bhouston/mtlx/tree/main/packages/website)                        | Drag-and-drop viewer and validator at [mtlx.ben3d.ca](https://mtlx.ben3d.ca), plus these docs.                                                                |
 | [`mtlx-vscode-extension`](https://github.com/bhouston/mtlx/tree/main/packages/vscode-extension) | "Mtlx Viewer for MaterialX": preview, inspect, and convert MaterialX files inside VS Code.                                                                    |
 | [`mtlx-viewer`](https://github.com/bhouston/mtlx/tree/main/packages/viewer)                     | Shared three.js preview scenes and environment assets for applications.                                                                                       |
@@ -110,6 +111,10 @@ mtlx x material.mtlx -o material.mtlx.zip --image-format webp,exr:piz  # SDR->we
 mtlx x material.mtlx -o material.mtlx.zip --profile web           # resize; normalizes EXR compression to PIZ
 mtlx x "{metal,wood,glass}.mtlx" -o combined.mtlx.zip             # combine
 mtlx x "materials/*.mtlx" -o out/                                 # batch: one output file per input
+mtlx login                                                        # authenticate with MTLX.ai
+mtlx upload copper.mtlx.zip --name copper --user alice             # upload a public material
+mtlx search copper                                                 # search the public library
+mtlx download alice/copper -o copper.mtlx.zip                      # download a material
 ```
 
 See the [mtlx-cli README](https://www.npmjs.com/package/mtlx-cli) for the full reference.

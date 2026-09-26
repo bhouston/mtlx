@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const directory = mkdtempSync(join(tmpdir(), 'mtlx-release-check-'));
 try {
-  const tarballs = ['core', 'viewer', 'cli'].map((name) => {
+  const tarballs = ['core', 'viewer', 'sdk', 'cli'].map((name) => {
     const pkg = JSON.parse(readFileSync(join(root, 'packages', name, 'package.json'), 'utf8'));
     return join(root, 'publish', `${pkg.name}-${pkg.version}.tgz`);
   });
@@ -48,8 +48,13 @@ assert.equal(session.getDocument(), before);
     cwd: directory,
     stdio: 'inherit',
   });
-  for (const name of ['core', 'viewer', 'cli']) {
-    const files = readdirSync(join(directory, 'node_modules', `mtlx-${name}`, 'dist'), { recursive: true });
+  for (const [name, packageName] of [
+    ['core', 'mtlx-core'],
+    ['viewer', 'mtlx-viewer'],
+    ['sdk', 'mtlx-sdk'],
+    ['cli', 'mtlx-cli'],
+  ]) {
+    const files = readdirSync(join(directory, 'node_modules', packageName, 'dist'), { recursive: true });
     assert.ok(
       files.every((file) => !String(file).includes('.test.') && !String(file).endsWith('.tsbuildinfo')),
       `${name} must not ship tests or incremental metadata`,
@@ -58,6 +63,15 @@ assert.equal(session.getDocument(), before);
   const cli = join(directory, 'node_modules/mtlx-cli/bin/cli.js');
   const run = (args) => execFileSync(process.execPath, [cli, ...args], { cwd: directory, encoding: 'utf8' });
   assert.match(run(['--help']), /check/);
+  assert.match(run(['--help']), /materials/);
+  assert.match(run(['auth', '--help']), /login/);
+  const sdkConsumer = `
+import assert from 'node:assert/strict';
+import { createAnonymousClient } from 'mtlx-sdk';
+assert.equal(typeof createAnonymousClient, 'function');
+`;
+  writeFileSync(join(directory, 'check-sdk.mjs'), sdkConsumer);
+  execFileSync(process.execPath, ['check-sdk.mjs'], { cwd: directory, stdio: 'inherit' });
   writeFileSync(
     join(directory, 'sample.mtlx'),
     '<materialx version="1.39"><constant name="value" type="float"><input name="value" type="float" value="1" /></constant></materialx>',
