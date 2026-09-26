@@ -17,7 +17,6 @@ export const command = defineCommand({
   handler: async (argv) => {
     const deps = getCliDeps(argv);
     const config = await getConfig(deps);
-    const host = argv.host || config.host;
-    await getAuthStatus(host, deps);
+    await getAuthStatus({ ...config, host: argv.host || config.host }, deps);
   },
 });
