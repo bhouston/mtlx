@@ -1,0 +1,59 @@
+<!-- in: uv_sep. out: h_step (m, 0 = frame face), ps_d (m to the panel outline, + on the frame), ps_stile (1 on stiles), ps_tone (per-member random 0..1), ps_corner (1 in the inside corner). Recessed Shaker panel: 400 x 600 mm panels on a 470 x 670 mm pitch (70 mm stiles and rails), 8 mm step. The wall is d*2 (63 deg, 4 mm wide: ~10 px at closeup, which is what lets it be this steep), then a cubic smooth-min arris (k 2 mm) and a quadratic smooth-max fillet (k 1.2 mm) at the panel floor. Seeds are per member: stiles run through and are keyed on the stile column, rails on (column, rail row), panels on the cell, so no tone step lands mid-member -->
+<divide name="ps_u" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.47" /></divide>
+<divide name="ps_v" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="0.67" /></divide>
+<fract name="ps_3" type="float"><input name="in" type="float" nodename="ps_u" /></fract>
+<subtract name="ps_4" type="float"><input name="in1" type="float" nodename="ps_3" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="ps_lx" type="float"><input name="in1" type="float" nodename="ps_4" /><input name="in2" type="float" value="0.47" /></multiply>
+<fract name="ps_6" type="float"><input name="in" type="float" nodename="ps_v" /></fract>
+<subtract name="ps_7" type="float"><input name="in1" type="float" nodename="ps_6" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="ps_ly" type="float"><input name="in1" type="float" nodename="ps_7" /><input name="in2" type="float" value="0.67" /></multiply>
+<absval name="ps_9" type="float"><input name="in" type="float" nodename="ps_lx" /></absval>
+<subtract name="ps_ex" type="float"><input name="in1" type="float" nodename="ps_9" /><input name="in2" type="float" value="0.2" /></subtract>
+<absval name="ps_11" type="float"><input name="in" type="float" nodename="ps_ly" /></absval>
+<subtract name="ps_ey" type="float"><input name="in1" type="float" nodename="ps_11" /><input name="in2" type="float" value="0.3" /></subtract>
+<max name="ps_d" type="float"><input name="in1" type="float" nodename="ps_ex" /><input name="in2" type="float" nodename="ps_ey" /></max>
+<multiply name="ps_14" type="float"><input name="in1" type="float" nodename="ps_d" /><input name="in2" type="float" value="2.0" /></multiply>
+<subtract name="ps_15" type="float"><input name="in1" type="float" nodename="ps_14" /><input name="in2" type="float" value="0.0" /></subtract>
+<absval name="ps_16" type="float"><input name="in" type="float" nodename="ps_15" /></absval>
+<subtract name="ps_17" type="float"><input name="in1" type="float" value="0.002" /><input name="in2" type="float" nodename="ps_16" /></subtract>
+<max name="ps_18" type="float"><input name="in1" type="float" nodename="ps_17" /><input name="in2" type="float" value="0.0" /></max>
+<divide name="ps_19" type="float"><input name="in1" type="float" nodename="ps_18" /><input name="in2" type="float" value="0.002" /></divide>
+<min name="ps_20" type="float"><input name="in1" type="float" nodename="ps_14" /><input name="in2" type="float" value="0.0" /></min>
+<multiply name="ps_21" type="float"><input name="in1" type="float" nodename="ps_19" /><input name="in2" type="float" nodename="ps_19" /></multiply>
+<multiply name="ps_22" type="float"><input name="in1" type="float" nodename="ps_21" /><input name="in2" type="float" nodename="ps_19" /></multiply>
+<multiply name="ps_23" type="float"><input name="in1" type="float" nodename="ps_22" /><input name="in2" type="float" value="0.0003333333333333333" /></multiply>
+<subtract name="ps_top" type="float"><input name="in1" type="float" nodename="ps_20" /><input name="in2" type="float" nodename="ps_23" /></subtract>
+<subtract name="ps_25" type="float"><input name="in1" type="float" nodename="ps_top" /><input name="in2" type="float" value="-0.008" /></subtract>
+<absval name="ps_26" type="float"><input name="in" type="float" nodename="ps_25" /></absval>
+<subtract name="ps_27" type="float"><input name="in1" type="float" value="0.0012" /><input name="in2" type="float" nodename="ps_26" /></subtract>
+<max name="ps_28" type="float"><input name="in1" type="float" nodename="ps_27" /><input name="in2" type="float" value="0.0" /></max>
+<divide name="ps_29" type="float"><input name="in1" type="float" nodename="ps_28" /><input name="in2" type="float" value="0.0012" /></divide>
+<max name="ps_30" type="float"><input name="in1" type="float" nodename="ps_top" /><input name="in2" type="float" value="-0.008" /></max>
+<multiply name="ps_31" type="float"><input name="in1" type="float" nodename="ps_29" /><input name="in2" type="float" nodename="ps_29" /></multiply>
+<multiply name="ps_32" type="float"><input name="in1" type="float" nodename="ps_31" /><input name="in2" type="float" value="0.0003" /></multiply>
+<add name="h_step" type="float"><input name="in1" type="float" nodename="ps_30" /><input name="in2" type="float" nodename="ps_32" /></add>
+<multiply name="ps_34" type="float"><input name="in1" type="float" nodename="ps_d" /><input name="in2" type="float" value="-1.0" /></multiply>
+<subtract name="ps_35" type="float"><input name="in1" type="float" nodename="ps_34" /><input name="in2" type="float" value="0.004" /></subtract>
+<smoothstep name="ps_36" type="float"><input name="in" type="float" nodename="ps_35" /><input name="low" type="float" value="-0.001" /><input name="high" type="float" value="0.003" /></smoothstep>
+<subtract name="ps_corner" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="ps_36" /></subtract>
+<smoothstep name="ps_stile" type="float"><input name="in" type="float" nodename="ps_ex" /><input name="low" type="float" value="-0.0002" /><input name="high" type="float" value="0.0002" /></smoothstep>
+<subtract name="ps_39" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="ps_stile" /></subtract>
+<smoothstep name="ps_40" type="float"><input name="in" type="float" nodename="ps_ey" /><input name="low" type="float" value="-0.0002" /><input name="high" type="float" value="0.0002" /></smoothstep>
+<multiply name="ps_rail" type="float"><input name="in1" type="float" nodename="ps_39" /><input name="in2" type="float" nodename="ps_40" /></multiply>
+<floor name="ps_col" type="float"><input name="in" type="float" nodename="ps_u" /></floor>
+<add name="ps_43" type="float"><input name="in1" type="float" nodename="ps_u" /><input name="in2" type="float" value="0.5" /></add>
+<floor name="ps_44" type="float"><input name="in" type="float" nodename="ps_43" /></floor>
+<combine2 name="ps_45" type="vector2"><input name="in1" type="float" nodename="ps_44" /><input name="in2" type="float" value="1.0" /></combine2>
+<add name="ps_46" type="vector2"><input name="in1" type="vector2" nodename="ps_45" /><input name="in2" type="vector2" value="200.37, 300.61" /></add>
+<cellnoise2d name="ps_sid" type="float"><input name="texcoord" type="vector2" nodename="ps_46" /></cellnoise2d>
+<add name="ps_48" type="float"><input name="in1" type="float" nodename="ps_v" /><input name="in2" type="float" value="0.5" /></add>
+<floor name="ps_49" type="float"><input name="in" type="float" nodename="ps_48" /></floor>
+<combine2 name="ps_50" type="vector2"><input name="in1" type="float" nodename="ps_col" /><input name="in2" type="float" nodename="ps_49" /></combine2>
+<add name="ps_51" type="vector2"><input name="in1" type="vector2" nodename="ps_50" /><input name="in2" type="vector2" value="41.37, 9.61" /></add>
+<cellnoise2d name="ps_rid" type="float"><input name="texcoord" type="vector2" nodename="ps_51" /></cellnoise2d>
+<floor name="ps_53" type="float"><input name="in" type="float" nodename="ps_v" /></floor>
+<combine2 name="ps_54" type="vector2"><input name="in1" type="float" nodename="ps_col" /><input name="in2" type="float" nodename="ps_53" /></combine2>
+<add name="ps_55" type="vector2"><input name="in1" type="vector2" nodename="ps_54" /><input name="in2" type="vector2" value="11.37, 5.61" /></add>
+<cellnoise2d name="ps_pid" type="float"><input name="texcoord" type="vector2" nodename="ps_55" /></cellnoise2d>
+<mix name="ps_57" type="float"><input name="bg" type="float" nodename="ps_pid" /><input name="fg" type="float" nodename="ps_rid" /><input name="mix" type="float" nodename="ps_rail" /></mix>
+<mix name="ps_tone" type="float"><input name="bg" type="float" nodename="ps_57" /><input name="fg" type="float" nodename="ps_sid" /><input name="mix" type="float" nodename="ps_stile" /></mix>

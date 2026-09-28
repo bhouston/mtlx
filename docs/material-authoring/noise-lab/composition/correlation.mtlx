@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Channel correlation: left = colour/roughness from the height field, right = same masks from an unrelated field. UV 1 = 1 m. -->
+  <nodegraph name="NG_correlation">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <ifgreater name="q_right" type="float"><input name="value1" type="float" nodename="uv_sep" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+    <multiply name="multiply_4" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8.0" /></multiply>
+    <fractal2d name="relief_f5" type="float"><input name="texcoord" type="vector2" nodename="multiply_4" /><input name="octaves" type="integer" value="5" /><input name="amplitude" type="float" value="1.0" /></fractal2d>
+    <!-- Relief: fractal2d(uv*8, 5 oct) * 8 mm (~9 deg typical slope). Left half: colour/roughness masks from this same field. Right half: masks from an offset copy (uncorrelated). -->
+    <multiply name="height" type="float"><input name="in1" type="float" nodename="relief_f5" /><input name="in2" type="float" value="0.008" /></multiply>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8.0" /></multiply>
+    <fractal2d name="corr_f5" type="float"><input name="texcoord" type="vector2" nodename="multiply_7" /><input name="octaves" type="integer" value="5" /><input name="amplitude" type="float" value="1.0" /></fractal2d>
+    <multiply name="multiply_9" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8.0" /></multiply>
+    <fractal2d name="corr_f2" type="float"><input name="texcoord" type="vector2" nodename="multiply_9" /><input name="octaves" type="integer" value="2" /><input name="amplitude" type="float" value="1.0" /></fractal2d>
+    <subtract name="corr_convexity" type="float"><input name="in1" type="float" nodename="corr_f5" /><input name="in2" type="float" nodename="corr_f2" /></subtract>
+    <subtract name="subtract_12" type="float"><input name="in1" type="float" value="0.0" /><input name="in2" type="float" nodename="corr_convexity" /></subtract>
+    <smoothstep name="smoothstep_13" type="float"><input name="in" type="float" nodename="subtract_12" /><input name="low" type="float" value="0.06" /><input name="high" type="float" value="0.16" /></smoothstep>
+    <subtract name="subtract_14" type="float"><input name="in1" type="float" value="0.0" /><input name="in2" type="float" nodename="corr_f5" /></subtract>
+    <smoothstep name="smoothstep_15" type="float"><input name="in" type="float" nodename="subtract_14" /><input name="low" type="float" value="0.25" /><input name="high" type="float" value="0.45" /></smoothstep>
+    <max name="corr_cavity" type="float"><input name="in1" type="float" nodename="smoothstep_13" /><input name="in2" type="float" nodename="smoothstep_15" /></max>
+    <smoothstep name="smoothstep_17" type="float"><input name="in" type="float" nodename="corr_convexity" /><input name="low" type="float" value="0.06" /><input name="high" type="float" value="0.16" /></smoothstep>
+    <smoothstep name="smoothstep_18" type="float"><input name="in" type="float" nodename="corr_f5" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.15" /></smoothstep>
+    <multiply name="corr_wear" type="float"><input name="in1" type="float" nodename="smoothstep_17" /><input name="in2" type="float" nodename="smoothstep_18" /></multiply>
+    <add name="add_20" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="3.7, 1.9" /></add>
+    <multiply name="multiply_21" type="vector2"><input name="in1" type="vector2" nodename="add_20" /><input name="in2" type="float" value="8.0" /></multiply>
+    <fractal2d name="unc_f5" type="float"><input name="texcoord" type="vector2" nodename="multiply_21" /><input name="octaves" type="integer" value="5" /><input name="amplitude" type="float" value="1.0" /></fractal2d>
+    <multiply name="multiply_23" type="vector2"><input name="in1" type="vector2" nodename="add_20" /><input name="in2" type="float" value="8.0" /></multiply>
+    <fractal2d name="unc_f2" type="float"><input name="texcoord" type="vector2" nodename="multiply_23" /><input name="octaves" type="integer" value="2" /><input name="amplitude" type="float" value="1.0" /></fractal2d>
+    <subtract name="unc_convexity" type="float"><input name="in1" type="float" nodename="unc_f5" /><input name="in2" type="float" nodename="unc_f2" /></subtract>
+    <subtract name="subtract_26" type="float"><input name="in1" type="float" value="0.0" /><input name="in2" type="float" nodename="unc_convexity" /></subtract>
+    <smoothstep name="smoothstep_27" type="float"><input name="in" type="float" nodename="subtract_26" /><input name="low" type="float" value="0.06" /><input name="high" type="float" value="0.16" /></smoothstep>
+    <subtract name="subtract_28" type="float"><input name="in1" type="float" value="0.0" /><input name="in2" type="float" nodename="unc_f5" /></subtract>
+    <smoothstep name="smoothstep_29" type="float"><input name="in" type="float" nodename="subtract_28" /><input name="low" type="float" value="0.25" /><input name="high" type="float" value="0.45" /></smoothstep>
+    <max name="unc_cavity" type="float"><input name="in1" type="float" nodename="smoothstep_27" /><input name="in2" type="float" nodename="smoothstep_29" /></max>
+    <smoothstep name="smoothstep_31" type="float"><input name="in" type="float" nodename="unc_convexity" /><input name="low" type="float" value="0.06" /><input name="high" type="float" value="0.16" /></smoothstep>
+    <smoothstep name="smoothstep_32" type="float"><input name="in" type="float" nodename="unc_f5" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.15" /></smoothstep>
+    <multiply name="unc_wear" type="float"><input name="in1" type="float" nodename="smoothstep_31" /><input name="in2" type="float" nodename="smoothstep_32" /></multiply>
+    <mix name="cavity" type="float"><input name="bg" type="float" nodename="corr_cavity" /><input name="fg" type="float" nodename="unc_cavity" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="wear" type="float"><input name="bg" type="float" nodename="corr_wear" /><input name="fg" type="float" nodename="unc_wear" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <!-- Cavities darker and rougher; worn highs lighter and smoother. -->
+    <mix name="mix_40" type="color3"><input name="bg" type="color3" value="0.36, 0.35, 0.33" /><input name="fg" type="color3" value="0.16, 0.15, 0.14" /><input name="mix" type="float" nodename="cavity" /></mix>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" nodename="mix_40" /><input name="fg" type="color3" value="0.56, 0.55, 0.53" /><input name="mix" type="float" nodename="wear" /></mix>
+    <mix name="mix_42" type="float"><input name="bg" type="float" value="0.8" /><input name="fg" type="float" value="0.95" /><input name="mix" type="float" nodename="cavity" /></mix>
+    <mix name="roughness" type="float"><input name="bg" type="float" nodename="mix_42" /><input name="fg" type="float" value="0.45" /><input name="mix" type="float" nodename="wear" /></mix>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0.0" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+  </nodegraph>
+  <standard_surface name="SR_correlation" type="surfaceshader">
+    <input name="base" type="float" value="1.0" />
+    <input name="base_color" type="color3" nodegraph="NG_correlation" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_correlation" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_correlation" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_correlation" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_correlation" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_correlation" /></surfacematerial>
+</materialx>

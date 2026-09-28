@@ -119,10 +119,46 @@ AO start enabled, with Neutral tone mapping. The totem rotates once every 40 sec
 ```sh
 mtlx render material.mtlx -o material.png
 mtlx render material.mtlx -o sphere.png --geometry sphere --material Wood --size 512
+mtlx render material.mtlx -o shots/ --view plane closeup sphere totem --ibl sun --supersample
+mtlx render material.mtlx -o sheet.png --view plane closeup detail --center 0.25,0.7
+mtlx render material.mtlx -o height.png --view plane --channel height --range=-0.003,0.002
 ```
 
 Renders the same preview as `mtlx view` headlessly and writes a PNG. The backdrop is transparent by
 default so the model is the only thing in the image; `--background environment` shows the IBL instead.
+
+- **`--view`** renders several named views from one browser session and one material compile. Plane
+  views are head-on and sized in meters, assuming 1 UV unit = 1 m: `plane` frames the whole 0..1 tile,
+  `closeup` 20 cm, `detail` 5 cm, `plane:<meters>` any width. `grazing` looks along the plane at 72°,
+  `sphere` shows the environment behind a sphere (judge gloss there), and `totem` and `cube` are also
+  available. With several views, an `-o` image path gets a captioned contact sheet; any other
+  path is a directory of `<view>.png` files (`--format` picks another format). `--center u,v` aims plane views at a UV point.
+- **Output format** follows the `-o` extension: `.png`, `.jpg`, `.webp` or `.avif`. Quality is fixed and
+  high (webp 99, jpg 95, avif 90 with 4:4:4 chroma, the same as the mtlx-fidelity reference renders).
+- **`--ibl`** picks the lighting:
+  - `studio`: soft, dim room.
+  - `bridge`: outdoor. Shows relief, with a green-yellow cast.
+  - `sun`: hard midday sun, for the strongest relief.
+  - `overcast`: soft, medium daylight, near neutral.
+  - `neutral`: colorless grey studio, for judging albedo.
+  - `strips`: dark room with sharp softbox strips, for judging gloss and roughness variation.
+  - `dusk`: warm, medium-dark street.
+  - `night`: very dark.
+
+  `--exposure` adjusts by stops (-2..2), and `--supersample` renders at 2× and downsamples to smooth
+  thin features.
+
+- **`--channel <node>`** shows one nodegraph node unlit, with no tone mapping: floats as grey,
+  vectors as rgb, with `--range min,max` mapped to black..white. It also prints the value's min, p5,
+  mean, p95, and max over the visible pixels, so masks and heights can be checked numerically.
+- **Inspection:**
+  - `--grid 0.1` overlays labelled UV lines every 0.1 m on head-on plane views.
+  - `--crop x,y,size` enlarges a pixel square with nearest-neighbour sampling.
+  - `--mirror u=0.15` prints how symmetric the view is about a UV line (book-match checks; best with
+    `--channel`).
+  - `--uv-scale N` shows N × N meters on the 1 m plane.
+- **`--zoom`, `--elevation`, `--geometry`** frame a single custom view when `--view` isn't given.
+
 Rendering uses a Chromium-based browser
 already on the machine (Google Chrome, then Microsoft Edge, then a Playwright-installed Chromium).
 No browser is downloaded at install time; set `MTLX_BROWSER` or `--browser` to a specific executable.
@@ -140,7 +176,8 @@ codex mcp add mtlx -- mtlx mcp      # Codex CLI
 
 `mtlx mcp` serves the same capabilities over the Model Context Protocol on stdio, so an agent host
 calls them as tools instead of shelling out: `check_material`, `inspect_material`, `render_material`
-(returns the PNG inline), and `edit_material`, which runs a short script against the
+(returns the PNG inline, with the same views, lighting, and channel statistics as `mtlx render`),
+`list_node_definitions` (like `mtlx nodes`), and `edit_material`, which runs a short script against the
 `mtlx-core/session` API and saves the file. Invalid edits are rejected and leave the file unchanged.
 Rendering needs the same Chrome or Edge as `mtlx render`.
 
@@ -219,6 +256,7 @@ mtlx check material.mtlx --strict --rules basic structure types resources
 | `types`            | Conservative checks against known input overloads and connection types.              |
 | `resources`        | Resource graph completeness for files read through the Node loader.                  |
 | `renderer-support` | Reports support as unassessed when no host capability inventory is available.        |
+| `unused`           | Warns about nodegraph nodes whose result never reaches an output (opt-in lint).      |
 
 Issues include stable `code` and `rule` fields for automation. A check result only describes the
 selected rules; it does not compile shaders or certify complete MaterialX or renderer compatibility.
@@ -308,8 +346,11 @@ Commands:
   mtlx mcp                      Run a Model Context Protocol server over stdio
                                 (check, inspect, render, and edit tools for AI
                                 agents)
-  mtlx render <input>           Render a .mtlx or .mtlx.zip file to a PNG image
-                                using a local headless browser
+  mtlx nodes <query>            Search MaterialX node definitions: exact names,
+                                inputs with defaults, and preview-renderer notes
+  mtlx render <input>           Render a .mtlx or .mtlx.zip file to an image
+                                (png, jpg, webp or avif) using a local headless
+                                browser
   mtlx transform <inputs..>     Convert, combine, or resize/reformat textures
                                 across one or more .mtlx / .mtlx.zip files (glob
                                 patterns accepted), writing --output. A
@@ -353,7 +394,7 @@ Options:
       --rules     Rule groups to run (default: basic); renderer checks require a
                   capability inventory
                    [array] [choices: "basic", "structure", "types", "resources",
-                                                             "renderer-support"]
+                                                   "renderer-support", "unused"]
       --format    Output format
                              [choices: "text", "json", "yaml"] [default: "text"]
   -h, --help      Show help                                            [boolean]
@@ -436,31 +477,91 @@ Options:
 ```
 
 ```text
+mtlx nodes <query>
+
+Search MaterialX node definitions: exact names, inputs with defaults, and
+preview-renderer notes
+
+Positionals:
+  query  Substring of the definition name, category, or node group;
+         comma-separate several (e.g. worley,smoothstep,fract)
+                                                             [string] [required]
+
+Options:
+      --parallel  Number of parallel operations to run concurrently
+                                                           [number] [default: 4]
+      --limit     Maximum definitions to list             [number] [default: 40]
+      --format    Output format      [choices: "text", "json"] [default: "text"]
+  -h, --help      Show help                                            [boolean]
+  -v, --version   Show version number                                  [boolean]
+```
+
+```text
 mtlx render <input>
 
-Render a .mtlx or .mtlx.zip file to a PNG image using a local headless browser
+Render a .mtlx or .mtlx.zip file to an image (png, jpg, webp or avif) using a
+local headless browser
 
 Positionals:
   input  Path to .mtlx or .mtlx.zip file                     [string] [required]
 
 Options:
-      --parallel    Number of parallel operations to run concurrently
+      --parallel     Number of parallel operations to run concurrently
                                                            [number] [default: 4]
-  -o, --output      PNG file to write                        [string] [required]
-  -g, --geometry    Preview geometry
+  -o, --output       Image file to write; .png, .jpg, .webp or .avif picks the
+                     format. With several --view, an image path gets a contact
+                     sheet; any other path (or an existing directory, or one
+                     ending in /) gets <view>.<format> files [string] [required]
+      --format       Format of the <view> files when --output is a directory (an
+                     image --output uses its extension)
+                        [choices: "png", "jpg", "webp", "avif"] [default: "png"]
+      --view         Named views rendered in one browser session: plane,
+                     closeup, detail, grazing, sphere, totem, cube, or
+                     plane:<meters> for a head-on plane of that width (1 UV = 1
+                     m)                                                  [array]
+  -g, --geometry     Preview geometry
                 [choices: "totem", "sphere", "cube", "plane"] [default: "totem"]
-  -m, --material    Material name (default: last material in the document)
+  -m, --material     Material name (default: last material in the document)
                                                                         [string]
-  -b, --background  Backdrop behind the model; none keeps the IBL lighting but
-                    leaves the PNG transparent
+  -b, --background   Backdrop behind the model; none keeps the IBL lighting but
+                     leaves the PNG transparent
                               [choices: "none", "environment"] [default: "none"]
-  -s, --size        Image width and height in pixels     [number] [default: 800]
-      --browser     Chromium-based browser executable (default: installed
-                    Chrome, Edge, or Playwright Chromium)               [string]
-      --timeout     Seconds to wait for the material to compile
-                                                          [number] [default: 60]
-  -h, --help        Show help                                          [boolean]
-  -v, --version     Show version number                                [boolean]
+  -s, --size         Image width and height in pixels    [number] [default: 800]
+      --ibl          Lighting: studio (soft, dim room), bridge (outdoor, shows
+                     relief, green-yellow cast), sun (hard midday sun, strongest
+                     relief), overcast (soft medium daylight, near neutral),
+                     neutral (colorless grey studio, for judging albedo), strips
+                     (dark room with sharp softbox strips, for judging gloss and
+                     roughness breakup), dusk (warm, medium-dark street), night
+                     (very dark)
+   [choices: "studio", "bridge", "sun", "overcast", "neutral", "strips", "dusk",
+                                                    "night"] [default: "studio"]
+  -e, --exposure     Exposure in stops (-2..2)             [number] [default: 0]
+  -z, --zoom         Camera zoom factor for close-ups (1 = default framing)
+                                                                        [number]
+      --elevation    Camera elevation in degrees (default 35; 0 = head-on to the
+                     plane)                                             [number]
+      --center       UV point the plane view aims at, e.g. 0.25,0.7     [string]
+      --supersample  Render at 2x and downsample (smoother thin features)
+                                                      [boolean] [default: false]
+      --channel      Show one nodegraph node unlit (floats grey, vectors as rgb)
+                     and print its value statistics                     [string]
+      --uv-scale     Multiply every texcoord by N, so the 1 m plane shows N × N
+                     m (layout checks over several meters)              [number]
+      --grid         Overlay UV grid lines every N meters (with labels) on
+                     head-on plane views, e.g. 0.1                      [number]
+      --crop         Crop x,y,size pixels of each view and enlarge it to --size
+                     (nearest neighbour) for pixel-level inspection     [string]
+      --mirror       Print how symmetric each head-on plane view is about a UV
+                     line, e.g. u=0.15 or v=0.5 (book-match checks)     [string]
+      --range        Value range mapped to black..white for --channel, e.g.
+                     -0.003,0.002 (default 0,1)                         [string]
+      --browser      Chromium-based browser executable (default: installed
+                     Chrome, Edge, or Playwright Chromium)              [string]
+      --timeout      Seconds to wait for the material to compile and each view
+                     to render                            [number] [default: 60]
+  -h, --help         Show help                                         [boolean]
+  -v, --version      Show version number                               [boolean]
 ```
 
 ```text

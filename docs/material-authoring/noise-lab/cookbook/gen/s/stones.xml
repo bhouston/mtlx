@@ -1,0 +1,14 @@
+<!-- in: uv. out: h_stone (m, 1.8..3 mm), a_id, a_col. 20 cells/m, jitter 1, inset 0.07, R 0.85 -->
+<multiply name="uv_st" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="20" /></multiply>
+<worleynoise2d name="a_w" type="vector2"><input name="texcoord" type="vector2" nodename="uv_st" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<worleynoise2d name="a_id" type="float"><input name="texcoord" type="vector2" nodename="uv_st" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<extract name="a_f1" type="float"><input name="in" type="vector2" nodename="a_w" /><input name="index" type="integer" value="0" /></extract>
+<dotproduct name="a_e" type="float"><input name="in1" type="vector2" nodename="a_w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<subtract name="a_e1" type="float"><input name="in1" type="float" nodename="a_e" /><input name="in2" type="float" value="0.07" /></subtract>
+<subtract name="a_e2" type="float"><input name="in1" type="float" value="0.85" /><input name="in2" type="float" nodename="a_f1" /></subtract>
+<min name="a_s" type="float"><input name="in1" type="float" nodename="a_e1" /><input name="in2" type="float" nodename="a_e2" /></min>
+<smoothstep name="a_prof" type="float"><input name="in" type="float" nodename="a_s" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.06" /></smoothstep>
+<multiply name="a_hs0" type="float"><input name="in1" type="float" nodename="a_id" /><input name="in2" type="float" value="0.0012" /></multiply>
+<add name="a_hs" type="float"><input name="in1" type="float" nodename="a_hs0" /><input name="in2" type="float" value="0.0018" /></add>
+<multiply name="h_stone" type="float"><input name="in1" type="float" nodename="a_prof" /><input name="in2" type="float" nodename="a_hs" /></multiply>
+<mix name="a_col" type="color3"><input name="bg" type="color3" value="0.5, 0.47, 0.42" /><input name="fg" type="color3" value="0.24, 0.22, 0.2" /><input name="mix" type="float" nodename="a_id" /></mix>

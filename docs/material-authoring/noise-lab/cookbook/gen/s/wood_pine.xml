@@ -1,0 +1,64 @@
+<!-- in: uv_sep. out: pn_loc (m: along U, across from the row centre), pn_rid (per-row random), pn_ph (ring phase), pn_sp (ring pitch, m), pn_fade, pn_lw (latewood, faded to its mean 0.28), pn_col (wood colour). Flat-sawn pine rows 150 mm along V, grain along U. Softwood rings are the reverse of oak: pale straw earlywood, then an abrupt dark, hard latewood band, t 0.56..0.61 up and 0.92..1 down (smoothstep). Cone model: pith +-12 cm off the row centre, 4..12 cm deep, taper +-2%, pitch 6..11 mm; the latewood fades to its mean between 150 and 230 lines/m (|dR/dy|/pitch; moire-free under render.sh) -->
+<divide name="pn_v" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="0.15" /></divide>
+<floor name="pn_row" type="float"><input name="in" type="float" nodename="pn_v" /></floor>
+<subtract name="pn_3" type="float"><input name="in1" type="float" nodename="pn_v" /><input name="in2" type="float" nodename="pn_row" /></subtract>
+<subtract name="pn_4" type="float"><input name="in1" type="float" nodename="pn_3" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="pn_c" type="float"><input name="in1" type="float" nodename="pn_4" /><input name="in2" type="float" value="0.15" /></multiply>
+<combine2 name="pn_loc" type="vector2"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" nodename="pn_c" /></combine2>
+<combine2 name="pn_7" type="vector2"><input name="in1" type="float" nodename="pn_row" /><input name="in2" type="float" value="5.0" /></combine2>
+<add name="pn_8" type="vector2"><input name="in1" type="vector2" nodename="pn_7" /><input name="in2" type="vector2" value="200.37, 300.61" /></add>
+<cellnoise2d name="pn_rid" type="float"><input name="texcoord" type="vector2" nodename="pn_8" /></cellnoise2d>
+<multiply name="pn_10" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="13.73" /></multiply>
+<add name="pn_11" type="float"><input name="in1" type="float" nodename="pn_10" /><input name="in2" type="float" value="0.61" /></add>
+<fract name="pn_12" type="float"><input name="in" type="float" nodename="pn_11" /></fract>
+<multiply name="pn_13" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="29.17" /></multiply>
+<add name="pn_14" type="float"><input name="in1" type="float" nodename="pn_13" /><input name="in2" type="float" value="0.61" /></add>
+<fract name="pn_15" type="float"><input name="in" type="float" nodename="pn_14" /></fract>
+<multiply name="pn_16" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="47.91" /></multiply>
+<add name="pn_17" type="float"><input name="in1" type="float" nodename="pn_16" /><input name="in2" type="float" value="0.61" /></add>
+<fract name="pn_18" type="float"><input name="in" type="float" nodename="pn_17" /></fract>
+<multiply name="pn_19" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="71.33" /></multiply>
+<add name="pn_20" type="float"><input name="in1" type="float" nodename="pn_19" /><input name="in2" type="float" value="0.61" /></add>
+<fract name="pn_21" type="float"><input name="in" type="float" nodename="pn_20" /></fract>
+<multiply name="pn_22" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="97.61" /></multiply>
+<add name="pn_23" type="float"><input name="in1" type="float" nodename="pn_22" /><input name="in2" type="float" value="0.61" /></add>
+<fract name="pn_24" type="float"><input name="in" type="float" nodename="pn_23" /></fract>
+<multiply name="pn_25" type="float"><input name="in1" type="float" nodename="pn_15" /><input name="in2" type="float" value="0.08" /></multiply>
+<add name="pn_26" type="float"><input name="in1" type="float" nodename="pn_25" /><input name="in2" type="float" value="0.04" /></add>
+<subtract name="pn_27" type="float"><input name="in1" type="float" nodename="pn_18" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="pn_28" type="float"><input name="in1" type="float" nodename="pn_27" /><input name="in2" type="float" value="0.04" /></multiply>
+<multiply name="pn_29" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" nodename="pn_28" /></multiply>
+<add name="pn_zc" type="float"><input name="in1" type="float" nodename="pn_26" /><input name="in2" type="float" nodename="pn_29" /></add>
+<subtract name="pn_31" type="float"><input name="in1" type="float" nodename="pn_12" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="pn_32" type="float"><input name="in1" type="float" nodename="pn_31" /><input name="in2" type="float" value="0.24" /></multiply>
+<subtract name="pn_33" type="float"><input name="in1" type="float" nodename="pn_c" /><input name="in2" type="float" nodename="pn_32" /></subtract>
+<multiply name="pn_34" type="vector2"><input name="in1" type="vector2" nodename="pn_loc" /><input name="in2" type="vector2" value="2.2, 6.0" /></multiply>
+<add name="pn_35" type="vector2"><input name="in1" type="vector2" nodename="pn_34" /><input name="in2" type="vector2" value="13.1, 2.9" /></add>
+<fractal2d name="pn_36" type="float"><input name="texcoord" type="vector2" nodename="pn_35" /><input name="amplitude" type="float" value="0.005" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<add name="pn_dy" type="float"><input name="in1" type="float" nodename="pn_33" /><input name="in2" type="float" nodename="pn_36" /></add>
+<combine2 name="pn_38" type="vector2"><input name="in1" type="float" nodename="pn_dy" /><input name="in2" type="float" nodename="pn_zc" /></combine2>
+<magnitude name="pn_R" type="float"><input name="in" type="vector2" nodename="pn_38" /></magnitude>
+<multiply name="pn_40" type="float"><input name="in1" type="float" nodename="pn_21" /><input name="in2" type="float" value="0.005" /></multiply>
+<add name="pn_sp" type="float"><input name="in1" type="float" nodename="pn_40" /><input name="in2" type="float" value="0.006" /></add>
+<divide name="pn_42" type="float"><input name="in1" type="float" nodename="pn_R" /><input name="in2" type="float" nodename="pn_sp" /></divide>
+<multiply name="pn_43" type="float"><input name="in1" type="float" nodename="pn_R" /><input name="in2" type="float" value="25.0" /></multiply>
+<multiply name="pn_44" type="float"><input name="in1" type="float" nodename="pn_24" /><input name="in2" type="float" value="53.0" /></multiply>
+<combine2 name="pn_45" type="vector2"><input name="in1" type="float" nodename="pn_43" /><input name="in2" type="float" nodename="pn_44" /></combine2>
+<fractal2d name="pn_46" type="float"><input name="texcoord" type="vector2" nodename="pn_45" /><input name="amplitude" type="float" value="1.3" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<add name="pn_ph" type="float"><input name="in1" type="float" nodename="pn_42" /><input name="in2" type="float" nodename="pn_46" /></add>
+<fract name="pn_t" type="float"><input name="in" type="float" nodename="pn_ph" /></fract>
+<smoothstep name="pn_49" type="float"><input name="in" type="float" nodename="pn_t" /><input name="low" type="float" value="0.56" /><input name="high" type="float" value="0.61" /></smoothstep>
+<smoothstep name="pn_50" type="float"><input name="in" type="float" nodename="pn_t" /><input name="low" type="float" value="0.92" /><input name="high" type="float" value="1.0" /></smoothstep>
+<subtract name="pn_51" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="pn_50" /></subtract>
+<multiply name="pn_lw0" type="float"><input name="in1" type="float" nodename="pn_49" /><input name="in2" type="float" nodename="pn_51" /></multiply>
+<divide name="pn_53" type="float"><input name="in1" type="float" nodename="pn_dy" /><input name="in2" type="float" nodename="pn_R" /></divide>
+<absval name="pn_54" type="float"><input name="in" type="float" nodename="pn_53" /></absval>
+<divide name="pn_55" type="float"><input name="in1" type="float" nodename="pn_54" /><input name="in2" type="float" nodename="pn_sp" /></divide>
+<smoothstep name="pn_56" type="float"><input name="in" type="float" nodename="pn_55" /><input name="low" type="float" value="150.0" /><input name="high" type="float" value="230.0" /></smoothstep>
+<subtract name="pn_fade" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="pn_56" /></subtract>
+<mix name="pn_lw" type="float"><input name="bg" type="float" value="0.28" /><input name="fg" type="float" nodename="pn_lw0" /><input name="mix" type="float" nodename="pn_fade" /></mix>
+<mix name="pn_ewc" type="color3"><input name="bg" type="color3" value="0.56, 0.41, 0.24" /><input name="fg" type="color3" value="0.64, 0.48, 0.3" /><input name="mix" type="float" nodename="pn_12" /></mix>
+<mix name="pn_60" type="color3"><input name="bg" type="color3" nodename="pn_ewc" /><input name="fg" type="color3" value="0.34, 0.2, 0.1" /><input name="mix" type="float" nodename="pn_lw" /></mix>
+<multiply name="pn_61" type="float"><input name="in1" type="float" nodename="pn_21" /><input name="in2" type="float" value="0.3" /></multiply>
+<add name="pn_62" type="float"><input name="in1" type="float" nodename="pn_61" /><input name="in2" type="float" value="0.85" /></add>
+<multiply name="pn_col" type="color3"><input name="in1" type="color3" nodename="pn_60" /><input name="in2" type="float" nodename="pn_62" /></multiply>

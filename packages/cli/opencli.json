@@ -42,6 +42,9 @@
             },
             {
               "value": "renderer-support"
+            },
+            {
+              "value": "unused"
             }
           ]
         },
@@ -149,8 +152,41 @@
     "mtlx mcp": {
       "summary": "Run a Model Context Protocol server over stdio (check, inspect, render, and edit tools for AI agents)"
     },
+    "mtlx nodes": {
+      "summary": "Search MaterialX node definitions: exact names, inputs with defaults, and preview-renderer notes",
+      "args": [
+        {
+          "name": "query",
+          "required": true,
+          "type": "string",
+          "summary": "Substring of the definition name, category, or node group; comma-separate several (e.g. worley,smoothstep,fract)"
+        }
+      ],
+      "flags": [
+        {
+          "name": "limit",
+          "type": "number",
+          "summary": "Maximum definitions to list",
+          "default": 40
+        },
+        {
+          "name": "format",
+          "type": "string",
+          "summary": "Output format",
+          "choices": [
+            {
+              "value": "text"
+            },
+            {
+              "value": "json"
+            }
+          ],
+          "default": "text"
+        }
+      ]
+    },
     "mtlx render": {
-      "summary": "Render a .mtlx or .mtlx.zip file to a PNG image using a local headless browser",
+      "summary": "Render a .mtlx or .mtlx.zip file to an image (png, jpg, webp or avif) using a local headless browser",
       "args": [
         {
           "name": "input",
@@ -166,8 +202,34 @@
           "aliases": [
             "o"
           ],
-          "summary": "PNG file to write",
+          "summary": "Image file to write; .png, .jpg, .webp or .avif picks the format. With several --view, an image path gets a contact sheet; any other path (or an existing directory, or one ending in /) gets <view>.<format> files",
           "required": true
+        },
+        {
+          "name": "format",
+          "type": "string",
+          "summary": "Format of the <view> files when --output is a directory (an image --output uses its extension)",
+          "choices": [
+            {
+              "value": "png"
+            },
+            {
+              "value": "jpg"
+            },
+            {
+              "value": "webp"
+            },
+            {
+              "value": "avif"
+            }
+          ],
+          "default": "png"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "summary": "Named views rendered in one browser session: plane, closeup, detail, grazing, sphere, totem, cube, or plane:<meters> for a head-on plane of that width (1 UV = 1 m)",
+          "variadic": true
         },
         {
           "name": "geometry",
@@ -227,6 +289,101 @@
           "default": 800
         },
         {
+          "name": "ibl",
+          "type": "string",
+          "summary": "Lighting: studio (soft, dim room), bridge (outdoor, shows relief, green-yellow cast), sun (hard midday sun, strongest relief), overcast (soft medium daylight, near neutral), neutral (colorless grey studio, for judging albedo), strips (dark room with sharp softbox strips, for judging gloss and roughness breakup), dusk (warm, medium-dark street), night (very dark)",
+          "choices": [
+            {
+              "value": "studio"
+            },
+            {
+              "value": "bridge"
+            },
+            {
+              "value": "sun"
+            },
+            {
+              "value": "overcast"
+            },
+            {
+              "value": "neutral"
+            },
+            {
+              "value": "strips"
+            },
+            {
+              "value": "dusk"
+            },
+            {
+              "value": "night"
+            }
+          ],
+          "default": "studio"
+        },
+        {
+          "name": "exposure",
+          "type": "number",
+          "aliases": [
+            "e"
+          ],
+          "summary": "Exposure in stops (-2..2)",
+          "default": 0
+        },
+        {
+          "name": "zoom",
+          "type": "number",
+          "aliases": [
+            "z"
+          ],
+          "summary": "Camera zoom factor for close-ups (1 = default framing)"
+        },
+        {
+          "name": "elevation",
+          "type": "number",
+          "summary": "Camera elevation in degrees (default 35; 0 = head-on to the plane)"
+        },
+        {
+          "name": "center",
+          "type": "string",
+          "summary": "UV point the plane view aims at, e.g. 0.25,0.7"
+        },
+        {
+          "name": "supersample",
+          "type": "boolean",
+          "summary": "Render at 2x and downsample (smoother thin features)",
+          "default": false
+        },
+        {
+          "name": "channel",
+          "type": "string",
+          "summary": "Show one nodegraph node unlit (floats grey, vectors as rgb) and print its value statistics"
+        },
+        {
+          "name": "uv-scale",
+          "type": "number",
+          "summary": "Multiply every texcoord by N, so the 1 m plane shows N × N m (layout checks over several meters)"
+        },
+        {
+          "name": "grid",
+          "type": "number",
+          "summary": "Overlay UV grid lines every N meters (with labels) on head-on plane views, e.g. 0.1"
+        },
+        {
+          "name": "crop",
+          "type": "string",
+          "summary": "Crop x,y,size pixels of each view and enlarge it to --size (nearest neighbour) for pixel-level inspection"
+        },
+        {
+          "name": "mirror",
+          "type": "string",
+          "summary": "Print how symmetric each head-on plane view is about a UV line, e.g. u=0.15 or v=0.5 (book-match checks)"
+        },
+        {
+          "name": "range",
+          "type": "string",
+          "summary": "Value range mapped to black..white for --channel, e.g. -0.003,0.002 (default 0,1)"
+        },
+        {
           "name": "browser",
           "type": "string",
           "summary": "Chromium-based browser executable (default: installed Chrome, Edge, or Playwright Chromium)"
@@ -234,7 +391,7 @@
         {
           "name": "timeout",
           "type": "number",
-          "summary": "Seconds to wait for the material to compile",
+          "summary": "Seconds to wait for the material to compile and each view to render",
           "default": 60
         }
       ]

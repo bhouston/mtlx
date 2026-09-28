@@ -1,0 +1,22 @@
+<!-- in: uv. out: h_chip (m, down to -3 mm). Two rotated/offset 30/m worley layers, cone r 0.6, rim smoothstep 0.12 -->
+<multiply name="uv_k" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="30" /></multiply>
+<rotate2d name="uv_k2r" type="vector2"><input name="in" type="vector2" nodename="uv_k" /><input name="amount" type="float" value="37" /></rotate2d>
+<add name="uv_k2" type="vector2"><input name="in1" type="vector2" nodename="uv_k2r" /><input name="in2" type="vector2" value="17.3, 5.1" /></add>
+<worleynoise2d name="k1_w" type="vector2"><input name="texcoord" type="vector2" nodename="uv_k" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<extract name="k1_f1" type="float"><input name="in" type="vector2" nodename="k1_w" /><input name="index" type="integer" value="0" /></extract>
+<dotproduct name="k1_e" type="float"><input name="in1" type="vector2" nodename="k1_w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<divide name="k1_c0" type="float"><input name="in1" type="float" nodename="k1_f1" /><input name="in2" type="float" value="0.6" /></divide>
+<subtract name="k1_c1" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="k1_c0" /></subtract>
+<max name="k1_cone" type="float"><input name="in1" type="float" nodename="k1_c1" /><input name="in2" type="float" value="0" /></max>
+<smoothstep name="k1_rim" type="float"><input name="in" type="float" nodename="k1_e" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.12" /></smoothstep>
+<multiply name="k1" type="float"><input name="in1" type="float" nodename="k1_cone" /><input name="in2" type="float" nodename="k1_rim" /></multiply>
+<worleynoise2d name="k2_w" type="vector2"><input name="texcoord" type="vector2" nodename="uv_k2" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<extract name="k2_f1" type="float"><input name="in" type="vector2" nodename="k2_w" /><input name="index" type="integer" value="0" /></extract>
+<dotproduct name="k2_e" type="float"><input name="in1" type="vector2" nodename="k2_w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<divide name="k2_c0" type="float"><input name="in1" type="float" nodename="k2_f1" /><input name="in2" type="float" value="0.6" /></divide>
+<subtract name="k2_c1" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="k2_c0" /></subtract>
+<max name="k2_cone" type="float"><input name="in1" type="float" nodename="k2_c1" /><input name="in2" type="float" value="0" /></max>
+<smoothstep name="k2_rim" type="float"><input name="in" type="float" nodename="k2_e" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.12" /></smoothstep>
+<multiply name="k2" type="float"><input name="in1" type="float" nodename="k2_cone" /><input name="in2" type="float" nodename="k2_rim" /></multiply>
+<max name="k_chip" type="float"><input name="in1" type="float" nodename="k1" /><input name="in2" type="float" nodename="k2" /></max>
+<multiply name="h_chip" type="float"><input name="in1" type="float" nodename="k_chip" /><input name="in2" type="float" value="-0.003" /></multiply>

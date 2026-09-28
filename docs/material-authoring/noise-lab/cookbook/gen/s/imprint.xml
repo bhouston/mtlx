@@ -1,0 +1,20 @@
+<!-- in: wr_fig, kc_ring, kc_swirl, wk_core, pk_d, uv. out: im_fig (figure with knot swirls, 0..1), im_fin (0..1 paste fin), h_imp (m). Board-formed concrete takes the NEGATIVE of the board surface: the weathered board's soft earlywood is eroded 0.26 mm below the mean and its knot cores stand 0.15 mm proud, so in the concrete earlywood becomes ridges and knots become dimples. The grain fades to 0 inside the joint, smoothstep(pk_d, 1.5, 5 mm), where cement paste squeezed between the boards leaves a fin 0.4..2.2 mm from the edge: +0.28 mm, broken to -0.12 mm in patches -->
+<mix name="im_fig" type="float"><input name="bg" type="float" nodename="wr_fig" /><input name="fg" type="float" nodename="kc_ring" /><input name="mix" type="float" nodename="kc_swirl" /></mix>
+<subtract name="im_2" type="float"><input name="in1" type="float" value="0.35" /><input name="in2" type="float" nodename="im_fig" /></subtract>
+<multiply name="im_3" type="float"><input name="in1" type="float" nodename="im_2" /><input name="in2" type="float" value="0.0004" /></multiply>
+<multiply name="im_4" type="float"><input name="in1" type="float" nodename="wk_core" /><input name="in2" type="float" value="0.00015" /></multiply>
+<add name="im_wood" type="float"><input name="in1" type="float" nodename="im_3" /><input name="in2" type="float" nodename="im_4" /></add>
+<smoothstep name="im_keep" type="float"><input name="in" type="float" nodename="pk_d" /><input name="low" type="float" value="0.0015" /><input name="high" type="float" value="0.005" /></smoothstep>
+<smoothstep name="im_7" type="float"><input name="in" type="float" nodename="pk_d" /><input name="low" type="float" value="0.0004" /><input name="high" type="float" value="0.0022" /></smoothstep>
+<subtract name="im_line" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="im_7" /></subtract>
+<multiply name="im_9" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="6.0" /></multiply>
+<add name="im_10" type="vector2"><input name="in1" type="vector2" nodename="im_9" /><input name="in2" type="vector2" value="41.3, 7.7" /></add>
+<fractal2d name="im_11" type="float"><input name="texcoord" type="vector2" nodename="im_10" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="2" /></fractal2d>
+<smoothstep name="im_fp" type="float"><input name="in" type="float" nodename="im_11" /><input name="low" type="float" value="-0.25" /><input name="high" type="float" value="0.25" /></smoothstep>
+<multiply name="im_fin" type="float"><input name="in1" type="float" nodename="im_line" /><input name="in2" type="float" nodename="im_fp" /></multiply>
+<multiply name="im_14" type="float"><input name="in1" type="float" nodename="im_fp" /><input name="in2" type="float" value="0.0004" /></multiply>
+<subtract name="im_15" type="float"><input name="in1" type="float" nodename="im_14" /><input name="in2" type="float" value="0.00012" /></subtract>
+<multiply name="im_finh" type="float"><input name="in1" type="float" nodename="im_line" /><input name="in2" type="float" nodename="im_15" /></multiply>
+<multiply name="im_17" type="float"><input name="in1" type="float" nodename="im_wood" /><input name="in2" type="float" nodename="im_keep" /></multiply>
+<multiply name="im_18" type="float"><input name="in1" type="float" nodename="im_17" /><input name="in2" type="float" value="-1.0" /></multiply>
+<add name="h_imp" type="float"><input name="in1" type="float" nodename="im_18" /><input name="in2" type="float" nodename="im_finh" /></add>

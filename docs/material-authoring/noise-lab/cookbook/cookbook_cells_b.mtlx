@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- NOISE_COOKBOOK.md test material. UV 1 = 1 m. Quadrants: TL tapering cracks, TR flagstones, BL terrazzo palette, BR sparse features (worley below v=0.25, manual grid above) -->
+  <nodegraph name="NG_cookbook_cells_b">
+    <!-- TL tapering cracks, TR flagstones, BL terrazzo palette, BR sparse features (worley below v=0.25, manual grid above) -->
+    <texcoord name="uv" type="vector2" />
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <ifgreater name="q_right" type="float"><input name="value1" type="float" nodename="uv_sep" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="q_top" type="float"><input name="value1" type="float" nodename="uv_sep" output="outy" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+
+    <!-- snippet: warp -->
+    <!-- in: uv. out: uv_w = uv displaced in 2D, in metres. f = 6/m, A = 0.03 m, s = A*f = 0.18 (limit 0.2) -->
+    <multiply name="w_p0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="6" /></multiply>
+    <add name="w_p" type="vector2"><input name="in1" type="vector2" nodename="w_p0" /><input name="in2" type="vector2" value="3.1, 7.9" /></add>
+    <noise2d name="w_n3" type="vector3"><input name="texcoord" type="vector2" nodename="w_p" /><input name="amplitude" type="vector3" value="0.03, 0.03, 0" /></noise2d>
+    <convert name="w_d" type="vector2"><input name="in" type="vector3" nodename="w_n3" /></convert>
+    <add name="uv_w" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" nodename="w_d" /></add>
+
+    <!-- snippet: cracks -->
+    <!-- in: uv, uv_w (warped uv, m). out: crack (0..1), h_crack (m, -3 mm). 4 cells/m; presence mask scales the threshold, so cracks taper to points; the gate smoothstep(t0, 2e-4, 6e-4) removes the hairline left where t sits on its 1e-4 floor -->
+    <multiply name="uv_c" type="vector2"><input name="in1" type="vector2" nodename="uv_w" /><input name="in2" type="float" value="4" /></multiply>
+    <worleynoise2d name="c_w12" type="vector2"><input name="texcoord" type="vector2" nodename="uv_c" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+    <dotproduct name="c_e" type="float"><input name="in1" type="vector2" nodename="c_w12" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <multiply name="uv_cm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="2.5" /></multiply>
+    <noise2d name="c_m0" type="float"><input name="texcoord" type="vector2" nodename="uv_cm" /><input name="amplitude" type="float" value="0.5" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <smoothstep name="c_mask" type="float"><input name="in" type="float" nodename="c_m0" /><input name="low" type="float" value="0.3" /><input name="high" type="float" value="0.55" /></smoothstep>
+    <multiply name="c_t0" type="float"><input name="in1" type="float" nodename="c_mask" /><input name="in2" type="float" value="0.03" /></multiply>
+    <max name="c_t" type="float"><input name="in1" type="float" nodename="c_t0" /><input name="in2" type="float" value="0.0001" /></max>
+    <smoothstep name="c_s" type="float"><input name="in" type="float" nodename="c_e" /><input name="low" type="float" value="0" /><input name="high" type="float" nodename="c_t" /></smoothstep>
+    <subtract name="c_line" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="c_s" /></subtract>
+    <smoothstep name="c_gate" type="float"><input name="in" type="float" nodename="c_t0" /><input name="low" type="float" value="0.0002" /><input name="high" type="float" value="0.0006" /></smoothstep>
+    <multiply name="crack" type="float"><input name="in1" type="float" nodename="c_line" /><input name="in2" type="float" nodename="c_gate" /></multiply>
+    <multiply name="h_crack" type="float"><input name="in1" type="float" nodename="crack" /><input name="in2" type="float" value="-0.003" /></multiply>
+
+    <!-- snippet: flag -->
+    <!-- in: uv_w (warped uv, m). out: h_flag (m, 4..6 mm tops), f_top (1 on stone, 0 in joint), f_id. 5 stones/m, joint F2-F1 < 0.05 (~1.3 cm), arris to 0.11 -->
+    <multiply name="uv_fl" type="vector2"><input name="in1" type="vector2" nodename="uv_w" /><input name="in2" type="float" value="5" /></multiply>
+    <worleynoise2d name="f_w12" type="vector2"><input name="texcoord" type="vector2" nodename="uv_fl" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+    <worleynoise2d name="f_id" type="float"><input name="texcoord" type="vector2" nodename="uv_fl" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <dotproduct name="f_e" type="float"><input name="in1" type="vector2" nodename="f_w12" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <smoothstep name="f_top" type="float"><input name="in" type="float" nodename="f_e" /><input name="low" type="float" value="0.05" /><input name="high" type="float" value="0.11" /></smoothstep>
+    <multiply name="f_hs0" type="float"><input name="in1" type="float" nodename="f_id" /><input name="in2" type="float" value="0.002" /></multiply>
+    <add name="f_hs" type="float"><input name="in1" type="float" nodename="f_hs0" /><input name="in2" type="float" value="0.004" /></add>
+    <multiply name="h_flag" type="float"><input name="in1" type="float" nodename="f_top" /><input name="in2" type="float" nodename="f_hs" /></multiply>
+
+    <!-- snippet: palette -->
+    <!-- in: uv. out: t_col (per-chip palette colour), t_chip (0 in joints, 1 on chips), t_id. 30 cells/m, 6 colours -->
+    <multiply name="uv_t" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="30" /></multiply>
+    <worleynoise2d name="t_w" type="vector2"><input name="texcoord" type="vector2" nodename="uv_t" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+    <worleynoise2d name="t_id" type="float"><input name="texcoord" type="vector2" nodename="uv_t" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <dotproduct name="t_e" type="float"><input name="in1" type="vector2" nodename="t_w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <smoothstep name="t_chip" type="float"><input name="in" type="float" nodename="t_e" /><input name="low" type="float" value="0.08" /><input name="high" type="float" value="0.1" /></smoothstep>
+    <multiply name="t_pal_k0" type="float"><input name="in1" type="float" nodename="t_id" /><input name="in2" type="float" value="13.7" /></multiply>
+    <modulo name="t_pal_k" type="float"><input name="in1" type="float" nodename="t_pal_k0" /><input name="in2" type="float" value="1" /></modulo>
+    <ifgreater name="t_pal_c1" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.1667" /><input name="in1" type="color3" value="0.55, 0.53, 0.5" /><input name="in2" type="color3" value="0.05, 0.05, 0.05" /></ifgreater>
+    <ifgreater name="t_pal_c2" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="color3" value="0.35, 0.12, 0.08" /><input name="in2" type="color3" nodename="t_pal_c1" /></ifgreater>
+    <ifgreater name="t_pal_c3" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.5" /><input name="in1" type="color3" value="0.12, 0.2, 0.14" /><input name="in2" type="color3" nodename="t_pal_c2" /></ifgreater>
+    <ifgreater name="t_pal_c4" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="color3" value="0.45, 0.33, 0.18" /><input name="in2" type="color3" nodename="t_pal_c3" /></ifgreater>
+    <ifgreater name="t_pal_c5" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.8333" /><input name="in1" type="color3" value="0.25, 0.27, 0.3" /><input name="in2" type="color3" nodename="t_pal_c4" /></ifgreater>
+    <multiply name="t_br0" type="float"><input name="in1" type="float" nodename="t_id" /><input name="in2" type="float" value="0.5" /></multiply>
+    <add name="t_br" type="float"><input name="in1" type="float" nodename="t_br0" /><input name="in2" type="float" value="0.75" /></add>
+    <multiply name="t_col" type="color3"><input name="in1" type="color3" nodename="t_pal_c5" /><input name="in2" type="float" nodename="t_br" /></multiply>
+
+    <!-- snippet: sparse -->
+    <!-- in: uv. out: h_sparse (m), v_mask. 8 cells/m, jitter 0.4 so r <= 0.3 cell never clips; 45% of cells empty, r 0.1..0.28 cell -->
+    <multiply name="uv_g" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8" /></multiply>
+    <worleynoise2d name="v_f1" type="float"><input name="texcoord" type="vector2" nodename="uv_g" /><input name="jitter" type="float" value="0.4" /></worleynoise2d>
+    <worleynoise2d name="v_id" type="float"><input name="texcoord" type="vector2" nodename="uv_g" /><input name="jitter" type="float" value="0.4" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <multiply name="v_rk" type="float"><input name="in1" type="float" nodename="v_id" /><input name="in2" type="float" value="7.3" /></multiply>
+    <modulo name="v_rm" type="float"><input name="in1" type="float" nodename="v_rk" /><input name="in2" type="float" value="1" /></modulo>
+    <multiply name="v_r0" type="float"><input name="in1" type="float" nodename="v_rm" /><input name="in2" type="float" value="0.18" /></multiply>
+    <add name="v_r1" type="float"><input name="in1" type="float" nodename="v_r0" /><input name="in2" type="float" value="0.1" /></add>
+    <ifgreater name="v_r" type="float"><input name="value1" type="float" nodename="v_id" /><input name="value2" type="float" value="0.55" /><input name="in1" type="float" nodename="v_r1" /><input name="in2" type="float" value="0.0001" /></ifgreater>
+    <divide name="v_t" type="float"><input name="in1" type="float" nodename="v_f1" /><input name="in2" type="float" nodename="v_r" /></divide>
+    <multiply name="v_t2" type="float"><input name="in1" type="float" nodename="v_t" /><input name="in2" type="float" nodename="v_t" /></multiply>
+    <subtract name="v_b0" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="v_t2" /></subtract>
+    <max name="v_dome" type="float"><input name="in1" type="float" nodename="v_b0" /><input name="in2" type="float" value="0" /></max>
+    <multiply name="v_hs" type="float"><input name="in1" type="float" nodename="v_r" /><input name="in2" type="float" value="0.02" /></multiply>
+    <multiply name="h_sparse" type="float"><input name="in1" type="float" nodename="v_dome" /><input name="in2" type="float" nodename="v_hs" /></multiply>
+    <smoothstep name="v_mask" type="float"><input name="in" type="float" nodename="v_dome" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.05" /></smoothstep>
+
+    <!-- snippet: grid -->
+    <!-- in: uv_g (uv*8). out: h_grid (m), g_mask, g_dv (vector from the feature centre, for ellipses/orientation). Manual jittered grid, 0.4 jitter -->
+    <floor name="g_cell" type="vector2"><input name="in" type="vector2" nodename="uv_g" /></floor>
+    <cellnoise2d name="g_rnd" type="vector3"><input name="texcoord" type="vector2" nodename="uv_g" /></cellnoise2d>
+    <extract name="g_jx" type="float"><input name="in" type="vector3" nodename="g_rnd" /><input name="index" type="integer" value="0" /></extract>
+    <extract name="g_jy" type="float"><input name="in" type="vector3" nodename="g_rnd" /><input name="index" type="integer" value="1" /></extract>
+    <extract name="g_pres" type="float"><input name="in" type="vector3" nodename="g_rnd" /><input name="index" type="integer" value="2" /></extract>
+    <combine2 name="g_j" type="vector2"><input name="in1" type="float" nodename="g_jx" /><input name="in2" type="float" nodename="g_jy" /></combine2>
+    <subtract name="g_j0" type="vector2"><input name="in1" type="vector2" nodename="g_j" /><input name="in2" type="vector2" value="0.5, 0.5" /></subtract>
+    <multiply name="g_j1" type="vector2"><input name="in1" type="vector2" nodename="g_j0" /><input name="in2" type="float" value="0.4" /></multiply>
+    <add name="g_j2" type="vector2"><input name="in1" type="vector2" nodename="g_j1" /><input name="in2" type="vector2" value="0.5, 0.5" /></add>
+    <add name="g_ctr" type="vector2"><input name="in1" type="vector2" nodename="g_cell" /><input name="in2" type="vector2" nodename="g_j2" /></add>
+    <subtract name="g_dv" type="vector2"><input name="in1" type="vector2" nodename="uv_g" /><input name="in2" type="vector2" nodename="g_ctr" /></subtract>
+    <magnitude name="g_d" type="float"><input name="in" type="vector2" nodename="g_dv" /></magnitude>
+    <multiply name="g_rk" type="float"><input name="in1" type="float" nodename="g_pres" /><input name="in2" type="float" value="7.3" /></multiply>
+    <modulo name="g_rm" type="float"><input name="in1" type="float" nodename="g_rk" /><input name="in2" type="float" value="1" /></modulo>
+    <multiply name="g_r0" type="float"><input name="in1" type="float" nodename="g_rm" /><input name="in2" type="float" value="0.18" /></multiply>
+    <add name="g_r1" type="float"><input name="in1" type="float" nodename="g_r0" /><input name="in2" type="float" value="0.1" /></add>
+    <ifgreater name="g_r" type="float"><input name="value1" type="float" nodename="g_pres" /><input name="value2" type="float" value="0.55" /><input name="in1" type="float" nodename="g_r1" /><input name="in2" type="float" value="0.0001" /></ifgreater>
+    <divide name="g_t" type="float"><input name="in1" type="float" nodename="g_d" /><input name="in2" type="float" nodename="g_r" /></divide>
+    <multiply name="g_t2" type="float"><input name="in1" type="float" nodename="g_t" /><input name="in2" type="float" nodename="g_t" /></multiply>
+    <subtract name="g_b0" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="g_t2" /></subtract>
+    <max name="g_dome" type="float"><input name="in1" type="float" nodename="g_b0" /><input name="in2" type="float" value="0" /></max>
+    <multiply name="g_hs" type="float"><input name="in1" type="float" nodename="g_r" /><input name="in2" type="float" value="0.02" /></multiply>
+    <multiply name="h_grid" type="float"><input name="in1" type="float" nodename="g_dome" /><input name="in2" type="float" nodename="g_hs" /></multiply>
+    <smoothstep name="g_mask" type="float"><input name="in" type="float" nodename="g_dome" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.05" /></smoothstep>
+
+    <!-- test glue -->
+    <multiply name="h_terz" type="float"><input name="in1" type="float" nodename="t_chip" /><input name="in2" type="float" value="0.0004" /></multiply>
+    <ifgreater name="h_sp" type="float"><input name="value1" type="float" nodename="uv_sep" output="outy" /><input name="value2" type="float" value="0.25" /><input name="in1" type="float" nodename="h_grid" /><input name="in2" type="float" nodename="h_sparse" /></ifgreater>
+    <ifgreater name="m_sp" type="float"><input name="value1" type="float" nodename="uv_sep" output="outy" /><input name="value2" type="float" value="0.25" /><input name="in1" type="float" nodename="g_mask" /><input name="in2" type="float" nodename="v_mask" /></ifgreater>
+    <mix name="col_sp" type="color3"><input name="bg" type="color3" value="0.36, 0.35, 0.33" /><input name="fg" type="color3" value="0.5, 0.3, 0.2" /><input name="mix" type="float" nodename="m_sp" /></mix>
+    <mix name="col_fl0" type="color3"><input name="bg" type="color3" value="0.45, 0.42, 0.38" /><input name="fg" type="color3" value="0.28, 0.27, 0.26" /><input name="mix" type="float" nodename="f_id" /></mix>
+    <mix name="col_fl" type="color3"><input name="bg" type="color3" value="0.2, 0.19, 0.18" /><input name="fg" type="color3" nodename="col_fl0" /><input name="mix" type="float" nodename="f_top" /></mix>
+    <mix name="col_tz" type="color3"><input name="bg" type="color3" value="0.62, 0.6, 0.56" /><input name="fg" type="color3" nodename="t_col" /><input name="mix" type="float" nodename="t_chip" /></mix>
+    <mix name="col_cr" type="color3"><input name="bg" type="color3" value="0.36, 0.35, 0.33" /><input name="fg" type="color3" value="0.12, 0.12, 0.11" /><input name="mix" type="float" nodename="crack" /></mix>
+    <mix name="height_t" type="float"><input name="bg" type="float" nodename="h_crack" /><input name="fg" type="float" nodename="h_flag" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="height_b" type="float"><input name="bg" type="float" nodename="h_terz" /><input name="fg" type="float" nodename="h_sp" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="height" type="float"><input name="bg" type="float" nodename="height_b" /><input name="fg" type="float" nodename="height_t" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <mix name="base_color_t" type="color3"><input name="bg" type="color3" nodename="col_cr" /><input name="fg" type="color3" nodename="col_fl" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="base_color_b" type="color3"><input name="bg" type="color3" nodename="col_tz" /><input name="fg" type="color3" nodename="col_sp" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" nodename="base_color_b" /><input name="fg" type="color3" nodename="base_color_t" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <mix name="roughness_t" type="float"><input name="bg" type="float" value="0.85" /><input name="fg" type="float" value="0.8" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="roughness_b" type="float"><input name="bg" type="float" value="0.35" /><input name="fg" type="float" value="0.85" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="roughness" type="float"><input name="bg" type="float" nodename="roughness_b" /><input name="fg" type="float" nodename="roughness_t" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+
+    <!-- snippet: normal -->
+    <!-- in: uv, height (m). out: n_world -> standard_surface.normal. Millimetre workaround for the heighttonormal threshold bug -->
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+  </nodegraph>
+  <standard_surface name="SR_cookbook_cells_b" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="base_color" type="color3" nodegraph="NG_cookbook_cells_b" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_cookbook_cells_b" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_cookbook_cells_b" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_cookbook_cells_b" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_cookbook_cells_b" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_cookbook_cells_b" /></surfacematerial>
+</materialx>

@@ -1,0 +1,6 @@
+<!-- in: height (true surface, m), lq_fib, uv. out: n_base -> standard_surface.normal. Paste after the normal snippet, whose n_world goes to coat_normal. Lacquered wood has two normals: the base layer (the fibres) sees height + the fibre pseudo-height, so its highlight rolls across the figure as the view changes (chatoyance, fiddleback shimmer), while the coat sees only the true, near-flat surface. Set coat 1, coat_IOR 1.5, coat_roughness ~0.3; without coat_normal the coat is a flat mirror -->
+<add name="ln_1" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" nodename="lq_fib" /></add>
+<multiply name="ln_mm" type="float"><input name="in1" type="float" nodename="ln_1" /><input name="in2" type="float" value="1000.0" /></multiply>
+<multiply name="ln_3" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000.0" /></multiply>
+<heighttonormal name="ln_nt" type="vector3"><input name="in" type="float" nodename="ln_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="ln_3" /></heighttonormal>
+<normalmap name="n_base" type="vector3"><input name="in" type="vector3" nodename="ln_nt" /></normalmap>

@@ -186,6 +186,21 @@ export function validateGraphScope(
   }
   const outgoing = new Map<string, string[]>();
   for (const edge of projection.edges) outgoing.set(edge.source, [...(outgoing.get(edge.source) ?? []), edge.target]);
+  // Opt-in lint (editors leave half-built chains around): inside a nodegraph every node should reach
+  // an output; top-level shaders and materials are sinks.
+  if (scope && rules.has('unused')) {
+    for (const node of projection.nodes) {
+      if (['output', 'input', 'nodegraph'].includes(node.element.name) || outgoing.has(node.id)) continue;
+      issues.push({
+        rule: 'unused',
+        code: 'UNUSED_NODE',
+        level: 'warning',
+        location: `${location}/${node.element.name}:${node.id}`,
+        message: `Node "${node.id}" is not connected to anything downstream; its result is never used.`,
+        graph: { scope, nodeIds: [node.id] },
+      });
+    }
+  }
   for (const edge of rules.has('structure') ? projection.edges : []) {
     const visited = new Set<string>();
     const pending = [edge.target];

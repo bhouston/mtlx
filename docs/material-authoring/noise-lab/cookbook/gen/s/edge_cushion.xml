@@ -1,0 +1,8 @@
+<!-- in: rr_d (m, + inside). out: h_cush (m: 0 on the face, -1.2 mm in the grout), cu_tile. Cubic shoulder 1 - (1 - d/W)^3 over W = 6 mm: slope 0 and curvature 0 where it meets the face (no crease), 3*1.2/6 = 31 deg at the arris -->
+<divide name="cu_x0" type="float"><input name="in1" type="float" nodename="rr_d" /><input name="in2" type="float" value="0.006" /></divide>
+<clamp name="cu_x" type="float"><input name="in" type="float" nodename="cu_x0" /></clamp>
+<subtract name="cu_o" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="cu_x" /></subtract>
+<multiply name="cu_o2" type="float"><input name="in1" type="float" nodename="cu_o" /><input name="in2" type="float" nodename="cu_o" /></multiply>
+<multiply name="cu_o3" type="float"><input name="in1" type="float" nodename="cu_o2" /><input name="in2" type="float" nodename="cu_o" /></multiply>
+<multiply name="h_cush" type="float"><input name="in1" type="float" nodename="cu_o3" /><input name="in2" type="float" value="-0.0012" /></multiply>
+<smoothstep name="cu_tile" type="float"><input name="in" type="float" nodename="rr_d" /><input name="low" type="float" value="-0.00025" /><input name="high" type="float" value="0.00025" /></smoothstep>

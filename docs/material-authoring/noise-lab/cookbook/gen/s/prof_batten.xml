@@ -1,0 +1,43 @@
+<!-- in: uv_sep. out: bt_m (0 board .. 1 batten top), bt_x (m up the side from the toe), bt_xb (m from the board centre, for the base), bt_ao (albedo factor, 0.65 at the toe). Board-and-batten: 250 mm boards, a 50 mm batten H = 19 mm proud over each seam. The side slope is SMAX*smoothstep(x/C)*(1 - smoothstep((x - W + E)/E)), integrated analytically: I(t) = tc^3 - tc^4/2 + max(t - 1, 0), tc = clamp(t), so curvature is continuous at the toe (fillet C = 4.5 mm) and the arris (ease E = 2.5 mm). Width W = H/SMAX + (C + E)/2 = 16.8 mm for a 55 deg face (SMAX = tan) -->
+<divide name="bt_us" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.25" /></divide>
+<floor name="bt_bk" type="float"><input name="in" type="float" nodename="bt_us" /></floor>
+<subtract name="bt_3" type="float"><input name="in1" type="float" nodename="bt_us" /><input name="in2" type="float" nodename="bt_bk" /></subtract>
+<subtract name="bt_4" type="float"><input name="in1" type="float" nodename="bt_3" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="bt_xb" type="float"><input name="in1" type="float" nodename="bt_4" /><input name="in2" type="float" value="0.25" /></multiply>
+<add name="bt_6" type="float"><input name="in1" type="float" nodename="bt_us" /><input name="in2" type="float" value="0.5" /></add>
+<floor name="bt_7" type="float"><input name="in" type="float" nodename="bt_6" /></floor>
+<subtract name="bt_8" type="float"><input name="in1" type="float" nodename="bt_6" /><input name="in2" type="float" nodename="bt_7" /></subtract>
+<subtract name="bt_9" type="float"><input name="in1" type="float" nodename="bt_8" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="bt_xs" type="float"><input name="in1" type="float" nodename="bt_9" /><input name="in2" type="float" value="0.25" /></multiply>
+<absval name="bt_11" type="float"><input name="in" type="float" nodename="bt_xs" /></absval>
+<subtract name="bt_x" type="float"><input name="in1" type="float" value="0.038287" /><input name="in2" type="float" nodename="bt_11" /></subtract>
+<divide name="bt_13" type="float"><input name="in1" type="float" nodename="bt_x" /><input name="in2" type="float" value="0.0045" /></divide>
+<clamp name="bt_14" type="float"><input name="in" type="float" nodename="bt_13" /></clamp>
+<multiply name="bt_15" type="float"><input name="in1" type="float" nodename="bt_14" /><input name="in2" type="float" nodename="bt_14" /></multiply>
+<multiply name="bt_16" type="float"><input name="in1" type="float" nodename="bt_15" /><input name="in2" type="float" nodename="bt_14" /></multiply>
+<multiply name="bt_17" type="float"><input name="in1" type="float" nodename="bt_15" /><input name="in2" type="float" nodename="bt_15" /></multiply>
+<multiply name="bt_18" type="float"><input name="in1" type="float" nodename="bt_17" /><input name="in2" type="float" value="0.5" /></multiply>
+<subtract name="bt_19" type="float"><input name="in1" type="float" nodename="bt_16" /><input name="in2" type="float" nodename="bt_18" /></subtract>
+<subtract name="bt_20" type="float"><input name="in1" type="float" nodename="bt_13" /><input name="in2" type="float" value="1.0" /></subtract>
+<max name="bt_21" type="float"><input name="in1" type="float" nodename="bt_20" /><input name="in2" type="float" value="0.0" /></max>
+<add name="bt_ic" type="float"><input name="in1" type="float" nodename="bt_19" /><input name="in2" type="float" nodename="bt_21" /></add>
+<multiply name="bt_23" type="float"><input name="in1" type="float" nodename="bt_ic" /><input name="in2" type="float" value="0.0045" /></multiply>
+<subtract name="bt_24" type="float"><input name="in1" type="float" nodename="bt_x" /><input name="in2" type="float" value="0.014287" /></subtract>
+<divide name="bt_25" type="float"><input name="in1" type="float" nodename="bt_24" /><input name="in2" type="float" value="0.0025" /></divide>
+<clamp name="bt_26" type="float"><input name="in" type="float" nodename="bt_25" /></clamp>
+<multiply name="bt_27" type="float"><input name="in1" type="float" nodename="bt_26" /><input name="in2" type="float" nodename="bt_26" /></multiply>
+<multiply name="bt_28" type="float"><input name="in1" type="float" nodename="bt_27" /><input name="in2" type="float" nodename="bt_26" /></multiply>
+<multiply name="bt_29" type="float"><input name="in1" type="float" nodename="bt_27" /><input name="in2" type="float" nodename="bt_27" /></multiply>
+<multiply name="bt_30" type="float"><input name="in1" type="float" nodename="bt_29" /><input name="in2" type="float" value="0.5" /></multiply>
+<subtract name="bt_31" type="float"><input name="in1" type="float" nodename="bt_28" /><input name="in2" type="float" nodename="bt_30" /></subtract>
+<subtract name="bt_32" type="float"><input name="in1" type="float" nodename="bt_25" /><input name="in2" type="float" value="1.0" /></subtract>
+<max name="bt_33" type="float"><input name="in1" type="float" nodename="bt_32" /><input name="in2" type="float" value="0.0" /></max>
+<add name="bt_ie" type="float"><input name="in1" type="float" nodename="bt_31" /><input name="in2" type="float" nodename="bt_33" /></add>
+<multiply name="bt_35" type="float"><input name="in1" type="float" nodename="bt_ie" /><input name="in2" type="float" value="0.0025" /></multiply>
+<subtract name="bt_raw" type="float"><input name="in1" type="float" nodename="bt_23" /><input name="in2" type="float" nodename="bt_35" /></subtract>
+<divide name="bt_37" type="float"><input name="in1" type="float" nodename="bt_raw" /><input name="in2" type="float" value="0.013287" /></divide>
+<clamp name="bt_m" type="float"><input name="in" type="float" nodename="bt_37" /></clamp>
+<smoothstep name="bt_39" type="float"><input name="in" type="float" nodename="bt_x" /><input name="low" type="float" value="-0.004" /><input name="high" type="float" value="0.0045" /></smoothstep>
+<subtract name="bt_40" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="bt_39" /></subtract>
+<multiply name="bt_41" type="float"><input name="in1" type="float" nodename="bt_40" /><input name="in2" type="float" value="-0.35" /></multiply>
+<add name="bt_ao" type="float"><input name="in1" type="float" nodename="bt_41" /><input name="in2" type="float" value="1.0" /></add>

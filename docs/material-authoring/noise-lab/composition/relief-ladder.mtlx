@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Relief ladder: egg-crate bumps of known slope and wavelength. UV 1 = 1 m, height in m. -->
+  <nodegraph name="NG_relief_ladder">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <!-- Relief visibility ladder, k=1.0. Columns (u, left->right): max slope tan = 0.003*2.6^col (0.17, 0.45, 1.2, 3, 7.8, 20, 43, 67 deg). Rows (v, bottom->top): wavelength 0.005*2.8^row / k m. -->
+    <subtract name="subtract_3" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.5, 0.5" /></subtract>
+    <multiply name="multiply_4" type="vector2"><input name="in1" type="vector2" nodename="subtract_3" /><input name="in2" type="float" value="1.0" /></multiply>
+    <add name="add_5" type="vector2"><input name="in1" type="vector2" nodename="multiply_4" /><input name="in2" type="vector2" value="0.5, 0.5" /></add>
+    <separate2 name="c_sep" type="multioutput"><input name="in" type="vector2" nodename="add_5" /></separate2>
+    <multiply name="multiply_7" type="float"><input name="in1" type="float" nodename="c_sep" output="outx" /><input name="in2" type="float" value="8.0" /></multiply>
+    <floor name="floor_8" type="float"><input name="in" type="float" nodename="multiply_7" /></floor>
+    <multiply name="multiply_9" type="float"><input name="in1" type="float" nodename="c_sep" output="outy" /><input name="in2" type="float" value="4.0" /></multiply>
+    <floor name="floor_10" type="float"><input name="in" type="float" nodename="multiply_9" /></floor>
+    <power name="power_11" type="float"><input name="in1" type="float" value="2.6" /><input name="in2" type="float" nodename="floor_8" /></power>
+    <multiply name="tan_slope" type="float"><input name="in1" type="float" nodename="power_11" /><input name="in2" type="float" value="0.003" /></multiply>
+    <power name="power_13" type="float"><input name="in1" type="float" value="2.8" /><input name="in2" type="float" nodename="floor_10" /></power>
+    <multiply name="wavelength" type="float"><input name="in1" type="float" nodename="power_13" /><input name="in2" type="float" value="0.005" /></multiply>
+    <divide name="divide_15" type="float"><input name="in1" type="float" nodename="tan_slope" /><input name="in2" type="float" value="6.2832" /></divide>
+    <multiply name="amplitude" type="float"><input name="in1" type="float" nodename="divide_15" /><input name="in2" type="float" nodename="wavelength" /></multiply>
+    <divide name="divide_17" type="float"><input name="in1" type="float" value="6.2832" /><input name="in2" type="float" nodename="wavelength" /></divide>
+    <multiply name="multiply_18" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" nodename="divide_17" /></multiply>
+    <sin name="sin_19" type="float"><input name="in" type="float" nodename="multiply_18" /></sin>
+    <multiply name="multiply_20" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" nodename="divide_17" /></multiply>
+    <sin name="sin_21" type="float"><input name="in" type="float" nodename="multiply_20" /></sin>
+    <multiply name="multiply_22" type="float"><input name="in1" type="float" nodename="sin_19" /><input name="in2" type="float" nodename="sin_21" /></multiply>
+    <multiply name="height" type="float"><input name="in1" type="float" nodename="multiply_22" /><input name="in2" type="float" nodename="amplitude" /></multiply>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="base_color" type="color3"><input name="value" type="color3" value="0.4, 0.4, 0.4" /></constant>
+    <constant name="roughness" type="float"><input name="value" type="float" value="0.8" /></constant>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0.0" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+  </nodegraph>
+  <standard_surface name="SR_relief_ladder" type="surfaceshader">
+    <input name="base" type="float" value="1.0" />
+    <input name="base_color" type="color3" nodegraph="NG_relief_ladder" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_relief_ladder" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_relief_ladder" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_relief_ladder" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_relief_ladder" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_relief_ladder" /></surfacematerial>
+</materialx>

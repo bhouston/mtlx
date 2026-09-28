@@ -1,0 +1,16 @@
+<!-- in: uv. out: t_col (per-chip palette colour), t_chip (0 in joints, 1 on chips), t_id. 30 cells/m, 6 colours -->
+<multiply name="uv_t" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="30" /></multiply>
+<worleynoise2d name="t_w" type="vector2"><input name="texcoord" type="vector2" nodename="uv_t" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<worleynoise2d name="t_id" type="float"><input name="texcoord" type="vector2" nodename="uv_t" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<dotproduct name="t_e" type="float"><input name="in1" type="vector2" nodename="t_w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<smoothstep name="t_chip" type="float"><input name="in" type="float" nodename="t_e" /><input name="low" type="float" value="0.08" /><input name="high" type="float" value="0.1" /></smoothstep>
+<multiply name="t_pal_k0" type="float"><input name="in1" type="float" nodename="t_id" /><input name="in2" type="float" value="13.7" /></multiply>
+<modulo name="t_pal_k" type="float"><input name="in1" type="float" nodename="t_pal_k0" /><input name="in2" type="float" value="1" /></modulo>
+<ifgreater name="t_pal_c1" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.1667" /><input name="in1" type="color3" value="0.55, 0.53, 0.5" /><input name="in2" type="color3" value="0.05, 0.05, 0.05" /></ifgreater>
+<ifgreater name="t_pal_c2" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="color3" value="0.35, 0.12, 0.08" /><input name="in2" type="color3" nodename="t_pal_c1" /></ifgreater>
+<ifgreater name="t_pal_c3" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.5" /><input name="in1" type="color3" value="0.12, 0.2, 0.14" /><input name="in2" type="color3" nodename="t_pal_c2" /></ifgreater>
+<ifgreater name="t_pal_c4" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="color3" value="0.45, 0.33, 0.18" /><input name="in2" type="color3" nodename="t_pal_c3" /></ifgreater>
+<ifgreater name="t_pal_c5" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.8333" /><input name="in1" type="color3" value="0.25, 0.27, 0.3" /><input name="in2" type="color3" nodename="t_pal_c4" /></ifgreater>
+<multiply name="t_br0" type="float"><input name="in1" type="float" nodename="t_id" /><input name="in2" type="float" value="0.5" /></multiply>
+<add name="t_br" type="float"><input name="in1" type="float" nodename="t_br0" /><input name="in2" type="float" value="0.75" /></add>
+<multiply name="t_col" type="color3"><input name="in1" type="color3" nodename="t_pal_c5" /><input name="in2" type="float" nodename="t_br" /></multiply>

@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Value distribution at default settings, 8 features/m. Each panel is posterized at -0.4 / 0 / 0.4 / 0.8 (black / dark grey / mid grey / light grey / white); white = value > 0.8.
+       UV 0..1 = 1 m. Layout (3x2, row 1 at the bottom = v small, column 1 at the left):
+         [r1 c1] noise2d float (std 0.32, |n| < 0.97)
+         [r1 c2] fractal2d float, octaves 3 (std 0.37, |n| < 1.36)
+         [r1 c3] fractal2d octaves 6, diminish 0.7 (std 0.44, |n| < 1.8)
+         [r2 c1] noise3d on combine3(u,v,0) (std 0.25; narrower)
+         [r2 c2] unifiednoise2d type 3 defaults: signed fractal clamped to 0..1, half the area is exactly 0
+         [r2 c3] unifiednoise2d type 0, remapped 2x-1: identical to noise2d (panel r1 c1)
+  -->
+  <nodegraph name="NG_ranges">
+    <texcoord name="uv" type="vector2" />
+    <separate2 name="uv_s" type="multioutput"><input name="in" type="vector2" nodename="uv" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+
+    <!-- ===== [r1 c1] noise2d float (std 0.32, |n| < 0.97) ===== -->
+    <multiply name="p11_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8" /></multiply>
+    <noise2d name="p11_n" type="float"><input name="texcoord" type="vector2" nodename="p11_uv" /></noise2d>
+    <ifgreater name="p11_t0" type="float"><input name="value1" type="float" nodename="p11_n" /><input name="value2" type="float" value="-0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="p11_t1" type="float"><input name="value1" type="float" nodename="p11_n" /><input name="value2" type="float" value="0" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p11_s1" type="float"><input name="in1" type="float" nodename="p11_t0" /><input name="in2" type="float" nodename="p11_t1" /></add>
+    <ifgreater name="p11_t2" type="float"><input name="value1" type="float" nodename="p11_n" /><input name="value2" type="float" value="0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p11_s2" type="float"><input name="in1" type="float" nodename="p11_s1" /><input name="in2" type="float" nodename="p11_t2" /></add>
+    <ifgreater name="p11_t3" type="float"><input name="value1" type="float" nodename="p11_n" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p11_s3" type="float"><input name="in1" type="float" nodename="p11_s2" /><input name="in2" type="float" nodename="p11_t3" /></add>
+
+    <!-- ===== [r1 c2] fractal2d float, octaves 3 (std 0.37, |n| < 1.36) ===== -->
+    <subtract name="p12_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.3333, 0.0000" /></subtract>
+    <multiply name="p12_uv" type="vector2"><input name="in1" type="vector2" nodename="p12_uv0" /><input name="in2" type="float" value="8" /></multiply>
+    <fractal2d name="p12_n" type="float"><input name="texcoord" type="vector2" nodename="p12_uv" /></fractal2d>
+    <ifgreater name="p12_t0" type="float"><input name="value1" type="float" nodename="p12_n" /><input name="value2" type="float" value="-0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="p12_t1" type="float"><input name="value1" type="float" nodename="p12_n" /><input name="value2" type="float" value="0" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p12_s1" type="float"><input name="in1" type="float" nodename="p12_t0" /><input name="in2" type="float" nodename="p12_t1" /></add>
+    <ifgreater name="p12_t2" type="float"><input name="value1" type="float" nodename="p12_n" /><input name="value2" type="float" value="0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p12_s2" type="float"><input name="in1" type="float" nodename="p12_s1" /><input name="in2" type="float" nodename="p12_t2" /></add>
+    <ifgreater name="p12_t3" type="float"><input name="value1" type="float" nodename="p12_n" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p12_s3" type="float"><input name="in1" type="float" nodename="p12_s2" /><input name="in2" type="float" nodename="p12_t3" /></add>
+
+    <!-- ===== [r1 c3] fractal2d octaves 6, diminish 0.7 (std 0.44, |n| < 1.8) ===== -->
+    <subtract name="p13_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.6667, 0.0000" /></subtract>
+    <multiply name="p13_uv" type="vector2"><input name="in1" type="vector2" nodename="p13_uv0" /><input name="in2" type="float" value="8" /></multiply>
+    <fractal2d name="p13_n" type="float"><input name="texcoord" type="vector2" nodename="p13_uv" /><input name="octaves" type="integer" value="6" /><input name="diminish" type="float" value="0.7" /></fractal2d>
+    <ifgreater name="p13_t0" type="float"><input name="value1" type="float" nodename="p13_n" /><input name="value2" type="float" value="-0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="p13_t1" type="float"><input name="value1" type="float" nodename="p13_n" /><input name="value2" type="float" value="0" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p13_s1" type="float"><input name="in1" type="float" nodename="p13_t0" /><input name="in2" type="float" nodename="p13_t1" /></add>
+    <ifgreater name="p13_t2" type="float"><input name="value1" type="float" nodename="p13_n" /><input name="value2" type="float" value="0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p13_s2" type="float"><input name="in1" type="float" nodename="p13_s1" /><input name="in2" type="float" nodename="p13_t2" /></add>
+    <ifgreater name="p13_t3" type="float"><input name="value1" type="float" nodename="p13_n" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p13_s3" type="float"><input name="in1" type="float" nodename="p13_s2" /><input name="in2" type="float" nodename="p13_t3" /></add>
+
+    <!-- ===== [r2 c1] noise3d on combine3(u,v,0) (std 0.25; narrower) ===== -->
+    <subtract name="p21_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.0000, 0.5000" /></subtract>
+    <multiply name="p21_uv" type="vector2"><input name="in1" type="vector2" nodename="p21_uv0" /><input name="in2" type="float" value="8" /></multiply>
+    <separate2 name="p21_s" type="multioutput"><input name="in" type="vector2" nodename="p21_uv" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <combine3 name="p21_p" type="vector3"><input name="in1" type="float" nodename="p21_s" output="outx" /><input name="in2" type="float" nodename="p21_s" output="outy" /><input name="in3" type="float" value="0" /></combine3>
+    <noise3d name="p21_n" type="float"><input name="position" type="vector3" nodename="p21_p" /></noise3d>
+    <ifgreater name="p21_t0" type="float"><input name="value1" type="float" nodename="p21_n" /><input name="value2" type="float" value="-0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="p21_t1" type="float"><input name="value1" type="float" nodename="p21_n" /><input name="value2" type="float" value="0" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p21_s1" type="float"><input name="in1" type="float" nodename="p21_t0" /><input name="in2" type="float" nodename="p21_t1" /></add>
+    <ifgreater name="p21_t2" type="float"><input name="value1" type="float" nodename="p21_n" /><input name="value2" type="float" value="0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p21_s2" type="float"><input name="in1" type="float" nodename="p21_s1" /><input name="in2" type="float" nodename="p21_t2" /></add>
+    <ifgreater name="p21_t3" type="float"><input name="value1" type="float" nodename="p21_n" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p21_s3" type="float"><input name="in1" type="float" nodename="p21_s2" /><input name="in2" type="float" nodename="p21_t3" /></add>
+
+    <!-- ===== [r2 c2] unifiednoise2d type 3 defaults: signed fractal clamped to 0..1, half the area is exactly 0 ===== -->
+    <subtract name="p22_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.3333, 0.5000" /></subtract>
+    <unifiednoise2d name="p22_n" type="float"><input name="texcoord" type="vector2" nodename="p22_uv0" /><input name="freq" type="vector2" value="8, 8" /><input name="type" type="integer" value="3" /></unifiednoise2d>
+    <ifgreater name="p22_t0" type="float"><input name="value1" type="float" nodename="p22_n" /><input name="value2" type="float" value="-0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="p22_t1" type="float"><input name="value1" type="float" nodename="p22_n" /><input name="value2" type="float" value="0" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p22_s1" type="float"><input name="in1" type="float" nodename="p22_t0" /><input name="in2" type="float" nodename="p22_t1" /></add>
+    <ifgreater name="p22_t2" type="float"><input name="value1" type="float" nodename="p22_n" /><input name="value2" type="float" value="0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p22_s2" type="float"><input name="in1" type="float" nodename="p22_s1" /><input name="in2" type="float" nodename="p22_t2" /></add>
+    <ifgreater name="p22_t3" type="float"><input name="value1" type="float" nodename="p22_n" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p22_s3" type="float"><input name="in1" type="float" nodename="p22_s2" /><input name="in2" type="float" nodename="p22_t3" /></add>
+
+    <!-- ===== [r2 c3] unifiednoise2d type 0, remapped 2x-1: identical to noise2d (panel r1 c1) ===== -->
+    <subtract name="p23_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.6667, 0.5000" /></subtract>
+    <unifiednoise2d name="p23_n" type="float"><input name="texcoord" type="vector2" nodename="p23_uv0" /><input name="freq" type="vector2" value="8, 8" /><input name="type" type="integer" value="0" /></unifiednoise2d>
+    <multiply name="p23_m" type="float"><input name="in1" type="float" nodename="p23_n" /><input name="in2" type="float" value="2" /></multiply>
+    <subtract name="p23_r" type="float"><input name="in1" type="float" nodename="p23_m" /><input name="in2" type="float" value="1" /></subtract>
+    <ifgreater name="p23_t0" type="float"><input name="value1" type="float" nodename="p23_r" /><input name="value2" type="float" value="-0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="p23_t1" type="float"><input name="value1" type="float" nodename="p23_r" /><input name="value2" type="float" value="0" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p23_s1" type="float"><input name="in1" type="float" nodename="p23_t0" /><input name="in2" type="float" nodename="p23_t1" /></add>
+    <ifgreater name="p23_t2" type="float"><input name="value1" type="float" nodename="p23_r" /><input name="value2" type="float" value="0.4" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p23_s2" type="float"><input name="in1" type="float" nodename="p23_s1" /><input name="in2" type="float" nodename="p23_t2" /></add>
+    <ifgreater name="p23_t3" type="float"><input name="value1" type="float" nodename="p23_r" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="0.25" /><input name="in2" type="float" value="0" /></ifgreater>
+    <add name="p23_s3" type="float"><input name="in1" type="float" nodename="p23_s2" /><input name="in2" type="float" nodename="p23_t3" /></add>
+
+    <!-- ===== panel selection ===== -->
+    <ifgreater name="sel_r0_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="float" nodename="p12_s3" /><input name="in2" type="float" nodename="p11_s3" /></ifgreater>
+    <ifgreater name="sel_r0_c2" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="float" nodename="p13_s3" /><input name="in2" type="float" nodename="sel_r0_c1" /></ifgreater>
+    <ifgreater name="sel_r1_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="float" nodename="p22_s3" /><input name="in2" type="float" nodename="p21_s3" /></ifgreater>
+    <ifgreater name="sel_r1_c2" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="float" nodename="p23_s3" /><input name="in2" type="float" nodename="sel_r1_c1" /></ifgreater>
+    <ifgreater name="sel_row1" type="float"><input name="value1" type="float" nodename="uv_s" output="outy" /><input name="value2" type="float" value="0.5000" /><input name="in1" type="float" nodename="sel_r1_c2" /><input name="in2" type="float" nodename="sel_r0_c2" /></ifgreater>
+    <!-- selected panel value -->
+    <multiply name="value" type="float"><input name="in1" type="float" nodename="sel_row1" /><input name="in2" type="float" value="1" /></multiply>
+    <convert name="value_c" type="color3"><input name="in" type="float" nodename="value" /></convert>
+    <output name="emission_out" type="color3" nodename="value_c" />
+  </nodegraph>
+  <standard_surface name="SR_ranges" type="surfaceshader"><input name="base" type="float" value="0" /><input name="specular" type="float" value="0" /><input name="emission" type="float" value="1" /><input name="emission_color" type="color3" nodegraph="NG_ranges" output="emission_out" /></standard_surface>
+  <surfacematerial name="M_ranges" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_ranges" /></surfacematerial>
+</materialx>

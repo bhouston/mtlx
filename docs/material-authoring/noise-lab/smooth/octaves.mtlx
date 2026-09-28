@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- fractal2d parameter sweep at 4 features/m; grey = 0.5 + 0.35 * value (clips at |value| > 1.43).
+       UV 0..1 = 1 m. Layout (3x2, row 1 at the bottom = v small, column 1 at the left):
+         [r1 c1] octaves 1 (= noise2d)
+         [r1 c2] octaves 3 (default)
+         [r1 c3] octaves 6
+         [r2 c1] octaves 6, lacunarity 3
+         [r2 c2] octaves 6, diminish 0.3
+         [r2 c3] octaves 6, diminish 0.8 (std 0.51, |n| up to 2.1, 0.2% clips)
+  -->
+  <nodegraph name="NG_octaves">
+    <texcoord name="uv" type="vector2" />
+    <separate2 name="uv_s" type="multioutput"><input name="in" type="vector2" nodename="uv" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+
+    <!-- ===== [r1 c1] octaves 1 (= noise2d) ===== -->
+    <multiply name="p11_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="4" /></multiply>
+    <fractal2d name="p11_n" type="float"><input name="texcoord" type="vector2" nodename="p11_uv" /><input name="octaves" type="integer" value="1" /></fractal2d>
+    <multiply name="p11_g0" type="float"><input name="in1" type="float" nodename="p11_n" /><input name="in2" type="float" value="0.35" /></multiply>
+    <add name="p11_g" type="float"><input name="in1" type="float" nodename="p11_g0" /><input name="in2" type="float" value="0.5" /></add>
+
+    <!-- ===== [r1 c2] octaves 3 (default) ===== -->
+    <subtract name="p12_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.3333, 0.0000" /></subtract>
+    <multiply name="p12_uv" type="vector2"><input name="in1" type="vector2" nodename="p12_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <fractal2d name="p12_n" type="float"><input name="texcoord" type="vector2" nodename="p12_uv" /></fractal2d>
+    <multiply name="p12_g0" type="float"><input name="in1" type="float" nodename="p12_n" /><input name="in2" type="float" value="0.35" /></multiply>
+    <add name="p12_g" type="float"><input name="in1" type="float" nodename="p12_g0" /><input name="in2" type="float" value="0.5" /></add>
+
+    <!-- ===== [r1 c3] octaves 6 ===== -->
+    <subtract name="p13_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.6667, 0.0000" /></subtract>
+    <multiply name="p13_uv" type="vector2"><input name="in1" type="vector2" nodename="p13_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <fractal2d name="p13_n" type="float"><input name="texcoord" type="vector2" nodename="p13_uv" /><input name="octaves" type="integer" value="6" /></fractal2d>
+    <multiply name="p13_g0" type="float"><input name="in1" type="float" nodename="p13_n" /><input name="in2" type="float" value="0.35" /></multiply>
+    <add name="p13_g" type="float"><input name="in1" type="float" nodename="p13_g0" /><input name="in2" type="float" value="0.5" /></add>
+
+    <!-- ===== [r2 c1] octaves 6, lacunarity 3 ===== -->
+    <subtract name="p21_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.0000, 0.5000" /></subtract>
+    <multiply name="p21_uv" type="vector2"><input name="in1" type="vector2" nodename="p21_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <fractal2d name="p21_n" type="float"><input name="texcoord" type="vector2" nodename="p21_uv" /><input name="octaves" type="integer" value="6" /><input name="lacunarity" type="float" value="3" /></fractal2d>
+    <multiply name="p21_g0" type="float"><input name="in1" type="float" nodename="p21_n" /><input name="in2" type="float" value="0.35" /></multiply>
+    <add name="p21_g" type="float"><input name="in1" type="float" nodename="p21_g0" /><input name="in2" type="float" value="0.5" /></add>
+
+    <!-- ===== [r2 c2] octaves 6, diminish 0.3 ===== -->
+    <subtract name="p22_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.3333, 0.5000" /></subtract>
+    <multiply name="p22_uv" type="vector2"><input name="in1" type="vector2" nodename="p22_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <fractal2d name="p22_n" type="float"><input name="texcoord" type="vector2" nodename="p22_uv" /><input name="octaves" type="integer" value="6" /><input name="diminish" type="float" value="0.3" /></fractal2d>
+    <multiply name="p22_g0" type="float"><input name="in1" type="float" nodename="p22_n" /><input name="in2" type="float" value="0.35" /></multiply>
+    <add name="p22_g" type="float"><input name="in1" type="float" nodename="p22_g0" /><input name="in2" type="float" value="0.5" /></add>
+
+    <!-- ===== [r2 c3] octaves 6, diminish 0.8 (std 0.51, |n| up to 2.1, 0.2% clips) ===== -->
+    <subtract name="p23_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.6667, 0.5000" /></subtract>
+    <multiply name="p23_uv" type="vector2"><input name="in1" type="vector2" nodename="p23_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <fractal2d name="p23_n" type="float"><input name="texcoord" type="vector2" nodename="p23_uv" /><input name="octaves" type="integer" value="6" /><input name="diminish" type="float" value="0.8" /></fractal2d>
+    <multiply name="p23_g0" type="float"><input name="in1" type="float" nodename="p23_n" /><input name="in2" type="float" value="0.35" /></multiply>
+    <add name="p23_g" type="float"><input name="in1" type="float" nodename="p23_g0" /><input name="in2" type="float" value="0.5" /></add>
+
+    <!-- ===== panel selection ===== -->
+    <ifgreater name="sel_r0_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="float" nodename="p12_g" /><input name="in2" type="float" nodename="p11_g" /></ifgreater>
+    <ifgreater name="sel_r0_c2" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="float" nodename="p13_g" /><input name="in2" type="float" nodename="sel_r0_c1" /></ifgreater>
+    <ifgreater name="sel_r1_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="float" nodename="p22_g" /><input name="in2" type="float" nodename="p21_g" /></ifgreater>
+    <ifgreater name="sel_r1_c2" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="float" nodename="p23_g" /><input name="in2" type="float" nodename="sel_r1_c1" /></ifgreater>
+    <ifgreater name="sel_row1" type="float"><input name="value1" type="float" nodename="uv_s" output="outy" /><input name="value2" type="float" value="0.5000" /><input name="in1" type="float" nodename="sel_r1_c2" /><input name="in2" type="float" nodename="sel_r0_c2" /></ifgreater>
+    <!-- selected panel value -->
+    <multiply name="value" type="float"><input name="in1" type="float" nodename="sel_row1" /><input name="in2" type="float" value="1" /></multiply>
+    <convert name="value_c" type="color3"><input name="in" type="float" nodename="value" /></convert>
+    <output name="emission_out" type="color3" nodename="value_c" />
+  </nodegraph>
+  <standard_surface name="SR_octaves" type="surfaceshader"><input name="base" type="float" value="0" /><input name="specular" type="float" value="0" /><input name="emission" type="float" value="1" /><input name="emission_color" type="color3" nodegraph="NG_octaves" output="emission_out" /></standard_surface>
+  <surfacematerial name="M_octaves" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_octaves" /></surfacematerial>
+</materialx>

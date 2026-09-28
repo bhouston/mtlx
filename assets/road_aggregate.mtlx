@@ -2,7 +2,7 @@
 <materialx version="1.39" colorspace="lin_rec709">
   <nodegraph name="road_color_graph">
     <texcoord name="texcoord1" type="vector2" />
-    <separate2 name="uv_components" type="vector2">
+    <separate2 name="uv_components" type="multioutput">
       <input name="in" type="vector2" nodename="texcoord1" />
     </separate2>
     <multiply name="tiled_u" type="float">
@@ -76,7 +76,7 @@
   </nodegraph>
   <nodegraph name="road_normal_graph">
     <texcoord name="texcoord1" type="vector2" />
-    <separate2 name="uv_components" type="vector2">
+    <separate2 name="uv_components" type="multioutput">
       <input name="in" type="vector2" nodename="texcoord1" />
     </separate2>
     <multiply name="tiled_u" type="float">

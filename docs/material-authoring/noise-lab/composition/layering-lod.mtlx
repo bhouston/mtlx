@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Height layering + slope budget + LOD fade. UV 1 = 1 m, heights in m. Quadrants meet at the tile center. -->
+  <nodegraph name="NG_layering_lod">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <ifgreater name="q_right" type="float"><input name="value1" type="float" nodename="uv_sep" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+    <ifgreater name="q_top" type="float"><input name="value1" type="float" nodename="uv_sep" output="outy" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+    <multiply name="multiply_5" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="3.0" /></multiply>
+    <!-- Macro: ~30 cm undulation, 6.7 mm amplitude, ~1.5 deg typical slope. -->
+    <noise2d name="h_macro" type="float"><input name="texcoord" type="vector2" nodename="multiply_5" /><input name="amplitude" type="float" value="0.0067" /></noise2d>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="40.0" /></multiply>
+    <!-- Meso: ~2.5 cm lumps, 1 mm amplitude, ~3-5 deg. -->
+    <fractal2d name="h_meso" type="float"><input name="texcoord" type="vector2" nodename="multiply_7" /><input name="amplitude" type="float" value="0.001" /><input name="octaves" type="integer" value="3" /></fractal2d>
+    <multiply name="multiply_9" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1500.0" /></multiply>
+    <!-- Micro: ~0.7 mm grain. Budgeted: 0.036 mm amplitude = ~4 deg. -->
+    <noise2d name="h_micro_ok" type="float"><input name="texcoord" type="vector2" nodename="multiply_9" /><input name="amplitude" type="float" value="3.6e-05" /></noise2d>
+    <multiply name="multiply_11" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1500.0" /></multiply>
+    <!-- Hot micro: 0.24 mm amplitude = ~25 deg. Reads at z20, turns to noise soup at z1. -->
+    <noise2d name="h_micro_hot" type="float"><input name="texcoord" type="vector2" nodename="multiply_11" /><input name="amplitude" type="float" value="0.00024" /></noise2d>
+    <multiply name="multiply_13" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="0.7071067811865476" /></multiply>
+    <heighttonormal name="heighttonormal_14" type="vector3"><input name="in" type="float" nodename="uv_sep" output="outx" /><input name="scale" type="float" value="113.13708498984761" /><input name="texcoord" type="vector2" nodename="multiply_13" /></heighttonormal>
+    <separate3 name="lod1_sep" type="multioutput"><input name="in" type="vector3" nodename="heighttonormal_14" /></separate3>
+    <ifgreater name="lod1" type="float"><input name="value1" type="float" nodename="lod1_sep" output="outz" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+    <multiply name="multiply_17" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1.0" /></multiply>
+    <heighttonormal name="heighttonormal_18" type="vector3"><input name="in" type="float" nodename="uv_sep" output="outx" /><input name="scale" type="float" value="160.0" /><input name="texcoord" type="vector2" nodename="multiply_17" /></heighttonormal>
+    <separate3 name="lod2_sep" type="multioutput"><input name="in" type="vector3" nodename="heighttonormal_18" /></separate3>
+    <ifgreater name="lod2" type="float"><input name="value1" type="float" nodename="lod2_sep" output="outz" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+    <multiply name="multiply_21" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1.4142135623730951" /></multiply>
+    <heighttonormal name="heighttonormal_22" type="vector3"><input name="in" type="float" nodename="uv_sep" output="outx" /><input name="scale" type="float" value="226.27416997969522" /><input name="texcoord" type="vector2" nodename="multiply_21" /></heighttonormal>
+    <separate3 name="lod3_sep" type="multioutput"><input name="in" type="vector3" nodename="heighttonormal_22" /></separate3>
+    <ifgreater name="lod3" type="float"><input name="value1" type="float" nodename="lod3_sep" output="outz" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+    <add name="add_25" type="float"><input name="in1" type="float" nodename="lod1" /><input name="in2" type="float" nodename="lod2" /></add>
+    <add name="add_26" type="float"><input name="in1" type="float" nodename="add_25" /><input name="in2" type="float" nodename="lod3" /></add>
+    <divide name="lod" type="float"><input name="in1" type="float" nodename="add_26" /><input name="in2" type="float" value="3.0" /></divide>
+    <multiply name="h_micro_lod" type="float"><input name="in1" type="float" nodename="h_micro_hot" /><input name="in2" type="float" nodename="lod" /></multiply>
+    <mix name="micro_bottom" type="float"><input name="bg" type="float" nodename="h_micro_ok" /><input name="fg" type="float" nodename="h_micro_hot" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="micro_top" type="float"><input name="bg" type="float" nodename="h_micro_lod" /><input name="fg" type="float" value="0.0" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="h_micro" type="float"><input name="bg" type="float" nodename="micro_bottom" /><input name="fg" type="float" nodename="micro_top" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <add name="add_32" type="float"><input name="in1" type="float" nodename="h_macro" /><input name="in2" type="float" nodename="h_meso" /></add>
+    <add name="height" type="float"><input name="in1" type="float" nodename="add_32" /><input name="in2" type="float" nodename="h_micro" /></add>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <multiply name="multiply_38" type="float"><input name="in1" type="float" nodename="h_meso" /><input name="in2" type="float" value="150.0" /></multiply>
+    <add name="add_39" type="float"><input name="in1" type="float" nodename="multiply_38" /><input name="in2" type="float" value="0.5" /></add>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.34, 0.33, 0.32" /><input name="fg" type="color3" value="0.44, 0.43, 0.41" /><input name="mix" type="float" nodename="add_39" /></mix>
+    <subtract name="subtract_41" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="lod" /></subtract>
+    <mix name="micro_lost" type="float"><input name="bg" type="float" nodename="subtract_41" /><input name="fg" type="float" value="1.0" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <multiply name="multiply_43" type="float"><input name="in1" type="float" nodename="micro_lost" /><input name="in2" type="float" nodename="q_top" /></multiply>
+    <multiply name="multiply_44" type="float"><input name="in1" type="float" nodename="multiply_43" /><input name="in2" type="float" value="0.2" /></multiply>
+    <add name="roughness" type="float"><input name="in1" type="float" value="0.72" /><input name="in2" type="float" nodename="multiply_44" /></add>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0.0" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+  </nodegraph>
+  <standard_surface name="SR_layering_lod" type="surfaceshader">
+    <input name="base" type="float" value="1.0" />
+    <input name="base_color" type="color3" nodegraph="NG_layering_lod" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_layering_lod" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_layering_lod" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_layering_lod" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_layering_lod" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_layering_lod" /></surfacematerial>
+</materialx>

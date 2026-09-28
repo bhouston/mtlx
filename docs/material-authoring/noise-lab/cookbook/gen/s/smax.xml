@@ -1,0 +1,10 @@
+<!-- in: sm_a, sm_b (floats), k = 0.3 (~1/3 of their range). out: smax = max(a,b) + h^2*k/4, h = max(k-|a-b|,0)/k -->
+<subtract name="sm_d" type="float"><input name="in1" type="float" nodename="sm_a" /><input name="in2" type="float" nodename="sm_b" /></subtract>
+<absval name="sm_ad" type="float"><input name="in" type="float" nodename="sm_d" /></absval>
+<subtract name="sm_kd" type="float"><input name="in1" type="float" value="0.3" /><input name="in2" type="float" nodename="sm_ad" /></subtract>
+<max name="sm_h0" type="float"><input name="in1" type="float" nodename="sm_kd" /><input name="in2" type="float" value="0" /></max>
+<divide name="sm_h" type="float"><input name="in1" type="float" nodename="sm_h0" /><input name="in2" type="float" value="0.3" /></divide>
+<multiply name="sm_h2" type="float"><input name="in1" type="float" nodename="sm_h" /><input name="in2" type="float" nodename="sm_h" /></multiply>
+<multiply name="sm_c" type="float"><input name="in1" type="float" nodename="sm_h2" /><input name="in2" type="float" value="0.075" /></multiply>
+<max name="sm_m" type="float"><input name="in1" type="float" nodename="sm_a" /><input name="in2" type="float" nodename="sm_b" /></max>
+<add name="smax" type="float"><input name="in1" type="float" nodename="sm_m" /><input name="in2" type="float" nodename="sm_c" /></add>

@@ -6,7 +6,8 @@
     "packages/vscode-extension/dist/**",
     "packages/vscode-extension/media/**",
     "packages/cli/media/**",
-    "submodules/**"
+    "submodules/**",
+    "docs/material-authoring/noise-lab/**"
   ],
   "categories": {
     "correctness": "error",

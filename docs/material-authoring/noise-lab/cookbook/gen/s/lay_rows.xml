@@ -1,0 +1,48 @@
+<!-- in: uv_sep. out: vw_loc (board-local m, centred), vw_w (row width, m), vw_row, vw_cell, vw_id, vw_d, vw_tile. Variable-width rows: the plank trick along V, one row joint per S = 0.2 m segment at 0.375..0.625 of it, so widths are S(1 +- JW) = 150..250 mm. Boards 1.2 m long along U, shifted by a random per row. 1 mm joints -->
+<divide name="vw_v" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="0.2" /></divide>
+<floor name="vw_rk" type="float"><input name="in" type="float" nodename="vw_v" /></floor>
+<subtract name="vw_fv" type="float"><input name="in1" type="float" nodename="vw_v" /><input name="in2" type="float" nodename="vw_rk" /></subtract>
+<combine2 name="vw_4" type="vector2"><input name="in1" type="float" nodename="vw_rk" /><input name="in2" type="float" value="3.0" /></combine2>
+<add name="vw_5" type="vector2"><input name="in1" type="vector2" nodename="vw_4" /><input name="in2" type="vector2" value="11.37, 5.61" /></add>
+<cellnoise2d name="vw_6" type="float"><input name="texcoord" type="vector2" nodename="vw_5" /></cellnoise2d>
+<multiply name="vw_7" type="float"><input name="in1" type="float" nodename="vw_6" /><input name="in2" type="float" value="0.25" /></multiply>
+<add name="vw_j" type="float"><input name="in1" type="float" nodename="vw_7" /><input name="in2" type="float" value="0.375" /></add>
+<ifgreater name="vw_up" type="float"><input name="value1" type="float" nodename="vw_fv" /><input name="value2" type="float" nodename="vw_j" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<multiply name="vw_10" type="float"><input name="in1" type="float" nodename="vw_up" /><input name="in2" type="float" value="2.0" /></multiply>
+<subtract name="vw_sg" type="float"><input name="in1" type="float" nodename="vw_10" /><input name="in2" type="float" value="1.0" /></subtract>
+<add name="vw_12" type="float"><input name="in1" type="float" nodename="vw_rk" /><input name="in2" type="float" nodename="vw_sg" /></add>
+<combine2 name="vw_13" type="vector2"><input name="in1" type="float" nodename="vw_12" /><input name="in2" type="float" value="3.0" /></combine2>
+<add name="vw_14" type="vector2"><input name="in1" type="vector2" nodename="vw_13" /><input name="in2" type="vector2" value="11.37, 5.61" /></add>
+<cellnoise2d name="vw_15" type="float"><input name="texcoord" type="vector2" nodename="vw_14" /></cellnoise2d>
+<multiply name="vw_16" type="float"><input name="in1" type="float" nodename="vw_15" /><input name="in2" type="float" value="0.25" /></multiply>
+<add name="vw_n0" type="float"><input name="in1" type="float" nodename="vw_16" /><input name="in2" type="float" value="0.375" /></add>
+<add name="vw_n" type="float"><input name="in1" type="float" nodename="vw_n0" /><input name="in2" type="float" nodename="vw_sg" /></add>
+<subtract name="vw_19" type="float"><input name="in1" type="float" nodename="vw_n" /><input name="in2" type="float" nodename="vw_j" /></subtract>
+<absval name="vw_20" type="float"><input name="in" type="float" nodename="vw_19" /></absval>
+<multiply name="vw_w" type="float"><input name="in1" type="float" nodename="vw_20" /><input name="in2" type="float" value="0.2" /></multiply>
+<add name="vw_row" type="float"><input name="in1" type="float" nodename="vw_rk" /><input name="in2" type="float" nodename="vw_up" /></add>
+<add name="vw_23" type="float"><input name="in1" type="float" nodename="vw_j" /><input name="in2" type="float" nodename="vw_n" /></add>
+<multiply name="vw_24" type="float"><input name="in1" type="float" nodename="vw_23" /><input name="in2" type="float" value="0.5" /></multiply>
+<subtract name="vw_25" type="float"><input name="in1" type="float" nodename="vw_fv" /><input name="in2" type="float" nodename="vw_24" /></subtract>
+<multiply name="vw_c" type="float"><input name="in1" type="float" nodename="vw_25" /><input name="in2" type="float" value="0.2" /></multiply>
+<divide name="vw_27" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="1.2" /></divide>
+<combine2 name="vw_28" type="vector2"><input name="in1" type="float" nodename="vw_row" /><input name="in2" type="float" value="7.0" /></combine2>
+<add name="vw_29" type="vector2"><input name="in1" type="vector2" nodename="vw_28" /><input name="in2" type="vector2" value="3.37, 1.61" /></add>
+<cellnoise2d name="vw_30" type="float"><input name="texcoord" type="vector2" nodename="vw_29" /></cellnoise2d>
+<add name="vw_bx" type="float"><input name="in1" type="float" nodename="vw_27" /><input name="in2" type="float" nodename="vw_30" /></add>
+<floor name="vw_bk" type="float"><input name="in" type="float" nodename="vw_bx" /></floor>
+<subtract name="vw_33" type="float"><input name="in1" type="float" nodename="vw_bx" /><input name="in2" type="float" nodename="vw_bk" /></subtract>
+<subtract name="vw_34" type="float"><input name="in1" type="float" nodename="vw_33" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="vw_35" type="float"><input name="in1" type="float" nodename="vw_34" /><input name="in2" type="float" value="1.2" /></multiply>
+<combine2 name="vw_loc" type="vector2"><input name="in1" type="float" nodename="vw_35" /><input name="in2" type="float" nodename="vw_c" /></combine2>
+<multiply name="vw_37" type="float"><input name="in1" type="float" nodename="vw_w" /><input name="in2" type="float" value="0.5" /></multiply>
+<combine2 name="vw_half" type="vector2"><input name="in1" type="float" value="0.6" /><input name="in2" type="float" nodename="vw_37" /></combine2>
+<absval name="vw_39" type="vector2"><input name="in" type="vector2" nodename="vw_loc" /></absval>
+<subtract name="vw_40" type="vector2"><input name="in1" type="vector2" nodename="vw_half" /><input name="in2" type="vector2" nodename="vw_39" /></subtract>
+<subtract name="vw_e" type="vector2"><input name="in1" type="vector2" nodename="vw_40" /><input name="in2" type="float" value="0.0005" /></subtract>
+<separate2 name="vw_es" type="multioutput"><input name="in" type="vector2" nodename="vw_e" /></separate2>
+<min name="vw_d" type="float"><input name="in1" type="float" nodename="vw_es" output="outx" /><input name="in2" type="float" nodename="vw_es" output="outy" /></min>
+<combine2 name="vw_cell" type="vector2"><input name="in1" type="float" nodename="vw_bk" /><input name="in2" type="float" nodename="vw_row" /></combine2>
+<add name="vw_45" type="vector2"><input name="in1" type="vector2" nodename="vw_cell" /><input name="in2" type="vector2" value="200.37, 300.61" /></add>
+<cellnoise2d name="vw_id" type="float"><input name="texcoord" type="vector2" nodename="vw_45" /></cellnoise2d>
+<smoothstep name="vw_tile" type="float"><input name="in" type="float" nodename="vw_d" /><input name="low" type="float" value="-0.00025" /><input name="high" type="float" value="0.00025" /></smoothstep>
