@@ -131,8 +131,10 @@ default so the model is the only thing in the image; `--background environment` 
   views are head-on and sized in meters, assuming 1 UV unit = 1 m: `plane` frames the whole 0..1 tile,
   `closeup` 20 cm, `detail` 5 cm, `plane:<meters>` any width. `grazing` looks along the plane at 72°,
   `sphere` shows the environment behind a sphere (judge gloss there), and `totem` and `cube` are also
-  available. With several views, an `-o` ending in `.png` gets a captioned contact sheet; any other
-  path is a directory of `<view>.png` files. `--center u,v` aims plane views at a UV point.
+  available. With several views, an `-o` image path gets a captioned contact sheet; any other
+  path is a directory of `<view>.png` files (`--format` picks another format). `--center u,v` aims plane views at a UV point.
+- **Output format** follows the `-o` extension: `.png`, `.jpg`, `.webp` or `.avif`. Quality is fixed and
+  high (webp 99, jpg 95, avif 90 with 4:4:4 chroma, the same as the mtlx-fidelity reference renders).
 - **`--ibl`** picks the lighting:
   - `studio`: soft, dim room.
   - `bridge`: outdoor. Shows relief, with a green-yellow cast.
@@ -346,8 +348,9 @@ Commands:
                                 agents)
   mtlx nodes <query>            Search MaterialX node definitions: exact names,
                                 inputs with defaults, and preview-renderer notes
-  mtlx render <input>           Render a .mtlx or .mtlx.zip file to a PNG image
-                                using a local headless browser
+  mtlx render <input>           Render a .mtlx or .mtlx.zip file to an image
+                                (png, jpg, webp or avif) using a local headless
+                                browser
   mtlx transform <inputs..>     Convert, combine, or resize/reformat textures
                                 across one or more .mtlx / .mtlx.zip files (glob
                                 patterns accepted), writing --output. A
@@ -496,7 +499,8 @@ Options:
 ```text
 mtlx render <input>
 
-Render a .mtlx or .mtlx.zip file to a PNG image using a local headless browser
+Render a .mtlx or .mtlx.zip file to an image (png, jpg, webp or avif) using a
+local headless browser
 
 Positionals:
   input  Path to .mtlx or .mtlx.zip file                     [string] [required]
@@ -504,9 +508,13 @@ Positionals:
 Options:
       --parallel     Number of parallel operations to run concurrently
                                                            [number] [default: 4]
-  -o, --output       PNG file to write. With several --view, a .png path gets a
-                     contact sheet; any other path (or an existing directory, or
-                     one ending in /) gets <view>.png files  [string] [required]
+  -o, --output       Image file to write; .png, .jpg, .webp or .avif picks the
+                     format. With several --view, an image path gets a contact
+                     sheet; any other path (or an existing directory, or one
+                     ending in /) gets <view>.<format> files [string] [required]
+      --format       Format of the <view> files when --output is a directory (an
+                     image --output uses its extension)
+                        [choices: "png", "jpg", "webp", "avif"] [default: "png"]
       --view         Named views rendered in one browser session: plane,
                      closeup, detail, grazing, sphere, totem, cube, or
                      plane:<meters> for a head-on plane of that width (1 UV = 1

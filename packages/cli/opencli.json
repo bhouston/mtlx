@@ -186,7 +186,7 @@
       ]
     },
     "mtlx render": {
-      "summary": "Render a .mtlx or .mtlx.zip file to a PNG image using a local headless browser",
+      "summary": "Render a .mtlx or .mtlx.zip file to an image (png, jpg, webp or avif) using a local headless browser",
       "args": [
         {
           "name": "input",
@@ -202,8 +202,28 @@
           "aliases": [
             "o"
           ],
-          "summary": "PNG file to write. With several --view, a .png path gets a contact sheet; any other path (or an existing directory, or one ending in /) gets <view>.png files",
+          "summary": "Image file to write; .png, .jpg, .webp or .avif picks the format. With several --view, an image path gets a contact sheet; any other path (or an existing directory, or one ending in /) gets <view>.<format> files",
           "required": true
+        },
+        {
+          "name": "format",
+          "type": "string",
+          "summary": "Format of the <view> files when --output is a directory (an image --output uses its extension)",
+          "choices": [
+            {
+              "value": "png"
+            },
+            {
+              "value": "jpg"
+            },
+            {
+              "value": "webp"
+            },
+            {
+              "value": "avif"
+            }
+          ],
+          "default": "png"
         },
         {
           "name": "view",

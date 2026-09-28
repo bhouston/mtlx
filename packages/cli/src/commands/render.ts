@@ -395,6 +395,27 @@ const escapeXml = (text: string) => text.replace(/[&<>]/g, (c) => ({ '&': '&amp;
 const viewLabel = (view: RenderView) =>
   `${view.name}${view.width ? ` (${view.width >= 1 ? `${view.width} m` : `${Math.round(view.width * 1000)} mm`} across)` : ''}`;
 
+export const IMAGE_FORMATS = ['png', 'jpg', 'webp', 'avif'] as const;
+export type ImageFormat = (typeof IMAGE_FORMATS)[number];
+
+/** The image format a file path asks for by its extension, if any. */
+export function imageFormatOf(file: string): ImageFormat | undefined {
+  const ext = path.extname(file).toLowerCase().slice(1);
+  return ext === 'jpeg' ? 'jpg' : IMAGE_FORMATS.find((format) => format === ext);
+}
+
+/**
+ * Encodes a rendered PNG at a fixed high quality: high enough for fidelity comparisons, still well
+ * compressed. AVIF matches the reference renders in mtlx-fidelity and ss-fidelity.
+ */
+export async function encodeImage(png: Buffer, format: ImageFormat): Promise<Buffer> {
+  if (format === 'png') return png;
+  const image = (await loadSharp())(png);
+  if (format === 'avif') return image.avif({ quality: 90, chromaSubsampling: '4:4:4' }).toBuffer();
+  if (format === 'webp') return image.webp({ quality: 99 }).toBuffer();
+  return image.jpeg({ quality: 95, chromaSubsampling: '4:4:4' }).toBuffer();
+}
+
 /** Lays views out left to right with captions, wrapping every `columns` views. */
 export async function contactSheet(shots: RenderedView[], size: number, columns = 3): Promise<Buffer> {
   const caption = 24;
@@ -545,16 +566,21 @@ const shown = (file: string) =>
 
 export const command = defineCommand({
   command: 'render <input>',
-  describe: 'Render a .mtlx or .mtlx.zip file to a PNG image using a local headless browser',
+  describe: 'Render a .mtlx or .mtlx.zip file to an image (png, jpg, webp or avif) using a local headless browser',
   builder: (yargs) =>
     yargs
       .positional('input', { describe: 'Path to .mtlx or .mtlx.zip file', type: 'string', demandOption: true })
       .option('output', {
         alias: 'o',
         describe:
-          'PNG file to write. With several --view, a .png path gets a contact sheet; any other path (or an existing directory, or one ending in /) gets <view>.png files',
+          'Image file to write; .png, .jpg, .webp or .avif picks the format. With several --view, an image path gets a contact sheet; any other path (or an existing directory, or one ending in /) gets <view>.<format> files',
         type: 'string',
         demandOption: true,
+      })
+      .option('format', {
+        describe: 'Format of the <view> files when --output is a directory (an image --output uses its extension)',
+        choices: IMAGE_FORMATS,
+        default: 'png' as ImageFormat,
       })
       .option('view', {
         describe: `Named views rendered in one browser session: ${Object.keys(VIEW_PRESETS).join(', ')}, or plane:<meters> for a head-on plane of that width (1 UV = 1 m)`,
@@ -678,16 +704,18 @@ export const command = defineCommand({
       const output = path.resolve(argv.output);
       const written: string[] = [];
       const isDir = (await fs.stat(output).catch(() => undefined))?.isDirectory() || argv.output.endsWith('/');
-      if (!output.toLowerCase().endsWith('.png') && (shots.length > 1 || isDir)) {
+      const format = imageFormatOf(output);
+      if (!format && (shots.length > 1 || isDir)) {
         await fs.mkdir(output, { recursive: true });
         for (const shot of shots) {
-          const file = path.join(output, `${shot.view.name}.png`);
-          await fs.writeFile(file, shot.png);
+          const file = path.join(output, `${shot.view.name}.${argv.format}`);
+          await fs.writeFile(file, await encodeImage(shot.png, argv.format));
           written.push(file);
         }
       } else {
         await fs.mkdir(path.dirname(output), { recursive: true });
-        await fs.writeFile(output, shots.length > 1 ? await contactSheet(shots, argv.size) : shots[0]!.png);
+        const png = shots.length > 1 ? await contactSheet(shots, argv.size) : shots[0]!.png;
+        await fs.writeFile(output, await encodeImage(png, format ?? argv.format));
         written.push(output);
       }
       const complexity = graphComplexity(await fs.readFile(argv.input, 'utf8').catch(() => ''));

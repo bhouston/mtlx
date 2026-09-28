@@ -4,8 +4,10 @@ import sharp from 'sharp';
 import {
   channelDocument,
   cropPixels,
+  encodeImage,
   graphComplexity,
   gridOverlay,
+  imageFormatOf,
   mirrorDiff,
   parseView,
   uvScaledDocument,
@@ -100,5 +102,27 @@ describe('image checks', () => {
     const crop = await cropPixels(await halves(), [30, 0, 4], 32);
     const { data } = await sharp(crop).raw().toBuffer({ resolveWithObject: true });
     expect([data[0], data[(32 - 1) * 3]]).toEqual([40, 200]); // nearest neighbour keeps the hard edge
+  });
+});
+
+describe('render image output', () => {
+  it('picks the format from the output extension', () => {
+    expect(imageFormatOf('a/b.PNG')).toBe('png');
+    expect(imageFormatOf('b.jpeg')).toBe('jpg');
+    expect(imageFormatOf('b.webp')).toBe('webp');
+    expect(imageFormatOf('b.avif')).toBe('avif');
+    expect(imageFormatOf('out/')).toBeUndefined();
+  });
+
+  it('encodes a render in each format', async () => {
+    const png = await sharp({ create: { width: 8, height: 8, channels: 4, background: '#808080' } })
+      .png()
+      .toBuffer();
+    const formats = { png: 'png', jpg: 'jpeg', webp: 'webp', avif: 'heif' } as const;
+    for (const [format, decoded] of Object.entries(formats)) {
+      const meta = await sharp(await encodeImage(png, format as keyof typeof formats)).metadata();
+      expect(meta.format).toBe(decoded);
+      expect(meta.width).toBe(8);
+    }
   });
 });
