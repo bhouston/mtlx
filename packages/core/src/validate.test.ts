@@ -39,6 +39,19 @@ it('checks scoped connections, outputs and duplicate names independently of basi
   );
   expect(issues.every((issue) => issue.rule === 'structure')).toBe(true);
 });
+it('warns about graph nodes whose result never reaches an output when the unused rule is on', () => {
+  const document = doc(
+    '<nodegraph name="g"><constant name="used" type="float"/><constant name="dead" type="float"/><output name="out" type="float" nodename="used"/></nodegraph>',
+  );
+  expect(validateDocument(document, { rules: ['unused'] })).toEqual([
+    expect.objectContaining({
+      code: 'UNUSED_NODE',
+      level: 'warning',
+      graph: expect.objectContaining({ nodeIds: ['dead'] }),
+    }),
+  ]);
+  expect(validateDocument(document, { rules: ['structure'] })).toEqual([]);
+});
 it('does not resolve graph-local names from another graph', () => {
   const issues = validateDocument(
     doc(
