@@ -66,9 +66,10 @@ export const textureTransformOptions = {
     coerce: parseTextureTargets,
   },
   'image-quality': {
-    describe: 'Quality for lossy image formats (webp/jpg/avif)',
+    describe:
+      'Quality for lossy image formats (webp/jpg/avif). Default: 95 for webp/jpg; avif uses ' +
+      "mtlx-fidelity's render settings (quality 90, 4:4:4 chroma)",
     type: 'number',
-    default: 95,
   },
   'texture-library': {
     alias: 'tl',
@@ -86,7 +87,7 @@ export interface TextureTransformArgv {
   profile?: keyof typeof PROFILES;
   maxImageSize?: number;
   imageFormat?: TextureTarget[];
-  imageQuality: number;
+  imageQuality?: number;
 }
 
 /** The transforms implied by the texture flags; empty when none were given. `--max-image-size`

@@ -24,6 +24,7 @@ describe('mimeTypeFor', () => {
   it('maps known extensions', () => {
     expect(mimeTypeFor('a.mtlx')).toBe('application/xml');
     expect(mimeTypeFor('a.jpg')).toBe('image/jpeg');
+    expect(mimeTypeFor('a.avif')).toBe('image/avif');
     expect(mimeTypeFor('a.glb')).toBe('model/gltf-binary');
   });
 

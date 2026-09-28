@@ -18,7 +18,7 @@ import {
   type ExrCompression,
   type HdrifyImage,
 } from 'hdrify';
-import sharp from 'sharp';
+import sharp, { type Sharp } from 'sharp';
 import { isImagePath, posixExtname, withExtension, type Transform } from './package.js';
 
 /**
@@ -70,16 +70,22 @@ export interface TransformImageOptions {
    * `webp,exr` sends SDR sources to webp and HDR sources to exr without cross-converting.
    */
   targets?: TextureTarget[];
-  /** Quality for lossy SDR formats (webp/jpg/avif). */
+  /** Quality for lossy SDR formats (webp/jpg/avif); defaults per format (see {@link TRANSFORM_IMAGE_DEFAULTS}). */
   imageQuality?: number;
 }
 
 /**
- * *Defaults for {@link TransformImageOptions}.*
+ * *Defaults for {@link TransformImageOptions}.* `imageQuality` applies to webp/jpg. AVIF uses the
+ * encoder settings mtlx-fidelity renders its reference images with: quality 90 and full-resolution
+ * (4:4:4) chroma, so color detail isn't halved. An explicit `imageQuality` overrides the AVIF quality
+ * but keeps 4:4:4.
  *
  * @category Textures
  */
-export const TRANSFORM_IMAGE_DEFAULTS = { imageQuality: 95 } as const satisfies TransformImageOptions;
+export const TRANSFORM_IMAGE_DEFAULTS = {
+  imageQuality: 95,
+  avif: { quality: 90, chromaSubsampling: '4:4:4' },
+} as const;
 
 /**
  * *The result of {@link transformImage}.* `changed` is false when the input was returned as-is.
@@ -95,6 +101,17 @@ export interface TransformImageResult {
 /** sharp's `jpg` output format is spelled `jpeg`; everything else matches. */
 const sharpFormatFor = (format: SdrImageFormat): 'jpeg' | 'png' | 'webp' | 'avif' =>
   format === 'jpg' ? 'jpeg' : format;
+
+/** Encodes to the given sharp output format with the per-format quality defaults. */
+const encodeSdr = (pipeline: Sharp, format: 'jpeg' | 'png' | 'webp' | 'avif', imageQuality?: number) => {
+  if (format === 'png') return pipeline.png();
+  if (format === 'avif')
+    return pipeline.avif({
+      ...TRANSFORM_IMAGE_DEFAULTS.avif,
+      quality: imageQuality ?? TRANSFORM_IMAGE_DEFAULTS.avif.quality,
+    });
+  return pipeline.toFormat(format, { quality: imageQuality ?? TRANSFORM_IMAGE_DEFAULTS.imageQuality });
+};
 
 /** The first target sharing `sourceExt`'s dynamic-range classification (SDR/HDR), if any was requested. */
 const pickTarget = (sourceExt: string, targets: TextureTarget[]): TextureTarget | undefined => {
@@ -115,7 +132,7 @@ const transformSdrSource = async (
   sourceExt: string,
   targets: TextureTarget[],
   maxImageSize: number | undefined,
-  imageQuality: number,
+  imageQuality: number | undefined,
 ): Promise<TransformImageResult> => {
   const sourceExtension = `.${sourceExt}`;
   const requested = pickTarget(sourceExt, targets) as { format: SdrImageFormat } | undefined;
@@ -138,14 +155,17 @@ const transformSdrSource = async (
     return { data, extension: sourceExtension, changed: false };
   }
 
-  const outputFormat = targetFormat ? sharpFormatFor(targetFormat) : (metadata.format ?? 'png');
-  pipeline =
-    outputFormat === 'png'
-      ? pipeline.png()
-      : pipeline.toFormat(outputFormat as 'jpeg' | 'webp' | 'avif', { quality: imageQuality });
+  // sharp reports AVIF sources as `heif`; re-encode them as AVIF so the `.avif` extension stays true.
+  const outputFormat = targetFormat
+    ? sharpFormatFor(targetFormat)
+    : metadata.format === 'heif'
+      ? 'avif'
+      : (metadata.format ?? 'png');
 
   return {
-    data: new Uint8Array(await pipeline.toBuffer()),
+    data: new Uint8Array(
+      await encodeSdr(pipeline, outputFormat as 'jpeg' | 'png' | 'webp' | 'avif', imageQuality).toBuffer(),
+    ),
     extension: targetFormat ? `.${targetFormat}` : sourceExtension,
     changed: true,
   };
@@ -158,15 +178,14 @@ const transformSdrSource = async (
 const clipHdrToSdr = async (
   image: { width: number; height: number; data: Float32Array },
   targetFormat: SdrImageFormat,
-  imageQuality: number,
+  imageQuality: number | undefined,
 ): Promise<TransformImageResult> => {
   const rgba = new Uint8Array(image.width * image.height * 4);
   for (let i = 0; i < rgba.length; i++) {
     rgba[i] = Math.min(255, Math.max(0, Math.round(image.data[i]! * 255)));
   }
   const pipeline = sharp(rgba, { raw: { width: image.width, height: image.height, channels: 4 } });
-  const outputFormat = sharpFormatFor(targetFormat);
-  const output = outputFormat === 'png' ? pipeline.png() : pipeline.toFormat(outputFormat, { quality: imageQuality });
+  const output = encodeSdr(pipeline, sharpFormatFor(targetFormat), imageQuality);
   return { data: new Uint8Array(await output.toBuffer()), extension: `.${targetFormat}`, changed: true };
 };
 
@@ -175,7 +194,7 @@ const transformHdrSource = async (
   sourceExt: 'exr' | 'hdr',
   targets: TextureTarget[],
   maxImageSize: number | undefined,
-  imageQuality: number,
+  imageQuality: number | undefined,
 ): Promise<TransformImageResult> => {
   const sourceExtension = `.${sourceExt}`;
   const requested = pickTarget(sourceExt, targets);
@@ -235,7 +254,7 @@ export const transformImage = async (
   sourceExtension: string,
   options: TransformImageOptions = {},
 ): Promise<TransformImageResult> => {
-  const { maxImageSize, targets = [], imageQuality } = { ...TRANSFORM_IMAGE_DEFAULTS, ...options };
+  const { maxImageSize, targets = [], imageQuality } = options;
   const sourceExt = sourceExtension.toLowerCase().replace(/^\./, '');
 
   return isHdrFormat(sourceExt)

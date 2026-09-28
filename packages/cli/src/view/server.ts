@@ -52,6 +52,8 @@ export function mimeTypeFor(filePath: string): string {
       return 'image/jpeg';
     case '.webp':
       return 'image/webp';
+    case '.avif':
+      return 'image/avif';
     case '.gif':
       return 'image/gif';
     case '.glb':

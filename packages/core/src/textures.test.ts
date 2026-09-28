@@ -76,6 +76,30 @@ describe('transformImage', () => {
     expect(low.data.byteLength).toBeLessThan(high.data.byteLength);
   });
 
+  it("encodes avif with mtlx-fidelity's render settings (quality 90, 4:4:4) unless quality is given", async () => {
+    const { readFile } = await import('node:fs/promises');
+    const jpg = await readFile(new URL('../../../assets/wood_grain/textures/wood_color.jpg', import.meta.url));
+    const expected = (options: sharp.AvifOptions) => sharp(jpg).avif(options).toBuffer();
+    const result = await transformImage(new Uint8Array(jpg), '.jpg', { targets: [{ format: 'avif' }] });
+    expect(result.extension).toBe('.avif');
+    expect(Buffer.from(result.data).equals(await expected({ quality: 90, chromaSubsampling: '4:4:4' }))).toBe(true);
+    const custom = await transformImage(new Uint8Array(jpg), '.jpg', {
+      targets: [{ format: 'avif' }],
+      imageQuality: 50,
+    });
+    expect(Buffer.from(custom.data).equals(await expected({ quality: 50, chromaSubsampling: '4:4:4' }))).toBe(true);
+  });
+
+  it('keeps a resized avif source as avif', async () => {
+    const avif = await sharp(await makePng(64, 64))
+      .avif()
+      .toBuffer();
+    const result = await transformImage(new Uint8Array(avif), '.avif', { maxImageSize: 16 });
+    expect(result.extension).toBe('.avif');
+    const metadata = await sharp(result.data).metadata();
+    expect([metadata.format, metadata.compression, metadata.width]).toEqual(['heif', 'av1', 16]);
+  });
+
   it('ignores an SDR target for an HDR source (dynamic-range classification keeps them apart)', async () => {
     const { writeHdr } = await import('hdrify');
     const hdr = writeHdr({
