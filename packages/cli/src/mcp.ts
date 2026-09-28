@@ -5,12 +5,21 @@
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { MATERIALX_VALIDATION_RULES, materialXNodeRegistry, parseMaterialX } from 'mtlx-core';
+import { MATERIALX_VALIDATION_RULES, parseMaterialX } from 'mtlx-core';
 import { createEditorSession } from 'mtlx-core/session';
 import { z } from 'zod';
 import { runCheck } from './commands/check.js';
+import { findNodeDefinitions } from './commands/nodes.js';
 import { loadInfo } from './commands/info.js';
-import { GEOMETRIES, renderMaterial } from './commands/render.js';
+import {
+  channelStats,
+  contactSheet,
+  GEOMETRIES,
+  gridOverlay,
+  IBLS,
+  mirrorDiff,
+  renderViews,
+} from './commands/render.js';
 
 const file = z.string().describe('Path to a .mtlx or .mtlx.zip file');
 const json = (value: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(value, null, 2) }] });
@@ -33,7 +42,10 @@ graph.listNodes(); graph.getInputs(id); editor.getDiagnostics(). Multioutput nod
 outputs named outx, outy, outz (separate2: outx, outy).
 Procedural node outputs in this renderer: noise3d and fractal3d are roughly 0..1 centred near 0.5; cellnoise3d is a
 random 0..1 value per cell; worleynoise3d is a distance field, near 0 at each cell's feature point and higher
-toward cell borders. Thin film is a set of standard_surface inputs (thin_film_thickness, thin_film_IOR), not a node.
+toward cell borders. noise2d and fractal2d are signed, roughly -1..1; worleynoise2d as vector2 is (F1, F2), and
+F2 - F1 is 0 on cell borders (cracks, joints). heighttonormal uses screen-space derivatives and returns a flat normal
+when UV derivatives are tiny, so give it millimetre-scale units: texcoord = uv * 1000 and height (metres) * 1000,
+with scale 16 for physically correct slopes when 1 UV unit = 1 m. Thin film is a set of standard_surface inputs (thin_film_thickness, thin_film_IOR), not a node.
 Edits are validated as they happen and throw with a code and message on an invalid change.`;
 
 export function createMcpServer(): McpServer {
@@ -62,7 +74,7 @@ export function createMcpServer(): McpServer {
     'list_node_definitions',
     {
       description:
-        'Search the built-in MaterialX node definitions. Returns matching definition names with their output type and inputs (name, type, default), so scripts use exact names such as ND_absval_float or ND_worleynoise3d_float.',
+        'Search the built-in MaterialX node definitions. Returns matching definition names with their output type, inputs (name, type, default), and notes on how the preview renderer behaves for surprising nodes (noise ranges, worley styles, heighttonormal), so scripts use exact names such as ND_absval_float or ND_worleynoise3d_float.',
       inputSchema: {
         query: z
           .string()
@@ -72,25 +84,7 @@ export function createMcpServer(): McpServer {
         limit: z.number().int().min(1).max(200).optional().describe('Maximum results (default 40)'),
       },
     },
-    (args) => {
-      const query = args.query.trim().toLowerCase();
-      const matches = materialXNodeRegistry.filter((spec) =>
-        [spec.nodeDefName, spec.category, spec.nodeGroup].some((field) => field?.toLowerCase().includes(query)),
-      );
-      return json({
-        total: matches.length,
-        definitions: matches.slice(0, args.limit ?? 40).map((spec) => ({
-          name: spec.nodeDefName,
-          category: spec.category,
-          output: spec.type,
-          inputs: [...spec.inputs, ...spec.parameters].map((port) => ({
-            name: port.name,
-            type: port.type,
-            ...(port.value !== undefined ? { default: port.value } : {}),
-          })),
-        })),
-      });
-    },
+    (args) => json(findNodeDefinitions(args.query, args.limit)),
   );
 
   server.registerTool(
@@ -113,22 +107,95 @@ export function createMcpServer(): McpServer {
     'render_material',
     {
       description:
-        'Render a MaterialX file to a PNG image with a headless browser and return it. The backdrop is transparent by default so only the model is visible; use background "environment" to judge reflective, glossy, metallic or transmissive materials, since reflections and refraction need something to show. Lighting is the same studio IBL in both modes and is fairly dim, so bright diffuse materials read mid-grey. Fails with the compile error when the material cannot be built.',
+        'Render a MaterialX file with a headless browser and return PNG images. Several named `views` render in one browser session after a single compile (much faster than separate calls) and come back as a captioned contact sheet. Plane views are head-on and sized in meters assuming 1 UV unit = 1 m: plane (the whole 0..1 tile), closeup (20 cm), detail (5 cm), plane:<meters>; also grazing (plane at 72 degrees with the environment behind it), sphere (environment backdrop, judge gloss and reflections here), totem, cube. `channel` shows any nodegraph node unlit (floats grey, vectors as rgb) with `range` mapped to black..white and returns its value statistics, for checking masks and heights numerically. The backdrop is otherwise transparent. Fails with the compile error when the material cannot be built.',
       inputSchema: {
         file,
-        geometry: z.enum(GEOMETRIES).optional().describe('Preview geometry (default totem)'),
+        views: z
+          .array(z.string())
+          .optional()
+          .describe(
+            'Named views, e.g. ["plane", "closeup", "sphere"]; when absent, one view from geometry/zoom/elevation',
+          ),
+        geometry: z.enum(GEOMETRIES).optional().describe('Preview geometry when views is absent (default totem)'),
         material: z.string().optional().describe('Material name (default: last material in the document)'),
         background: z.enum(['none', 'environment']).optional().describe('none (transparent, default) or environment'),
-        size: z.number().int().min(64).max(2048).optional().describe('Image width and height in pixels (default 800)'),
+        size: z
+          .number()
+          .int()
+          .min(64)
+          .max(2048)
+          .optional()
+          .describe('Image width and height in pixels per view (default 800)'),
+        ibl: z
+          .enum(IBLS)
+          .optional()
+          .describe(
+            'Lighting (default studio, soft and dim). bridge: outdoor, shows relief, green-yellow cast. sun: hard midday sun, strongest relief. overcast: soft medium daylight, near neutral. neutral: colorless grey studio for judging albedo. strips: dark room with sharp softbox strips, for judging gloss and roughness variation. dusk: warm medium-dark street. night: very dark.',
+          ),
+        exposure: z.number().min(-2).max(2).optional().describe('Exposure in stops (default 0)'),
+        zoom: z.number().min(1).max(100).optional().describe('Camera zoom when views is absent (default 1)'),
+        elevation: z
+          .number()
+          .min(0)
+          .max(89)
+          .optional()
+          .describe('Camera elevation in degrees when views is absent (default 35; 0 is head-on)'),
+        center: z
+          .tuple([z.number(), z.number()])
+          .optional()
+          .describe('UV point plane views aim at, e.g. [0.25, 0.7], to inspect a specific feature'),
+        supersample: z
+          .boolean()
+          .optional()
+          .describe('Render at 2x and downsample: smoother thin lines and fewer normal artifacts'),
+        channel: z.string().optional().describe('Name of a nodegraph node to show unlit, with value statistics'),
+        range: z
+          .tuple([z.number(), z.number()])
+          .optional()
+          .describe('Value range mapped to black..white for channel (default [0, 1])'),
+        uvScale: z
+          .number()
+          .positive()
+          .optional()
+          .describe('Multiply every texcoord by N so the 1 m plane shows N x N meters'),
+        grid: z
+          .number()
+          .positive()
+          .optional()
+          .describe('Overlay labelled UV grid lines every N meters on head-on plane views'),
+        mirror: z
+          .object({ axis: z.enum(['u', 'v']), at: z.number() })
+          .optional()
+          .describe('Report symmetry about a UV line on head-on plane views (book-match checks)'),
       },
     },
     async (args) => {
       try {
-        const png = await renderMaterial({ input: args.file, ...args });
+        const shots = await renderViews({ input: args.file, ...args });
+        const lines: string[] = [];
+        for (const shot of shots) {
+          if (args.mirror) {
+            const d = await mirrorDiff(shot.png, shot.view, args.mirror.axis, args.mirror.at, args.uvScale);
+            lines.push(
+              `${shot.view.name} mirror ${d.axis}=${d.at}: mean ${d.mean.toFixed(4)}, max ${d.max.toFixed(4)} (0..1)`,
+            );
+          }
+          if (args.grid) shot.png = await gridOverlay(shot.png, shot.view, args.grid, args.uvScale);
+        }
+        const size = args.size ?? 800;
+        const png = shots.length > 1 ? await contactSheet(shots, size) : shots[0]!.png;
+        lines.unshift(`Rendered ${args.file}: ${shots.map((shot) => shot.view.name).join(', ')}`);
+        if (args.channel) {
+          for (const shot of shots) {
+            const [r, g, b] = await channelStats(shot.png, args.range);
+            const grey = r!.mean === g!.mean && r!.mean === b!.mean && r!.max === b!.max;
+            lines.push(`${shot.view.name} ${args.channel}: ${JSON.stringify(grey ? r : { r, g, b })}`);
+          }
+        }
         return {
           content: [
             { type: 'image' as const, data: png.toString('base64'), mimeType: 'image/png' },
-            { type: 'text' as const, text: `Rendered ${args.file} (${args.geometry ?? 'totem'})` },
+            { type: 'text' as const, text: lines.join('\n') },
           ],
         };
       } catch (error) {

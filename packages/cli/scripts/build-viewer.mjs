@@ -4,7 +4,7 @@
  * extension's build-preview.js (three.js WebGPURenderer, MaterialXLoader, GLTFLoader,
  * OrbitControls, all in one iife).
  */
-import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
+import { copyFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as esbuild from 'esbuild';
@@ -44,5 +44,14 @@ copyFileSync(
   join(root, '..', 'website', 'public', 'viewer-assets', 'shaderball.glb'),
   join(mediaDir, 'shaderball.glb'),
 );
+// Lighting for `mtlx render --ibl <name>` (the studio room is inlined in viewer.js). The HDRs are
+// Poly Haven CC0 1k maps from the three.js examples: sun (quarry_01), overcast (blouberg_sunrise_2),
+// neutral (monochrome_studio_02), dusk (venice_sunset), night (moonless_golf); bridge is the
+// website's default environment (san_giuseppe_bridge).
+const environmentsDir = join(root, '..', 'viewer', 'assets', 'environments');
+for (const file of readdirSync(environmentsDir)) {
+  copyFileSync(join(environmentsDir, file), join(mediaDir, file.replace(/\.hdr$/, '-environment.hdr')));
+}
+copyFileSync(join(root, '..', 'viewer', 'assets', 'default-environment.hdr'), join(mediaDir, 'bridge-environment.hdr'));
 
 console.log('Built viewer.js');

@@ -128,6 +128,8 @@ interface RequestContext {
   fileName: string;
   viewerJsPath: string;
   mediaDir: string;
+  /** Served in place of the target file (`mtlx render --channel` rewrites the document in memory). */
+  documentOverride?: string;
 }
 
 async function handleRequest(req: IncomingMessage, res: ServerResponse, ctx: RequestContext): Promise<void> {
@@ -156,6 +158,11 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse, ctx: Req
     res.end('Forbidden');
     return;
   }
+  if (ctx.documentOverride !== undefined && target === path.join(ctx.rootDir, ctx.fileName)) {
+    res.writeHead(200, { 'Content-Type': mimeTypeFor(target) });
+    res.end(ctx.documentOverride);
+    return;
+  }
   await sendFile(res, target);
 }
 
@@ -170,6 +177,7 @@ export async function startViewServer(
   inputPath: string,
   mediaDir: string = defaultMediaDir(),
   viewerJsPath: string = defaultViewerJsPath(),
+  documentOverride?: string,
 ): Promise<ViewServer> {
   const resolvedInput = path.resolve(inputPath);
   const stat = await fs.stat(resolvedInput).catch(() => null);
@@ -182,6 +190,7 @@ export async function startViewServer(
     fileName: path.basename(resolvedInput),
     viewerJsPath,
     mediaDir,
+    documentOverride,
   };
 
   const server = http.createServer((req, res) => {
