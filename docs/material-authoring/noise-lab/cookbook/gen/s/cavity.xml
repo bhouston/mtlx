@@ -1,0 +1,15 @@
+<!-- in: uv. out: h_rock (m, ~9 deg typical), cavity, wear (0..1 masks from the same field). Tint: mix colour/roughness by cavity, then by wear -->
+<multiply name="cw_p0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8" /></multiply>
+<add name="cw_p" type="vector2"><input name="in1" type="vector2" nodename="cw_p0" /><input name="in2" type="vector2" value="29.6, 15.2" /></add>
+<fractal2d name="cw_f5" type="float"><input name="texcoord" type="vector2" nodename="cw_p" /><input name="octaves" type="integer" value="5" /></fractal2d>
+<fractal2d name="cw_f2" type="float"><input name="texcoord" type="vector2" nodename="cw_p" /><input name="octaves" type="integer" value="2" /></fractal2d>
+<subtract name="cw_cvx" type="float"><input name="in1" type="float" nodename="cw_f5" /><input name="in2" type="float" nodename="cw_f2" /></subtract>
+<multiply name="h_rock" type="float"><input name="in1" type="float" nodename="cw_f5" /><input name="in2" type="float" value="0.008" /></multiply>
+<multiply name="cw_ncvx" type="float"><input name="in1" type="float" nodename="cw_cvx" /><input name="in2" type="float" value="-1" /></multiply>
+<multiply name="cw_nh" type="float"><input name="in1" type="float" nodename="cw_f5" /><input name="in2" type="float" value="-1" /></multiply>
+<smoothstep name="cw_c1" type="float"><input name="in" type="float" nodename="cw_ncvx" /><input name="low" type="float" value="0.06" /><input name="high" type="float" value="0.16" /></smoothstep>
+<smoothstep name="cw_c2" type="float"><input name="in" type="float" nodename="cw_nh" /><input name="low" type="float" value="0.25" /><input name="high" type="float" value="0.45" /></smoothstep>
+<max name="cavity" type="float"><input name="in1" type="float" nodename="cw_c1" /><input name="in2" type="float" nodename="cw_c2" /></max>
+<smoothstep name="cw_w1" type="float"><input name="in" type="float" nodename="cw_cvx" /><input name="low" type="float" value="0.06" /><input name="high" type="float" value="0.16" /></smoothstep>
+<smoothstep name="cw_w2" type="float"><input name="in" type="float" nodename="cw_f5" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.15" /></smoothstep>
+<multiply name="wear" type="float"><input name="in1" type="float" nodename="cw_w1" /><input name="in2" type="float" nodename="cw_w2" /></multiply>

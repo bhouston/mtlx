@@ -729,7 +729,7 @@ export const command = defineCommand({
       console.log(
         `Wrote ${written.map(shown).join(', ')} in ${((performance.now() - started) / 1000).toFixed(1)}s (first view ${compile.toFixed(1)}s)` +
           (compile > 20
-            ? '. Slow compile: see library/AUTHORING.md §6 (re-read nodes, noise2d on deep texcoords).'
+            ? '. Slow compile: see docs/material-authoring/AUTHORING.md §6 (re-read nodes, noise2d on deep texcoords).'
             : ''),
       );
       for (const line of reports) console.log(line);

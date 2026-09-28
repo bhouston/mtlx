@@ -1,0 +1,18 @@
+<!-- in: uv_sep. out: rg_loc (tile-local m, centred; x along, y across), rg_cell (integer tile index), rg_id (0..1 per tile), rg_d (m to the tile edge, + on tile, - in grout), rg_tile (1 tile, 0 grout). 150x75 mm tiles + 3 mm grout = 153x78 mm pitch; row offset o = 0.5 (0 = stack or square grid, 0.333 = third bond) -->
+<divide name="rg_v" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="0.078" /></divide>
+<floor name="rg_row" type="float"><input name="in" type="float" nodename="rg_v" /></floor>
+<multiply name="rg_off" type="float"><input name="in1" type="float" nodename="rg_row" /><input name="in2" type="float" value="0.5" /></multiply>
+<divide name="rg_u0" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.153" /></divide>
+<add name="rg_u" type="float"><input name="in1" type="float" nodename="rg_u0" /><input name="in2" type="float" nodename="rg_off" /></add>
+<combine2 name="rg_p" type="vector2"><input name="in1" type="float" nodename="rg_u" /><input name="in2" type="float" nodename="rg_v" /></combine2>
+<floor name="rg_cell" type="vector2"><input name="in" type="vector2" nodename="rg_p" /></floor>
+<subtract name="rg_fr" type="vector2"><input name="in1" type="vector2" nodename="rg_p" /><input name="in2" type="vector2" nodename="rg_cell" /></subtract>
+<subtract name="rg_fc" type="vector2"><input name="in1" type="vector2" nodename="rg_fr" /><input name="in2" type="vector2" value="0.5, 0.5" /></subtract>
+<multiply name="rg_loc" type="vector2"><input name="in1" type="vector2" nodename="rg_fc" /><input name="in2" type="vector2" value="0.153, 0.078" /></multiply>
+<add name="rg_seed" type="vector2"><input name="in1" type="vector2" nodename="rg_cell" /><input name="in2" type="vector2" value="200.37, 300.61" /></add>
+<cellnoise2d name="rg_id" type="float"><input name="texcoord" type="vector2" nodename="rg_seed" /></cellnoise2d>
+<absval name="rg_al" type="vector2"><input name="in" type="vector2" nodename="rg_loc" /></absval>
+<subtract name="rg_e" type="vector2"><input name="in1" type="vector2" value="0.075, 0.0375" /><input name="in2" type="vector2" nodename="rg_al" /></subtract>
+<separate2 name="rg_es" type="multioutput"><input name="in" type="vector2" nodename="rg_e" /></separate2>
+<min name="rg_d" type="float"><input name="in1" type="float" nodename="rg_es" output="outx" /><input name="in2" type="float" nodename="rg_es" output="outy" /></min>
+<smoothstep name="rg_tile" type="float"><input name="in" type="float" nodename="rg_d" /><input name="low" type="float" value="-0.00025" /><input name="high" type="float" value="0.00025" /></smoothstep>

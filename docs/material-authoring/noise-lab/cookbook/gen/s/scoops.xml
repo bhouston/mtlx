@@ -1,0 +1,26 @@
+<!-- in: uv. out: h_scoop (m), sc_pool (0..1 in the hollows), sc_crest (0..1 on the ridges). Paraboloid dishes D*(smin(F1^2, F2^2)/R^2 - 1): cells 22 mm along U x 45 mm across (draw-knife scoops across the grain), jitter 0.9, R^2 = 0.36, smooth-min k 0.06 rounds the crest. Depth D 0.33..0.77 mm from a smooth field, never per cell (steps) -->
+<rotate2d name="sc_1" type="vector2"><input name="in" type="vector2" nodename="uv" /><input name="amount" type="float" value="4.0" /></rotate2d>
+<multiply name="sc_2" type="vector2"><input name="in1" type="vector2" nodename="sc_1" /><input name="in2" type="vector2" value="45.0, 22.0" /></multiply>
+<add name="sc_p" type="vector2"><input name="in1" type="vector2" nodename="sc_2" /><input name="in2" type="vector2" value="3.1, 7.9" /></add>
+<worleynoise2d name="sc_w" type="vector2"><input name="texcoord" type="vector2" nodename="sc_p" /><input name="jitter" type="float" value="0.9" /></worleynoise2d>
+<separate2 name="sc_ws" type="multioutput"><input name="in" type="vector2" nodename="sc_w" /></separate2>
+<multiply name="sc_a2" type="float"><input name="in1" type="float" nodename="sc_ws" output="outx" /><input name="in2" type="float" nodename="sc_ws" output="outx" /></multiply>
+<multiply name="sc_b2" type="float"><input name="in1" type="float" nodename="sc_ws" output="outy" /><input name="in2" type="float" nodename="sc_ws" output="outy" /></multiply>
+<subtract name="sc_8" type="float"><input name="in1" type="float" nodename="sc_b2" /><input name="in2" type="float" nodename="sc_a2" /></subtract>
+<subtract name="sc_9" type="float"><input name="in1" type="float" value="0.06" /><input name="in2" type="float" nodename="sc_8" /></subtract>
+<max name="sc_10" type="float"><input name="in1" type="float" nodename="sc_9" /><input name="in2" type="float" value="0.0" /></max>
+<divide name="sc_h" type="float"><input name="in1" type="float" nodename="sc_10" /><input name="in2" type="float" value="0.06" /></divide>
+<multiply name="sc_12" type="float"><input name="in1" type="float" nodename="sc_h" /><input name="in2" type="float" nodename="sc_h" /></multiply>
+<multiply name="sc_13" type="float"><input name="in1" type="float" nodename="sc_12" /><input name="in2" type="float" value="0.015" /></multiply>
+<subtract name="sc_fs" type="float"><input name="in1" type="float" nodename="sc_a2" /><input name="in2" type="float" nodename="sc_13" /></subtract>
+<divide name="sc_15" type="float"><input name="in1" type="float" nodename="sc_fs" /><input name="in2" type="float" value="0.36" /></divide>
+<subtract name="sc_dish" type="float"><input name="in1" type="float" nodename="sc_15" /><input name="in2" type="float" value="1.0" /></subtract>
+<multiply name="sc_17" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="14.0, 9.0" /></multiply>
+<add name="sc_18" type="vector2"><input name="in1" type="vector2" nodename="sc_17" /><input name="in2" type="vector2" value="17.3, 5.1" /></add>
+<noise2d name="sc_D" type="float"><input name="texcoord" type="vector2" nodename="sc_18" /><input name="amplitude" type="float" value="0.0004" /><input name="pivot" type="float" value="0.00055" /></noise2d>
+<multiply name="h_scoop" type="float"><input name="in1" type="float" nodename="sc_dish" /><input name="in2" type="float" nodename="sc_D" /></multiply>
+<multiply name="sc_21" type="float"><input name="in1" type="float" nodename="sc_dish" /><input name="in2" type="float" value="-1.0" /></multiply>
+<smoothstep name="sc_pool" type="float"><input name="in" type="float" nodename="sc_21" /><input name="low" type="float" value="0.2" /><input name="high" type="float" value="0.9" /></smoothstep>
+<subtract name="sc_23" type="float"><input name="in1" type="float" nodename="sc_b2" /><input name="in2" type="float" nodename="sc_a2" /></subtract>
+<smoothstep name="sc_24" type="float"><input name="in" type="float" nodename="sc_23" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.25" /></smoothstep>
+<subtract name="sc_crest" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="sc_24" /></subtract>

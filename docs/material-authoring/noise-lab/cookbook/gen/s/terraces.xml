@@ -1,0 +1,6 @@
+<!-- in: fbm (signed). out: terraced = k steps per unit of fbm (k = 3), riser over the top half of each step (a narrower riser renders as hairlines on the 1 m view) -->
+<multiply name="tr_k" type="float"><input name="in1" type="float" nodename="fbm" /><input name="in2" type="float" value="3" /></multiply>
+<floor name="tr_fl" type="float"><input name="in" type="float" nodename="tr_k" /></floor>
+<subtract name="tr_fr" type="float"><input name="in1" type="float" nodename="tr_k" /><input name="in2" type="float" nodename="tr_fl" /></subtract>
+<smoothstep name="tr_ss" type="float"><input name="in" type="float" nodename="tr_fr" /><input name="low" type="float" value="0.5" /><input name="high" type="float" value="1" /></smoothstep>
+<add name="terraced" type="float"><input name="in1" type="float" nodename="tr_fl" /><input name="in2" type="float" nodename="tr_ss" /></add>

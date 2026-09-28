@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Feature size vs frequency: noise2d > 0.25 (white) over the noise lattice (grey lines). Blobs are ~0.7 lattice cells across and ~2 cells apart.
+       UV 0..1 = 1 m. Layout (2x2, row 1 at the bottom = v small, column 1 at the left):
+         [r1 c1] noise2d(uv*4) > 0.25, grid every 1/4 m
+         [r1 c2] noise2d(uv*8) > 0.25, grid every 1/8 m
+         [r2 c1] noise2d(uv*16) > 0.25, grid every 1/16 m
+         [r2 c2] noise2d(uv*32) > 0.25, grid every 1/32 m
+  -->
+  <nodegraph name="NG_frequency">
+    <texcoord name="uv" type="vector2" />
+    <separate2 name="uv_s" type="multioutput"><input name="in" type="vector2" nodename="uv" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+
+    <!-- ===== [r1 c1] noise2d(uv*4) > 0.25, grid every 1/4 m ===== -->
+    <multiply name="p11_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="4" /></multiply>
+    <noise2d name="p11_n" type="float"><input name="texcoord" type="vector2" nodename="p11_uv" /></noise2d>
+    <ifgreater name="p11_blob" type="float"><input name="value1" type="float" nodename="p11_n" /><input name="value2" type="float" value="0.25" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.02" /></ifgreater>
+    <!-- lattice lines: fract(uv*f) < 0.03 in u or v -->
+    <modulo name="p11_fr" type="vector2"><input name="in1" type="vector2" nodename="p11_uv" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p11_frs" type="multioutput"><input name="in" type="vector2" nodename="p11_fr" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p11_frm" type="float"><input name="in1" type="float" nodename="p11_frs" output="outx" /><input name="in2" type="float" nodename="p11_frs" output="outy" /></min>
+    <ifgreater name="p11_out" type="float"><input name="value1" type="float" value="0.03" /><input name="value2" type="float" nodename="p11_frm" /><input name="in1" type="float" value="0.35" /><input name="in2" type="float" nodename="p11_blob" /></ifgreater>
+
+    <!-- ===== [r1 c2] noise2d(uv*8) > 0.25, grid every 1/8 m ===== -->
+    <subtract name="p12_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.5000, 0.0000" /></subtract>
+    <multiply name="p12_uv" type="vector2"><input name="in1" type="vector2" nodename="p12_uv0" /><input name="in2" type="float" value="8" /></multiply>
+    <noise2d name="p12_n" type="float"><input name="texcoord" type="vector2" nodename="p12_uv" /></noise2d>
+    <ifgreater name="p12_blob" type="float"><input name="value1" type="float" nodename="p12_n" /><input name="value2" type="float" value="0.25" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.02" /></ifgreater>
+    <!-- lattice lines: fract(uv*f) < 0.03 in u or v -->
+    <modulo name="p12_fr" type="vector2"><input name="in1" type="vector2" nodename="p12_uv" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p12_frs" type="multioutput"><input name="in" type="vector2" nodename="p12_fr" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p12_frm" type="float"><input name="in1" type="float" nodename="p12_frs" output="outx" /><input name="in2" type="float" nodename="p12_frs" output="outy" /></min>
+    <ifgreater name="p12_out" type="float"><input name="value1" type="float" value="0.03" /><input name="value2" type="float" nodename="p12_frm" /><input name="in1" type="float" value="0.35" /><input name="in2" type="float" nodename="p12_blob" /></ifgreater>
+
+    <!-- ===== [r2 c1] noise2d(uv*16) > 0.25, grid every 1/16 m ===== -->
+    <subtract name="p21_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.0000, 0.5000" /></subtract>
+    <multiply name="p21_uv" type="vector2"><input name="in1" type="vector2" nodename="p21_uv0" /><input name="in2" type="float" value="16" /></multiply>
+    <noise2d name="p21_n" type="float"><input name="texcoord" type="vector2" nodename="p21_uv" /></noise2d>
+    <ifgreater name="p21_blob" type="float"><input name="value1" type="float" nodename="p21_n" /><input name="value2" type="float" value="0.25" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.02" /></ifgreater>
+    <!-- lattice lines: fract(uv*f) < 0.03 in u or v -->
+    <modulo name="p21_fr" type="vector2"><input name="in1" type="vector2" nodename="p21_uv" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p21_frs" type="multioutput"><input name="in" type="vector2" nodename="p21_fr" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p21_frm" type="float"><input name="in1" type="float" nodename="p21_frs" output="outx" /><input name="in2" type="float" nodename="p21_frs" output="outy" /></min>
+    <ifgreater name="p21_out" type="float"><input name="value1" type="float" value="0.03" /><input name="value2" type="float" nodename="p21_frm" /><input name="in1" type="float" value="0.35" /><input name="in2" type="float" nodename="p21_blob" /></ifgreater>
+
+    <!-- ===== [r2 c2] noise2d(uv*32) > 0.25, grid every 1/32 m ===== -->
+    <subtract name="p22_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.5000, 0.5000" /></subtract>
+    <multiply name="p22_uv" type="vector2"><input name="in1" type="vector2" nodename="p22_uv0" /><input name="in2" type="float" value="32" /></multiply>
+    <noise2d name="p22_n" type="float"><input name="texcoord" type="vector2" nodename="p22_uv" /></noise2d>
+    <ifgreater name="p22_blob" type="float"><input name="value1" type="float" nodename="p22_n" /><input name="value2" type="float" value="0.25" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.02" /></ifgreater>
+    <!-- lattice lines: fract(uv*f) < 0.03 in u or v -->
+    <modulo name="p22_fr" type="vector2"><input name="in1" type="vector2" nodename="p22_uv" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p22_frs" type="multioutput"><input name="in" type="vector2" nodename="p22_fr" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p22_frm" type="float"><input name="in1" type="float" nodename="p22_frs" output="outx" /><input name="in2" type="float" nodename="p22_frs" output="outy" /></min>
+    <ifgreater name="p22_out" type="float"><input name="value1" type="float" value="0.03" /><input name="value2" type="float" nodename="p22_frm" /><input name="in1" type="float" value="0.35" /><input name="in2" type="float" nodename="p22_blob" /></ifgreater>
+
+    <!-- ===== panel selection ===== -->
+    <ifgreater name="sel_r0_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.5000" /><input name="in1" type="float" nodename="p12_out" /><input name="in2" type="float" nodename="p11_out" /></ifgreater>
+    <ifgreater name="sel_r1_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.5000" /><input name="in1" type="float" nodename="p22_out" /><input name="in2" type="float" nodename="p21_out" /></ifgreater>
+    <ifgreater name="sel_row1" type="float"><input name="value1" type="float" nodename="uv_s" output="outy" /><input name="value2" type="float" value="0.5000" /><input name="in1" type="float" nodename="sel_r1_c1" /><input name="in2" type="float" nodename="sel_r0_c1" /></ifgreater>
+    <!-- selected panel value -->
+    <multiply name="value" type="float"><input name="in1" type="float" nodename="sel_row1" /><input name="in2" type="float" value="1" /></multiply>
+    <convert name="value_c" type="color3"><input name="in" type="float" nodename="value" /></convert>
+    <output name="emission_out" type="color3" nodename="value_c" />
+  </nodegraph>
+  <standard_surface name="SR_frequency" type="surfaceshader"><input name="base" type="float" value="0" /><input name="specular" type="float" value="0" /><input name="emission" type="float" value="1" /><input name="emission_color" type="color3" nodegraph="NG_frequency" output="emission_out" /></standard_surface>
+  <surfacematerial name="M_frequency" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_frequency" /></surfacematerial>
+</materialx>

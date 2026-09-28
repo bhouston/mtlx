@@ -1,0 +1,12 @@
+<!-- in: uv_sep. out: bm_a (flitch m across the grain, 0..L), bm_q (flitch coords: across, along), bm_ds (m to the nearest seam). Book-matched leaves L = 150 mm wide across U: a = L - |mod(u, 2L) - L| is a triangle wave, so every seam is an exact mirror line (4 nodes). Leaves 2-3 repeat leaves 0-1, so shift the along-grain coordinate per panel (600 mm panels here, 0.31 m each) or repeats show -->
+<modulo name="bm_t" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.3" /></modulo>
+<subtract name="bm_2" type="float"><input name="in1" type="float" nodename="bm_t" /><input name="in2" type="float" value="0.15" /></subtract>
+<absval name="bm_3" type="float"><input name="in" type="float" nodename="bm_2" /></absval>
+<subtract name="bm_a" type="float"><input name="in1" type="float" value="0.15" /><input name="in2" type="float" nodename="bm_3" /></subtract>
+<subtract name="bm_5" type="float"><input name="in1" type="float" value="0.15" /><input name="in2" type="float" nodename="bm_a" /></subtract>
+<min name="bm_ds" type="float"><input name="in1" type="float" nodename="bm_a" /><input name="in2" type="float" nodename="bm_5" /></min>
+<divide name="bm_7" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.6" /></divide>
+<floor name="bm_8" type="float"><input name="in" type="float" nodename="bm_7" /></floor>
+<multiply name="bm_9" type="float"><input name="in1" type="float" nodename="bm_8" /><input name="in2" type="float" value="0.31" /></multiply>
+<add name="bm_b" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" nodename="bm_9" /></add>
+<combine2 name="bm_q" type="vector2"><input name="in1" type="float" nodename="bm_a" /><input name="in2" type="float" nodename="bm_b" /></combine2>

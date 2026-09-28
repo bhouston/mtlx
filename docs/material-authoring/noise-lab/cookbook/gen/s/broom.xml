@@ -1,0 +1,7 @@
+<!-- in: uv. out: h_broom (m). Two stretched layers: strokes ~30 cm long, ~3 mm apart, ~4 deg slope -->
+<multiply name="br_pa" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="3, 330" /></multiply>
+<noise2d name="br_a" type="float"><input name="texcoord" type="vector2" nodename="br_pa" /><input name="amplitude" type="float" value="0.00016" /></noise2d>
+<add name="br_pbo" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.37, 0.0021" /></add>
+<multiply name="br_pb" type="vector2"><input name="in1" type="vector2" nodename="br_pbo" /><input name="in2" type="vector2" value="5, 462" /></multiply>
+<noise2d name="br_b" type="float"><input name="texcoord" type="vector2" nodename="br_pb" /><input name="amplitude" type="float" value="0.00011" /></noise2d>
+<add name="h_broom" type="float"><input name="in1" type="float" nodename="br_a" /><input name="in2" type="float" nodename="br_b" /></add>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Neutral grey reference swatch. UV 1 = 1 m. -->
+  <nodegraph name="NG_neutral_grey">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <!-- Left half linear 0.18 (18% grey card), right half 0.5. Flat, roughness 0.8, dielectric. Measures the IBL tint. -->
+    <ifgreater name="right" type="float"><input name="value1" type="float" nodename="uv_sep" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.18, 0.18, 0.18" /><input name="fg" type="color3" value="0.5, 0.5, 0.5" /><input name="mix" type="float" nodename="right" /></mix>
+    <constant name="roughness" type="float"><input name="value" type="float" value="0.8" /></constant>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0.0" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+  </nodegraph>
+  <standard_surface name="SR_neutral_grey" type="surfaceshader">
+    <input name="base" type="float" value="1.0" />
+    <input name="base_color" type="color3" nodegraph="NG_neutral_grey" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_neutral_grey" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_neutral_grey" output="metalness_out" />
+  </standard_surface>
+  <surfacematerial name="M_neutral_grey" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_neutral_grey" /></surfacematerial>
+</materialx>

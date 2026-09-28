@@ -1,0 +1,43 @@
+<!-- in: uv_sep. out: mb_s (m from the bead centre, across U), mb_k (bead index), h_mould (m, 0 = board face), mb_cav (0..1 in the quirks). Beadboard moulding across U: a half-round bead every 45 mm (circular arc sqrt(max(R^2 - t^2, 0)) - R, R 4.5 mm), meeting a 45 deg V quirk 1.5 mm deep at t = TB = 3.35 mm; smooth-max fillet k 0.6 mm in the V, cubic smooth-min arris k 0.5 mm where the quirk wall meets the face (applied to the wall before the union, so the bead crown stays true); even beads open a 0.6 mm slot on their right (the board joint) with a flat floor max(., -D) -->
+<divide name="mb_1" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.045" /></divide>
+<add name="mb_wb" type="float"><input name="in1" type="float" nodename="mb_1" /><input name="in2" type="float" value="0.574536" /></add>
+<floor name="mb_k" type="float"><input name="in" type="float" nodename="mb_wb" /></floor>
+<subtract name="mb_4" type="float"><input name="in1" type="float" nodename="mb_wb" /><input name="in2" type="float" nodename="mb_k" /></subtract>
+<subtract name="mb_5" type="float"><input name="in1" type="float" nodename="mb_4" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="mb_s" type="float"><input name="in1" type="float" nodename="mb_5" /><input name="in2" type="float" value="0.045" /></multiply>
+<absval name="mb_t" type="float"><input name="in" type="float" nodename="mb_s" /></absval>
+<multiply name="mb_8" type="float"><input name="in1" type="float" nodename="mb_t" /><input name="in2" type="float" nodename="mb_t" /></multiply>
+<subtract name="mb_9" type="float"><input name="in1" type="float" value="0.00002025" /><input name="in2" type="float" nodename="mb_8" /></subtract>
+<max name="mb_10" type="float"><input name="in1" type="float" nodename="mb_9" /><input name="in2" type="float" value="0.0" /></max>
+<sqrt name="mb_11" type="float"><input name="in" type="float" nodename="mb_10" /></sqrt>
+<subtract name="mb_bead" type="float"><input name="in1" type="float" nodename="mb_11" /><input name="in2" type="float" value="0.0045" /></subtract>
+<multiply name="mb_13" type="float"><input name="in1" type="float" nodename="mb_k" /><input name="in2" type="float" value="0.5" /></multiply>
+<fract name="mb_14" type="float"><input name="in" type="float" nodename="mb_13" /></fract>
+<ifgreater name="mb_even" type="float"><input name="value1" type="float" value="0.25" /><input name="value2" type="float" nodename="mb_14" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<ifgreater name="mb_16" type="float"><input name="value1" type="float" nodename="mb_s" /><input name="value2" type="float" value="0.0" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<multiply name="mb_17" type="float"><input name="in1" type="float" nodename="mb_even" /><input name="in2" type="float" nodename="mb_16" /></multiply>
+<multiply name="mb_slot" type="float"><input name="in1" type="float" nodename="mb_17" /><input name="in2" type="float" value="0.0006" /></multiply>
+<subtract name="mb_19" type="float"><input name="in1" type="float" nodename="mb_t" /><input name="in2" type="float" nodename="mb_slot" /></subtract>
+<subtract name="mb_wall" type="float"><input name="in1" type="float" nodename="mb_19" /><input name="in2" type="float" value="0.0048541" /></subtract>
+<subtract name="mb_21" type="float"><input name="in1" type="float" nodename="mb_wall" /><input name="in2" type="float" value="0.0" /></subtract>
+<absval name="mb_22" type="float"><input name="in" type="float" nodename="mb_21" /></absval>
+<subtract name="mb_23" type="float"><input name="in1" type="float" value="0.0005" /><input name="in2" type="float" nodename="mb_22" /></subtract>
+<max name="mb_24" type="float"><input name="in1" type="float" nodename="mb_23" /><input name="in2" type="float" value="0.0" /></max>
+<divide name="mb_25" type="float"><input name="in1" type="float" nodename="mb_24" /><input name="in2" type="float" value="0.0005" /></divide>
+<min name="mb_26" type="float"><input name="in1" type="float" nodename="mb_wall" /><input name="in2" type="float" value="0.0" /></min>
+<multiply name="mb_27" type="float"><input name="in1" type="float" nodename="mb_25" /><input name="in2" type="float" nodename="mb_25" /></multiply>
+<multiply name="mb_28" type="float"><input name="in1" type="float" nodename="mb_27" /><input name="in2" type="float" nodename="mb_25" /></multiply>
+<multiply name="mb_29" type="float"><input name="in1" type="float" nodename="mb_28" /><input name="in2" type="float" value="0.00008333" /></multiply>
+<subtract name="mb_arris" type="float"><input name="in1" type="float" nodename="mb_26" /><input name="in2" type="float" nodename="mb_29" /></subtract>
+<subtract name="mb_31" type="float"><input name="in1" type="float" nodename="mb_bead" /><input name="in2" type="float" nodename="mb_arris" /></subtract>
+<absval name="mb_32" type="float"><input name="in" type="float" nodename="mb_31" /></absval>
+<subtract name="mb_33" type="float"><input name="in1" type="float" value="0.0006" /><input name="in2" type="float" nodename="mb_32" /></subtract>
+<max name="mb_34" type="float"><input name="in1" type="float" nodename="mb_33" /><input name="in2" type="float" value="0.0" /></max>
+<divide name="mb_35" type="float"><input name="in1" type="float" nodename="mb_34" /><input name="in2" type="float" value="0.0006" /></divide>
+<max name="mb_36" type="float"><input name="in1" type="float" nodename="mb_bead" /><input name="in2" type="float" nodename="mb_arris" /></max>
+<multiply name="mb_37" type="float"><input name="in1" type="float" nodename="mb_35" /><input name="in2" type="float" nodename="mb_35" /></multiply>
+<multiply name="mb_38" type="float"><input name="in1" type="float" nodename="mb_37" /><input name="in2" type="float" value="0.00015" /></multiply>
+<add name="mb_fil" type="float"><input name="in1" type="float" nodename="mb_36" /><input name="in2" type="float" nodename="mb_38" /></add>
+<max name="h_mould" type="float"><input name="in1" type="float" nodename="mb_fil" /><input name="in2" type="float" value="-0.0015" /></max>
+<multiply name="mb_41" type="float"><input name="in1" type="float" nodename="h_mould" /><input name="in2" type="float" value="-1.0" /></multiply>
+<smoothstep name="mb_cav" type="float"><input name="in" type="float" nodename="mb_41" /><input name="low" type="float" value="0.0005" /><input name="high" type="float" value="0.0014" /></smoothstep>

@@ -1,0 +1,10 @@
+<!-- in: rg_loc (any centred tile-local m). out: rr_d = exact signed distance (m) to a 150x75 mm rectangle with 3 mm corners, + inside. half size h = (0.075, 0.0375), r = 0.003: d = r - |max(q,0)| - min(max(qx,qy),0), q = |loc| - h + r -->
+<absval name="rr_a" type="vector2"><input name="in" type="vector2" nodename="rg_loc" /></absval>
+<subtract name="rr_q" type="vector2"><input name="in1" type="vector2" nodename="rr_a" /><input name="in2" type="vector2" value="0.072, 0.0345" /></subtract>
+<max name="rr_qp" type="vector2"><input name="in1" type="vector2" nodename="rr_q" /><input name="in2" type="float" value="0" /></max>
+<magnitude name="rr_out" type="float"><input name="in" type="vector2" nodename="rr_qp" /></magnitude>
+<separate2 name="rr_qs" type="multioutput"><input name="in" type="vector2" nodename="rr_q" /></separate2>
+<max name="rr_qm" type="float"><input name="in1" type="float" nodename="rr_qs" output="outx" /><input name="in2" type="float" nodename="rr_qs" output="outy" /></max>
+<min name="rr_in" type="float"><input name="in1" type="float" nodename="rr_qm" /><input name="in2" type="float" value="0" /></min>
+<add name="rr_s" type="float"><input name="in1" type="float" nodename="rr_out" /><input name="in2" type="float" nodename="rr_in" /></add>
+<subtract name="rr_d" type="float"><input name="in1" type="float" value="0.003" /><input name="in2" type="float" nodename="rr_s" /></subtract>

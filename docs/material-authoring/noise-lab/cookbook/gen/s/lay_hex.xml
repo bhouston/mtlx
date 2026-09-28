@@ -1,0 +1,19 @@
+<!-- in: uv. out: hx_loc (m from the hex centre), hx_id, hx_d (m to the hex edge, + on tile), hx_tile. Pointy-top hexes, 52 mm pitch across flats (50 mm tile + 2 mm grout): nearest centre of two offset rectangular lattices -->
+<modulo name="hx_a0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.052, 0.0900666" /></modulo>
+<subtract name="hx_qa" type="vector2"><input name="in1" type="vector2" nodename="hx_a0" /><input name="in2" type="vector2" value="0.026, 0.0450333" /></subtract>
+<subtract name="hx_b1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.026, 0.0450333" /></subtract>
+<modulo name="hx_b0" type="vector2"><input name="in1" type="vector2" nodename="hx_b1" /><input name="in2" type="vector2" value="0.052, 0.0900666" /></modulo>
+<subtract name="hx_qb" type="vector2"><input name="in1" type="vector2" nodename="hx_b0" /><input name="in2" type="vector2" value="0.026, 0.0450333" /></subtract>
+<magnitude name="hx_la" type="float"><input name="in" type="vector2" nodename="hx_qa" /></magnitude>
+<magnitude name="hx_lb" type="float"><input name="in" type="vector2" nodename="hx_qb" /></magnitude>
+<ifgreater name="hx_loc" type="vector2"><input name="value1" type="float" nodename="hx_la" /><input name="value2" type="float" nodename="hx_lb" /><input name="in1" type="vector2" nodename="hx_qb" /><input name="in2" type="vector2" nodename="hx_qa" /></ifgreater>
+<subtract name="hx_ctr" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" nodename="hx_loc" /></subtract>
+<divide name="hx_ci" type="vector2"><input name="in1" type="vector2" nodename="hx_ctr" /><input name="in2" type="vector2" value="0.026, 0.0450333" /></divide>
+<add name="hx_seed" type="vector2"><input name="in1" type="vector2" nodename="hx_ci" /><input name="in2" type="vector2" value="200.37, 300.61" /></add>
+<cellnoise2d name="hx_id" type="float"><input name="texcoord" type="vector2" nodename="hx_seed" /></cellnoise2d>
+<absval name="hx_al" type="vector2"><input name="in" type="vector2" nodename="hx_loc" /></absval>
+<dotproduct name="hx_ed" type="float"><input name="in1" type="vector2" nodename="hx_al" /><input name="in2" type="vector2" value="0.5, 0.866025" /></dotproduct>
+<separate2 name="hx_as" type="multioutput"><input name="in" type="vector2" nodename="hx_al" /></separate2>
+<max name="hx_hd" type="float"><input name="in1" type="float" nodename="hx_as" output="outx" /><input name="in2" type="float" nodename="hx_ed" /></max>
+<subtract name="hx_d" type="float"><input name="in1" type="float" value="0.025" /><input name="in2" type="float" nodename="hx_hd" /></subtract>
+<smoothstep name="hx_tile" type="float"><input name="in" type="float" nodename="hx_d" /><input name="low" type="float" value="-0.00025" /><input name="high" type="float" value="0.00025" /></smoothstep>

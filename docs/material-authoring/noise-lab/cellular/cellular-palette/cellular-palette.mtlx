@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Cellular recipes on one 1 m tile (UV 1 = 1 m). Left: per-chip colour palette (terrazzo). TR: sparse features on a manual jittered grid. BR: the same with low-jitter worley + style=1. -->
+  <nodegraph name="NG_cellular_palette">
+    <texcoord name="uv" type="vector2" />
+
+    <!-- Quadrant masks: q_right = u > 0.5, q_top = v > 0.5 (V increases upward in the plane render). -->
+    <separate2 name="uv_s" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <ifgreater name="q_right" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="q_top" type="float"><input name="value1" type="float" nodename="uv_s" output="outy" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+
+    <!-- LEFT  PER-CELL PALETTE: terrazzo chips. 30 cells/m, jitter 1. id = worleynoise2d float style=1 (same texcoord and
+      jitter as the F1/F2 lookup, so it is constant over each Voronoi chip). Hue = modulo(id*13.7, 1) through an
+      ifgreater chain of 6 colours; brightness = 0.75 + 0.5*id, so hue and brightness are decorrelated.
+      Chip = smoothstep(F2-F1, 0.08, 0.1): angular chips in a white matrix, polished flat with a 0.1 mm lip. -->
+    <multiply name="uv_t" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="30" /></multiply>
+    <worleynoise2d name="t_w" type="vector2"><input name="texcoord" type="vector2" nodename="uv_t" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+    <worleynoise2d name="t_id" type="float"><input name="texcoord" type="vector2" nodename="uv_t" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <dotproduct name="t_e" type="float"><input name="in1" type="vector2" nodename="t_w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <smoothstep name="t_chip" type="float"><input name="in" type="float" nodename="t_e" /><input name="low" type="float" value="0.08" /><input name="high" type="float" value="0.1" /></smoothstep>
+    <multiply name="t_pal_k0" type="float"><input name="in1" type="float" nodename="t_id" /><input name="in2" type="float" value="13.7" /></multiply>
+    <modulo name="t_pal_k" type="float"><input name="in1" type="float" nodename="t_pal_k0" /><input name="in2" type="float" value="1" /></modulo>
+    <ifgreater name="t_pal_c1" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.1667" /><input name="in1" type="color3" value="0.55, 0.53, 0.5" /><input name="in2" type="color3" value="0.05, 0.05, 0.05" /></ifgreater>
+    <ifgreater name="t_pal_c2" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="color3" value="0.35, 0.12, 0.08" /><input name="in2" type="color3" nodename="t_pal_c1" /></ifgreater>
+    <ifgreater name="t_pal_c3" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.5" /><input name="in1" type="color3" value="0.12, 0.2, 0.14" /><input name="in2" type="color3" nodename="t_pal_c2" /></ifgreater>
+    <ifgreater name="t_pal_c4" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="color3" value="0.45, 0.33, 0.18" /><input name="in2" type="color3" nodename="t_pal_c3" /></ifgreater>
+    <ifgreater name="t_pal_c5" type="color3"><input name="value1" type="float" nodename="t_pal_k" /><input name="value2" type="float" value="0.8333" /><input name="in1" type="color3" value="0.25, 0.27, 0.3" /><input name="in2" type="color3" nodename="t_pal_c4" /></ifgreater>
+    <multiply name="t_br0" type="float"><input name="in1" type="float" nodename="t_id" /><input name="in2" type="float" value="0.5" /></multiply>
+    <add name="t_br" type="float"><input name="in1" type="float" nodename="t_br0" /><input name="in2" type="float" value="0.75" /></add>
+    <multiply name="t_col" type="color3"><input name="in1" type="color3" nodename="t_pal_c5" /><input name="in2" type="float" nodename="t_br" /></multiply>
+    <mix name="c_left" type="color3"><input name="bg" type="color3" value="0.62, 0.61, 0.58" /><input name="fg" type="color3" nodename="t_col" /><input name="mix" type="float" nodename="t_chip" /></mix>
+    <multiply name="h_left" type="float"><input name="in1" type="float" nodename="t_chip" /><input name="in2" type="float" value="0.0001" /></multiply>
+
+    <!-- TR  SPARSE FEATURES ON A MANUAL JITTERED GRID. 8 cells/m (12.5 cm). cellnoise2d vector3 on the cell gives
+    (jx, jy, presence). Centre = floor(p) + 0.5 + (jxy - 0.5)*0.4 (+/-0.2 cell), 45% present,
+    radius 0.1..0.28 cell < 0.5 - 0.2 = 0.3, so a feature never reaches its cell border and is never clipped.
+    You also get the local vector p - centre (for tilt, ellipses, orientation), which worley does not expose. -->
+    <multiply name="uv_g" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8" /></multiply>
+    <floor name="g_cell" type="vector2"><input name="in" type="vector2" nodename="uv_g" /></floor>
+    <cellnoise2d name="g_rnd" type="vector3"><input name="texcoord" type="vector2" nodename="uv_g" /></cellnoise2d>
+    <extract name="g_jx" type="float"><input name="in" type="vector3" nodename="g_rnd" /><input name="index" type="integer" value="0" /></extract>
+    <extract name="g_jy" type="float"><input name="in" type="vector3" nodename="g_rnd" /><input name="index" type="integer" value="1" /></extract>
+    <extract name="g_pres" type="float"><input name="in" type="vector3" nodename="g_rnd" /><input name="index" type="integer" value="2" /></extract>
+    <combine2 name="g_j" type="vector2"><input name="in1" type="float" nodename="g_jx" /><input name="in2" type="float" nodename="g_jy" /></combine2>
+    <subtract name="g_j0" type="vector2"><input name="in1" type="vector2" nodename="g_j" /><input name="in2" type="vector2" value="0.5, 0.5" /></subtract>
+    <multiply name="g_j1" type="vector2"><input name="in1" type="vector2" nodename="g_j0" /><input name="in2" type="float" value="0.4" /></multiply>
+    <add name="g_j2" type="vector2"><input name="in1" type="vector2" nodename="g_j1" /><input name="in2" type="vector2" value="0.5, 0.5" /></add>
+    <add name="g_ctr" type="vector2"><input name="in1" type="vector2" nodename="g_cell" /><input name="in2" type="vector2" nodename="g_j2" /></add>
+    <subtract name="g_dv" type="vector2"><input name="in1" type="vector2" nodename="uv_g" /><input name="in2" type="vector2" nodename="g_ctr" /></subtract>
+    <magnitude name="g_d" type="float"><input name="in" type="vector2" nodename="g_dv" /></magnitude>
+    <multiply name="g_rk" type="float"><input name="in1" type="float" nodename="g_pres" /><input name="in2" type="float" value="7.3" /></multiply>
+    <modulo name="g_rm" type="float"><input name="in1" type="float" nodename="g_rk" /><input name="in2" type="float" value="1" /></modulo>
+    <multiply name="g_r0" type="float"><input name="in1" type="float" nodename="g_rm" /><input name="in2" type="float" value="0.18" /></multiply>
+    <add name="g_r1" type="float"><input name="in1" type="float" nodename="g_r0" /><input name="in2" type="float" value="0.1" /></add>
+    <ifgreater name="g_r" type="float"><input name="value1" type="float" nodename="g_pres" /><input name="value2" type="float" value="0.55" /><input name="in1" type="float" nodename="g_r1" /><input name="in2" type="float" value="0.0001" /></ifgreater>
+    <divide name="g_t" type="float"><input name="in1" type="float" nodename="g_d" /><input name="in2" type="float" nodename="g_r" /></divide>
+    <multiply name="g_t2" type="float"><input name="in1" type="float" nodename="g_t" /><input name="in2" type="float" nodename="g_t" /></multiply>
+    <subtract name="g_b0" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="g_t2" /></subtract>
+    <max name="g_dome" type="float"><input name="in1" type="float" nodename="g_b0" /><input name="in2" type="float" value="0" /></max>
+    <multiply name="g_hs" type="float"><input name="in1" type="float" nodename="g_r" /><input name="in2" type="float" value="0.02" /></multiply>
+    <multiply name="h_tr" type="float"><input name="in1" type="float" nodename="g_dome" /><input name="in2" type="float" nodename="g_hs" /></multiply>
+    <smoothstep name="g_mask" type="float"><input name="in" type="float" nodename="g_dome" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.05" /></smoothstep>
+
+    <!-- BR  THE SAME WITH WORLEY: 8 cells/m, jitter 0.4, so r <= (1-0.4)/2 = 0.3 is never clipped. Presence and radius come
+    from style=1 (the per-feature random), so there is no cellnoise-square mismatch. No manual grid needed. -->
+    <worleynoise2d name="v_f1" type="float"><input name="texcoord" type="vector2" nodename="uv_g" /><input name="jitter" type="float" value="0.4" /></worleynoise2d>
+    <worleynoise2d name="v_id" type="float"><input name="texcoord" type="vector2" nodename="uv_g" /><input name="jitter" type="float" value="0.4" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <multiply name="v_rk" type="float"><input name="in1" type="float" nodename="v_id" /><input name="in2" type="float" value="7.3" /></multiply>
+    <modulo name="v_rm" type="float"><input name="in1" type="float" nodename="v_rk" /><input name="in2" type="float" value="1" /></modulo>
+    <multiply name="v_r0" type="float"><input name="in1" type="float" nodename="v_rm" /><input name="in2" type="float" value="0.18" /></multiply>
+    <add name="v_r1" type="float"><input name="in1" type="float" nodename="v_r0" /><input name="in2" type="float" value="0.1" /></add>
+    <ifgreater name="v_r" type="float"><input name="value1" type="float" nodename="v_id" /><input name="value2" type="float" value="0.55" /><input name="in1" type="float" nodename="v_r1" /><input name="in2" type="float" value="0.0001" /></ifgreater>
+    <divide name="v_t" type="float"><input name="in1" type="float" nodename="v_f1" /><input name="in2" type="float" nodename="v_r" /></divide>
+    <multiply name="v_t2" type="float"><input name="in1" type="float" nodename="v_t" /><input name="in2" type="float" nodename="v_t" /></multiply>
+    <subtract name="v_b0" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="v_t2" /></subtract>
+    <max name="v_dome" type="float"><input name="in1" type="float" nodename="v_b0" /><input name="in2" type="float" value="0" /></max>
+    <multiply name="v_hs" type="float"><input name="in1" type="float" nodename="v_r" /><input name="in2" type="float" value="0.02" /></multiply>
+    <multiply name="h_br" type="float"><input name="in1" type="float" nodename="v_dome" /><input name="in2" type="float" nodename="v_hs" /></multiply>
+    <smoothstep name="v_mask" type="float"><input name="in" type="float" nodename="v_dome" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.05" /></smoothstep>
+
+    <!-- Right-half matrix: fine concrete; features are dark stones. -->
+    <mix name="r_mask" type="float"><input name="bg" type="float" nodename="v_mask" /><input name="fg" type="float" nodename="g_mask" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <mix name="h_right" type="float"><input name="bg" type="float" nodename="h_br" /><input name="fg" type="float" nodename="h_tr" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <multiply name="uv_m" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="300" /></multiply>
+    <noise2d name="m_n" type="float"><input name="texcoord" type="vector2" nodename="uv_m" /><input name="amplitude" type="float" value="4e-05" /></noise2d>
+    <multiply name="uv_mo" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="5" /></multiply>
+    <noise2d name="mo" type="float"><input name="texcoord" type="vector2" nodename="uv_mo" /><input name="amplitude" type="float" value="0.5" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <mix name="c_mat" type="color3"><input name="bg" type="color3" value="0.4, 0.39, 0.37" /><input name="fg" type="color3" value="0.34, 0.33, 0.315" /><input name="mix" type="float" nodename="mo" /></mix>
+    <mix name="c_right" type="color3"><input name="bg" type="color3" nodename="c_mat" /><input name="fg" type="color3" value="0.24, 0.22, 0.2" /><input name="mix" type="float" nodename="r_mask" /></mix>
+    <mix name="h_lr" type="float"><input name="bg" type="float" nodename="h_left" /><input name="fg" type="float" nodename="h_right" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <add name="height" type="float"><input name="in1" type="float" nodename="h_lr" /><input name="in2" type="float" nodename="m_n" /></add>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" nodename="c_left" /><input name="fg" type="color3" nodename="c_right" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="r_r" type="float"><input name="bg" type="float" value="0.85" /><input name="fg" type="float" value="0.8" /><input name="mix" type="float" nodename="r_mask" /></mix>
+    <mix name="roughness" type="float"><input name="bg" type="float" value="0.22" /><input name="fg" type="float" nodename="r_r" /><input name="mix" type="float" nodename="q_right" /></mix>
+
+    <!-- Normal: heighttonormal needs millimetres (see AUTHORING.md). scale 16 cancels the internal 1/16. -->
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+  </nodegraph>
+  <standard_surface name="SR_cellular_palette" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="base_color" type="color3" nodegraph="NG_cellular_palette" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_cellular_palette" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_cellular_palette" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_cellular_palette" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_cellular_palette" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_cellular_palette" /></surfacematerial>
+</materialx>

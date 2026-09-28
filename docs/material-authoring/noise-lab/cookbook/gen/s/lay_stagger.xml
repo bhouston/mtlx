@@ -1,0 +1,47 @@
+<!-- in: uv_sep. out: pk_loc (board-local m, centred; x along, y across), pk_cell, pk_id, pk_lm (board length, m), pk_d (m to the board edge), pk_tile. Same outputs as the random-length planks, so it drops in. Rows 180 mm; segment S = 1.2 m, joint window w = 0.42: lengths S(1 +- w) = 0.70..1.70 m; odd rows shift half a segment, so neighbouring joints are always >= S(0.5 - w) = 96 mm apart; 1 mm joints -->
+<divide name="pk_v" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="0.18" /></divide>
+<floor name="pk_row" type="float"><input name="in" type="float" nodename="pk_v" /></floor>
+<subtract name="pk_fv" type="float"><input name="in1" type="float" nodename="pk_v" /><input name="in2" type="float" nodename="pk_row" /></subtract>
+<modulo name="pk_par" type="float"><input name="in1" type="float" nodename="pk_row" /><input name="in2" type="float" value="2.0" /></modulo>
+<divide name="pk_5" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="1.2" /></divide>
+<multiply name="pk_6" type="float"><input name="in1" type="float" nodename="pk_par" /><input name="in2" type="float" value="0.5" /></multiply>
+<add name="pk_x" type="float"><input name="in1" type="float" nodename="pk_5" /><input name="in2" type="float" nodename="pk_6" /></add>
+<floor name="pk_k" type="float"><input name="in" type="float" nodename="pk_x" /></floor>
+<subtract name="pk_fx" type="float"><input name="in1" type="float" nodename="pk_x" /><input name="in2" type="float" nodename="pk_k" /></subtract>
+<combine2 name="pk_10" type="vector2"><input name="in1" type="float" nodename="pk_k" /><input name="in2" type="float" nodename="pk_row" /></combine2>
+<add name="pk_11" type="vector2"><input name="in1" type="vector2" nodename="pk_10" /><input name="in2" type="vector2" value="11.37, 5.61" /></add>
+<cellnoise2d name="pk_12" type="float"><input name="texcoord" type="vector2" nodename="pk_11" /></cellnoise2d>
+<multiply name="pk_13" type="float"><input name="in1" type="float" nodename="pk_12" /><input name="in2" type="float" value="0.42" /></multiply>
+<add name="pk_j" type="float"><input name="in1" type="float" nodename="pk_13" /><input name="in2" type="float" value="0.29" /></add>
+<ifgreater name="pk_right" type="float"><input name="value1" type="float" nodename="pk_fx" /><input name="value2" type="float" nodename="pk_j" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<multiply name="pk_16" type="float"><input name="in1" type="float" nodename="pk_right" /><input name="in2" type="float" value="2.0" /></multiply>
+<subtract name="pk_sg" type="float"><input name="in1" type="float" nodename="pk_16" /><input name="in2" type="float" value="1.0" /></subtract>
+<add name="pk_18" type="float"><input name="in1" type="float" nodename="pk_k" /><input name="in2" type="float" nodename="pk_sg" /></add>
+<combine2 name="pk_19" type="vector2"><input name="in1" type="float" nodename="pk_18" /><input name="in2" type="float" nodename="pk_row" /></combine2>
+<add name="pk_20" type="vector2"><input name="in1" type="vector2" nodename="pk_19" /><input name="in2" type="vector2" value="11.37, 5.61" /></add>
+<cellnoise2d name="pk_21" type="float"><input name="texcoord" type="vector2" nodename="pk_20" /></cellnoise2d>
+<multiply name="pk_22" type="float"><input name="in1" type="float" nodename="pk_21" /><input name="in2" type="float" value="0.42" /></multiply>
+<add name="pk_n0" type="float"><input name="in1" type="float" nodename="pk_22" /><input name="in2" type="float" value="0.29" /></add>
+<add name="pk_n" type="float"><input name="in1" type="float" nodename="pk_n0" /><input name="in2" type="float" nodename="pk_sg" /></add>
+<add name="pk_25" type="float"><input name="in1" type="float" nodename="pk_j" /><input name="in2" type="float" nodename="pk_n" /></add>
+<multiply name="pk_mid" type="float"><input name="in1" type="float" nodename="pk_25" /><input name="in2" type="float" value="0.5" /></multiply>
+<subtract name="pk_27" type="float"><input name="in1" type="float" nodename="pk_n" /><input name="in2" type="float" nodename="pk_j" /></subtract>
+<absval name="pk_28" type="float"><input name="in" type="float" nodename="pk_27" /></absval>
+<multiply name="pk_lm" type="float"><input name="in1" type="float" nodename="pk_28" /><input name="in2" type="float" value="1.2" /></multiply>
+<subtract name="pk_30" type="float"><input name="in1" type="float" nodename="pk_fx" /><input name="in2" type="float" nodename="pk_mid" /></subtract>
+<multiply name="pk_31" type="float"><input name="in1" type="float" nodename="pk_30" /><input name="in2" type="float" value="1.2" /></multiply>
+<subtract name="pk_32" type="float"><input name="in1" type="float" nodename="pk_fv" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="pk_33" type="float"><input name="in1" type="float" nodename="pk_32" /><input name="in2" type="float" value="0.18" /></multiply>
+<combine2 name="pk_loc" type="vector2"><input name="in1" type="float" nodename="pk_31" /><input name="in2" type="float" nodename="pk_33" /></combine2>
+<multiply name="pk_35" type="float"><input name="in1" type="float" nodename="pk_lm" /><input name="in2" type="float" value="0.5" /></multiply>
+<combine2 name="pk_half" type="vector2"><input name="in1" type="float" nodename="pk_35" /><input name="in2" type="float" value="0.09" /></combine2>
+<absval name="pk_37" type="vector2"><input name="in" type="vector2" nodename="pk_loc" /></absval>
+<subtract name="pk_38" type="vector2"><input name="in1" type="vector2" nodename="pk_half" /><input name="in2" type="vector2" nodename="pk_37" /></subtract>
+<subtract name="pk_e" type="vector2"><input name="in1" type="vector2" nodename="pk_38" /><input name="in2" type="float" value="0.0005" /></subtract>
+<separate2 name="pk_es" type="multioutput"><input name="in" type="vector2" nodename="pk_e" /></separate2>
+<min name="pk_d" type="float"><input name="in1" type="float" nodename="pk_es" output="outx" /><input name="in2" type="float" nodename="pk_es" output="outy" /></min>
+<add name="pk_42" type="float"><input name="in1" type="float" nodename="pk_k" /><input name="in2" type="float" nodename="pk_right" /></add>
+<combine2 name="pk_cell" type="vector2"><input name="in1" type="float" nodename="pk_42" /><input name="in2" type="float" nodename="pk_row" /></combine2>
+<add name="pk_44" type="vector2"><input name="in1" type="vector2" nodename="pk_cell" /><input name="in2" type="vector2" value="200.37, 300.61" /></add>
+<cellnoise2d name="pk_id" type="float"><input name="texcoord" type="vector2" nodename="pk_44" /></cellnoise2d>
+<smoothstep name="pk_tile" type="float"><input name="in" type="float" nodename="pk_d" /><input name="low" type="float" value="-0.00025" /><input name="high" type="float" value="0.00025" /></smoothstep>

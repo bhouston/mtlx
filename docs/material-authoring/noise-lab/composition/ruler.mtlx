@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Ruler / calibration: unlit (emission) grid in true meters. Render -g plane to read visible width per zoom. -->
+  <nodegraph name="NG_ruler">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <!-- Unlit calibration grid: 1 cm grey, 5 cm blue, 10 cm black, u=0.5/v=0.5 red. UV 1 = 1 m. -->
+    <constant name="constant_3" type="color3"><input name="value" type="color3" value="0.8, 0.8, 0.8" /></constant>
+    <multiply name="multiply_4" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="100" /></multiply>
+    <add name="add_5" type="float"><input name="in1" type="float" nodename="multiply_4" /><input name="in2" type="float" value="0.5" /></add>
+    <modulo name="modulo_6" type="float"><input name="in1" type="float" nodename="add_5" /><input name="in2" type="float" value="1.0" /></modulo>
+    <subtract name="subtract_7" type="float"><input name="in1" type="float" nodename="modulo_6" /><input name="in2" type="float" value="0.5" /></subtract>
+    <absval name="absval_8" type="float"><input name="in" type="float" nodename="subtract_7" /></absval>
+    <divide name="divide_9" type="float"><input name="in1" type="float" nodename="absval_8" /><input name="in2" type="float" value="100" /></divide>
+    <smoothstep name="smoothstep_10" type="float"><input name="in" type="float" nodename="divide_9" /><input name="low" type="float" value="0.0003" /><input name="high" type="float" value="0.0005" /></smoothstep>
+    <subtract name="cm_u" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="smoothstep_10" /></subtract>
+    <multiply name="multiply_12" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="100" /></multiply>
+    <add name="add_13" type="float"><input name="in1" type="float" nodename="multiply_12" /><input name="in2" type="float" value="0.5" /></add>
+    <modulo name="modulo_14" type="float"><input name="in1" type="float" nodename="add_13" /><input name="in2" type="float" value="1.0" /></modulo>
+    <subtract name="subtract_15" type="float"><input name="in1" type="float" nodename="modulo_14" /><input name="in2" type="float" value="0.5" /></subtract>
+    <absval name="absval_16" type="float"><input name="in" type="float" nodename="subtract_15" /></absval>
+    <divide name="divide_17" type="float"><input name="in1" type="float" nodename="absval_16" /><input name="in2" type="float" value="100" /></divide>
+    <smoothstep name="smoothstep_18" type="float"><input name="in" type="float" nodename="divide_17" /><input name="low" type="float" value="0.0003" /><input name="high" type="float" value="0.0005" /></smoothstep>
+    <subtract name="cm_v" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="smoothstep_18" /></subtract>
+    <max name="cm" type="float"><input name="in1" type="float" nodename="cm_u" /><input name="in2" type="float" nodename="cm_v" /></max>
+    <mix name="mix_21" type="color3"><input name="bg" type="color3" nodename="constant_3" /><input name="fg" type="color3" value="0.3, 0.3, 0.3" /><input name="mix" type="float" nodename="cm" /></mix>
+    <multiply name="multiply_22" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="20" /></multiply>
+    <add name="add_23" type="float"><input name="in1" type="float" nodename="multiply_22" /><input name="in2" type="float" value="0.5" /></add>
+    <modulo name="modulo_24" type="float"><input name="in1" type="float" nodename="add_23" /><input name="in2" type="float" value="1.0" /></modulo>
+    <subtract name="subtract_25" type="float"><input name="in1" type="float" nodename="modulo_24" /><input name="in2" type="float" value="0.5" /></subtract>
+    <absval name="absval_26" type="float"><input name="in" type="float" nodename="subtract_25" /></absval>
+    <divide name="divide_27" type="float"><input name="in1" type="float" nodename="absval_26" /><input name="in2" type="float" value="20" /></divide>
+    <smoothstep name="smoothstep_28" type="float"><input name="in" type="float" nodename="divide_27" /><input name="low" type="float" value="0.0007" /><input name="high" type="float" value="0.0009" /></smoothstep>
+    <subtract name="cm5_u" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="smoothstep_28" /></subtract>
+    <multiply name="multiply_30" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="20" /></multiply>
+    <add name="add_31" type="float"><input name="in1" type="float" nodename="multiply_30" /><input name="in2" type="float" value="0.5" /></add>
+    <modulo name="modulo_32" type="float"><input name="in1" type="float" nodename="add_31" /><input name="in2" type="float" value="1.0" /></modulo>
+    <subtract name="subtract_33" type="float"><input name="in1" type="float" nodename="modulo_32" /><input name="in2" type="float" value="0.5" /></subtract>
+    <absval name="absval_34" type="float"><input name="in" type="float" nodename="subtract_33" /></absval>
+    <divide name="divide_35" type="float"><input name="in1" type="float" nodename="absval_34" /><input name="in2" type="float" value="20" /></divide>
+    <smoothstep name="smoothstep_36" type="float"><input name="in" type="float" nodename="divide_35" /><input name="low" type="float" value="0.0007" /><input name="high" type="float" value="0.0009" /></smoothstep>
+    <subtract name="cm5_v" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="smoothstep_36" /></subtract>
+    <max name="cm5" type="float"><input name="in1" type="float" nodename="cm5_u" /><input name="in2" type="float" nodename="cm5_v" /></max>
+    <mix name="mix_39" type="color3"><input name="bg" type="color3" nodename="mix_21" /><input name="fg" type="color3" value="0.1, 0.2, 0.9" /><input name="mix" type="float" nodename="cm5" /></mix>
+    <multiply name="multiply_40" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="10" /></multiply>
+    <add name="add_41" type="float"><input name="in1" type="float" nodename="multiply_40" /><input name="in2" type="float" value="0.5" /></add>
+    <modulo name="modulo_42" type="float"><input name="in1" type="float" nodename="add_41" /><input name="in2" type="float" value="1.0" /></modulo>
+    <subtract name="subtract_43" type="float"><input name="in1" type="float" nodename="modulo_42" /><input name="in2" type="float" value="0.5" /></subtract>
+    <absval name="absval_44" type="float"><input name="in" type="float" nodename="subtract_43" /></absval>
+    <divide name="divide_45" type="float"><input name="in1" type="float" nodename="absval_44" /><input name="in2" type="float" value="10" /></divide>
+    <smoothstep name="smoothstep_46" type="float"><input name="in" type="float" nodename="divide_45" /><input name="low" type="float" value="0.0015" /><input name="high" type="float" value="0.0017000000000000001" /></smoothstep>
+    <subtract name="cm10_u" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="smoothstep_46" /></subtract>
+    <multiply name="multiply_48" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="10" /></multiply>
+    <add name="add_49" type="float"><input name="in1" type="float" nodename="multiply_48" /><input name="in2" type="float" value="0.5" /></add>
+    <modulo name="modulo_50" type="float"><input name="in1" type="float" nodename="add_49" /><input name="in2" type="float" value="1.0" /></modulo>
+    <subtract name="subtract_51" type="float"><input name="in1" type="float" nodename="modulo_50" /><input name="in2" type="float" value="0.5" /></subtract>
+    <absval name="absval_52" type="float"><input name="in" type="float" nodename="subtract_51" /></absval>
+    <divide name="divide_53" type="float"><input name="in1" type="float" nodename="absval_52" /><input name="in2" type="float" value="10" /></divide>
+    <smoothstep name="smoothstep_54" type="float"><input name="in" type="float" nodename="divide_53" /><input name="low" type="float" value="0.0015" /><input name="high" type="float" value="0.0017000000000000001" /></smoothstep>
+    <subtract name="cm10_v" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="smoothstep_54" /></subtract>
+    <max name="cm10" type="float"><input name="in1" type="float" nodename="cm10_u" /><input name="in2" type="float" nodename="cm10_v" /></max>
+    <mix name="mix_57" type="color3"><input name="bg" type="color3" nodename="mix_39" /><input name="fg" type="color3" value="0, 0, 0" /><input name="mix" type="float" nodename="cm10" /></mix>
+    <multiply name="multiply_58" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="1" /></multiply>
+    <add name="add_59" type="float"><input name="in1" type="float" nodename="multiply_58" /><input name="in2" type="float" value="0.0" /></add>
+    <modulo name="modulo_60" type="float"><input name="in1" type="float" nodename="add_59" /><input name="in2" type="float" value="1.0" /></modulo>
+    <subtract name="subtract_61" type="float"><input name="in1" type="float" nodename="modulo_60" /><input name="in2" type="float" value="0.5" /></subtract>
+    <absval name="absval_62" type="float"><input name="in" type="float" nodename="subtract_61" /></absval>
+    <divide name="divide_63" type="float"><input name="in1" type="float" nodename="absval_62" /><input name="in2" type="float" value="1" /></divide>
+    <smoothstep name="smoothstep_64" type="float"><input name="in" type="float" nodename="divide_63" /><input name="low" type="float" value="0.001" /><input name="high" type="float" value="0.0012000000000000001" /></smoothstep>
+    <subtract name="center_u" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="smoothstep_64" /></subtract>
+    <multiply name="multiply_66" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="1" /></multiply>
+    <add name="add_67" type="float"><input name="in1" type="float" nodename="multiply_66" /><input name="in2" type="float" value="0.0" /></add>
+    <modulo name="modulo_68" type="float"><input name="in1" type="float" nodename="add_67" /><input name="in2" type="float" value="1.0" /></modulo>
+    <subtract name="subtract_69" type="float"><input name="in1" type="float" nodename="modulo_68" /><input name="in2" type="float" value="0.5" /></subtract>
+    <absval name="absval_70" type="float"><input name="in" type="float" nodename="subtract_69" /></absval>
+    <divide name="divide_71" type="float"><input name="in1" type="float" nodename="absval_70" /><input name="in2" type="float" value="1" /></divide>
+    <smoothstep name="smoothstep_72" type="float"><input name="in" type="float" nodename="divide_71" /><input name="low" type="float" value="0.001" /><input name="high" type="float" value="0.0012000000000000001" /></smoothstep>
+    <subtract name="center_v" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="smoothstep_72" /></subtract>
+    <max name="center" type="float"><input name="in1" type="float" nodename="center_u" /><input name="in2" type="float" nodename="center_v" /></max>
+    <mix name="mix_75" type="color3"><input name="bg" type="color3" nodename="mix_57" /><input name="fg" type="color3" value="0.9, 0.05, 0.05" /><input name="mix" type="float" nodename="center" /></mix>
+    <output name="emission_out" type="color3" nodename="mix_75" />
+  </nodegraph>
+  <standard_surface name="SR_ruler" type="surfaceshader">
+    <input name="base" type="float" value="0.0" />
+    <input name="specular" type="float" value="0.0" />
+    <input name="emission" type="float" value="1.0" />
+    <input name="emission_color" type="color3" nodegraph="NG_ruler" output="emission_out" />
+  </standard_surface>
+  <surfacematerial name="M_ruler" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_ruler" /></surfacematerial>
+</materialx>

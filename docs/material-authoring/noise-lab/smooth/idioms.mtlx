@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Height idioms (lit, bridge IBL), all from fractal2d/noise2d at 8/m, ~12 mm relief.
+       UV 0..1 = 1 m. Layout (3x2, row 1 at the bottom = v small, column 1 at the left):
+         [r1 c1] plain fBm: fractal2d, 5 octaves
+         [r1 c2] ridged: 1 - abs(fBm): sharp crests on the zero contours
+         [r1 c3] billow: abs(fBm): rounded puffs with creases
+         [r2 c1] terraces: soft-stepped fBm, 6 steps over the range
+         [r2 c2] anisotropic: noise2d(u*3, v*60), streaks along u
+         [r2 c3] domain-warped fBm: fractal2d(uv*8 + 0.02*fractal3(uv*4).xy (A*f 0.08))
+  -->
+  <nodegraph name="NG_idioms">
+    <texcoord name="uv" type="vector2" />
+    <separate2 name="uv_s" type="multioutput"><input name="in" type="vector2" nodename="uv" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+
+    <!-- ===== [r1 c1] plain fBm: fractal2d, 5 octaves ===== -->
+    <multiply name="p11_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8" /></multiply>
+    <fractal2d name="p11_n" type="float"><input name="texcoord" type="vector2" nodename="p11_uv" /><input name="octaves" type="integer" value="5" /></fractal2d>
+    <multiply name="p11_h" type="float"><input name="in1" type="float" nodename="p11_n" /><input name="in2" type="float" value="0.012" /></multiply>
+
+    <!-- ===== [r1 c2] ridged: 1 - abs(fBm): sharp crests on the zero contours ===== -->
+    <subtract name="p12_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.3333, 0.0000" /></subtract>
+    <multiply name="p12_uv" type="vector2"><input name="in1" type="vector2" nodename="p12_uv0" /><input name="in2" type="float" value="8" /></multiply>
+    <fractal2d name="p12_n" type="float"><input name="texcoord" type="vector2" nodename="p12_uv" /><input name="octaves" type="integer" value="5" /></fractal2d>
+    <absval name="p12_a" type="float"><input name="in" type="float" nodename="p12_n" /></absval>
+    <subtract name="p12_r" type="float"><input name="in1" type="float" value="0.5" /><input name="in2" type="float" nodename="p12_a" /></subtract>
+    <multiply name="p12_h" type="float"><input name="in1" type="float" nodename="p12_r" /><input name="in2" type="float" value="0.018000000000000002" /></multiply>
+
+    <!-- ===== [r1 c3] billow: abs(fBm): rounded puffs with creases ===== -->
+    <subtract name="p13_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.6667, 0.0000" /></subtract>
+    <multiply name="p13_uv" type="vector2"><input name="in1" type="vector2" nodename="p13_uv0" /><input name="in2" type="float" value="8" /></multiply>
+    <fractal2d name="p13_n" type="float"><input name="texcoord" type="vector2" nodename="p13_uv" /><input name="octaves" type="integer" value="5" /></fractal2d>
+    <absval name="p13_a" type="float"><input name="in" type="float" nodename="p13_n" /></absval>
+    <multiply name="p13_h" type="float"><input name="in1" type="float" nodename="p13_a" /><input name="in2" type="float" value="0.018000000000000002" /></multiply>
+
+    <!-- ===== [r2 c1] terraces: soft-stepped fBm, 6 steps over the range ===== -->
+    <subtract name="p21_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.0000, 0.5000" /></subtract>
+    <multiply name="p21_uv" type="vector2"><input name="in1" type="vector2" nodename="p21_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <fractal2d name="p21_n" type="float"><input name="texcoord" type="vector2" nodename="p21_uv" /><input name="octaves" type="integer" value="3" /></fractal2d>
+    <multiply name="p21_k" type="float"><input name="in1" type="float" nodename="p21_n" /><input name="in2" type="float" value="3" /></multiply>
+    <floor name="p21_fl" type="float"><input name="in" type="float" nodename="p21_k" /></floor>
+    <subtract name="p21_fr" type="float"><input name="in1" type="float" nodename="p21_k" /><input name="in2" type="float" nodename="p21_fl" /></subtract>
+    <!-- riser occupies the top 25% of each step -->
+    <smoothstep name="p21_ss" type="float"><input name="in" type="float" nodename="p21_fr" /><input name="low" type="float" value="0.75" /><input name="high" type="float" value="1" /></smoothstep>
+    <add name="p21_st" type="float"><input name="in1" type="float" nodename="p21_fl" /><input name="in2" type="float" nodename="p21_ss" /></add>
+    <multiply name="p21_h" type="float"><input name="in1" type="float" nodename="p21_st" /><input name="in2" type="float" value="0.006" /></multiply>
+
+    <!-- ===== [r2 c2] anisotropic: noise2d(u*3, v*60), streaks along u ===== -->
+    <subtract name="p22_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.3333, 0.5000" /></subtract>
+    <multiply name="p22_uv" type="vector2"><input name="in1" type="vector2" nodename="p22_uv0" /><input name="in2" type="vector2" value="3, 60" /></multiply>
+    <fractal2d name="p22_n" type="float"><input name="texcoord" type="vector2" nodename="p22_uv" /><input name="octaves" type="integer" value="3" /></fractal2d>
+    <multiply name="p22_h" type="float"><input name="in1" type="float" nodename="p22_n" /><input name="in2" type="float" value="0.003" /></multiply>
+
+    <!-- ===== [r2 c3] domain-warped fBm: fractal2d(uv*8 + 0.02*fractal3(uv*4).xy (A*f 0.08)) ===== -->
+    <subtract name="p23_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.6667, 0.5000" /></subtract>
+    <multiply name="p23_wf" type="vector2"><input name="in1" type="vector2" nodename="p23_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <fractal2d name="p23_w3" type="vector3"><input name="texcoord" type="vector2" nodename="p23_wf" /><input name="amplitude" type="vector3" value="0.02, 0.02, 0" /></fractal2d>
+    <convert name="p23_w" type="vector2"><input name="in" type="vector3" nodename="p23_w3" /></convert>
+    <add name="p23_wp" type="vector2"><input name="in1" type="vector2" nodename="p23_uv0" /><input name="in2" type="vector2" nodename="p23_w" /></add>
+    <multiply name="p23_uv" type="vector2"><input name="in1" type="vector2" nodename="p23_wp" /><input name="in2" type="float" value="8" /></multiply>
+    <fractal2d name="p23_n" type="float"><input name="texcoord" type="vector2" nodename="p23_uv" /><input name="octaves" type="integer" value="5" /></fractal2d>
+    <multiply name="p23_h" type="float"><input name="in1" type="float" nodename="p23_n" /><input name="in2" type="float" value="0.012" /></multiply>
+
+    <!-- ===== panel selection ===== -->
+    <ifgreater name="sel_r0_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="float" nodename="p12_h" /><input name="in2" type="float" nodename="p11_h" /></ifgreater>
+    <ifgreater name="sel_r0_c2" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="float" nodename="p13_h" /><input name="in2" type="float" nodename="sel_r0_c1" /></ifgreater>
+    <ifgreater name="sel_r1_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="float" nodename="p22_h" /><input name="in2" type="float" nodename="p21_h" /></ifgreater>
+    <ifgreater name="sel_r1_c2" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="float" nodename="p23_h" /><input name="in2" type="float" nodename="sel_r1_c1" /></ifgreater>
+    <ifgreater name="sel_row1" type="float"><input name="value1" type="float" nodename="uv_s" output="outy" /><input name="value2" type="float" value="0.5000" /><input name="in1" type="float" nodename="sel_r1_c2" /><input name="in2" type="float" nodename="sel_r0_c2" /></ifgreater>
+    <!-- selected panel value -->
+    <multiply name="value" type="float"><input name="in1" type="float" nodename="sel_row1" /><input name="in2" type="float" value="1" /></multiply>
+
+    <!-- ===== height (m) -> normal via the millimeter workaround ===== -->
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="value" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <!-- colour: grey concrete-like tone, brighter on highs so relief and value agree -->
+    <multiply name="h_norm" type="float"><input name="in1" type="float" nodename="value" /><input name="in2" type="float" value="41.666666666666664" /></multiply>
+    <clamp name="h_c" type="float"><input name="in" type="float" nodename="h_norm" /><input name="low" type="float" value="-1" /><input name="high" type="float" value="1" /></clamp>
+    <multiply name="tone_a" type="float"><input name="in1" type="float" nodename="h_c" /><input name="in2" type="float" value="0.12" /></multiply>
+    <add name="tone" type="float"><input name="in1" type="float" nodename="tone_a" /><input name="in2" type="float" value="0.38" /></add>
+    <convert name="base_color" type="color3"><input name="in" type="float" nodename="tone" /></convert>
+    <constant name="rough" type="float"><input name="value" type="float" value="0.8" /></constant>
+    <constant name="metal" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="rough" />
+    <output name="metalness_out" type="float" nodename="metal" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_idioms" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="base_color" type="color3" nodegraph="NG_idioms" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_idioms" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_idioms" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_idioms" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_idioms" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_idioms" /></surfacematerial>
+</materialx>

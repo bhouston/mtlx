@@ -1,0 +1,45 @@
+<!-- in: uv. out: hb_loc (plank-local m, centred; x along, y across), hb_id, hb_d (m to the plank edge), hb_tile. 90-deg herringbone at 45 deg, 25x100 mm planks, 1.5 mm grout; module WM = 26.5 mm, K = LM/WM = 3.8302 -->
+<rotate2d name="hb_r" type="vector2"><input name="in" type="vector2" nodename="uv" /><input name="amount" type="float" value="45" /></rotate2d>
+<divide name="hb_q" type="vector2"><input name="in1" type="vector2" nodename="hb_r" /><input name="in2" type="float" value="0.0265" /></divide>
+<separate2 name="hb_qs" type="multioutput"><input name="in" type="vector2" nodename="hb_q" /></separate2>
+<subtract name="hb_t" type="float"><input name="in1" type="float" nodename="hb_qs" output="outx" /><input name="in2" type="float" nodename="hb_qs" output="outy" /></subtract>
+<add name="hb_t1" type="float"><input name="in1" type="float" nodename="hb_t" /><input name="in2" type="float" value="1" /></add>
+<divide name="hb_nh0" type="float"><input name="in1" type="float" nodename="hb_t1" /><input name="in2" type="float" value="7.66038" /></divide>
+<floor name="hb_nh" type="float"><input name="in" type="float" nodename="hb_nh0" /></floor>
+<multiply name="hb_nhk" type="float"><input name="in1" type="float" nodename="hb_nh" /><input name="in2" type="float" value="3.83019" /></multiply>
+<add name="hb_yh" type="float"><input name="in1" type="float" nodename="hb_qs" output="outy" /><input name="in2" type="float" nodename="hb_nhk" /></add>
+<floor name="hb_mh" type="float"><input name="in" type="float" nodename="hb_yh" /></floor>
+<subtract name="hb_fyh" type="float"><input name="in1" type="float" nodename="hb_yh" /><input name="in2" type="float" nodename="hb_mh" /></subtract>
+<modulo name="hb_xl0" type="float"><input name="in1" type="float" nodename="hb_t1" /><input name="in2" type="float" value="7.66038" /></modulo>
+<add name="hb_xl1" type="float"><input name="in1" type="float" nodename="hb_xl0" /><input name="in2" type="float" nodename="hb_fyh" /></add>
+<subtract name="hb_xl" type="float"><input name="in1" type="float" nodename="hb_xl1" /><input name="in2" type="float" value="1" /></subtract>
+<ifgreater name="hb_ish0" type="float"><input name="value1" type="float" value="3.83019" /><input name="value2" type="float" nodename="hb_xl" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+<ifgreater name="hb_ish" type="float"><input name="value1" type="float" value="0" /><input name="value2" type="float" nodename="hb_xl" /><input name="in1" type="float" value="0" /><input name="in2" type="float" nodename="hb_ish0" /></ifgreater>
+<subtract name="hb_nv0" type="float"><input name="in1" type="float" nodename="hb_t1" /><input name="in2" type="float" value="3.83019" /></subtract>
+<divide name="hb_nv1" type="float"><input name="in1" type="float" nodename="hb_nv0" /><input name="in2" type="float" value="7.66038" /></divide>
+<floor name="hb_nv" type="float"><input name="in" type="float" nodename="hb_nv1" /></floor>
+<multiply name="hb_nvk" type="float"><input name="in1" type="float" nodename="hb_nv" /><input name="in2" type="float" value="3.83019" /></multiply>
+<add name="hb_nvk1" type="float"><input name="in1" type="float" nodename="hb_nvk" /><input name="in2" type="float" value="3.83019" /></add>
+<subtract name="hb_gx" type="float"><input name="in1" type="float" nodename="hb_qs" output="outx" /><input name="in2" type="float" nodename="hb_nvk1" /></subtract>
+<floor name="hb_mv" type="float"><input name="in" type="float" nodename="hb_gx" /></floor>
+<subtract name="hb_fxv" type="float"><input name="in1" type="float" nodename="hb_gx" /><input name="in2" type="float" nodename="hb_mv" /></subtract>
+<subtract name="hb_av0" type="float"><input name="in1" type="float" nodename="hb_qs" output="outy" /><input name="in2" type="float" nodename="hb_mv" /></subtract>
+<add name="hb_av1" type="float"><input name="in1" type="float" nodename="hb_av0" /><input name="in2" type="float" nodename="hb_nvk1" /></add>
+<subtract name="hb_av" type="float"><input name="in1" type="float" nodename="hb_av1" /><input name="in2" type="float" value="1" /></subtract>
+<mix name="hb_al" type="float"><input name="bg" type="float" nodename="hb_av" /><input name="fg" type="float" nodename="hb_xl" /><input name="mix" type="float" nodename="hb_ish" /></mix>
+<mix name="hb_ac" type="float"><input name="bg" type="float" nodename="hb_fxv" /><input name="fg" type="float" nodename="hb_fyh" /><input name="mix" type="float" nodename="hb_ish" /></mix>
+<combine2 name="hb_ac2" type="vector2"><input name="in1" type="float" nodename="hb_al" /><input name="in2" type="float" nodename="hb_ac" /></combine2>
+<multiply name="hb_l0" type="vector2"><input name="in1" type="vector2" nodename="hb_ac2" /><input name="in2" type="float" value="0.0265" /></multiply>
+<subtract name="hb_loc" type="vector2"><input name="in1" type="vector2" nodename="hb_l0" /><input name="in2" type="vector2" value="0.05075, 0.01325" /></subtract>
+<mix name="hb_in" type="float"><input name="bg" type="float" nodename="hb_nv" /><input name="fg" type="float" nodename="hb_nh" /><input name="mix" type="float" nodename="hb_ish" /></mix>
+<multiply name="hb_io" type="float"><input name="in1" type="float" nodename="hb_ish" /><input name="in2" type="float" value="173" /></multiply>
+<add name="hb_in2" type="float"><input name="in1" type="float" nodename="hb_in" /><input name="in2" type="float" nodename="hb_io" /></add>
+<mix name="hb_im" type="float"><input name="bg" type="float" nodename="hb_mv" /><input name="fg" type="float" nodename="hb_mh" /><input name="mix" type="float" nodename="hb_ish" /></mix>
+<combine2 name="hb_cell" type="vector2"><input name="in1" type="float" nodename="hb_in2" /><input name="in2" type="float" nodename="hb_im" /></combine2>
+<add name="hb_seed" type="vector2"><input name="in1" type="vector2" nodename="hb_cell" /><input name="in2" type="vector2" value="200.37, 300.61" /></add>
+<cellnoise2d name="hb_id" type="float"><input name="texcoord" type="vector2" nodename="hb_seed" /></cellnoise2d>
+<absval name="hb_abs" type="vector2"><input name="in" type="vector2" nodename="hb_loc" /></absval>
+<subtract name="hb_e" type="vector2"><input name="in1" type="vector2" value="0.05, 0.0125" /><input name="in2" type="vector2" nodename="hb_abs" /></subtract>
+<separate2 name="hb_es" type="multioutput"><input name="in" type="vector2" nodename="hb_e" /></separate2>
+<min name="hb_d" type="float"><input name="in1" type="float" nodename="hb_es" output="outx" /><input name="in2" type="float" nodename="hb_es" output="outy" /></min>
+<smoothstep name="hb_tile" type="float"><input name="in" type="float" nodename="hb_d" /><input name="low" type="float" value="-0.00025" /><input name="high" type="float" value="0.00025" /></smoothstep>

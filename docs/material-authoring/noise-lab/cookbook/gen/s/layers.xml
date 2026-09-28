@@ -1,0 +1,11 @@
+<!-- in: uv. out: h_layers (m). Slope budget: macro ~1.5 deg, meso ~5 deg, micro ~4 deg -->
+<multiply name="l_p1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="3" /></multiply>
+<noise2d name="l_macro" type="float"><input name="texcoord" type="vector2" nodename="l_p1" /><input name="amplitude" type="float" value="0.0067" /></noise2d>
+<multiply name="l_p2" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="40" /></multiply>
+<add name="l_p2o" type="vector2"><input name="in1" type="vector2" nodename="l_p2" /><input name="in2" type="vector2" value="11.3, 4.7" /></add>
+<fractal2d name="l_meso" type="float"><input name="texcoord" type="vector2" nodename="l_p2o" /><input name="octaves" type="integer" value="3" /><input name="amplitude" type="float" value="0.001" /></fractal2d>
+<multiply name="l_p3" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1500" /></multiply>
+<add name="l_p3o" type="vector2"><input name="in1" type="vector2" nodename="l_p3" /><input name="in2" type="vector2" value="71.9, 23.3" /></add>
+<noise2d name="l_micro" type="float"><input name="texcoord" type="vector2" nodename="l_p3o" /><input name="amplitude" type="float" value="0.000036" /></noise2d>
+<add name="l_mm" type="float"><input name="in1" type="float" nodename="l_macro" /><input name="in2" type="float" nodename="l_meso" /></add>
+<add name="h_layers" type="float"><input name="in1" type="float" nodename="l_mm" /><input name="in2" type="float" nodename="l_micro" /></add>

@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Domain warping a 10 cm line grid with 4/m noise. Amplitudes in meters; A*f = amplitude x warp frequency.
+       UV 0..1 = 1 m. Layout (3x2, row 1 at the bottom = v small, column 1 at the left):
+         [r1 c1] no warp
+         [r1 c2] noise2d type=vector2, A 0.05 (A*f 0.2): diagonal-only shear
+         [r1 c3] noise2d vector3 -> convert vector2, A 0.05 (A*f 0.2): safe
+         [r2 c1] noise2d vector3, A 0.08 (A*f 0.32): at the fold limit
+         [r2 c2] noise2d vector3, A 0.15 (A*f 0.6): folds
+         [r2 c3] fractal2d vector3 (3 oct), A 0.03 (A*f 0.12): safe
+  -->
+  <nodegraph name="NG_warp">
+    <texcoord name="uv" type="vector2" />
+    <separate2 name="uv_s" type="multioutput"><input name="in" type="vector2" nodename="uv" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+
+    <!-- ===== [r1 c1] no warp ===== -->
+    <multiply name="p11_g10" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="10" /></multiply>
+    <modulo name="p11_gf" type="vector2"><input name="in1" type="vector2" nodename="p11_g10" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p11_gs" type="multioutput"><input name="in" type="vector2" nodename="p11_gf" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p11_gm" type="float"><input name="in1" type="float" nodename="p11_gs" output="outx" /><input name="in2" type="float" nodename="p11_gs" output="outy" /></min>
+    <ifgreater name="p11_line" type="float"><input name="value1" type="float" value="0.08" /><input name="value2" type="float" nodename="p11_gm" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.05" /></ifgreater>
+
+    <!-- ===== [r1 c2] noise2d type=vector2, A 0.05 (A*f 0.2): diagonal-only shear ===== -->
+    <subtract name="p12_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.3333, 0.0000" /></subtract>
+    <multiply name="p12_wf" type="vector2"><input name="in1" type="vector2" nodename="p12_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <!-- vector2 noise: BOTH channels are the same value -> displacement only along the (1,1) diagonal -->
+    <noise2d name="p12_w" type="vector2"><input name="texcoord" type="vector2" nodename="p12_wf" /><input name="amplitude" type="vector2" value="0.05, 0.05" /></noise2d>
+    <add name="p12_p" type="vector2"><input name="in1" type="vector2" nodename="p12_uv0" /><input name="in2" type="vector2" nodename="p12_w" /></add>
+    <multiply name="p12_g10" type="vector2"><input name="in1" type="vector2" nodename="p12_p" /><input name="in2" type="float" value="10" /></multiply>
+    <modulo name="p12_gf" type="vector2"><input name="in1" type="vector2" nodename="p12_g10" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p12_gs" type="multioutput"><input name="in" type="vector2" nodename="p12_gf" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p12_gm" type="float"><input name="in1" type="float" nodename="p12_gs" output="outx" /><input name="in2" type="float" nodename="p12_gs" output="outy" /></min>
+    <ifgreater name="p12_line" type="float"><input name="value1" type="float" value="0.08" /><input name="value2" type="float" nodename="p12_gm" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.05" /></ifgreater>
+
+    <!-- ===== [r1 c3] noise2d vector3 -> convert vector2, A 0.05 (A*f 0.2): safe ===== -->
+    <subtract name="p13_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.6667, 0.0000" /></subtract>
+    <multiply name="p13_wf" type="vector2"><input name="in1" type="vector2" nodename="p13_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <!-- vector3 noise has 3 independent channels; convert keeps x,y -->
+    <noise2d name="p13_w3" type="vector3"><input name="texcoord" type="vector2" nodename="p13_wf" /><input name="amplitude" type="vector3" value="0.05, 0.05, 0" /></noise2d>
+    <convert name="p13_w" type="vector2"><input name="in" type="vector3" nodename="p13_w3" /></convert>
+    <add name="p13_p" type="vector2"><input name="in1" type="vector2" nodename="p13_uv0" /><input name="in2" type="vector2" nodename="p13_w" /></add>
+    <multiply name="p13_g10" type="vector2"><input name="in1" type="vector2" nodename="p13_p" /><input name="in2" type="float" value="10" /></multiply>
+    <modulo name="p13_gf" type="vector2"><input name="in1" type="vector2" nodename="p13_g10" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p13_gs" type="multioutput"><input name="in" type="vector2" nodename="p13_gf" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p13_gm" type="float"><input name="in1" type="float" nodename="p13_gs" output="outx" /><input name="in2" type="float" nodename="p13_gs" output="outy" /></min>
+    <ifgreater name="p13_line" type="float"><input name="value1" type="float" value="0.08" /><input name="value2" type="float" nodename="p13_gm" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.05" /></ifgreater>
+
+    <!-- ===== [r2 c1] noise2d vector3, A 0.08 (A*f 0.32): at the fold limit ===== -->
+    <subtract name="p21_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.0000, 0.5000" /></subtract>
+    <multiply name="p21_wf" type="vector2"><input name="in1" type="vector2" nodename="p21_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <!-- vector3 noise has 3 independent channels; convert keeps x,y -->
+    <noise2d name="p21_w3" type="vector3"><input name="texcoord" type="vector2" nodename="p21_wf" /><input name="amplitude" type="vector3" value="0.08, 0.08, 0" /></noise2d>
+    <convert name="p21_w" type="vector2"><input name="in" type="vector3" nodename="p21_w3" /></convert>
+    <add name="p21_p" type="vector2"><input name="in1" type="vector2" nodename="p21_uv0" /><input name="in2" type="vector2" nodename="p21_w" /></add>
+    <multiply name="p21_g10" type="vector2"><input name="in1" type="vector2" nodename="p21_p" /><input name="in2" type="float" value="10" /></multiply>
+    <modulo name="p21_gf" type="vector2"><input name="in1" type="vector2" nodename="p21_g10" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p21_gs" type="multioutput"><input name="in" type="vector2" nodename="p21_gf" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p21_gm" type="float"><input name="in1" type="float" nodename="p21_gs" output="outx" /><input name="in2" type="float" nodename="p21_gs" output="outy" /></min>
+    <ifgreater name="p21_line" type="float"><input name="value1" type="float" value="0.08" /><input name="value2" type="float" nodename="p21_gm" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.05" /></ifgreater>
+
+    <!-- ===== [r2 c2] noise2d vector3, A 0.15 (A*f 0.6): folds ===== -->
+    <subtract name="p22_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.3333, 0.5000" /></subtract>
+    <multiply name="p22_wf" type="vector2"><input name="in1" type="vector2" nodename="p22_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <!-- vector3 noise has 3 independent channels; convert keeps x,y -->
+    <noise2d name="p22_w3" type="vector3"><input name="texcoord" type="vector2" nodename="p22_wf" /><input name="amplitude" type="vector3" value="0.15, 0.15, 0" /></noise2d>
+    <convert name="p22_w" type="vector2"><input name="in" type="vector3" nodename="p22_w3" /></convert>
+    <add name="p22_p" type="vector2"><input name="in1" type="vector2" nodename="p22_uv0" /><input name="in2" type="vector2" nodename="p22_w" /></add>
+    <multiply name="p22_g10" type="vector2"><input name="in1" type="vector2" nodename="p22_p" /><input name="in2" type="float" value="10" /></multiply>
+    <modulo name="p22_gf" type="vector2"><input name="in1" type="vector2" nodename="p22_g10" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p22_gs" type="multioutput"><input name="in" type="vector2" nodename="p22_gf" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p22_gm" type="float"><input name="in1" type="float" nodename="p22_gs" output="outx" /><input name="in2" type="float" nodename="p22_gs" output="outy" /></min>
+    <ifgreater name="p22_line" type="float"><input name="value1" type="float" value="0.08" /><input name="value2" type="float" nodename="p22_gm" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.05" /></ifgreater>
+
+    <!-- ===== [r2 c3] fractal2d vector3 (3 oct), A 0.03 (A*f 0.12): safe ===== -->
+    <subtract name="p23_uv0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="0.6667, 0.5000" /></subtract>
+    <multiply name="p23_wf" type="vector2"><input name="in1" type="vector2" nodename="p23_uv0" /><input name="in2" type="float" value="4" /></multiply>
+    <!-- vector3 noise has 3 independent channels; convert keeps x,y -->
+    <fractal2d name="p23_w3" type="vector3"><input name="texcoord" type="vector2" nodename="p23_wf" /><input name="amplitude" type="vector3" value="0.03, 0.03, 0" /></fractal2d>
+    <convert name="p23_w" type="vector2"><input name="in" type="vector3" nodename="p23_w3" /></convert>
+    <add name="p23_p" type="vector2"><input name="in1" type="vector2" nodename="p23_uv0" /><input name="in2" type="vector2" nodename="p23_w" /></add>
+    <multiply name="p23_g10" type="vector2"><input name="in1" type="vector2" nodename="p23_p" /><input name="in2" type="float" value="10" /></multiply>
+    <modulo name="p23_gf" type="vector2"><input name="in1" type="vector2" nodename="p23_g10" /><input name="in2" type="float" value="1" /></modulo>
+    <separate2 name="p23_gs" type="multioutput"><input name="in" type="vector2" nodename="p23_gf" /><output name="outx" type="float" /><output name="outy" type="float" /></separate2>
+    <min name="p23_gm" type="float"><input name="in1" type="float" nodename="p23_gs" output="outx" /><input name="in2" type="float" nodename="p23_gs" output="outy" /></min>
+    <ifgreater name="p23_line" type="float"><input name="value1" type="float" value="0.08" /><input name="value2" type="float" nodename="p23_gm" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0.05" /></ifgreater>
+
+    <!-- ===== panel selection ===== -->
+    <ifgreater name="sel_r0_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="float" nodename="p12_line" /><input name="in2" type="float" nodename="p11_line" /></ifgreater>
+    <ifgreater name="sel_r0_c2" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="float" nodename="p13_line" /><input name="in2" type="float" nodename="sel_r0_c1" /></ifgreater>
+    <ifgreater name="sel_r1_c1" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.3333" /><input name="in1" type="float" nodename="p22_line" /><input name="in2" type="float" nodename="p21_line" /></ifgreater>
+    <ifgreater name="sel_r1_c2" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.6667" /><input name="in1" type="float" nodename="p23_line" /><input name="in2" type="float" nodename="sel_r1_c1" /></ifgreater>
+    <ifgreater name="sel_row1" type="float"><input name="value1" type="float" nodename="uv_s" output="outy" /><input name="value2" type="float" value="0.5000" /><input name="in1" type="float" nodename="sel_r1_c2" /><input name="in2" type="float" nodename="sel_r0_c2" /></ifgreater>
+    <!-- selected panel value -->
+    <multiply name="value" type="float"><input name="in1" type="float" nodename="sel_row1" /><input name="in2" type="float" value="1" /></multiply>
+    <convert name="value_c" type="color3"><input name="in" type="float" nodename="value" /></convert>
+    <output name="emission_out" type="color3" nodename="value_c" />
+  </nodegraph>
+  <standard_surface name="SR_warp" type="surfaceshader"><input name="base" type="float" value="0" /><input name="specular" type="float" value="0" /><input name="emission" type="float" value="1" /><input name="emission_color" type="color3" nodegraph="NG_warp" output="emission_out" /></standard_surface>
+  <surfacematerial name="M_warp" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_warp" /></surfacematerial>
+</materialx>
