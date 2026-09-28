@@ -522,6 +522,29 @@ describe('mtlx', () => {
       }
     });
 
+    it('transform --image-format avif encodes textures with the mtlx-fidelity AVIF settings', async () => {
+      const tempDir = await copyFixture('wood_grain');
+      try {
+        const outputPath = path.join(tempDir, 'out/wood_grain.mtlx');
+        const result = await cli.run(
+          ['transform', path.join(tempDir, 'wood_grain.mtlx'), '-o', outputPath, '--image-format', 'avif'],
+          { timeout: 15_000 },
+        );
+        expect(result).toSucceed();
+
+        const avif = await readFile(path.join(tempDir, 'out/textures/wood_color.avif'));
+        const expected = await sharp(path.join(tempDir, 'textures/wood_color.jpg'))
+          .avif({ quality: 90, chromaSubsampling: '4:4:4' })
+          .toBuffer();
+        expect(avif.equals(expected)).toBe(true);
+        const xmlText = await readFile(outputPath, 'utf8');
+        expect(xmlText).toContain('textures/wood_color.avif');
+        expect(xmlText).toContain('textures/wood_roughness.avif');
+      } finally {
+        await rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
     it('transform --profile web leaves an already-compliant texture untouched (filter, not re-encode)', async () => {
       // wood_grain's textures are 128x128 jpg: already a web format, well under 2048px.
       const tempDir = await copyFixture('wood_grain');

@@ -302,6 +302,9 @@ with `exr:piz` requested) is re-encoded.
 mtlx x material.mtlx -o material.mtlx.zip --image-format webp,exr:piz
 ```
 
+`avif` is encoded with the settings mtlx-fidelity uses for its reference renders: quality 90 with
+full-resolution (4:4:4) chroma. `--image-quality` overrides the quality; chroma stays 4:4:4.
+
 ### `--texture-library`/`-tl`
 
 Loose `.mtlx` output normally keeps textures under `textures/` next to the document.
@@ -589,8 +592,10 @@ Texture options:
                                "exr:piz") to normalize EXR compression;
                                supported: none, rle, zips, zip, piz, pxr24, b44,
                                b44a, dwaa, dwab                         [string]
-      --image-quality          Quality for lossy image formats (webp/jpg/avif)
-                                                          [number] [default: 95]
+      --image-quality          Quality for lossy image formats (webp/jpg/avif).
+                               Default: 95 for webp/jpg; avif uses
+                               mtlx-fidelity's render settings (quality 90,
+                               4:4:4 chroma)                            [number]
       --texture-library, --tl  Loose .mtlx output only: copy textures into this
                                directory (relative to --output) instead of
                                ./textures. Ignored for .mtlx.zip output, whose

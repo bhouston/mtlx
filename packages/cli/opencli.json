@@ -453,8 +453,7 @@
         {
           "name": "image-quality",
           "type": "number",
-          "summary": "Quality for lossy image formats (webp/jpg/avif)",
-          "default": 95
+          "summary": "Quality for lossy image formats (webp/jpg/avif). Default: 95 for webp/jpg; avif uses mtlx-fidelity's render settings (quality 90, 4:4:4 chroma)"
         },
         {
           "name": "texture-library",
