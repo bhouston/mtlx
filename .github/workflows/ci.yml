@@ -44,8 +44,8 @@ jobs:
           done
       - name: Verify generated CLI documentation
         run: pnpm docs:cli --check
-      - name: Verify generated OpenCLI document
-        run: pnpm docs:opencli --check
+      - name: Generate OpenCLI document
+        run: node packages/cli/bin/cli.js docgen --output packages/cli/opencli.json
       - name: Validate OpenCLI document
         uses: bhouston/clidoc-action@v1
         with:

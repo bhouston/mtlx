@@ -119,12 +119,45 @@ mtlx download alice/copper -o copper.mtlx.zip                      # download a 
 
 See the [mtlx-cli README](https://www.npmjs.com/package/mtlx-cli) for the full reference.
 
-## Contributing
+## Development
 
-See [CONTRIBUTING.md](https://github.com/bhouston/mtlx/blob/main/CONTRIBUTING.md) for the
-issue/branch/PR workflow, [docs/DEVELOPMENT.md](https://github.com/bhouston/mtlx/blob/main/docs/DEVELOPMENT.md)
-for setup, the MaterialX node-definition generator, and repo conventions, and
-[GitHub Releases](https://github.com/bhouston/mtlx/releases) for what has changed.
+Read [CONTRIBUTING.md](https://github.com/bhouston/mtlx/blob/main/CONTRIBUTING.md) before starting a
+change; release setup is in [RELEASING.md](https://github.com/bhouston/mtlx/blob/main/RELEASING.md)
+and changes are listed in [GitHub Releases](https://github.com/bhouston/mtlx/releases).
+
+```sh
+pnpm install
+pnpm build             # builds every package; the website build also regenerates the docs
+pnpm test              # type-check + vitest across all packages
+pnpm lint
+pnpm docs:cli          # splice `mtlx --help` into packages/cli/README.md (commit the result)
+pnpm docs:cli --check  # fails if that generated help is stale
+node packages/cli/bin/cli.js check material.mtlx  # run the local CLI build
+```
+
+Test fixtures live under `assets/` and are shared by every package's tests.
+
+**Node definitions.** The registry is generated from upstream MaterialX sources in
+`submodules/MaterialX` (a local source copy, not a registered submodule; only needed when
+regenerating). `pnpm generate:nodes [path/to/MaterialX]` regenerates the registry and upstream
+license; `pnpm check:nodes` verifies them without rewriting. Commit the generated files with any
+matching core model changes.
+
+**Keep `mtlx-core` pure.** The root entry has no `node:` imports, no `Buffer`, and no native
+modules; the website imports only the root entry, which is the check. Filesystem helpers go in
+`packages/core/src/node.ts` (`mtlx-core/node`), anything needing sharp in
+`packages/core/src/textures.ts` (`mtlx-core/textures`), and pure functions take bytes, text, or a
+reader callback such as `ResourceReader`.
+
+**API conventions.** Functions, not classes, with plain interfaces for data. A function that takes
+options has an `XOptions` interface and, when any option has a default, an `X_DEFAULTS` const.
+Whole-material operations are a `Transform` so they compose with `transform(pkg, ...)`. Validation
+returns `MaterialXValidationIssue[]` and never throws on bad input. Tag every export with
+`@category` (`Parsing`, `Validation`, `Packaging`, `Transforms`, or `Textures`) and keep each
+package README current when an export's signature or behavior changes.
+
+**VS Code extension.** Build the VSIX with `pnpm --filter mtlx-vscode-extension package`, not
+`pnpm tsc`, which replaces the bundled host entry with unbundled output.
 
 ## Credits
 

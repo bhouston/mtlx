@@ -189,9 +189,8 @@ mtlx docgen --format markdown --output cli.md  # ...or as Markdown
 ```
 
 `mtlx docgen` writes an [OpenCLI](https://github.com/bcdxn/opencli) document generated from the
-CLI's own command definitions, via [clidoc](https://clidoc.dev). The repository's committed copy,
-`packages/cli/opencli.json`, is validated in CI with
-[`clidoc-action`](https://github.com/bhouston/clidoc-action).
+CLI's own command definitions, via [clidoc](https://clidoc.dev). CI generates it and validates it
+with [`clidoc-action`](https://github.com/bhouston/clidoc-action).
 
 ### Pack and unpack
 
