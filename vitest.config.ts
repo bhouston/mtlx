@@ -5,6 +5,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
+      include: ['packages/{cli,core,editor,sdk,viewer,vscode-extension}/src/**/*.ts'],
+      exclude: ['**/*.{test,spec}.ts', '**/*.d.ts'],
     },
     projects: [
       { test: { name: 'sdk', include: ['packages/sdk/src/**/*.test.ts'], environment: 'node' } },
