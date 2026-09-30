@@ -1,3 +1,5 @@
+[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
+
 # Mtlx Viewer for MaterialX
 
 **See your [MaterialX](https://materialx.org) materials without leaving VS Code.** Open any `.mtlx` or

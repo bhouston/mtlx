@@ -1,3 +1,5 @@
+[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
+
 # mtlx-editor
 
 A functional MaterialX graph editor, with no dependency on Three.js or the website.

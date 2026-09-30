@@ -1,3 +1,5 @@
+[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
+
 # mtlx-sdk
 
 Official SDK for the [MTLX.ai](https://mtlx.ai) REST API.
