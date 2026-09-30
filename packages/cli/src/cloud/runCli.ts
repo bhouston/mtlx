@@ -1,8 +1,8 @@
 import { createRequire } from 'node:module';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { infoFromPackageJson, type OpenCliDocument } from '@clidoc/core';
-import { createDocgenCommand, fromYargs } from '@clidoc/yargs';
+import { infoFromPackageJson } from '@clidoc/core';
+import { createDocgenCommand, fromYargsAsync } from '@clidoc/yargs';
 import type { PackageJson } from 'type-fest';
 import yargs from 'yargs';
 import { fileCommands } from 'yargs-file-commands';
@@ -37,12 +37,21 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<unknown> {
   // Pre-load config defaults before commands are registered
   await initializeConfigDefaults(deps);
 
-  let document: OpenCliDocument;
+  const docgen = createDocgenCommand(async () =>
+    fromYargsAsync(
+      [...(await fileCommands({ commandDirs })), docgen],
+      infoFromPackageJson({
+        name: packageInfo.name ?? 'mtlx-cli',
+        version: packageInfo.version ?? '0.0.0',
+        bin: { mtlx: './bin/cli.js' },
+      }),
+    ),
+  );
   const y = yargs(argv)
     .scriptName('mtlx')
     .usage('$0 <command> [options]')
     .command(await fileCommands({ commandDirs }))
-    .command(createDocgenCommand(() => document))
+    .command(docgen)
     .option('parallel', {
       type: 'number',
       description: 'Number of parallel operations to run concurrently',
@@ -79,18 +88,6 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<unknown> {
       }
       throw new Error(msg);
     });
-
-  document = fromYargs(
-    yargs()
-      .scriptName('mtlx')
-      .command(await fileCommands({ commandDirs: [localCommandsDir] }))
-      .command(createDocgenCommand(() => document)),
-    infoFromPackageJson({
-      name: packageInfo.name ?? 'mtlx-cli',
-      version: packageInfo.version ?? '0.0.0',
-      bin: { mtlx: './bin/cli.js' },
-    }),
-  );
 
   // Check if argv is completely empty (no arguments at all)
   // If so, show help. Otherwise let yargs handle --help, --version, etc. normally
