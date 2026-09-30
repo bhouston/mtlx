@@ -75,8 +75,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       '@clidoc/yargs':
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^1.1.0
+        version: 1.1.0
       '@modelcontextprotocol/sdk':
         specifier: ^1.30.0
         version: 1.30.0(supports-color@10.2.2)(zod@4.6.5)
@@ -129,8 +129,8 @@ importers:
         specifier: ^18.0.0
         version: 18.1.0
       yargs-file-commands:
-        specifier: ^1.2.2
-        version: 1.2.2(yargs@18.1.0)
+        specifier: ^2.1.0
+        version: 2.1.0(yargs@18.1.0)
       zod:
         specifier: ^4.6.5
         version: 4.6.5
@@ -611,9 +611,13 @@ packages:
     resolution: {integrity: sha512-oyUkkXQ7VNRO7fXXn388oYe77jE+rVZE8MVhXcZb3C9VlDwAlTx/EUTk1QjQMrnd7ecJxuryb/E3qsq8gLcqAQ==}
     engines: {node: '>=22.12.0'}
 
-  '@clidoc/yargs@0.1.1':
-    resolution: {integrity: sha512-HrJkUOIQKzjcPA6WOPLs8vBy8wu8xcHV9G56PAJpRscP3vUIz9iop1QtQUmOB8XJ/6G6/g7CzQTWVcAXlFF85w==}
-    engines: {node: '>=22.12.0'}
+  '@clidoc/core@1.1.0':
+    resolution: {integrity: sha512-RuKMqeFV3oK5gcDjss1kcPu7Lgy2loUWkp23L/JHaNw4CTsjMmwbTy4s0BW8eF42Ve9Lw2A7GzATQykXNteh3g==}
+    engines: {node: '>=22'}
+
+  '@clidoc/yargs@1.1.0':
+    resolution: {integrity: sha512-jtE6J/lPUiyxHGI95Ti+VJ5mO4e/TNX1n6l7H5aKKejWF1DuPclMB3q2ulNjYXxlgthFT4+p6B105hF7OsNflg==}
+    engines: {node: '>=22'}
 
   '@cloudflare/kv-asset-handler@0.4.2':
     resolution: {integrity: sha512-SIOD2DxrRRwQ+jgzlXCqoEFiKOFqaPjhnNTGKXSRLvp1HiOvapLaFG2kEr9dYQTYe8rKrd9uvDUzmAITeNyaHQ==}
@@ -7847,11 +7851,11 @@ packages:
     engines: {node: '>= 14.6'}
     hasBin: true
 
-  yargs-file-commands@1.2.2:
-    resolution: {integrity: sha512-Up5lgQYZpoftbo7VNIEcn6YxpP5XUJedsnekO5Mq+vgrKENZyapmXFLrAiN4x8Y6ujU8GZvnEacb90UsPYgNkA==}
-    engines: {node: '>=20.0.0'}
+  yargs-file-commands@2.1.0:
+    resolution: {integrity: sha512-4ips0PL6c2epNK/dF6H+YNDtbdursTpG84ovw73xJFaeaiJgOwFN7awC8WuPcvqo8MCDAy9ztSub61C2tnaUYA==}
+    engines: {node: '>=22.0.0'}
     peerDependencies:
-      yargs: ^17
+      yargs: ^18.0.0
 
   yargs-parser@20.2.9:
     resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
@@ -8211,9 +8215,15 @@ snapshots:
       ajv-formats: 3.0.1(ajv@8.20.0)
       yaml: 2.9.0
 
-  '@clidoc/yargs@0.1.1':
+  '@clidoc/core@1.1.0':
     dependencies:
-      '@clidoc/core': 1.0.0
+      ajv: 8.20.0
+      ajv-formats: 3.0.1(ajv@8.20.0)
+      yaml: 2.9.0
+
+  '@clidoc/yargs@1.1.0':
+    dependencies:
+      '@clidoc/core': 1.1.0
 
   '@cloudflare/kv-asset-handler@0.4.2': {}
 
@@ -11257,7 +11267,7 @@ snapshots:
       obug: 2.2.1
       std-env: 4.2.0
       tinyrainbow: 3.1.1
-      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.0.2)(jsdom@25.0.1(supports-color@10.2.2))(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0))
+      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.0.2)(jsdom@25.0.1(supports-color@10.2.2))(vite@8.3.1(@types/node@22.20.1)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0))
 
   '@vitest/istanbul-lib-coverage@1.0.1': {}
 
@@ -15207,7 +15217,7 @@ snapshots:
 
   yaml@2.9.0: {}
 
-  yargs-file-commands@1.2.2(yargs@18.1.0):
+  yargs-file-commands@2.1.0(yargs@18.1.0):
     dependencies:
       yargs: 18.1.0
 

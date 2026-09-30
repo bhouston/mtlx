@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { validate } from '@clidoc/core';
 import { zipSync } from 'fflate';
 import sharp from 'sharp';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -104,9 +105,10 @@ describe('mtlx', () => {
     const result = await cli.run(['docgen'], { timeout: 15_000 });
     expect(result).toSucceed();
     const document = JSON.parse(result.stdout);
+    expect(validate(document)).toMatchObject({ valid: true });
     expect(document.info).toMatchObject({ binary: 'mtlx' });
     expect(Object.keys(document.commands)).toEqual(
-      expect.arrayContaining(['mtlx check', 'mtlx info', 'mtlx transform', 'mtlx docgen']),
+      expect.arrayContaining(['mtlx check', 'mtlx info', 'mtlx transform', 'mtlx config get', 'mtlx docgen']),
     );
   });
 
