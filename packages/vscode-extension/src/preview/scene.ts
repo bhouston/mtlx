@@ -1,7 +1,7 @@
 import * as THREE from 'three/webgpu';
 import { createViewer, dataUrlToArrayBuffer, parseEnvironmentFile, type Viewer } from 'mtlx-viewer';
 import type { ViewerSettings } from 'mtlx-viewer/settings';
-import studioEnvironmentDataUrl from 'mtlx-viewer/assets/studio-environment.png';
+import studioEnvironmentDataUrl from '../../../static-assets/public/viewer/studio-environment.png';
 import type { PreviewSettings } from '../previewSettings.js';
 import { requestAsset } from './host.js';
 import type { PreviewCamera } from './state.js';

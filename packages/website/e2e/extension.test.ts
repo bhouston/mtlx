@@ -41,7 +41,7 @@ test.each([false, true])(
         }),
       );
       const customPng = (
-        await readFile(resolve(import.meta.dirname, '../../viewer/assets/studio-environment.png'))
+        await readFile(resolve(import.meta.dirname, '../../static-assets/public/viewer/studio-environment.png'))
       ).toString('base64');
       await page.addInitScript(
         ({ png }) => {

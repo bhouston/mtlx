@@ -89,11 +89,9 @@ assert.equal(typeof createAnonymousClient, 'function');
   // Direct server invocation avoids opening a user's browser while checking packaged assets.
   const consumer = `
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
 import { startViewServer } from './node_modules/mtlx-cli/dist/view/server.js';
 import { parseMaterialX } from 'mtlx-core';
 assert.equal(parseMaterialX('<materialx version="1.39"/>').attributes.version, '1.39');
-await readFile(new URL(import.meta.resolve('mtlx-viewer/assets/studio-environment.png')));
 const server = await startViewServer('sample.mtlx');
 try {
   for (const route of ['/', '/__mtlx_view__/viewer.js', '/__mtlx_view__/shaderball.glb']) {
@@ -106,9 +104,7 @@ try {
   writeFileSync(join(directory, 'check.mjs'), consumer);
   execFileSync(process.execPath, ['check.mjs'], { cwd: directory, stdio: 'inherit' });
   checkReadmeExamples(directory);
-  console.log(
-    'Clean production tarball checks passed: headless session, help, check, transform, viewer routes, and exported assets.',
-  );
+  console.log('Clean production tarball checks passed: headless session, help, check, transform, and viewer routes.');
 } finally {
   rmSync(directory, { recursive: true, force: true });
 }

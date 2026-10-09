@@ -12,7 +12,6 @@
   "files": [
     "dist",
     "!dist/**/*.tsbuildinfo",
-    "assets",
     "styles"
   ],
   "type": "module",
@@ -31,7 +30,6 @@
       "types": "./dist/element.d.ts",
       "default": "./dist/element.js"
     },
-    "./assets/*": "./assets/*",
     "./capabilities": {
       "types": "./dist/capabilities.d.ts",
       "default": "./dist/capabilities.js"
