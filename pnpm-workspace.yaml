@@ -18,3 +18,7 @@ minimumReleaseAgeExclude:
   - '@vitest/mocker'
   - '@vitest/spy'
   - vitest
+# One vite for the whole workspace: when the website's plugins resolved a newer vite than its
+# `vite` binary, TanStack Start's dev SSR handler never registered and every route returned 404.
+overrides:
+  vite: 8.2.2
