@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * One-off (re-runnable) build step: bakes three.js's procedural RoomEnvironment into the flat
- * equirectangular PNG at ../assets/studio-environment.png, via a headless Chromium (WebGL is
+ * equirectangular PNG at ../../static-assets/public/viewer/studio-environment.png (immutable once
+ * deployed: bake to a new file name and update the references instead of overwriting it), via a headless Chromium (WebGL is
  * needed to render the scene; Node has no GPU context of its own). Only needs re-running if
  * RoomEnvironment's look or the bake resolution changes — the output is committed as a static
  * asset, not regenerated on every build.
@@ -17,7 +18,7 @@ import { chromium } from 'playwright';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const browserEntry = join(__dirname, 'bake-studio-environment.browser.mjs');
-const outFile = join(__dirname, '../assets/studio-environment.png');
+const outFile = join(__dirname, '../../static-assets/public/viewer/studio-environment.png');
 const WIDTH = 1024;
 const HEIGHT = 512;
 

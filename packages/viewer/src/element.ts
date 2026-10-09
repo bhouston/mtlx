@@ -32,13 +32,12 @@ import {
   type ViewerSettings,
 } from './renderingSettings.js';
 
-// The large built-ins (shaderball 1.4 MB, bridge HDR 6 MB) are served by the mtlx website rather
+// The large built-ins (shaderball 1.4 MB, bridge HDR 6 MB) are served from mtlx-static.ben3d.ca rather
 // than shipped in this package, so a script-tag embed from any CDN fetches them from one place.
-const HOSTED_ASSETS = 'https://mtlx.ben3d.ca/viewer-assets/';
+const HOSTED_ASSETS = 'https://mtlx-static.ben3d.ca/viewer/';
 const SHADERBALL_URL = new URL('shaderball.glb', HOSTED_ASSETS);
 const BUILTIN_IBLS: Record<string, URL> = {
-  // Resolved from import.meta.url so bundlers (Vite, esbuild, webpack) rewrite it to a served path.
-  studio: new URL('../assets/studio-environment.png', import.meta.url),
+  studio: new URL('studio-environment.png', HOSTED_ASSETS),
   bridge: new URL('default-environment.hdr', HOSTED_ASSETS),
 };
 const RELOAD_ATTRIBUTES = new Set(['src', 'model']);

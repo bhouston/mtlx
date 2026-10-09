@@ -7,7 +7,6 @@ import { Cache } from 'three';
 import { AnimationToggle, MaterialSelect, ViewerSettingsPanel } from 'mtlx-viewer/react';
 import type { Viewer } from 'mtlx-viewer';
 import type { PreviewReport } from 'mtlx-viewer/diagnostics';
-import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
 
 export type { PreviewReport } from 'mtlx-viewer/diagnostics';
 
@@ -34,11 +33,12 @@ export interface MaterialViewerProps {
   onStatus?: (report: PreviewReport) => void;
 }
 
-// Served from public/viewer-assets (also used by the <material-viewer> element on other sites).
-const shaderBallUrl = '/viewer-assets/shaderball.glb';
+// Served by packages/static-assets: its local server in dev (`pnpm dev`), the CDN in production.
+const STATIC_ASSETS = import.meta.env.DEV ? 'http://localhost:3001/viewer/' : 'https://mtlx-static.ben3d.ca/viewer/';
+const shaderBallUrl = `${STATIC_ASSETS}shaderball.glb`;
 const ENVIRONMENT_URLS: Record<string, string> = {
-  studio: studioEnvironmentUrl,
-  bridge: '/viewer-assets/default-environment.hdr',
+  studio: `${STATIC_ASSETS}studio-environment.png`,
+  bridge: `${STATIC_ASSETS}default-environment.hdr`,
 };
 const STAGE_PROGRESS = {
   renderer: { value: 80, label: 'Preparing preview…' },

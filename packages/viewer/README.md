@@ -27,8 +27,8 @@ preview geometry, materials, and textures.
 ```ts
 import { createMtlxScene, type MtlxScene } from 'mtlx-viewer';
 
-// The built-in shaderball is served by the mtlx website, not shipped in the package.
-const shaderBallUrl = 'https://mtlx.ben3d.ca/viewer-assets/shaderball.glb';
+// The built-in shaderball is served from mtlx-static.ben3d.ca, not shipped in the package.
+const shaderBallUrl = 'https://mtlx-static.ben3d.ca/viewer/shaderball.glb';
 
 const preview: MtlxScene = await createMtlxScene(camera, controls, {
   data: mtlxBytes, // ArrayBuffer of the .mtlx or .mtlx.zip
@@ -89,17 +89,19 @@ you want to build your own lighting rig.
 
 ```ts
 import { ENVIRONMENT_ASSET_FILES, parseEnvironment, type EnvironmentKind } from 'mtlx-viewer';
-import studioEnvironmentUrl from 'mtlx-viewer/assets/studio-environment.png?url';
 
 const kind: EnvironmentKind = 'studio'; // 'default' is San Giuseppe Bridge (the three-ntc website IBL)
-const texture = await parseEnvironment(kind, await (await fetch(studioEnvironmentUrl)).arrayBuffer());
+const texture = await parseEnvironment(
+  kind,
+  await (await fetch('https://mtlx-static.ben3d.ca/viewer/studio-environment.png')).arrayBuffer(),
+);
 threeScene.environment = texture;
 // Clear the environment and dispose its texture when the caller no longer needs it.
 // threeScene.environment = null;
 // texture.dispose();
 
-// ENVIRONMENT_ASSET_FILES maps each kind to its asset file name: the studio PNG ships under
-// mtlx-viewer/assets; the bridge HDR is served at https://mtlx.ben3d.ca/viewer-assets/.
+// ENVIRONMENT_ASSET_FILES maps each kind to its asset file name; both are served at
+// https://mtlx-static.ben3d.ca/viewer/.
 ```
 
 ## Shared host utilities

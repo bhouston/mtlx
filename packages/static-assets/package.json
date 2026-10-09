@@ -1,0 +1,13 @@
+{
+  "name": "static-assets",
+  "private": true,
+  "homepage": "https://mtlx-static.ben3d.ca",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs"
+  },
+  "dependencies": {
+    "@fastify/static": "^10.1.5",
+    "fastify": "^5.12.5"
+  }
+}

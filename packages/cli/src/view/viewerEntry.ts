@@ -13,7 +13,7 @@ import {
   type ViewerSettings,
 } from 'mtlx-viewer/settings';
 // esbuild's dataurl loader (see build-viewer.mjs) inlines this as a base64 data: URL string.
-import studioEnvironmentDataUrl from 'mtlx-viewer/assets/studio-environment.png';
+import studioEnvironmentDataUrl from '../../../static-assets/public/viewer/studio-environment.png';
 
 /** One shot requested by `mtlx render`; mirrored by `RenderView` in ../commands/render.ts. */
 interface RenderView {

@@ -37,9 +37,9 @@ await esbuild.build({
 // The shaderball ("totem" geometry, ~1.4MB) is too big to inline as a data URL like the studio
 // PNG — copied alongside preview.js instead, read as bytes by the extension host (same as the
 // document itself) and sent over postMessage, no separate webview fetch/CSP needed.
-const websiteAssets = join(root, '..', 'website', 'public', 'viewer-assets');
-copyFileSync(join(websiteAssets, 'shaderball.glb'), join(outDir, 'shaderball.glb'));
+const staticAssets = join(root, '..', 'static-assets', 'public', 'viewer');
+copyFileSync(join(staticAssets, 'shaderball.glb'), join(outDir, 'shaderball.glb'));
 
 console.log('Built preview.js');
 
-copyFileSync(join(websiteAssets, 'default-environment.hdr'), join(outDir, 'default-environment.hdr'));
+copyFileSync(join(staticAssets, 'default-environment.hdr'), join(outDir, 'default-environment.hdr'));
