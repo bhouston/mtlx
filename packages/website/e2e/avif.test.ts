@@ -85,9 +85,13 @@ test('editor previews a loose .mtlx with sibling AVIF textures', async () => {
 });
 
 test('<material-viewer> bundle renders a .mtlx.zip with AVIF textures', async () => {
-  await page.route('https://mtlx.ben3d.ca/viewer-assets/**', (route) =>
+  await page.route('https://mtlx-static.ben3d.ca/viewer/**', (route) =>
     route.fulfill({
-      path: resolve(import.meta.dirname, '../public/viewer-assets', new URL(route.request().url()).pathname.slice(15)),
+      path: resolve(
+        import.meta.dirname,
+        '../../static-assets/public',
+        new URL(route.request().url()).pathname.slice(1),
+      ),
       headers: { 'Access-Control-Allow-Origin': '*' },
     }),
   );

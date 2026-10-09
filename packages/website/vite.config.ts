@@ -27,9 +27,11 @@ export default defineConfig({
         brotli: false,
       },
       routeRules: {
-        // Fetched cross-origin by <material-viewer> embeds on other sites.
+        // Moved to packages/static-assets; published mtlx-viewer <= 0.6 still fetch these
+        // cross-origin, so the redirect itself needs the CORS header.
         '/viewer-assets/**': {
-          headers: { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=86400' },
+          headers: { 'Access-Control-Allow-Origin': '*' },
+          redirect: { to: 'https://mtlx-static.ben3d.ca/viewer/**', statusCode: 301 },
         },
         // Sample materials referenced by the <material-viewer> docs snippet.
         '/materials/**': { headers: { 'Access-Control-Allow-Origin': '*' } },

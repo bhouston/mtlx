@@ -27,8 +27,8 @@ preview geometry, materials, and textures.
 ```ts
 import { createMtlxScene, type MtlxScene } from 'mtlx-viewer';
 
-// The built-in shaderball is served by the mtlx website, not shipped in the package.
-const shaderBallUrl = 'https://mtlx.ben3d.ca/viewer-assets/shaderball.glb';
+// The built-in shaderball is served from mtlx-static.ben3d.ca, not shipped in the package.
+const shaderBallUrl = 'https://mtlx-static.ben3d.ca/viewer/shaderball.glb';
 
 const preview: MtlxScene = await createMtlxScene(camera, controls, {
   data: mtlxBytes, // ArrayBuffer of the .mtlx or .mtlx.zip
@@ -99,7 +99,7 @@ threeScene.environment = texture;
 // texture.dispose();
 
 // ENVIRONMENT_ASSET_FILES maps each kind to its asset file name: the studio PNG ships under
-// mtlx-viewer/assets; the bridge HDR is served at https://mtlx.ben3d.ca/viewer-assets/.
+// mtlx-viewer/assets; the bridge HDR is served at https://mtlx-static.ben3d.ca/viewer/.
 ```
 
 ## Shared host utilities

@@ -5,7 +5,7 @@ import { Texture } from 'three';
 import { createEnvironmentSwitcher, parseEnvironmentFile } from './environment.js';
 
 it('keeps the bundled bridge HDR finite through half-float PMREM filtering', async () => {
-  const bytes = await readFile(new URL('../assets/default-environment.hdr', import.meta.url));
+  const bytes = await readFile(new URL('../../static-assets/public/viewer/default-environment.hdr', import.meta.url));
   const source = readHdr(bytes);
   const texture = await parseEnvironmentFile(new Uint8Array(bytes).buffer, 'default-environment.hdr');
   const pixels = texture.image.data as Float32Array;

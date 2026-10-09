@@ -4,7 +4,7 @@
  * dist/material-viewer.js with three, hdrify and mtlx-core inlined. The tsc output in dist/
  * stays as-is for bundler consumers (`import 'mtlx-viewer/element'`).
  *
- * The shaderball and bridge HDR are fetched from the mtlx website (see src/element.ts); the small
+ * The shaderball and bridge HDR are fetched from mtlx-static.ben3d.ca (see src/element.ts); the small
  * studio PNG keeps its `new URL('../assets/…', import.meta.url)` reference, and `assets/` ships in
  * the package next to `dist/`, so that relative path works from a CDN too.
  */
