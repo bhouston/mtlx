@@ -59,7 +59,7 @@ pixel footprint.
 Ranked by the time saved, according to the agents' own reports:
 
 1. **One browser session per render, with named views** (`render --view plane closeup detail sphere
-totem`). One compile renders every view, and plane views are head-on at exact metric widths.
+   totem`). One compile renders every view, and plane views are head-on at exact metric widths.
    This removed the biggest round-1 cost.
 2. **`--channel <node>` with statistics.** It shows any node unlit and prints min, p5, mean, p95, and
    max, with the UVs of the extremes. Agents stopped guessing heights and masks, and used the

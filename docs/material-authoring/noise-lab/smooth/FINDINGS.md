@@ -268,7 +268,7 @@ channels.** Confirmed. It very likely affects `noise3d`/`fractal3d` too; that pa
 source, not rendered.
 
 - Repro (`tools/set4.mjs` → m8): `noise2d type="vector4"` with x − y and x − w, `fractal2d
-type="vector4"` with x − w, and `noise2d type="color4"` with g − b.
+  type="vector4"` with x − w, and `noise2d type="color4"` with g − b.
 - Observed: every difference is 0 on 100% of pixels.
 - Expected: reference `mx_noise2d_vector4.glsl` gives `vec4(perlin_vec3(p), perlin_float(p + (19,73)))`,
   and `mx_fractal2d_noise_vec4` gives `vec4(fractal_vec3(p), fractal_float(p + (19,193)))`.

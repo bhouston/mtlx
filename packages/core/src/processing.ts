@@ -122,7 +122,10 @@ export const processMaterialX = async (
     return value;
   };
   const skip = (name: MaterialXProcessingStage, reason: string) => {
-    Object.assign(result.stages.find((stage) => stage.name === name)!, { status: 'skipped', detail: reason });
+    Object.assign(
+      result.stages.find((stage) => stage.name === name)!,
+      { status: 'skipped', detail: reason },
+    );
     result.skippedOperations.push({ operation: name, reason });
   };
   const validate = (pkg: MaterialXPackage) => {
