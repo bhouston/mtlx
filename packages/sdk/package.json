@@ -43,10 +43,10 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/node": "^22.20.0",
+    "@types/node": "^22.20.5",
     "@types/source-map-support": "^0.5.10"
   },
   "engines": {
-    "node": ">=23.0.0"
+    "node": ">=22"
   }
 }
