@@ -33,7 +33,7 @@ export interface MtlxSceneOptions {
   /** Supply your own if you need onProgress/onError wiring (e.g. for texture blobs). */
   manager?: THREE.LoadingManager;
   /** Rewrite texture URLs the document references (e.g. to blob: URLs of bytes the host already read). */
-  resolveUrl?(url: string): string | undefined;
+  resolveUrl?: (url: string) => string | undefined;
   /**
    * Loader translation log entries (e.g. an unsupported node or an ignored surface input). Errors
    * never throw: parsing continues with a partial material, matching MaterialXView which ignores

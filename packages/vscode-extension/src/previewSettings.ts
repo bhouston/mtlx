@@ -53,7 +53,9 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
   const defaultName = (key: string, names: string[], fallback: string) => {
     const value = input[key] ?? fallback;
     if (typeof value === 'string' && names.includes(value)) return value;
-    warnings.push(`${key}: unknown name "${String(value)}"; using ${fallback}.`);
+    warnings.push(
+      `${key}: unknown name "${typeof value === 'string' ? value : JSON.stringify(value)}"; using ${fallback}.`,
+    );
     return fallback;
   };
   const boolean = (key: string) => {

@@ -29,17 +29,17 @@ export interface ViewerOptions {
   settings: ViewerSettings;
   /** Whether MaterialX `<time>`/`<frame>` nodes advance from the first frame; defaults to true. */
   playing?: boolean;
-  loadEnvironment(kind: string): Promise<THREE.Texture>;
+  loadEnvironment: (kind: string) => Promise<THREE.Texture>;
   /** Host-configured geometries beyond totem/sphere/cube/plane; `manager` resolves glTF sidecar files. */
   loadGeometry?(name: string): Promise<{ data: ArrayBuffer; manager?: THREE.LoadingManager }>;
   /** Rewrite texture URLs the document references (e.g. to blob: URLs of bytes the host already read). */
-  resolveUrl?(url: string): string | undefined;
-  onLog?(message: string): void;
+  resolveUrl?: (url: string) => string | undefined;
+  onLog?: (message: string) => void;
   onReport?(report: PreviewReport): void;
   /** Transient status text; empty when cleared. */
-  onStatus?(patch: { environment?: string; geometry?: string }): void;
+  onStatus?: (patch: { environment?: string; geometry?: string }) => void;
   /** Loading milestones for progress UI. */
-  onStage?(stage: 'renderer' | 'environment' | 'material' | 'render' | 'ready'): void;
+  onStage?: (stage: 'renderer' | 'environment' | 'material' | 'render' | 'ready') => void;
   /** The frame loop failed after startup; the viewer is already disposed. */
   onError?(message: string): void;
 }
@@ -254,7 +254,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       frameId.onRenderUpdate((frame) => frame.frameId);
     });
     let clock = performance.now();
-    renderer.setAnimationLoop(() => {
+    void renderer.setAnimationLoop(() => {
       const now = performance.now();
       const delta = (now - clock) / 1000;
       mtlxScene.update(delta);

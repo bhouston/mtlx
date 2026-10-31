@@ -224,7 +224,7 @@ function Graph({
   const [nodes, setNodes, onNodesChange] = useNodesState(projectedNodes);
   useLayoutEffect(() => setNodes(projectedNodes), [projectedNodes, setNodes]);
   const commit = (operation: () => unknown) => {
-    if (editable) attempt(session, operation);
+    if (editable) void attempt(session, operation);
   };
   const add = (spec: NodeDefinition, position: Point) =>
     commit(() =>

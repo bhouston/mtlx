@@ -1,4 +1,4 @@
-import sharp from 'sharp';
+import sharp, { type AvifOptions } from 'sharp';
 import { describe, expect, it } from 'vitest';
 import { transformImage } from './textures.js';
 
@@ -79,7 +79,7 @@ describe('transformImage', () => {
   it("encodes avif with mtlx-fidelity's render settings (quality 90, 4:4:4) unless quality is given", async () => {
     const { readFile } = await import('node:fs/promises');
     const jpg = await readFile(new URL('../../../assets/wood_grain/textures/wood_color.jpg', import.meta.url));
-    const expected = (options: sharp.AvifOptions) => sharp(jpg).avif(options).toBuffer();
+    const expected = (options: AvifOptions) => sharp(jpg).avif(options).toBuffer();
     const result = await transformImage(new Uint8Array(jpg), '.jpg', { targets: [{ format: 'avif' }] });
     expect(result.extension).toBe('.avif');
     expect(Buffer.from(result.data).equals(await expected({ quality: 90, chromaSubsampling: '4:4:4' }))).toBe(true);
@@ -106,7 +106,7 @@ describe('transformImage', () => {
       width: 2,
       height: 2,
       data: new Float32Array([2, 2, 2, 1, 0.5, 0.5, 0.5, 1, 2, 2, 2, 1, 0.5, 0.5, 0.5, 1]),
-      linearColorSpace: 'srgb-linear',
+      linearColorSpace: 'linear-rec709',
     });
     const result = await transformImage(hdr, '.hdr', { targets: [{ format: 'exr' }] });
     expect(result.changed).toBe(true);
@@ -119,7 +119,7 @@ describe('transformImage', () => {
       width: 1,
       height: 1,
       data: new Float32Array([2, 0.5, 0, 1]),
-      linearColorSpace: 'srgb-linear',
+      linearColorSpace: 'linear-rec709',
     });
     const result = await transformImage(hdr, '.hdr', { targets: [{ format: 'png' }] });
     expect(result.changed).toBe(true);
@@ -137,7 +137,7 @@ describe('transformImage', () => {
       width: 2,
       height: 2,
       data: new Float32Array(16).fill(0.5),
-      linearColorSpace: 'srgb-linear' as const,
+      linearColorSpace: 'linear-rec709' as const,
     };
     const b44 = writeExr(image, { compression: 'b44' });
     const converted = await transformImage(b44, '.exr', { targets: [{ format: 'exr', compression: 'piz' }] });
@@ -155,7 +155,7 @@ describe('transformImage', () => {
       width: 8,
       height: 4,
       data: new Float32Array(8 * 4 * 4).fill(0.25),
-      linearColorSpace: 'srgb-linear',
+      linearColorSpace: 'linear-rec709',
     });
     const result = await transformImage(exr, '.exr', { maxImageSize: 4 });
     expect(result.changed).toBe(true);
@@ -171,7 +171,7 @@ describe('transformImage', () => {
       width: 4,
       height: 4,
       data: new Float32Array(4 * 4 * 4).fill(0.25),
-      linearColorSpace: 'srgb-linear',
+      linearColorSpace: 'linear-rec709',
     });
     const result = await transformImage(exr, '.exr', { maxImageSize: 8 });
     expect(result.changed).toBe(false);
@@ -183,7 +183,7 @@ describe('transformImage', () => {
       width: 8,
       height: 4,
       data: new Float32Array(8 * 4 * 4).fill(0.5),
-      linearColorSpace: 'srgb-linear',
+      linearColorSpace: 'linear-rec709',
     });
     const result = await transformImage(hdr, '.hdr', { maxImageSize: 4, targets: [{ format: 'png' }] });
     expect(result.changed).toBe(true);

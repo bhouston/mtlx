@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { cloneMaterialXDocument, parseMaterialX, serializeMaterialX } from './xml.js';
 import { createEditorSession, EditorError } from './session.js';
-import type { MaterialXDocument } from './types.js';
+import type { MaterialXDocument, MaterialXElement } from './types.js';
 
 function createDefaultDocument(): MaterialXDocument {
   return parseMaterialX(
@@ -460,7 +460,7 @@ describe('pasting nodes', () => {
   it('renames collisions, keeps wires among the pasted set and drops wires to the rest', () => {
     const session = create();
     const graph = session.graph();
-    const elements = ['surface', 'material'].map((id) => graph.getNode(id).element);
+    const elements = ['surface', 'material'].map((id) => graph.getNode(id).element as MaterialXElement);
     const ids = graph.pasteNodes(elements, { x: 10, y: 20 });
     expect(ids).toEqual(['surface_2', 'material_2']);
     expect(graph.getConnection({ node: 'material_2', input: 'surfaceshader' })).toEqual({
@@ -469,7 +469,7 @@ describe('pasting nodes', () => {
     });
     expect(graph.getNode('surface_2').element.attributes).toMatchObject({ xpos: '10', ypos: '20' });
     // Only the material travels: its wire pointed outside the set, so it is dropped.
-    const [lone] = graph.pasteNodes([graph.getNode('material').element]);
+    const [lone] = graph.pasteNodes([graph.getNode('material').element as MaterialXElement]);
     expect(graph.getConnection({ node: lone!, input: 'surfaceshader' })).toBeUndefined();
     expect(session.getSnapshot().undoLabel).toBe('Paste nodes');
     session.undo();

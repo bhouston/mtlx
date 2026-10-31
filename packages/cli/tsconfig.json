@@ -7,5 +7,5 @@
     "rewriteRelativeImportExtensions": true
   },
   "references": [{ "path": "../core" }, { "path": "../viewer" }, { "path": "../sdk" }],
-  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/view/viewerEntry.ts"]
+  "exclude": ["node_modules", "dist", "src/view/viewerEntry.ts"]
 }

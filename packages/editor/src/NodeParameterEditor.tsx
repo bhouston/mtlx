@@ -45,7 +45,7 @@ export function NodeParameterEditor({
     ) : null;
   const graph = session.graph(snapshot.scope);
   const commit = (operation: () => unknown) => {
-    if (editable) attempt(session, operation);
+    if (editable) void attempt(session, operation);
   };
   const onRename = (name: string) =>
     commit(() => {
