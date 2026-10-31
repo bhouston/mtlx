@@ -5,6 +5,7 @@
   "license": "MIT",
   "files": [
     "dist",
+    "!dist/**/*.test.*",
     "styles.css"
   ],
   "type": "module",

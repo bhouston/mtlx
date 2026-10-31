@@ -35,7 +35,7 @@ export interface NodeDefinitionSummary {
   name?: string;
   category: string;
   output?: string;
-  inputs: { name: string; type?: string; default?: unknown }[];
+  inputs: { name: string; type?: string; default?: string }[];
   note?: string;
 }
 
@@ -102,9 +102,7 @@ export const command = defineCommand({
       if (queries.length > 1) console.log(`${i ? '\n' : ''}== ${query} ==`);
       const notes = new Map<string, string>();
       for (const def of result.definitions) {
-        const inputs = def.inputs.map(
-          (p) => `${p.name}:${p.type}${p.default !== undefined ? `=${String(p.default)}` : ''}`,
-        );
+        const inputs = def.inputs.map((p) => `${p.name}:${p.type}${p.default !== undefined ? `=${p.default}` : ''}`);
         console.log(`${def.name} -> ${def.output}  ${inputs.join('  ')}`);
         if (def.note) notes.set(def.category, def.note);
       }

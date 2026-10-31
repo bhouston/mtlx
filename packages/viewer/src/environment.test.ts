@@ -8,7 +8,7 @@ it('keeps the bundled bridge HDR finite through half-float PMREM filtering', asy
   const bytes = await readFile(new URL('../../static-assets/public/viewer/default-environment.hdr', import.meta.url));
   const source = readHdr(bytes);
   const texture = await parseEnvironmentFile(new Uint8Array(bytes).buffer, 'default-environment.hdr');
-  const pixels = texture.image.data as Float32Array;
+  const pixels = (texture.image as { data: Float32Array }).data;
 
   expect(source.data.some((value) => value > 65_504)).toBe(true);
   expect(pixels.every((value) => Number.isFinite(value) && Math.abs(value) <= 65_504)).toBe(true);
@@ -61,6 +61,7 @@ it('keeps the current IBL on failure and disposes replaced, stale and late resou
   controller.dispose();
   controller.dispose();
   expect(targets[1]!.dispose).toHaveBeenCalledTimes(1);
+  // oxlint-disable-next-line typescript/unbound-method
   expect(sources.every((source) => vi.mocked(source.dispose).mock.calls.length === 1)).toBe(true);
   load.mockImplementationOnce(
     () =>
@@ -72,5 +73,6 @@ it('keeps the current IBL on failure and disposes replaced, stale and late resou
   const texture = new Texture();
   complete(texture);
   expect(await late).toBe(false);
+  // oxlint-disable-next-line typescript/unbound-method
   expect(texture.dispose).toHaveBeenCalledTimes(1);
 });

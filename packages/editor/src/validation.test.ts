@@ -65,7 +65,7 @@ it('marks every wire in a cycle, without marking downstream wires', () => {
       '<add name="a" type="float"><input name="in1" type="float" nodename="b"/></add><add name="b" type="float"><input name="in1" type="float" nodename="a"/></add><output name="out" type="float" nodename="b"/>',
     ),
   );
-  expect(issues.map((i) => i.edgeId).toSorted()).toEqual(['a/in1', 'b/in1']);
+  expect(issues.map((i) => i.edgeId ?? '').toSorted((a, b) => a.localeCompare(b))).toEqual(['a/in1', 'b/in1']);
 });
 it('resolves nested graph interfaces and named single outputs', () => {
   const document = doc(

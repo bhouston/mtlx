@@ -10,8 +10,8 @@ export async function createViewerRenderer(
 ) {
   const renderer = new WebGPURenderer({ canvas: options.canvas, antialias: true });
   scope.own(() => {
-    renderer.setAnimationLoop(null);
-    renderer.dispose();
+    void renderer.setAnimationLoop(null);
+    void renderer.dispose();
     if (!options.canvas) renderer.domElement.remove();
   });
   renderer.setSize(options.width, options.height, options.updateStyle ?? true);
