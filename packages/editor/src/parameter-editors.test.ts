@@ -58,7 +58,7 @@ describe('parameter editing', () => {
     );
     const slider = container.querySelector('input[type="range"]') as HTMLInputElement;
     expect([slider.min, slider.max]).toEqual(['1', '3']);
-    const field = container.querySelector('input[type="text"]')!;
+    const field = container.querySelector<HTMLInputElement>('input[type="text"]')!;
     fill(field, '8');
     expect(field.getAttribute('aria-invalid')).not.toBe('true');
   });
@@ -125,8 +125,9 @@ describe('parameter editing', () => {
     expect(container.querySelector('output')?.textContent).toBe('a.out');
     act(() => render('a', false));
     expect(container.querySelector('[aria-label="Reset value"]')).toBeNull();
-    expect(container.querySelectorAll('.mtlx-field input').length).toBeGreaterThan(0);
-    for (const input of container.querySelectorAll('.mtlx-field input')) expect(input.disabled).toBe(true);
+    expect(container.querySelectorAll<HTMLInputElement>('.mtlx-field input').length).toBeGreaterThan(0);
+    for (const input of container.querySelectorAll<HTMLInputElement>('.mtlx-field input'))
+      expect(input.disabled).toBe(true);
     act(() => render('b'));
     act(() => (container.querySelector('[aria-label="Disconnect value"]') as HTMLButtonElement).click());
     expect(container.querySelector('.mtlx-field input')).not.toBeNull();
@@ -162,10 +163,14 @@ it('keeps colors compact and validates hex edits while preserving alpha and HDR 
   const hex = container.querySelector('[aria-label="tint hex"]') as HTMLInputElement;
   expect(hex.value).toBe('#ff8000');
   fill(hex, '#xyz');
-  act(() => hex.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })));
+  act(() => {
+    hex.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  });
   expect(onChange).not.toHaveBeenCalled();
   fill(hex, '#0f8');
-  act(() => hex.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })));
+  act(() => {
+    hex.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  });
   expect(onChange).toHaveBeenLastCalledWith('0, 1, 0.533333, 0.25');
   expect(hex.value).toBe('#00ff88');
   expect(red.value).toBe('0');
@@ -192,7 +197,7 @@ it('distinguishes geometry defaults, literals and connections, including reset a
     root.render(createElement(NodeParameterEditor, { session, editable }));
   };
   act(() => render());
-  expect(container.querySelectorAll('.mtlx-field input')).toHaveLength(0);
+  expect(container.querySelectorAll<HTMLInputElement>('.mtlx-field input')).toHaveLength(0);
   expect(container.textContent).toContain('World-space normal');
   expect(container.textContent).toContain('World-space tangent');
   expect(container.textContent).toContain('Geometry: customUV');
@@ -201,9 +206,9 @@ it('distinguishes geometry defaults, literals and connections, including reset a
     render();
   });
   expect(container.querySelector('[aria-label="normal geometry source"]')).toBeNull();
-  expect(container.querySelectorAll('.mtlx-field input')).toHaveLength(3);
+  expect(container.querySelectorAll<HTMLInputElement>('.mtlx-field input')).toHaveLength(3);
   act(() => (container.querySelector('[aria-label="Reset normal"]') as HTMLButtonElement).click());
-  expect(container.querySelectorAll('.mtlx-field input')).toHaveLength(0);
+  expect(container.querySelectorAll<HTMLInputElement>('.mtlx-field input')).toHaveLength(0);
   expect(container.querySelector('[aria-label="normal geometry source"]')).not.toBeNull();
   act(() => {
     session.graph().connect({ node: 'direction', output: 'out' }, { node: 'surface', input: 'normal' });

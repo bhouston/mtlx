@@ -360,7 +360,7 @@ async function renderViewsOnce(options: RenderOptions): Promise<RenderedView[]> 
     // Playwright's default 30 s screenshot timeout.
     page.setDefaultTimeout((options.timeout ?? 60) * 1000);
     const loadStart = performance.now();
-    await page.goto(`${server.url}?${query}`);
+    await page.goto(`${server.url}?${query.toString()}`);
     const canvas = page.locator('canvas[data-state]');
     await canvas.waitFor();
     let firstViewSeconds = 0;
@@ -441,7 +441,9 @@ export async function contactSheet(shots: RenderedView[], size: number, columns 
 
 const parsePair = (value: unknown, flag: string): [number, number] | undefined => {
   if (value === undefined) return undefined;
-  const parts = String(value).split(',').map(Number);
+  const parts = String(value as string | number)
+    .split(',')
+    .map(Number);
   if (parts.length !== 2 || parts.some((n) => !Number.isFinite(n)))
     throw new Error(`${flag} takes two numbers, e.g. 0.25,0.5`);
   return parts as [number, number];
@@ -514,7 +516,7 @@ const uvLabel = (x: number) => Number(x.toFixed(4)).toString();
 
 /** Draws UV grid lines every `step` meters with labels on head-on plane shots (others are returned as-is). */
 export async function gridOverlay(png: Buffer, view: RenderView, step: number, uvScale = 1): Promise<Buffer> {
-  const { width = 0, height = 0 } = await (await loadSharp())(png).metadata();
+  const { width, height } = await (await loadSharp())(png).metadata();
   const corner0 = frameToUv(view, [0, 1]);
   const corner1 = frameToUv(view, [1, 0]);
   if (!corner0 || !corner1) return png;

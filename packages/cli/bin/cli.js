@@ -14,7 +14,7 @@ process.stdout.on('error', (error) => {
 
 main().catch((error) => {
   Sentry.captureException(error);
-  Sentry.flush(2000).finally(() => {
+  void Sentry.flush(2000).finally(() => {
     console.error(formatError(error));
     process.exitCode = 1;
   });

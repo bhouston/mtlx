@@ -62,7 +62,7 @@ describe('automatic type inference', () => {
   });
 
   it('respects an imported explicit version without fixing its output type', () => {
-    const custom = [
+    const custom: MaterialXNodeSpec[] = [
       { ...make('a', 'float'), nodeDefName: 'old_float', attributes: { version: '1', isdefaultversion: 'false' } },
       { ...make('a', 'vector3'), nodeDefName: 'old_vector', attributes: { version: '1', isdefaultversion: 'false' } },
       { ...make('a', 'float'), nodeDefName: 'new_float', attributes: { version: '2' } },
@@ -266,7 +266,12 @@ describe('concrete fallback for preview and export', () => {
   });
 
   it('selects jointly compatible fallbacks when the first variants at either endpoint disagree', () => {
-    const custom = [make('a', 'float'), make('a', 'vector3'), make('b', 'vector3'), make('b', 'float')];
+    const custom: MaterialXNodeSpec[] = [
+      make('a', 'float'),
+      make('a', 'vector3'),
+      make('b', 'vector3'),
+      make('b', 'float'),
+    ];
     const document = doc(
       '<a name="a" type="vector3"/><b name="b" type="vector3"><input name="in" type="vector3" nodename="a"/></b>',
     );
@@ -279,7 +284,7 @@ describe('concrete fallback for preview and export', () => {
 
   it('detects a reconvergent contradiction that pairwise candidate filtering cannot detect', () => {
     // A and B preserve a type, C changes it. Both branches meet at D, which requires equal inputs.
-    const custom = ['a', 'b', 'd']
+    const custom: MaterialXNodeSpec[] = ['a', 'b', 'd']
       .flatMap((category) => ['float', 'vector3'].map((type) => spec(category, type, type, category === 'd')))
       .concat([spec('c', 'float', 'vector3'), spec('c', 'vector3', 'float')]);
     const document = doc(`<a name="a"/><b name="b"><input name="in" nodename="a"/></b>
