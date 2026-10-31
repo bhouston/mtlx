@@ -7,7 +7,7 @@ shared `mtlx-viewer` scene and assets; parsing and validation come from `mtlx-co
 
 ## Local development
 
-From the repository root, use Node.js 22+ (the pinned `.nvmrc` is used in CI) and pnpm 11.1.3:
+From the repository root, use Node.js 22+ (the pinned `.nvmrc` is used in CI) and pnpm 12.16.1:
 
 ```sh
 pnpm install --frozen-lockfile

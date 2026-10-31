@@ -27,7 +27,7 @@ Abbreviations for paths:
   With UVs in meters and a 20 cm close-up at 640 px, dU/dx ≈ 3e-4 per pixel, so
   |n|² ≈ 1e-14 < 1e-12. Almost every pixel is treated as degenerate and gets (0, 0, 1).
 - **Repro:** a plane with UV 0..1 and `heighttonormal(in = 0.002·noise2d(uv·300), scale = 16,
-texcoord = uv)` → `normalmap` → `standard_surface.normal`. Render with
+  texcoord = uv)` → `normalmap` → `standard_surface.normal`. Render with
   `mtlx render f.mtlx -o o.png --view closeup --channel n_tangent`. The result is uniform
   (0.5, 0.5, 1), with isolated speckles where slopes are extreme.
 - **Fix:** use the reference epsilon (1e-16). Better still, make the test scale-invariant, e.g.
@@ -44,7 +44,7 @@ texcoord = uv)` → `normalmap` → `standard_surface.normal`. Render with
   only branch on `usesVec3Noise` (vector3/color3). Everything else, including `vector2`, takes
   the **float** path, and the scalar is broadcast.
 - **Reference:** `mx_noise2d_vector2.glsl` gives `mx_perlin_noise_vec3(texcoord).xy * amplitude +
-pivot`, which has independent channels. `mx_fractal2d_vector2.glsl` works the same way.
+  pivot`, which has independent channels. `mx_fractal2d_vector2.glsl` works the same way.
 - **Repro:** `<noise2d name="n" type="vector2">` on `uv·6`, rendered with
   `--channel n --range=-1,1`. The red and green channels are identical (0 pixels differ in the
   explorer's overlay test).
