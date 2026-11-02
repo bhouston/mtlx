@@ -2,8 +2,9 @@
 
 # mtlx-sdk
 
-MaterialX-focused SDK for the [Land of Assets](https://landofassets.com) REST API. Its routes and schemas mirror
-the official `@landofassets/sdk`.
+MaterialX-focused SDK for the [Land of Assets](https://landofassets.com) REST API. It re-exports the official
+[`@landofassets/sdk`](https://www.npmjs.com/package/@landofassets/sdk); MaterialX materials are `MATERIAL` assets
+stored as `.mtlx.zip` files.
 
 ## Installation
 
