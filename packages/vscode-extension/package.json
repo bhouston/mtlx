@@ -58,7 +58,7 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tailwindcss": "^4.1.18",
-    "three": "^0.186.0"
+    "three": "^0.187.0"
   },
   "contributes": {
     "commands": [
