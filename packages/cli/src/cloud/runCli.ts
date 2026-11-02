@@ -62,7 +62,7 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<unknown> {
     })
     .help()
     .alias('h', 'help')
-    .version()
+    .version(packageInfo.version ?? '0.0.0')
     .alias('v', 'version')
     .strict()
     .exitProcess(false)
