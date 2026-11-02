@@ -9,6 +9,7 @@
     "submodules/**",
     "docs/material-authoring/noise-lab/**"
   ],
+  "options": { "typeAware": true },
   "categories": {
     "correctness": "error",
     "suspicious": "warn"
