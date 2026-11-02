@@ -3,9 +3,9 @@ import {
   descriptionOption,
   getAssetVisibilityOption,
   getLicenseOption,
-  getUserOption,
+  getOrgProjectOptions,
   metadataOption,
-  requireUser,
+  requireOrgProject,
 } from '../../lib/args.ts';
 import { createClient } from '../../lib/client.ts';
 import { getCliDeps } from '../../lib/deps.ts';
@@ -31,18 +31,19 @@ export const command = defineCommand({
           type: 'string',
           description: 'Keywords',
         },
-        ...getUserOption(),
+        ...getOrgProjectOptions(),
         ...getAssetVisibilityOption(),
         ...getLicenseOption(),
         ...descriptionOption,
         ...metadataOption,
       }),
   handler: async (argv) => {
-    const userName = requireUser(argv.user);
+    const { orgName, projectName } = requireOrgProject(argv.org, argv.project);
     const client = await createClient(getCliDeps(argv));
 
     await uploadMaterial(client, {
-      userName,
+      orgName,
+      projectName,
       filePath: argv.file,
       name: argv.name,
       description: argv.description,

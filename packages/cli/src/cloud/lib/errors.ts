@@ -37,9 +37,9 @@ export function formatError(error: unknown): string {
     // Provide user-friendly messages for common HTTP status codes
     if (status === 401) {
       if (errorMessage) {
-        return `${errorMessage}. Please run "mtlx-ai auth login" to authenticate.`;
+        return `${errorMessage}. Please run "mtlx auth login" to authenticate.`;
       }
-      return 'Authentication required. Please run "mtlx-ai auth login" to authenticate.';
+      return 'Authentication required. Please run "mtlx auth login" to authenticate.';
     }
     if (status === 403) {
       return errorMessage || 'Access forbidden. You do not have permission to perform this action.';

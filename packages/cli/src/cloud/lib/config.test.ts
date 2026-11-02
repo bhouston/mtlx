@@ -9,7 +9,7 @@ describe('config', () => {
   let filePersistentConfig: FilePersistentConfig;
 
   beforeEach(async () => {
-    tempConfigDir = await mkdtemp(join(tmpdir(), 'mtlx-ai-config-test-'));
+    tempConfigDir = await mkdtemp(join(tmpdir(), 'mtlx-config-test-'));
     filePersistentConfig = new FilePersistentConfig(tempConfigDir);
   });
 
@@ -40,7 +40,7 @@ describe('config', () => {
     });
 
     // get() should return default config without env vars
-    expect(config.host).toBe('https://api.mtlx.ai');
+    expect(config.host).toBe('https://api.landofassets.com');
     expect(config.auth).toBeUndefined();
   });
 
@@ -51,14 +51,16 @@ describe('config', () => {
     // Set global config
     const globalCfg: Config = {
       host: 'https://api.global.test',
-      user: 'test-user',
+      org: 'test-org',
+      project: 'test-project',
     };
     await filePersistentConfig.set(globalCfg);
 
     // get() should return only global config (no env vars)
     const globalConfig = await filePersistentConfig.get();
     expect(globalConfig.host).toBe('https://api.global.test');
-    expect(globalConfig.user).toBe('test-user');
+    expect(globalConfig.org).toBe('test-org');
+    expect(globalConfig.project).toBe('test-project');
     expect(globalConfig.auth).toBeUndefined();
 
     // getConfig() should merge env vars with global config (env takes precedence)
@@ -68,7 +70,8 @@ describe('config', () => {
     });
     expect(mergedConfig.host).toBe('https://api.env.test'); // env takes precedence
     expect(mergedConfig.auth?.token).toBe('st_'.padEnd(39, 'x')); // from env
-    expect(mergedConfig.user).toBe('test-user'); // from global config
+    expect(mergedConfig.org).toBe('test-org'); // from global config
+    expect(mergedConfig.project).toBe('test-project'); // from global config
   });
 
   it('should persist and read global config file', async () => {
@@ -78,7 +81,8 @@ describe('config', () => {
         type: 'secretToken',
         token: 'st_'.padEnd(39, 'y'),
       },
-      user: 'test-user',
+      org: 'org',
+      project: 'project',
     };
 
     await filePersistentConfig.set(cfg);
@@ -102,21 +106,21 @@ describe('config', () => {
     // Set global config
     const cfg: Config = {
       host: 'https://api.global-only.test',
-      user: 'global-user',
+      org: 'global-org',
     };
     await filePersistentConfig.set(cfg);
 
     // get() should return what was set (not affected by env vars)
     const globalConfig = await filePersistentConfig.get();
     expect(globalConfig.host).toBe('https://api.global-only.test');
-    expect(globalConfig.user).toBe('global-user');
+    expect(globalConfig.org).toBe('global-org');
     expect(globalConfig.auth).toBeUndefined(); // Not set in global config
 
     // Verify the file contains only what was set
     const raw = await readFile(join(filePersistentConfig.configDir, 'config.json'), 'utf-8');
     const parsed = JSON.parse(raw) as Config;
     expect(parsed.host).toBe('https://api.global-only.test');
-    expect(parsed.user).toBe('global-user');
+    expect(parsed.org).toBe('global-org');
     expect(parsed.auth).toBeUndefined();
   });
 });

@@ -5,7 +5,7 @@ import { logOutput } from '../../lib/output.ts';
 
 export const command = defineCommand({
   command: 'get',
-  describe: 'Get current default user and API host',
+  describe: 'Get current default org, project, and API host',
   builder: (yargs) =>
     yargs.options({
       ...formatOption,

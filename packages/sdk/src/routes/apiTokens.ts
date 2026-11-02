@@ -5,7 +5,13 @@ import { buildPath } from '../lib/buildPath.js';
 import { Enums } from '../lib/enums.js';
 import type { SortingFromFields } from '../lib/list.js';
 import { createSortingOptionalSchema, listResultSchema, paginationOptionalSchema } from '../lib/list.js';
-import { apiTokenNameSchema, shortDescriptionSchema, userNameSchema } from '../lib/schemas.js';
+import {
+  apiTokenNameSchema,
+  orgNameSchema,
+  projectNameSchema,
+  serviceAccountNameSchema,
+  shortDescriptionSchema,
+} from '../lib/schemas.js';
 
 const apiTokenStringSchema = z.string().refine(
   (token) => {
@@ -48,13 +54,23 @@ export type APIToken = z.infer<typeof apiTokenSchema>;
 
 export const listApiTokensSortFields = ['createdAt', 'updatedAt', 'name', 'lastUsedAt', 'usedCount'] as const;
 
-export const listApiTokensQuerySchema = paginationOptionalSchema
-  .merge(createSortingOptionalSchema(listApiTokensSortFields))
-  .extend({
-    userName: userNameSchema.describe('The name of the user'),
-    tokenType: z.enum(Enums.ApiTokenType).optional().describe('Filter by token type (SECRET or FRONTEND)'),
-  })
-  .strict();
+export const listApiTokensQuerySchema = z.union([
+  paginationOptionalSchema
+    .merge(createSortingOptionalSchema(listApiTokensSortFields))
+    .extend({
+      orgName: orgNameSchema.describe('The name of the organization'),
+      projectName: projectNameSchema.describe('The name of the project'),
+      tokenType: z.enum(Enums.ApiTokenType).optional().describe('Filter by token type (SECRET or FRONTEND)'),
+    })
+    .strict(),
+  paginationOptionalSchema
+    .merge(createSortingOptionalSchema(listApiTokensSortFields))
+    .extend({
+      orgName: orgNameSchema.describe('The name of the organization'),
+      tokenType: z.enum(Enums.ApiTokenType).optional().describe('Filter by token type (SECRET or FRONTEND)'),
+    })
+    .strict(),
+]);
 
 export type ListAPITokenQuery = z.infer<typeof listApiTokensQuerySchema>;
 
@@ -82,8 +98,8 @@ export type ListAPITokenSortField = (typeof listApiSortFields)[number];
  * @operationId list-api-tokens
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.query - Query parameters including userName, pagination, sorting, and optional tokenType filter
- * @returns Promise resolving to a paginated list of API tokens
+ * @param props.query - Query parameters including orgName, optional projectName, pagination, sorting, and optional tokenType filter
+ * @returns Promise resolving to a paginated list of API tokens with service account information
  */
 export const listAPITokens = async (client: ApiClient, props: ListAPITokenProps): Promise<ListAPITokenResult> => {
   const { query } = listApiTokenPropsSchema.parse(props);
@@ -94,13 +110,20 @@ export const listAPITokens = async (client: ApiClient, props: ListAPITokenProps)
   return parseResult(client, listApiTokensResultSchema, response.data);
 };
 
-export const createApiTokenQuerySchema = z.strictObject({
-  userName: userNameSchema.describe('The name of the user'),
-});
+export const createApiTokenQuerySchema = z.union([
+  z.strictObject({
+    orgName: orgNameSchema.describe('The name of the organization'),
+    projectName: projectNameSchema.describe('The name of the project'),
+  }),
+  z.strictObject({
+    orgName: orgNameSchema.describe('The name of the organization'),
+  }),
+]);
 
 export type CreateAPITokenQuery = z.infer<typeof createApiTokenQuerySchema>;
 
 export const createApiTokenBodySchema = z.strictObject({
+  serviceAccountName: serviceAccountNameSchema.describe('The name of the service account'),
   name: apiTokenNameSchema.describe('The name for the API token'),
   description: shortDescriptionSchema.optional().describe('Optional description for the token'),
   type: z.enum(Enums.ApiTokenType).describe('Token type: SECRET (server-side) or FRONTEND (browser)'),
@@ -122,12 +145,12 @@ export const createApiTokenPropsSchema = z
 export type CreateAPITokenProps = z.infer<typeof createApiTokenPropsSchema>;
 
 /**
- * Creates a new API token.
+ * Creates a new API token for a service account.
  *
  * @operationId create-api-token
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.query - Query parameters (userName)
+ * @param props.query - Query parameters (orgName, optional projectName)
  * @param props.body - Request body with token details
  * @returns Promise resolving to the created API token (includes the token value)
  */
@@ -146,9 +169,15 @@ export const deleteApiTokenParamsSchema = z.strictObject({
 
 export type DeleteAPITokenParams = z.infer<typeof deleteApiTokenParamsSchema>;
 
-export const deleteApiTokenQuerySchema = z.strictObject({
-  userName: userNameSchema.describe('The name of the user'),
-});
+export const deleteApiTokenQuerySchema = z.union([
+  z.strictObject({
+    orgName: orgNameSchema.describe('The name of the organization'),
+    projectName: projectNameSchema.describe('The name of the project'),
+  }),
+  z.strictObject({
+    orgName: orgNameSchema.describe('The name of the organization'),
+  }),
+]);
 
 export type DeleteAPITokenQuery = z.infer<typeof deleteApiTokenQuerySchema>;
 
@@ -164,7 +193,7 @@ export type DeleteAPITokenProps = z.infer<typeof deleteApiTokenPropsSchema>;
  * @param client - The API client instance
  * @param props - The request properties
  * @param props.params - Path parameters (apiTokenName)
- * @param props.query - Query parameters (userName)
+ * @param props.query - Query parameters (orgName, optional projectName)
  * @returns Promise that resolves when the token is deleted
  */
 export const deleteAPIToken = async (client: ApiClient, props: DeleteAPITokenProps): Promise<void> => {

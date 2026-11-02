@@ -4,15 +4,19 @@ import { coreEntityNameRegex } from './schemas.js';
 const commentHashRegex = '[a-zA-Z0-9][a-zA-Z0-9-]*';
 
 // Validation regexes for dashboard link paths (include leading slash to match actual link format)
-export const dashboardUserLinkRegex = new RegExp(`^/${coreEntityNameRegex}$`);
-export const dashboardAssetLinkRegex = new RegExp(`^/${coreEntityNameRegex}/${coreEntityNameRegex}$`);
+export const dashboardOrgLinkRegex = new RegExp(`^/${coreEntityNameRegex}$`);
+export const dashboardProjectLinkRegex = new RegExp(`^/${coreEntityNameRegex}/${coreEntityNameRegex}$`);
+export const dashboardAssetLinkRegex = new RegExp(
+  `^/${coreEntityNameRegex}/${coreEntityNameRegex}/assets/${coreEntityNameRegex}$`,
+);
 export const dashboardAssetCommentLinkRegex = new RegExp(
-  `^/${coreEntityNameRegex}/${coreEntityNameRegex}#comment-${commentHashRegex}$`,
+  `^/${coreEntityNameRegex}/${coreEntityNameRegex}/assets/${coreEntityNameRegex}#comment-${commentHashRegex}$`,
 );
 export const dashboardSettingsInvitesLinkRegex = /^\/settings\/invites$/;
 
 export const validDashboardLinkTargets: RegExp[] = [
-  dashboardUserLinkRegex,
+  dashboardOrgLinkRegex,
+  dashboardProjectLinkRegex,
   dashboardAssetLinkRegex,
   dashboardAssetCommentLinkRegex,
   dashboardSettingsInvitesLinkRegex,
@@ -25,26 +29,41 @@ function validateAndReturn(path: string, regex: RegExp): string {
   return path;
 }
 
-export function dashboardUserLink({ userName }: { userName: string }): string {
-  const path = `/${userName}`;
-  return validateAndReturn(path, dashboardUserLinkRegex);
+export function dashboardOrgLink({ orgName }: { orgName: string }): string {
+  const path = `/${orgName}`;
+  return validateAndReturn(path, dashboardOrgLinkRegex);
 }
 
-export function dashboardAssetLink({ userName, assetName }: { userName: string; assetName: string }): string {
-  const path = `/${userName}/${assetName}`;
+export function dashboardProjectLink({ orgName, projectName }: { orgName: string; projectName: string }): string {
+  const path = `/${orgName}/${projectName}`;
+  return validateAndReturn(path, dashboardProjectLinkRegex);
+}
+
+export function dashboardAssetLink({
+  orgName,
+  projectName,
+  assetName,
+}: {
+  orgName: string;
+  projectName: string;
+  assetName: string;
+}): string {
+  const path = `/${orgName}/${projectName}/assets/${assetName}`;
   return validateAndReturn(path, dashboardAssetLinkRegex);
 }
 
 export function dashboardAssetCommentLink({
-  userName,
+  orgName,
+  projectName,
   assetName,
   commentHash,
 }: {
-  userName: string;
+  orgName: string;
+  projectName: string;
   assetName: string;
   commentHash: string;
 }): string {
-  const path = `/${userName}/${assetName}#comment-${commentHash}`;
+  const path = `/${orgName}/${projectName}/assets/${assetName}#comment-${commentHash}`;
   return validateAndReturn(path, dashboardAssetCommentLinkRegex);
 }
 

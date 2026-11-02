@@ -26,6 +26,7 @@ export const command = defineCommand({
     const result = await sdk.listAssets(client, {
       query: {
         searchText: argv.query,
+        type: 'MATERIAL',
         pageOffset: argv['page-offset'],
         pageSize: argv['page-size'],
       },

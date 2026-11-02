@@ -28,7 +28,8 @@ describe('config commands', () => {
       // Set global config
       await persistentConfig.set({
         host: 'https://api.global.test',
-        user: 'test-user',
+        org: 'test-org',
+        project: 'test-project',
       });
 
       // Set env vars (should not appear in config get output)
@@ -41,7 +42,8 @@ describe('config commands', () => {
 
       // Should only show global config, not env vars
       expect(config.host).toBe('https://api.global.test');
-      expect(config.user).toBe('test-user');
+      expect(config.org).toBe('test-org');
+      expect(config.project).toBe('test-project');
       expect(config.auth).toBeUndefined(); // Not in global config
     });
 
@@ -61,7 +63,7 @@ describe('config commands', () => {
 
       // Should only show what's in global config
       expect(config.host).toBe('https://api.test.example');
-      expect(config.user).toBeUndefined(); // Not in global config
+      expect(config.org).toBeUndefined(); // Not in global config
       expect(config.auth).toBeUndefined(); // Not in global config
     });
 
@@ -70,18 +72,19 @@ describe('config commands', () => {
         // Set initial global config
         await persistentConfig.set({
           host: 'https://api.initial.test',
-          user: 'initial-user',
+          org: 'initial-org',
         });
 
         // Set env vars that should not interfere
         envVars.set('LOA_HOST', 'https://api.env-interference.test');
         envVars.set('LOA_TOKEN', 'st_env_token'.padEnd(39, 'x'));
 
-        await runCli(['config', 'set', '--user', 'new-user'], deps);
+        await runCli(['config', 'set', '--org', 'new-org', '--project', 'new-project'], deps);
 
         // Verify global config was updated correctly
         const globalConfig = await persistentConfig.get();
-        expect(globalConfig.user).toBe('new-user');
+        expect(globalConfig.org).toBe('new-org');
+        expect(globalConfig.project).toBe('new-project');
         expect(globalConfig.host).toBe('https://api.initial.test'); // Should remain unchanged
 
         // Verify env vars didn't interfere
@@ -154,116 +157,199 @@ describe('config commands', () => {
         });
       });
 
-      describe('user name validation', () => {
-        it('should accept valid user names', async () => {
-          await runCli(['config', 'set', '--user', 'my-user'], deps);
+      describe('org name validation', () => {
+        it('should accept valid org names', async () => {
+          await runCli(['config', 'set', '--org', 'my-org'], deps);
           const globalConfig = await persistentConfig.get();
-          expect(globalConfig.user).toBe('my-user');
+          expect(globalConfig.org).toBe('my-org');
         });
 
-        it('should accept user names with numbers', async () => {
-          await runCli(['config', 'set', '--user', 'user123'], deps);
+        it('should accept org names with numbers', async () => {
+          await runCli(['config', 'set', '--org', 'org123'], deps);
           const globalConfig = await persistentConfig.get();
-          expect(globalConfig.user).toBe('user123');
+          expect(globalConfig.org).toBe('org123');
         });
 
-        it('should accept user names with dashes', async () => {
-          await runCli(['config', 'set', '--user', 'my-user-name'], deps);
+        it('should accept org names with dashes', async () => {
+          await runCli(['config', 'set', '--org', 'my-org-name'], deps);
           const globalConfig = await persistentConfig.get();
-          expect(globalConfig.user).toBe('my-user-name');
+          expect(globalConfig.org).toBe('my-org-name');
         });
 
-        it('should reject user names starting with a number', async () => {
-          await expect(runCli(['config', 'set', '--user', '123user'], deps)).rejects.toThrow('Invalid user name');
+        it('should reject org names starting with a number', async () => {
+          await expect(runCli(['config', 'set', '--org', '123org'], deps)).rejects.toThrow('Invalid organization name');
         });
 
-        it('should reject user names with consecutive dashes', async () => {
-          await expect(runCli(['config', 'set', '--user', 'my--user'], deps)).rejects.toThrow('Invalid user name');
+        it('should reject org names with consecutive dashes', async () => {
+          await expect(runCli(['config', 'set', '--org', 'my--org'], deps)).rejects.toThrow(
+            'Invalid organization name',
+          );
         });
 
-        it('should reject user names with trailing dashes', async () => {
-          await expect(runCli(['config', 'set', '--user', 'my-user-'], deps)).rejects.toThrow('Invalid user name');
+        it('should reject org names with trailing dashes', async () => {
+          await expect(runCli(['config', 'set', '--org', 'my-org-'], deps)).rejects.toThrow(
+            'Invalid organization name',
+          );
         });
 
-        it('should reject user names that are too long', async () => {
+        it('should reject org names that are too long', async () => {
           const longName = 'a'.repeat(31); // 31 characters, max is 30
-          await expect(runCli(['config', 'set', '--user', longName], deps)).rejects.toThrow('Invalid user name');
+          await expect(runCli(['config', 'set', '--org', longName], deps)).rejects.toThrow('Invalid organization name');
         });
 
-        it('should reject empty user names', async () => {
-          await expect(runCli(['config', 'set', '--user', ''], deps)).rejects.toThrow('Invalid user name');
+        it('should reject empty org names', async () => {
+          await expect(runCli(['config', 'set', '--org', ''], deps)).rejects.toThrow('Invalid organization name');
         });
 
-        it('should reject user names with invalid characters', async () => {
-          await expect(runCli(['config', 'set', '--user', 'my_user'], deps)).rejects.toThrow('Invalid user name');
+        it('should reject org names with invalid characters', async () => {
+          await expect(runCli(['config', 'set', '--org', 'my_org'], deps)).rejects.toThrow('Invalid organization name');
+        });
+      });
+
+      describe('project name validation', () => {
+        it('should accept valid project names', async () => {
+          await runCli(['config', 'set', '--org', 'my-org', '--project', 'my-project'], deps);
+          const globalConfig = await persistentConfig.get();
+          expect(globalConfig.project).toBe('my-project');
+        });
+
+        it('should accept project names with numbers', async () => {
+          await runCli(['config', 'set', '--org', 'my-org', '--project', 'project123'], deps);
+          const globalConfig = await persistentConfig.get();
+          expect(globalConfig.project).toBe('project123');
+        });
+
+        it('should accept project names with dashes', async () => {
+          await runCli(['config', 'set', '--org', 'my-org', '--project', 'my-project-name'], deps);
+          const globalConfig = await persistentConfig.get();
+          expect(globalConfig.project).toBe('my-project-name');
+        });
+
+        it('should reject project names starting with a number', async () => {
+          await expect(runCli(['config', 'set', '--org', 'my-org', '--project', '123project'], deps)).rejects.toThrow(
+            'Invalid project name',
+          );
+        });
+
+        it('should reject project names with consecutive dashes', async () => {
+          await expect(runCli(['config', 'set', '--org', 'my-org', '--project', 'my--project'], deps)).rejects.toThrow(
+            'Invalid project name',
+          );
+        });
+
+        it('should reject project names with trailing dashes', async () => {
+          await expect(runCli(['config', 'set', '--org', 'my-org', '--project', 'my-project-'], deps)).rejects.toThrow(
+            'Invalid project name',
+          );
+        });
+
+        it('should reject project names that are too long', async () => {
+          const longName = 'a'.repeat(31); // 31 characters, max is 30
+          await expect(runCli(['config', 'set', '--org', 'my-org', '--project', longName], deps)).rejects.toThrow(
+            'Invalid project name',
+          );
+        });
+
+        it('should reject empty project names', async () => {
+          await expect(runCli(['config', 'set', '--org', 'my-org', '--project', ''], deps)).rejects.toThrow(
+            'Invalid project name',
+          );
+        });
+
+        it('should reject project names with invalid characters', async () => {
+          await expect(runCli(['config', 'set', '--org', 'my-org', '--project', 'my_project'], deps)).rejects.toThrow(
+            'Invalid project name',
+          );
         });
       });
 
       it('should persist config values correctly', async () => {
-        // Set user
-        await runCli(['config', 'set', '--user', 'persisted-user'], deps);
+        // Set org and project
+        await runCli(['config', 'set', '--org', 'persisted-org', '--project', 'persisted-project'], deps);
 
-        // Verify it persisted
+        // Verify they persisted
         let globalConfig = await persistentConfig.get();
-        expect(globalConfig.user).toBe('persisted-user');
+        expect(globalConfig.org).toBe('persisted-org');
+        expect(globalConfig.project).toBe('persisted-project');
 
-        // Update user
-        await runCli(['config', 'set', '--user', 'updated-user'], deps);
+        // Update org
+        await runCli(['config', 'set', '--org', 'updated-org'], deps);
 
-        // Verify user updated
+        // Verify org updated but project remained
         globalConfig = await persistentConfig.get();
-        expect(globalConfig.user).toBe('updated-user');
+        expect(globalConfig.org).toBe('updated-org');
+        expect(globalConfig.project).toBe('persisted-project');
       });
     });
 
     describe('config clear', () => {
-      it('should clear user from global config', async () => {
+      it('should clear org from global config', async () => {
         // Set initial config
         await persistentConfig.set({
           host: 'https://api.test.example',
-          user: 'test-user',
+          org: 'test-org',
+          project: 'test-project',
         });
 
-        await runCli(['config', 'clear', '--user'], deps);
+        await runCli(['config', 'clear', '--org'], deps);
 
         const globalConfig = await persistentConfig.get();
-        expect(globalConfig.user).toBeUndefined();
+        expect(globalConfig.org).toBeUndefined();
+        expect(globalConfig.project).toBeUndefined(); // Should also be cleared since project is scoped to org
+      });
+
+      it('should clear project from global config', async () => {
+        await persistentConfig.set({
+          host: 'https://api.test.example',
+          org: 'test-org',
+          project: 'test-project',
+        });
+
+        await runCli(['config', 'clear', '--project'], deps);
+
+        const globalConfig = await persistentConfig.get();
+        expect(globalConfig.org).toBe('test-org'); // Should remain
+        expect(globalConfig.project).toBeUndefined();
       });
 
       it('should reset host to default when cleared', async () => {
         await persistentConfig.set({
           host: 'https://api.custom.test',
-          user: 'test-user',
+          org: 'test-org',
         });
 
         await runCli(['config', 'clear', '--host'], deps);
 
         const globalConfig = await persistentConfig.get();
         expect(globalConfig.host).toBeUndefined(); // Should reset to empty
-        expect(globalConfig.user).toBe('test-user'); // Should remain
+        expect(globalConfig.org).toBe('test-org'); // Should remain
 
         // and the defaults should be restored when getting the full config
         const fullConfig = await getConfig(deps);
-        expect(fullConfig.host).toBe('https://api.mtlx.ai');
-        expect(fullConfig.user).toBe('test-user');
+        expect(fullConfig.host).toBe('https://api.landofassets.com');
+        expect(fullConfig.org).toBe('test-org');
+        expect(fullConfig.project).toBeUndefined();
       });
 
       it('should clear multiple values at once', async () => {
         await persistentConfig.set({
           host: 'https://api.custom.test',
-          user: 'test-user',
+          org: 'test-org',
+          project: 'test-project',
         });
 
-        await runCli(['config', 'clear', '--user', '--host'], deps);
+        await runCli(['config', 'clear', '--org', '--host'], deps);
 
         const globalConfig = await persistentConfig.get();
-        expect(globalConfig.user).toBeUndefined();
+        expect(globalConfig.org).toBeUndefined();
+        expect(globalConfig.project).toBeUndefined(); // Cleared with org
         expect(globalConfig.host).toBeUndefined(); // Reset to default
 
         // and the defaults should be restored when getting the full config
         const fullConfig = await getConfig(deps);
-        expect(fullConfig.host).toBe('https://api.mtlx.ai');
-        expect(fullConfig.user).toBeUndefined();
+        expect(fullConfig.host).toBe('https://api.landofassets.com');
+        expect(fullConfig.org).toBeUndefined();
+        expect(fullConfig.project).toBeUndefined();
       });
     });
 
@@ -272,7 +358,7 @@ describe('config commands', () => {
         // Set global config
         await persistentConfig.set({
           host: 'https://api.global.test',
-          user: 'global-user',
+          org: 'global-org',
         });
 
         // Set env vars
@@ -283,12 +369,12 @@ describe('config commands', () => {
         const mergedConfig = await persistentConfig.get();
         expect(mergedConfig.host).toBe('https://api.global.test'); // env takes precedence
         expect(mergedConfig.auth?.token).toBeUndefined();
-        expect(mergedConfig.user).toBe('global-user'); // from global
+        expect(mergedConfig.org).toBe('global-org'); // from global
 
         const fullConfig = await getConfig(deps);
         expect(fullConfig.host).toBe('https://api.env.test');
         expect(fullConfig.auth?.token).toBe('st_env_token'.padEnd(39, 'x'));
-        expect(fullConfig.user).toBe('global-user');
+        expect(fullConfig.org).toBe('global-org');
       });
     });
   });

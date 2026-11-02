@@ -29,6 +29,7 @@ export const privateUserSchema = z.object({
   role: z.string().describe('The role of the user'),
   phoneNumber: z.string().describe('The phone number of the user'),
   type: z.enum(Enums.UserType).describe('The type of the user'),
+  personalOrgId: z.number().int().nullable().describe('The personal organization id of the user'),
   emailNotifications: z.boolean().describe('Whether the user receives email notifications'),
   emailNewsletterUpdates: z.boolean().describe('Whether the user receives email newsletter updates'),
   emailAssetLikeNotifications: z.boolean().describe('Whether the user receives email asset like notifications'),

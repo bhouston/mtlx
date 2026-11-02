@@ -2,37 +2,37 @@ import { writeFile } from 'node:fs/promises';
 import type { Readable } from 'node:stream';
 import { getMediaOriginalUrl } from 'mtlx-sdk';
 import { defineCommand } from 'yargs-file-commands';
-import { getUserOption, resolveUserAndName } from '../../lib/args.ts';
+import { getOrgProjectOptions, resolveAssetRef } from '../../lib/args.ts';
 import { createClient } from '../../lib/client.ts';
 import { getCliDeps } from '../../lib/deps.ts';
 
 export const command = defineCommand({
-  command: 'download [userMaterial]',
+  command: 'download [material]',
   describe: 'Download a material file',
   builder: (yargs) =>
     yargs
-      .positional('userMaterial', {
+      .positional('material', {
         type: 'string',
-        description: '<user>/<name>, e.g. alice/copper',
+        description: '<org>/<project>/<name> (e.g. acme/library/copper), or <name> with --org/--project',
       })
       .options({
         name: {
           type: 'string',
-          description: 'Material name (alternative to <user>/<name>)',
+          description: 'Material name (alternative to the positional)',
         },
         output: {
           alias: 'o',
           type: 'string',
           description: 'Output file path (defaults to the material name)',
         },
-        ...getUserOption(),
+        ...getOrgProjectOptions(),
       }),
   handler: async (argv) => {
-    const { userName, name } = resolveUserAndName(argv.userMaterial, argv.user, argv.name);
+    const { orgName, projectName, name } = resolveAssetRef(argv.material, argv.org, argv.project, argv.name);
     const client = await createClient(getCliDeps(argv));
 
     const url = getMediaOriginalUrl(client, {
-      params: { userName, assetName: name },
+      params: { orgName, projectName, assetName: name },
       query: { download: true },
     });
     const result = await client.axios.get(url.toString(), { responseType: 'stream' });

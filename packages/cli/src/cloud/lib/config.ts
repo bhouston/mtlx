@@ -14,7 +14,8 @@ export type AuthConfig = {
 export type Config = {
   host: string;
   auth?: AuthConfig;
-  user?: string;
+  org?: string;
+  project?: string;
 };
 
 /**
@@ -23,5 +24,5 @@ export type Config = {
 export async function getConfig(deps: Pick<CliDeps, 'persistentConfig' | 'envVars'>): Promise<Config> {
   const globalConfig = await deps.persistentConfig.get();
   const envConfig = getEnvConfig(deps.envVars);
-  return { host: 'https://api.mtlx.ai', ...globalConfig, ...envConfig };
+  return { host: 'https://api.landofassets.com', ...globalConfig, ...envConfig };
 }

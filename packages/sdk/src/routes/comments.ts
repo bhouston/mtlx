@@ -46,13 +46,13 @@ export type CreateCommentProps = z.infer<typeof createCommentPropsSchema>;
  * @operationId create-comment
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.params - Path parameters (userName, assetName)
+ * @param props.params - Path parameters (orgName, projectName, assetName)
  * @param props.body - Request body with comment text
  * @returns Promise resolving to the created comment
  */
 export const createComment = async (client: ApiClient, props: CreateCommentProps): Promise<CreateCommentResult> => {
   const { params, body } = createCommentPropsSchema.parse(props);
-  const path = buildPath('/comments/$userName/$assetName', params);
+  const path = buildPath('/comments/$orgName/$projectName/$assetName', params);
   const response = await client.axios.post(path, body);
   return parseResult(client, commentSchema, response.data);
 };
@@ -89,13 +89,13 @@ export type ListCommentSortField = (typeof listCommentSortFields)[number];
  * @operationId list-comments
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.params - Path parameters (userName, assetName)
+ * @param props.params - Path parameters (orgName, projectName, assetName)
  * @param props.query - Query parameters (pagination, sorting)
  * @returns Promise resolving to a paginated list of comments
  */
 export const listComments = async (client: ApiClient, props: ListCommentProps): Promise<ListCommentResult> => {
   const { params, query } = listCommentPropsSchema.parse(props);
-  const path = buildPath('/comments/$userName/$assetName', params);
+  const path = buildPath('/comments/$orgName/$projectName/$assetName', params);
   const response = await client.axios.get(path, {
     params: query,
   });
@@ -125,13 +125,13 @@ export type EditCommentProps = z.infer<typeof editCommentPropsSchema>;
  * @operationId edit-comment
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.params - Path parameters (userName, assetName, commentId)
+ * @param props.params - Path parameters (orgName, projectName, assetName, commentId)
  * @param props.body - Request body with updated comment text
  * @returns Promise resolving to the updated comment
  */
 export const editComment = async (client: ApiClient, props: EditCommentProps): Promise<EditCommentResult> => {
   const { params, body } = editCommentPropsSchema.parse(props);
-  const path = buildPath('/comments/$userName/$assetName/$commentId', params);
+  const path = buildPath('/comments/$orgName/$projectName/$assetName/$commentId', params);
   const response = await client.axios.patch(path, body);
   return parseResult(client, commentSchema, response.data);
 };
@@ -149,11 +149,11 @@ export type DeleteCommentProps = z.infer<typeof deleteCommentPropsSchema>;
  * @operationId delete-comment
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.params - Path parameters (userName, assetName, commentId)
+ * @param props.params - Path parameters (orgName, projectName, assetName, commentId)
  * @returns Promise that resolves when the comment is deleted
  */
 export const deleteComment = async (client: ApiClient, props: DeleteCommentProps): Promise<void> => {
   const { params } = deleteCommentPropsSchema.parse(props);
-  const path = buildPath('/comments/$userName/$assetName/$commentId', params);
+  const path = buildPath('/comments/$orgName/$projectName/$assetName/$commentId', params);
   await client.axios.delete(path);
 };

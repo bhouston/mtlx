@@ -1,6 +1,6 @@
 import * as sdk from 'mtlx-sdk';
 import { defineCommand } from 'yargs-file-commands';
-import { formatOption, getUserOption, requireUser } from '../../lib/args.ts';
+import { formatOption, getOrgProjectOptions, requireOrg } from '../../lib/args.ts';
 import { createClient } from '../../lib/client.ts';
 import { getCliDeps } from '../../lib/deps.ts';
 import { logOutput } from '../../lib/output.ts';
@@ -14,7 +14,7 @@ export const command = defineCommand({
         choices: sdk.Enums.ApiTokenType,
         description: 'Filter by token type',
       },
-      ...getUserOption(),
+      ...getOrgProjectOptions(),
       ...formatOption,
     }),
   handler: async (argv) => {
@@ -22,7 +22,8 @@ export const command = defineCommand({
     const client = await createClient(deps);
     const result = await sdk.listAPITokens(client, {
       query: {
-        userName: requireUser(argv.user),
+        orgName: requireOrg(argv.org),
+        ...(argv.project ? { projectName: argv.project } : {}),
         tokenType: argv.type,
       },
     });

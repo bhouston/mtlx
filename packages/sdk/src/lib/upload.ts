@@ -1,6 +1,6 @@
 import type { ApiClient } from '../client.js';
 import { createAssetParamsSchema, prepareAssetUpload } from '../routes/assets.js';
-import { FileFormat, getFileFormatInfoFromExtension } from './fileFormats.js';
+import { FileFormat, getFileFormatInfoFromFileName } from './fileFormats.js';
 
 export const uploadFileToUploadUrl = async (
   uploadUrl: string,
@@ -42,7 +42,8 @@ export const uploadFileToUploadUrl = async (
 
 export type UploadFileProps = {
   params: {
-    userName: string;
+    orgName: string;
+    projectName: string;
   };
   fileData: Buffer | Uint8Array;
   filename: string;
@@ -55,7 +56,7 @@ export type UploadFileProps = {
  *
  * @param client - The API client instance
  * @param props - The upload properties
- * @param props.params - Path parameters (userName)
+ * @param props.params - Path parameters (orgName, projectName)
  * @param props.fileData - File data as Buffer or Uint8Array
  * @param props.filename - Filename (used for MIME type inference and upload metadata)
  * @returns Promise resolving to the upload token
@@ -67,7 +68,7 @@ export type UploadFileProps = {
  * const fileData = await readFile('model.glb');
  * const filename = basename('model.glb');
  * const uploadToken = await uploadFile(client, {
- *   params: { userName: 'my-user' },
+ *   params: { orgName: 'my-org', projectName: 'my-project' },
  *   fileData,
  *   filename,
  * });
@@ -77,9 +78,8 @@ export const uploadFile = async (client: ApiClient, props: UploadFileProps): Pro
   const params = createAssetParamsSchema.parse(props.params);
   const { fileData, filename } = props;
 
-  // Infer MIME type from extension
-  const ext = filename.includes('.') ? `.${filename.split('.').pop()}` : '';
-  const contentType = getFileFormatInfoFromExtension(ext, FileFormat)?.mimeType ?? 'application/octet-stream';
+  // Infer MIME type from extension (longest match, so `x.mtlx.zip` is MaterialX, not zip)
+  const contentType = getFileFormatInfoFromFileName(filename, FileFormat)?.mimeType ?? 'application/octet-stream';
 
   // Prepare upload
   const { uploadUrl, uploadToken } = await prepareAssetUpload(client, {

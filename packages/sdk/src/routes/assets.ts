@@ -13,10 +13,13 @@ import {
   assetVisibilitySchema,
   booleanPropSchema,
   descriptionSchema,
-  userNameParamsSchema,
+  orgNameSchema,
+  projectNameSchema,
+  projectParamsSchema,
 } from '../lib/schemas.js';
 import { ImageTransformOptionsSchema } from '../lib/types.js';
 
+/** Summary of a MATERIAL asset's MaterialX document, extracted on upload. */
 export const materialInfoSchema = z.object({
   version: z.string().optional(),
   colorspace: z.string().optional(),
@@ -34,8 +37,10 @@ export const assetSchema = z.object({
   name: z.string(),
   type: z.enum(Enums.AssetType),
   visibility: assetVisibilitySchema,
-  userId: z.number().int(),
-  userName: z.string(),
+  projectId: z.number().int(),
+  projectName: z.string(),
+  orgId: z.number().int(),
+  orgName: z.string(),
   description: z.string(),
   keywords: z.string(),
   shareLicense: z.enum(Enums.ShareLicense),
@@ -81,6 +86,8 @@ export const listAssetsQuerySchema = paginationOptionalSchema
       searchText: z.string().max(256).optional().describe('Search text to filter assets by name or description'),
       type: z.enum(Enums.AssetType).optional().describe('Filter by asset type'),
       userName: z.string().max(100).optional().describe('Filter by username'),
+      orgName: orgNameSchema.optional().describe('Filter by organization name'),
+      projectName: projectNameSchema.optional().describe('Filter by project name'),
       archived: booleanPropSchema
         .optional()
         .describe('Filter by archived status (true for archived, false for non-archived)'),
@@ -110,7 +117,7 @@ export type ListAssetSortField = (typeof listAssetSortFields)[number];
 /**
  * Lists assets with optional filtering and pagination.
  *
- * @operationId list-assets
+ * @operationId list-assets-in-project
  * @param client - The API client instance
  * @param props - The request properties
  * @param props.query - Query parameters for filtering, pagination, and sorting
@@ -131,7 +138,7 @@ export const listAssets = async (client: ApiClient, props: ListAssetProps): Prom
   return parseResult(client, listAssetsResultSchema, response.data);
 };
 
-export const createAssetParamsSchema = userNameParamsSchema;
+export const createAssetParamsSchema = projectParamsSchema;
 
 export type CreateAssetParams = z.infer<typeof createAssetParamsSchema>;
 
@@ -157,21 +164,21 @@ export const createAssetPropsSchema = z
 export type CreateAssetProps = z.infer<typeof createAssetPropsSchema>;
 
 /**
- * Creates a new asset for a user.
+ * Creates a new asset in a project.
  *
  * @operationId create-asset
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.params - Path parameters (userName)
+ * @param props.params - Path parameters (orgName, projectName)
  * @param props.body - Request body with asset details
  * @returns Promise resolving to the created asset
  * @example
  * ```typescript
  * const asset = await createAsset(client, {
- *   params: { userName: 'my-user' },
+ *   params: { orgName: 'my-org', projectName: 'my-project' },
  *   body: {
  *     name: 'my-asset',
- *     type: 'MATERIAL',
+ *     type: 'MODEL',
  *     uploadToken: '...',
  *     visibility: 'PUBLIC',
  *     shareLicense: 'CC_BY'
@@ -181,7 +188,7 @@ export type CreateAssetProps = z.infer<typeof createAssetPropsSchema>;
  */
 export const createAsset = async (client: ApiClient, props: CreateAssetProps): Promise<CreateAssetResult> => {
   const { params, body } = createAssetPropsSchema.parse(props);
-  const path = buildPath('/assets/$userName', params);
+  const path = buildPath('/assets/$orgName/$projectName', params);
   const response = await client.axios.post(path, body);
   return parseResult(client, assetSchema, response.data);
 };
@@ -196,30 +203,30 @@ export const getAssetPropsSchema = z.object({ params: getAssetParamsSchema }).st
 export type GetAssetProps = z.infer<typeof getAssetPropsSchema>;
 
 /**
- * Gets asset metadata by user and asset names.
+ * Gets asset metadata by org, project, and asset names.
  *
  * @operationId get-asset-metadata
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.params - Path parameters (userName, assetName)
+ * @param props.params - Path parameters (orgName, projectName, assetName)
  * @returns Promise resolving to the asset metadata
  * @example
  * ```typescript
  * const asset = await getAsset(client, {
- *   params: { userName: 'my-user', assetName: 'my-asset' }
+ *   params: { orgName: 'my-org', projectName: 'my-project', assetName: 'my-asset' }
  * });
  * ```
  */
 export const getAsset = async (client: ApiClient, props: GetAssetProps): Promise<GetAssetResult> => {
   const { params } = getAssetPropsSchema.parse(props);
-  const path = buildPath('/assets/$userName/$assetName', params);
+  const path = buildPath('/assets/$orgName/$projectName/$assetName', params);
   const response = await client.axios.get(path);
   return parseResult(client, assetSchema, response.data);
 };
 
 export const assetExists = async (client: ApiClient, props: GetAssetProps): Promise<boolean> => {
   const { params } = getAssetPropsSchema.parse(props);
-  const path = buildPath('/assets/$userName/$assetName', params);
+  const path = buildPath('/assets/$orgName/$projectName/$assetName', params);
   try {
     await client.axios.get(path);
     return true;
@@ -243,6 +250,12 @@ export const updateAssetBodySchema = z.strictObject({
   shareLicense: z.enum(Enums.ShareLicense).optional().describe('Optional share license of the asset'),
   aiUsage: aiUsageSchema.optional().describe('Optional AI usage policy of the asset'),
   commentMode: z.enum(Enums.CommentMode).optional().describe('Optional comment mode: ENABLED, MEMBERS_ONLY, or NONE'),
+  projectName: projectNameSchema
+    .optional()
+    .describe('Optional project name of the asset, to transfer asset to a different project/organization'),
+  orgName: orgNameSchema
+    .optional()
+    .describe('Optional organization name of the asset, to transfer asset to a different project/organization'),
   archived: z.boolean().optional().describe('Optional archived status (true to archive, false to unarchive)'),
   metadata: z.string().max(10_240).optional().describe('Optional metadata as a string (max 10240 characters)'),
   uploadToken: z
@@ -266,20 +279,20 @@ export type UpdateAssetProps = z.infer<typeof updateAssetPropsSchema>;
  * @operationId update-asset
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.params - Path parameters (userName, assetName)
+ * @param props.params - Path parameters (orgName, projectName, assetName)
  * @param props.body - Request body with fields to update
  * @returns Promise resolving to the updated asset
  * @example
  * ```typescript
  * const asset = await updateAsset(client, {
- *   params: { userName: 'my-user', assetName: 'my-asset' },
+ *   params: { orgName: 'my-org', projectName: 'my-project', assetName: 'my-asset' },
  *   body: { description: 'Updated description' }
  * });
  * ```
  */
 export const updateAsset = async (client: ApiClient, props: UpdateAssetProps): Promise<UpdateAssetResult> => {
   const { params, body } = updateAssetPropsSchema.parse(props);
-  const path = buildPath('/assets/$userName/$assetName', params);
+  const path = buildPath('/assets/$orgName/$projectName/$assetName', params);
   const response = await client.axios.patch(path, body);
   return parseResult(client, assetSchema, response.data);
 };
@@ -299,22 +312,22 @@ export type DeleteAssetProps = z.infer<typeof deleteAssetPropsSchema>;
  * @operationId delete-asset
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.params - Path parameters (userName, assetName)
+ * @param props.params - Path parameters (orgName, projectName, assetName)
  * @returns Promise that resolves when the asset is deleted
  * @example
  * ```typescript
  * await deleteAsset(client, {
- *   params: { userName: 'my-user', assetName: 'my-asset' }
+ *   params: { orgName: 'my-org', projectName: 'my-project', assetName: 'my-asset' }
  * });
  * ```
  */
 export const deleteAsset = async (client: ApiClient, props: DeleteAssetProps): Promise<void> => {
   const { params } = deleteAssetPropsSchema.parse(props);
-  const path = buildPath('/assets/$userName/$assetName', params);
+  const path = buildPath('/assets/$orgName/$projectName/$assetName', params);
   await client.axios.delete(path);
 };
 
-export const prepareAssetUploadParamsSchema = userNameParamsSchema;
+export const prepareAssetUploadParamsSchema = projectParamsSchema;
 
 export type PrepareAssetUploadParams = z.infer<typeof prepareAssetUploadParamsSchema>;
 
@@ -344,14 +357,14 @@ export type PrepareAssetUploadProps = z.infer<typeof prepareAssetUploadPropsSche
  * @operationId prepare-asset-upload
  * @param client - The API client instance
  * @param props - The request properties
- * @param props.params - Path parameters (userName)
+ * @param props.params - Path parameters (orgName, projectName)
  * @param props.body - Request body with file information
  * @returns Promise resolving to upload URL, token, and user upload ID
  * @example
  * ```typescript
  * const upload = await prepareAssetUpload(client, {
- *   params: { userName: 'my-user' },
- *   body: { filename: 'copper.mtlx.zip', contentType: 'application/zip', size: 1024000 }
+ *   params: { orgName: 'my-org', projectName: 'my-project' },
+ *   body: { filename: 'model.glb', contentType: 'model/gltf-binary', size: 1024000 }
  * });
  * ```
  */
@@ -360,7 +373,7 @@ export const prepareAssetUpload = async (
   props: PrepareAssetUploadProps,
 ): Promise<PrepareAssetUploadResult> => {
   const { params, body } = prepareAssetUploadPropsSchema.parse(props);
-  const path = buildPath('/assets/$userName/prepare-upload', params);
+  const path = buildPath('/assets/$orgName/$projectName/prepare-upload', params);
   const response = await client.axios.post(path, body);
   return parseResult(client, prepareAssetUploadResultSchema, response.data);
 };

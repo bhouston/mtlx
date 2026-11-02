@@ -1,6 +1,6 @@
 import * as sdk from 'mtlx-sdk';
 import { defineCommand } from 'yargs-file-commands';
-import { getAssetRequiredOption, getUserOption, requireUser } from '../../lib/args.ts';
+import { getAssetRequiredOption, getOrgProjectOptions, requireOrgProject } from '../../lib/args.ts';
 import { createClient } from '../../lib/client.ts';
 import { getCliDeps } from '../../lib/deps.ts';
 
@@ -10,7 +10,7 @@ export const command = defineCommand({
   builder: (yargs) =>
     yargs
       .options({
-        ...getUserOption(),
+        ...getOrgProjectOptions(),
         ...getAssetRequiredOption(),
       })
       .positional('commentId', {
@@ -22,7 +22,7 @@ export const command = defineCommand({
     const client = await createClient(getCliDeps(argv));
     await sdk.deleteComment(client, {
       params: {
-        userName: requireUser(argv.user),
+        ...requireOrgProject(argv.org, argv.project),
         assetName: argv.asset,
         commentId: argv.commentId,
       },

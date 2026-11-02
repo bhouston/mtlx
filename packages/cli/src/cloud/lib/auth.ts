@@ -203,7 +203,8 @@ export async function loginWithBrowser(host: string, deps: CliDeps): Promise<voi
 
   try {
     // OAuth client configuration
-    const clientId = 'mtlx-ai-cli';
+    // Land of Assets' registered public CLI client (no secret, redirect http://localhost:8080/callback).
+    const clientId = 'land-of-assets-cli';
     const redirectUri = 'http://localhost:8080/callback';
     const scope = 'api';
 

@@ -1,17 +1,17 @@
 import { readFile } from 'node:fs/promises';
-import { basename, extname } from 'node:path';
+import { basename } from 'node:path';
 import type { Asset, ApiClient, Enums } from 'mtlx-sdk';
 import {
   createAsset,
-  getFileFormatInfoFromExtension,
+  getFileFormatInfoFromFileName,
   MATERIAL_ASSET_FILE_FORMATS,
-  prepareAssetUpload,
   updateAsset,
-  uploadFileToUploadUrl,
+  uploadFile,
 } from 'mtlx-sdk';
 
 export type UploadMaterialOptions = {
-  userName: string;
+  orgName: string;
+  projectName: string;
   filePath: string;
   name: string;
   description?: string;
@@ -22,34 +22,20 @@ export type UploadMaterialOptions = {
 };
 
 /**
- * Infers the content type for a material upload from its filename (`.mtlx` or `.mtlx.zip`).
- */
-function inferContentType(filename: string): string {
-  const ext = filename.toLowerCase().endsWith('.mtlx.zip') ? '.mtlx.zip' : extname(filename);
-  const formatInfo = getFileFormatInfoFromExtension(ext, MATERIAL_ASSET_FILE_FORMATS);
-  if (!formatInfo) {
-    throw new Error(`Unsupported material file extension: ${ext} (expected .mtlx or .mtlx.zip)`);
-  }
-  return formatInfo.mimeType;
-}
-
-/**
  * Uploads a `.mtlx.zip` (or `.mtlx`) file and creates a MATERIAL asset for it.
  */
 export async function uploadMaterial(client: ApiClient, options: UploadMaterialOptions): Promise<Asset> {
   const filename = basename(options.filePath);
+  if (!getFileFormatInfoFromFileName(filename, MATERIAL_ASSET_FILE_FORMATS)) {
+    throw new Error(`Unsupported material file: ${filename} (expected .mtlx or .mtlx.zip)`);
+  }
   const fileData = await readFile(options.filePath);
-  const contentType = inferContentType(filename);
+  const params = { orgName: options.orgName, projectName: options.projectName };
 
-  const { uploadUrl, uploadToken } = await prepareAssetUpload(client, {
-    params: { userName: options.userName },
-    body: { filename, contentType, size: fileData.length },
-  });
-
-  await uploadFileToUploadUrl(uploadUrl, fileData, contentType);
+  const uploadToken = await uploadFile(client, { params, fileData, filename });
 
   const asset = await createAsset(client, {
-    params: { userName: options.userName },
+    params,
     body: {
       name: options.name,
       description: options.description,
@@ -64,7 +50,7 @@ export async function uploadMaterial(client: ApiClient, options: UploadMaterialO
   // createAssetBodySchema has no `keywords` field; set it via a follow-up update.
   if (options.keywords) {
     return await updateAsset(client, {
-      params: { userName: options.userName, assetName: asset.name },
+      params: { ...params, assetName: asset.name },
       body: { keywords: options.keywords },
     });
   }

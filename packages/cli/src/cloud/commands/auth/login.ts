@@ -5,7 +5,7 @@ import { getCliDeps } from '../../lib/deps.ts';
 
 export const command = defineCommand({
   command: 'login',
-  describe: 'Authenticate with the MTLX.ai platform',
+  describe: 'Authenticate with Land of Assets',
   builder: (yargs) =>
     yargs.options({
       token: {

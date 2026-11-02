@@ -1,6 +1,6 @@
 import * as sdk from 'mtlx-sdk';
 import { defineCommand } from 'yargs-file-commands';
-import { getUserOption, requireUser } from '../../lib/args.ts';
+import { getOrgProjectOptions, requireOrg } from '../../lib/args.ts';
 import { createClient } from '../../lib/client.ts';
 import { getCliDeps } from '../../lib/deps.ts';
 
@@ -15,13 +15,13 @@ export const command = defineCommand({
         demandOption: true,
       })
       .options({
-        ...getUserOption(),
+        ...getOrgProjectOptions(),
       }),
   handler: async (argv) => {
     const client = await createClient(getCliDeps(argv));
     await sdk.deleteAPIToken(client, {
       params: { apiTokenName: argv.token },
-      query: { userName: requireUser(argv.user) },
+      query: { orgName: requireOrg(argv.org), ...(argv.project ? { projectName: argv.project } : {}) },
     });
   },
 });

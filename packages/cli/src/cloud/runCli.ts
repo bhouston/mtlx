@@ -15,7 +15,7 @@ const SUBCOMMAND_ERROR_REGEX = /You must specify a (\w+) subcommand/i;
 /**
  * Core CLI runner that can be used programmatically from tests.
  *
- * This sets up yargs with the same commands and options as the real `mtlx-ai` CLI,
+ * This sets up yargs with the same commands and options as the real `mtlx` CLI,
  * but does not call `process.exit` on failure; callers can decide how to
  * handle errors.
  */
@@ -68,7 +68,7 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<unknown> {
     .exitProcess(false)
     .fail((msg, err) => {
       // If the error is about missing subcommand, show help instead of throwing
-      // This handles cases like "mtlx-ai config" or "mtlx-ai materials" without a subcommand
+      // This handles cases like "mtlx config" or "mtlx materials" without a subcommand
       if (!err) {
         const errorMsg = msg.toLowerCase();
         if (errorMsg.includes('must specify') || errorMsg.includes('subcommand')) {
@@ -106,7 +106,7 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<unknown> {
       return;
     }
     // If the error is about missing subcommand, show help instead
-    // This handles cases like "mtlx-ai config" or "mtlx-ai materials" without a subcommand
+    // This handles cases like "mtlx config" or "mtlx materials" without a subcommand
     if (error instanceof Error) {
       const errorMsg = error.message.toLowerCase();
       if (errorMsg.includes('must specify') || errorMsg.includes('subcommand')) {

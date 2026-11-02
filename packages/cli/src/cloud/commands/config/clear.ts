@@ -3,13 +3,18 @@ import { getCliDeps } from '../../lib/deps.ts';
 
 export const command = defineCommand({
   command: 'clear',
-  describe: 'Clear default user and/or API host from global config',
+  describe: 'Clear default org, project, and/or API host from global config',
   builder: (yargs) =>
     yargs
-      .option('user', {
-        alias: 'u',
+      .option('org', {
+        alias: 'o',
         type: 'boolean',
-        description: 'Clear default user name',
+        description: 'Clear organization name',
+      })
+      .option('project', {
+        alias: 'p',
+        type: 'boolean',
+        description: 'Clear project name',
       })
       .option('host', {
         type: 'boolean',
@@ -18,16 +23,24 @@ export const command = defineCommand({
   handler: async (argv) => {
     const deps = getCliDeps(argv);
     // Must clear at least one
-    if (!(argv.user || argv.host)) {
-      throw new Error('Must specify at least --user or --host');
+    if (!(argv.org || argv.project || argv.host)) {
+      throw new Error('Must specify at least --org, --project, or --host');
     }
 
     // Read global config (without env vars)
     const globalConfig = await deps.persistentConfig.get();
 
     // Clear specified fields
-    if (argv.user) {
-      globalConfig.user = undefined;
+    if (argv.org) {
+      globalConfig.org = undefined;
+      // If clearing org, also clear project since project is scoped to org
+      if (globalConfig.project) {
+        globalConfig.project = undefined;
+      }
+    }
+    if (argv.project && !argv.org) {
+      // Only clear project if org wasn't already cleared
+      globalConfig.project = undefined;
     }
     if (argv.host) {
       // Reset host to default

@@ -2,7 +2,8 @@
 
 # mtlx-sdk
 
-Official SDK for the [MTLX.ai](https://mtlx.ai) REST API.
+MaterialX-focused SDK for the [Land of Assets](https://landofassets.com) REST API. Its routes and schemas mirror
+the official `@landofassets/sdk`.
 
 ## Installation
 
@@ -16,26 +17,27 @@ yarn add mtlx-sdk
 
 ## Quick Start
 
-The SDK uses a **functional approach** - all API operations are exported as standalone functions that take a client instance as their first parameter. Every material belongs directly to a user (there are no organizations or projects).
+The SDK uses a **functional approach** - all API operations are exported as standalone functions that take a client instance as their first parameter. Materials are `MATERIAL` assets that live in a project within an organization.
 
 ```typescript
 import { createSecretTokenInstance, listAssets, getAsset } from 'mtlx-sdk';
 
-const userName = 'alice';
+const orgName = 'acme';
+const projectName = 'library';
 
-// Create a client instance (host defaults to https://api.mtlx.ai)
 const client = createSecretTokenInstance({
+  host: 'https://api.landofassets.com',
   secretToken: 'your-api-token',
 });
 
-// List a user's materials
+// List a project's materials
 const assets = await listAssets(client, {
-  query: { userName },
+  query: { orgName, projectName, type: 'MATERIAL' },
 });
 
 // Get a specific material
 const asset = await getAsset(client, {
-  params: { userName, assetName: 'copper' },
+  params: { orgName, projectName, assetName: 'copper' },
 });
 ```
 
@@ -45,8 +47,9 @@ const asset = await getAsset(client, {
 - Full TypeScript support with complete type definitions
 - Zod schema validation for requests and responses
 - Axios-based HTTP client with automatic error handling
-- Support for all MTLX.ai API endpoints:
-  - Materials (MaterialX assets, always stored as `.mtlx.zip`)
+- Support for the Land of Assets API endpoints:
+  - Assets, including MaterialX materials (`MATERIAL`, stored as `.mtlx.zip`)
+  - Organizations, projects, and members
   - Users and authentication
   - Comments and notifications
   - File uploads and downloads
@@ -61,9 +64,10 @@ import { readFile } from 'node:fs/promises';
 import { basename } from 'node:path';
 import { createSecretTokenInstance, uploadFile, createAsset } from 'mtlx-sdk';
 
-const userName = 'alice';
+const params = { orgName: 'acme', projectName: 'library' };
 
 const client = createSecretTokenInstance({
+  host: 'https://api.landofassets.com',
   secretToken: 'your-api-token',
 });
 
@@ -73,7 +77,7 @@ const filename = basename('copper.mtlx.zip');
 
 // Upload the file (infers MIME type and uploads)
 const uploadToken = await uploadFile(client, {
-  params: { userName },
+  params,
   fileData,
   filename,
 });
@@ -81,7 +85,7 @@ const uploadToken = await uploadFile(client, {
 // Create the asset record with the upload token. The API validates the
 // MaterialX document during ingest and rejects malformed content with 400.
 const asset = await createAsset(client, {
-  params: { userName },
+  params,
   body: {
     name: 'copper',
     description: 'A brushed copper material',
@@ -120,14 +124,11 @@ import {
 } from 'mtlx-sdk';
 
 // Most common: API token authentication
-// host defaults to 'https://api.mtlx.ai' if not provided
 const client = createSecretTokenInstance({
+  host: 'https://api.landofassets.com',
   secretToken: 'your-api-token',
-  // host: 'https://api.mtlx.ai', // Optional, defaults to production API
 });
 ```
-
-**Note:** For normal users, you typically don't need to specify the `host` parameter as it defaults to `https://api.mtlx.ai`. Only internal developers may need to override this for testing against different environments.
 
 ### Available Functions
 
@@ -135,7 +136,7 @@ The SDK exports functions for all API operations. Here are the main categories:
 
 **Assets (materials):**
 
-- `listAssets()` - List a user's materials (or search public ones)
+- `listAssets()` - List a project's assets, or search public ones (pass `type: 'MATERIAL'` for materials)
 - `getAsset()` - Get material metadata, including the parsed `materialInfo`
 - `createAsset()` - Create a new material
 - `updateAsset()` - Update material metadata or replace its file

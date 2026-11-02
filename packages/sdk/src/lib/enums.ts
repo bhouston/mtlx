@@ -4,8 +4,11 @@ export enum RefreshTokenType {
 }
 
 export namespace Enums {
-  export const UserType = ['STANDARD'] as const;
+  export const UserType = ['STANDARD', 'SERVICE_ACCOUNT'] as const;
   export type UserType = (typeof UserType)[number];
+
+  export const Visibility = ['PRIVATE', 'PUBLIC'] as const;
+  export type Visibility = (typeof Visibility)[number];
 
   export const AssetVisibility = ['PRIVATE', 'UNLISTED', 'PUBLIC'] as const;
   export type AssetVisibility = (typeof AssetVisibility)[number];
@@ -22,7 +25,7 @@ export namespace Enums {
   ] as const;
   export type ShareLicense = (typeof ShareLicense)[number];
 
-  export const AssetType = ['MATERIAL'] as const;
+  export const AssetType = ['MODEL', 'MATERIAL', 'IMAGE', 'SCENE', 'ENVMAP', 'CAD'] as const;
   export type AssetType = (typeof AssetType)[number];
 
   export const AiUsage = ['UNDISCLOSED', 'AI_USED', 'AI_FREE'] as const;
@@ -30,6 +33,15 @@ export namespace Enums {
 
   export const CommentMode = ['ENABLED', 'MEMBERS_ONLY', 'NONE'] as const;
   export type CommentMode = (typeof CommentMode)[number];
+
+  export const MemberRole = ['ADMIN', 'MEMBER', 'VIEWER'] as const;
+  export type MemberRole = (typeof MemberRole)[number];
+
+  export const MemberType = ['ORG', 'PROJECT'] as const;
+  export type MemberType = (typeof MemberType)[number];
+
+  export const MemberInviteStatus = ['PENDING', 'ACCEPTED', 'REJECTED'] as const;
+  export type MemberInviteStatus = (typeof MemberInviteStatus)[number];
 
   export const NotificationStatus = ['UNREAD', 'READ'] as const;
   export type NotificationStatus = (typeof NotificationStatus)[number];
@@ -46,6 +58,21 @@ export namespace Enums {
   export const UserInviteStatus = ['PENDING', 'APPROVED', 'REJECTED', 'REDEEMED'] as const;
   export type UserInviteStatus = (typeof UserInviteStatus)[number];
 
+  export const SocialLinkType = [
+    'BLUESKY',
+    'FACEBOOK',
+    'GITHUB',
+    'INSTAGRAM',
+    'LINKEDIN',
+    'MASTODON',
+    'REDDIT',
+    'TIKTOK',
+    'YOUTUBE',
+    'TWITTER',
+    'CUSTOM',
+  ] as const;
+  export type SocialLinkType = (typeof SocialLinkType)[number];
+
   export const FileEncoding = ['raw', 'br', 'zstd', 'gzip'] as const;
   export type FileEncoding = (typeof FileEncoding)[number];
 
@@ -53,6 +80,8 @@ export namespace Enums {
     'NEW_COMMENT',
     'COMMENT_MODERATED',
     'ASSET_MODERATED',
+    'PROJECT_INVITE',
+    'ORG_INVITE',
     'ASSET_LIKED',
     'COMMENT_LIKED',
     'COMMENT_MENTIONED',
@@ -321,4 +350,13 @@ export namespace Enums {
     'ZW',
   ] as const;
   export type CountryCode = (typeof CountryCode)[number];
+
+  export const PlanType = ['FREE', 'BASIC_MONTHLY', 'BASIC_YEARLY', 'ENTERPRISE'] as const;
+  export type PlanType = (typeof PlanType)[number];
+
+  export const GlbMeshCompress = ['draco', 'meshopt', 'quantize'] as const;
+  export type GlbMeshCompress = (typeof GlbMeshCompress)[number];
+
+  export const GlbTextureCompress = ['ktx2', 'webp', 'avif', 'auto'] as const;
+  export type GlbTextureCompress = (typeof GlbTextureCompress)[number];
 }

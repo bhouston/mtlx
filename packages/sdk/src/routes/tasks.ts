@@ -3,7 +3,7 @@ import * as z from 'zod';
 import type { ApiClient } from '../client.js';
 import { parseResult } from '../client.js';
 import { buildPath } from '../lib/buildPath.js';
-import { taskParamsSchema } from '../lib/schemas.js';
+import { projectParamsSchema } from '../lib/schemas.js';
 
 const taskRunStatusSchema = z.enum(['RUNNING', 'SUCCESS', 'FAILED']);
 
@@ -15,7 +15,8 @@ export const taskSchema = z.object({
   createdAt: z.iso.datetime().describe('When the task was created'),
   name: z.string().describe('Human-readable task name'),
   targetUrl: z.string().nullable().describe('Optional target URL'),
-  userName: z.string().describe('Username of the task owner'),
+  orgName: z.string().nullable().describe('Org name (owner of task or project)'),
+  projectName: z.string().nullable().describe('Project name if task is project-scoped'),
   assetName: z.string().nullable().optional().describe('Asset name if task is asset-scoped'),
   createdByName: z.string().describe('Display name of user who created the task'),
   latestRunStatus: taskRunStatusSchema.nullable().describe('Latest run status'),
@@ -28,7 +29,7 @@ export const taskWithStatusAndResultsSchema = taskSchema.extend({
 
 export type TaskWithStatusAndResults = z.infer<typeof taskWithStatusAndResultsSchema>;
 
-export const getTaskParamsSchema = taskParamsSchema.extend({
+export const getTaskParamsSchema = projectParamsSchema.extend({
   taskId: z.coerce.number().int().describe('The task ID'),
 });
 export type GetTaskParams = z.infer<typeof getTaskParamsSchema>;
@@ -105,15 +106,15 @@ export type GetTaskProps = {
 };
 
 export const getTask = async (client: ApiClient, props: GetTaskProps): Promise<GetTaskResult> => {
-  const path = buildPath('/tasks/$userName/$taskId', props.params);
+  const path = buildPath('/tasks/$orgName/$projectName/$taskId', props.params);
   const response = await client.axios.get(path);
   return parseResult(client, taskWithStatusAndResultsSchema, response.data);
 };
 
-const TASK_EVENTS_PATH = '/tasks/$userName/$taskId/events';
+const TASK_EVENTS_PATH = '/tasks/$orgName/$projectName/$taskId/events';
 
 export type SubscribeToTaskEventsProps = {
-  params: { userName: string; taskId: number };
+  params: { orgName: string; projectName: string; taskId: number };
   query?: GetTaskEventsQuery;
 };
 
@@ -186,7 +187,7 @@ export function subscribeToTaskEvents(client: ApiClient, props: SubscribeToTaskE
 }
 
 export type WaitForTaskCompletionProps = {
-  params: { userName: string; taskId: number };
+  params: { orgName: string; projectName: string; taskId: number };
   timeoutMs?: number;
 };
 

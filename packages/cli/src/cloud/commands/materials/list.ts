@@ -1,6 +1,6 @@
 import * as sdk from 'mtlx-sdk';
 import { defineCommand } from 'yargs-file-commands';
-import { formatOption, getAssetVisibilityOption, getUserOption, paginationOption } from '../../lib/args.ts';
+import { formatOption, getAssetVisibilityOption, getOrgProjectOptions, paginationOption } from '../../lib/args.ts';
 import { createClient } from '../../lib/client.ts';
 import { getCliDeps } from '../../lib/deps.ts';
 import { logOutput } from '../../lib/output.ts';
@@ -14,7 +14,7 @@ export const command = defineCommand({
         type: 'string',
         description: 'Search text',
       },
-      ...getUserOption(),
+      ...getOrgProjectOptions(),
       ...getAssetVisibilityOption(),
       ...paginationOption,
       ...formatOption,
@@ -25,7 +25,9 @@ export const command = defineCommand({
 
     const result = await sdk.listAssets(client, {
       query: {
-        userName: argv.user,
+        orgName: argv.org,
+        projectName: argv.project,
+        type: 'MATERIAL',
         visibility: argv.visibility,
         searchText: argv.search,
         pageOffset: argv['page-offset'],

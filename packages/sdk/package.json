@@ -1,20 +1,21 @@
 {
   "name": "mtlx-sdk",
   "version": "0.1.0",
-  "description": "SDK for MTLX.ai REST API",
+  "description": "MaterialX-focused SDK for the Land of Assets REST API",
   "keywords": [
     "3d",
     "api",
     "assets",
-    "mtlx-ai",
+    "land-of-assets",
+    "materialx",
     "sdk"
   ],
-  "homepage": "https://mtlx.ai",
+  "homepage": "https://mtlx.ben3d.ca",
   "bugs": {
     "url": "https://github.com/bhouston/mtlx/issues"
   },
   "license": "MIT",
-  "author": "Ben Houston <ben@mtlx.ai>",
+  "author": "Ben Houston <neuralsoft@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bhouston/mtlx.git",

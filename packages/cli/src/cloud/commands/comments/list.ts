@@ -1,6 +1,12 @@
 import * as sdk from 'mtlx-sdk';
 import { defineCommand } from 'yargs-file-commands';
-import { formatOption, getAssetRequiredOption, getUserOption, paginationOption, requireUser } from '../../lib/args.ts';
+import {
+  formatOption,
+  getAssetRequiredOption,
+  getOrgProjectOptions,
+  paginationOption,
+  requireOrgProject,
+} from '../../lib/args.ts';
 import { createClient } from '../../lib/client.ts';
 import { getCliDeps } from '../../lib/deps.ts';
 import { logOutput } from '../../lib/output.ts';
@@ -10,7 +16,7 @@ export const command = defineCommand({
   describe: 'List comments for a material',
   builder: (yargs) =>
     yargs.options({
-      ...getUserOption(),
+      ...getOrgProjectOptions(),
       ...getAssetRequiredOption(),
       ...paginationOption,
       ...formatOption,
@@ -20,7 +26,7 @@ export const command = defineCommand({
     const client = await createClient(deps);
     const result = await sdk.listComments(client, {
       params: {
-        userName: requireUser(argv.user),
+        ...requireOrgProject(argv.org, argv.project),
         assetName: argv.asset,
       },
       query: {

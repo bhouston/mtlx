@@ -8,7 +8,7 @@ export type PersistentConfig = {
   set: (config: Partial<Config>) => Promise<void>;
 };
 
-export const getConfigDir = (): string => join(homedir(), '.config', 'mtlx-ai');
+export const getConfigDir = (): string => join(homedir(), '.config', 'mtlx');
 
 export class FilePersistentConfig implements PersistentConfig {
   public readonly configDir: string;

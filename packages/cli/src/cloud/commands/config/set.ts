@@ -4,25 +4,44 @@ import { getCliDeps } from '../../lib/deps.ts';
 
 export const command = defineCommand({
   command: 'set',
-  describe: 'Set default user and/or API host',
+  describe: 'Set default org, project, and/or API host',
   builder: (yargs) =>
     yargs
-      .option('user', {
-        alias: 'u',
+      .option('org', {
+        alias: 'o',
         type: 'string',
-        description: 'Default user name (used when --user is omitted from other commands)',
+        description: 'Organization name',
+      })
+      .option('project', {
+        alias: 'p',
+        type: 'string',
+        description: 'Project name (requires org to be set)',
       })
       .option('host', {
         type: 'string',
-        description: 'API host URL (defaults to https://api.mtlx.ai)',
+        description: 'API host URL (defaults to https://api.landofassets.com)',
       }),
   handler: async (argv) => {
-    // Validate user name if provided (including empty strings)
-    if (argv.user !== undefined) {
-      const result = sdk.userNameSchema.safeParse(argv.user);
+    // Validate: cannot set project without org
+    if (argv.project && !argv.org) {
+      throw new Error('Cannot set project without org. Project is scoped to org.');
+    }
+
+    // Validate org name if provided (including empty strings)
+    if (argv.org !== undefined) {
+      const result = sdk.orgNameSchema.safeParse(argv.org);
       if (!result.success) {
         const errorMessage = result.error.issues.map((e) => e.message).join('; ');
-        throw new Error(`Invalid user name: ${errorMessage}`);
+        throw new Error(`Invalid organization name: ${errorMessage}`);
+      }
+    }
+
+    // Validate project name if provided (including empty strings)
+    if (argv.project !== undefined) {
+      const result = sdk.projectNameSchema.safeParse(argv.project);
+      if (!result.success) {
+        const errorMessage = result.error.issues.map((e) => e.message).join('; ');
+        throw new Error(`Invalid project name: ${errorMessage}`);
       }
     }
 
@@ -39,19 +58,27 @@ export const command = defineCommand({
     }
 
     // Must set at least one (check after validation so validation errors are shown first)
-    if (!(argv.user || argv.host)) {
-      throw new Error('Must specify at least --user or --host');
+    if (!(argv.org || argv.project || argv.host)) {
+      throw new Error('Must specify at least --org, --project, or --host');
     }
 
     const deps = getCliDeps(argv);
 
     // Write to global config
     const globalConfig = await deps.persistentConfig.get();
-    if (argv.user) {
-      globalConfig.user = argv.user;
+    if (argv.org) {
+      globalConfig.org = argv.org;
+    }
+    if (argv.project) {
+      globalConfig.project = argv.project;
     }
     if (argv.host) {
       globalConfig.host = argv.host;
+    }
+
+    // Validate config
+    if (globalConfig.project && !globalConfig.org) {
+      throw new Error('Cannot set project without org. Project is scoped to org.');
     }
 
     await deps.persistentConfig.set(globalConfig);

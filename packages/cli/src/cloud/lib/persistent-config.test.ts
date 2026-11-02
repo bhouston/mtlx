@@ -27,7 +27,7 @@ describe('persistent-config', () => {
       const envVars = new MemoryEnvVars();
       const persistentConfig = new MemoryPersistentConfig({
         host: 'https://global-host.test',
-        user: 'test-user',
+        org: 'test-org',
       });
       const deps = {
         persistentConfig,
@@ -38,13 +38,13 @@ describe('persistent-config', () => {
       // Initially no env vars - getEnvConfig() returns default host, so it takes precedence
       let config = await getConfig(deps);
       expect(config.host).toBe('https://api.global.test'); // new env config
-      expect(config.user).toBe('test-user'); // global config still present
+      expect(config.org).toBe('test-org'); // global config still present
 
       // Set env var - now it should use the env var
       envVars.set('LOA_HOST', 'https://env-host.test');
       config = await getConfig(deps);
       expect(config.host).toBe('https://env-host.test'); // env takes precedence
-      expect(config.user).toBe('test-user'); // global config still present
+      expect(config.org).toBe('test-org'); // global config still present
     });
   });
 
@@ -56,7 +56,8 @@ describe('persistent-config', () => {
       });
       const globalConfig: Config = {
         host: 'https://global-host.test',
-        user: 'test-user',
+        org: 'test-org',
+        project: 'test-project',
       };
       const persistentConfig = new MemoryPersistentConfig(globalConfig);
       const deps = {
@@ -70,7 +71,8 @@ describe('persistent-config', () => {
       expect(config.host).toBe('https://env-host.test');
       expect(config.auth?.token).toBe('st_env_token'.padEnd(39, 'x'));
       // Global config values should still be present
-      expect(config.user).toBe('test-user');
+      expect(config.org).toBe('test-org');
+      expect(config.project).toBe('test-project');
     });
 
     it('should return only global config in get()', async () => {
@@ -80,7 +82,8 @@ describe('persistent-config', () => {
       });
       const globalConfig: Config = {
         host: 'https://global-host.test',
-        user: 'test-user',
+        org: 'test-org',
+        project: 'test-project',
       };
       envVars.set('LOA_HOST', 'https://global-host.test');
       const persistentConfig = new MemoryPersistentConfig(globalConfig);
@@ -90,14 +93,15 @@ describe('persistent-config', () => {
       // Should only return global config, no env vars
       expect(config.host).toBe('https://global-host.test');
       expect(config.auth).toBeUndefined();
-      expect(config.user).toBe('test-user');
+      expect(config.org).toBe('test-org');
+      expect(config.project).toBe('test-project');
     });
 
     it('should not include env vars in get() even when env vars change', async () => {
       const envVars = new MemoryEnvVars();
       const globalConfig: Config = {
         host: 'https://global-host.test',
-        user: 'test-user',
+        org: 'test-org',
       };
       const persistentConfig = new MemoryPersistentConfig(globalConfig);
       const logger = new MemoryLogger();
@@ -109,7 +113,7 @@ describe('persistent-config', () => {
 
       const globalConfigResult = await persistentConfig.get();
       expect(globalConfigResult.host).toBe('https://global-host.test');
-      expect(globalConfigResult.user).toBe('test-user');
+      expect(globalConfigResult.org).toBe('test-org');
 
       // Change env vars
       envVars.set('LOA_HOST', 'https://new-env-host.test');
@@ -118,7 +122,7 @@ describe('persistent-config', () => {
       const configResult = await getConfig(deps);
       expect(configResult.host).toBe('https://new-env-host.test');
       expect(configResult.auth?.token).toBe('st_new_token'.padEnd(39, 'x'));
-      expect(configResult.user).toBe('test-user');
+      expect(configResult.org).toBe('test-org');
 
       // But getConfig() should include env vars
       const mergedConfig = await getConfig(deps);
@@ -134,7 +138,7 @@ describe('persistent-config', () => {
       });
       const persistentConfig = new MemoryPersistentConfig({
         host: 'https://initial-host.test',
-        user: 'initial-user',
+        org: 'initial-org',
       });
       const deps = {
         persistentConfig,
@@ -144,18 +148,21 @@ describe('persistent-config', () => {
       // Set new config
       await deps.persistentConfig.set({
         host: 'https://new-host.test',
-        user: 'new-user',
+        org: 'new-org',
+        project: 'new-project',
       });
 
       // get() should return the new config
       const globalConfig = await deps.persistentConfig.get();
       expect(globalConfig.host).toBe('https://new-host.test');
-      expect(globalConfig.user).toBe('new-user');
+      expect(globalConfig.org).toBe('new-org');
+      expect(globalConfig.project).toBe('new-project');
 
       // getConfig() should merge with env vars
       const mergedConfig = await getConfig(deps);
       expect(mergedConfig.host).toBe('https://env-host.test'); // env takes precedence
-      expect(mergedConfig.user).toBe('new-user'); // from global config
+      expect(mergedConfig.org).toBe('new-org'); // from global config
+      expect(mergedConfig.project).toBe('new-project'); // from global config
     });
 
     it('should not be affected by env vars when setting config', async () => {
@@ -172,7 +179,7 @@ describe('persistent-config', () => {
       // Set config with specific values
       await deps.persistentConfig.set({
         host: 'https://set-host.test',
-        user: 'set-user',
+        org: 'set-org',
       });
 
       // Change env vars after setting
@@ -181,13 +188,13 @@ describe('persistent-config', () => {
       // get() should still return what was set (not affected by env vars)
       const globalConfig = await deps.persistentConfig.get();
       expect(globalConfig.host).toBe('https://set-host.test');
-      expect(globalConfig.user).toBe('set-user');
+      expect(globalConfig.org).toBe('set-org');
       expect(globalConfig.auth).toBeUndefined();
 
       // But getConfig() should merge with current env vars
       const mergedConfig = await getConfig(deps);
       expect(mergedConfig.host).toBe('https://different-env-host.test'); // env takes precedence
-      expect(mergedConfig.user).toBe('set-user'); // from global config
+      expect(mergedConfig.org).toBe('set-org'); // from global config
     });
   });
 
@@ -195,7 +202,7 @@ describe('persistent-config', () => {
     it('should return raw stored config for testing', async () => {
       const config: Config = {
         host: 'https://test-host.test',
-        user: 'test-user',
+        org: 'test-org',
       };
       const persistentConfig = new MemoryPersistentConfig(config);
 
@@ -203,7 +210,7 @@ describe('persistent-config', () => {
 
       expect(rawConfig).toEqual(config);
       expect(rawConfig.host).toBe('https://test-host.test');
-      expect(rawConfig.user).toBe('test-user');
+      expect(rawConfig.org).toBe('test-org');
     });
   });
 });

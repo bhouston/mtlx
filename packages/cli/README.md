@@ -14,7 +14,7 @@ for validating, inspecting, packaging, previewing, and transforming MaterialX fi
 processing for SDR formats (webp/png/jpg/avif) and hdrify for HDR formats (EXR/Radiance HDR);
 browser-safe library imports are available separately through `mtlx-core`.
 
-The same CLI can also connect to [MTLX.ai](https://mtlx.ai). Run `mtlx login` for browser or token authentication,
+The same CLI can also connect to [Land of Assets](https://landofassets.com). Run `mtlx login` for browser or token authentication,
 then use `mtlx upload`, `mtlx download`, and `mtlx search`. The full cloud command set includes
 `mtlx auth`, `materials`, `comments`, `notifications`, `api-tokens`, `users`, and `config`.
 See [the platform command reference](PLATFORM.md) for options and examples.
@@ -338,44 +338,41 @@ Run `mtlx <command> --help` for the full option list of any command.
 mtlx <command> [options]
 
 Commands:
-  mtlx check <inputs..>         Run selected document checks on one or more
-                                .mtlx or .mtlx.zip files (glob patterns
-                                accepted)
-  mtlx download [userMaterial]  Download a material file
-  mtlx info <input>             Print information about a .mtlx or .mtlx.zip
-                                file
-  mtlx login                    Authenticate with the MTLX.ai platform
-  mtlx logout                   Clear stored authentication
-  mtlx mcp                      Run a Model Context Protocol server over stdio
-                                (check, inspect, render, and edit tools for AI
-                                agents)
-  mtlx nodes <query>            Search MaterialX node definitions: exact names,
-                                inputs with defaults, and preview-renderer notes
-  mtlx render <input>           Render a .mtlx or .mtlx.zip file to an image
-                                (png, jpg, webp or avif) using a local headless
-                                browser
-  mtlx transform <inputs..>     Convert, combine, or resize/reformat textures
-                                across one or more .mtlx / .mtlx.zip files (glob
-                                patterns accepted), writing --output. A
-                                directory --output batch-converts each input
-                                separately instead of combining.    [aliases: x]
-  mtlx upload <file>            Upload a .mtlx.zip (or .mtlx) file as a new
-                                material
-  mtlx view <input>             Open a local 3D preview of a .mtlx or .mtlx.zip
-                                file in your browser
-  mtlx api-tokens               api-tokens commands
-  mtlx assets                   assets commands
-  mtlx auth                     auth commands
-  mtlx comments                 comments commands
-  mtlx config                   config commands
-  mtlx health                   Check if the API server is healthy and reachable
-  mtlx materials                materials commands
-  mtlx notifications            notifications commands
-  mtlx search <query>           Search public materials (shortcut for `materials
-                                list --search`)
-  mtlx users                    users commands
-  mtlx docgen                   Write the OpenCLI document to a file, or stdout
-                                if --output is omitted
+  mtlx check <inputs..>      Run selected document checks on one or more .mtlx
+                             or .mtlx.zip files (glob patterns accepted)
+  mtlx download [material]   Download a material file
+  mtlx info <input>          Print information about a .mtlx or .mtlx.zip file
+  mtlx login                 Authenticate with Land of Assets
+  mtlx logout                Clear stored authentication
+  mtlx mcp                   Run a Model Context Protocol server over stdio
+                             (check, inspect, render, and edit tools for AI
+                             agents)
+  mtlx nodes <query>         Search MaterialX node definitions: exact names,
+                             inputs with defaults, and preview-renderer notes
+  mtlx render <input>        Render a .mtlx or .mtlx.zip file to an image (png,
+                             jpg, webp or avif) using a local headless browser
+  mtlx transform <inputs..>  Convert, combine, or resize/reformat textures
+                             across one or more .mtlx / .mtlx.zip files (glob
+                             patterns accepted), writing --output. A directory
+                             --output batch-converts each input separately
+                             instead of combining.                  [aliases: x]
+  mtlx upload <file>         Upload a .mtlx.zip (or .mtlx) file as a new
+                             material
+  mtlx view <input>          Open a local 3D preview of a .mtlx or .mtlx.zip
+                             file in your browser
+  mtlx api-tokens            api-tokens commands
+  mtlx assets                assets commands
+  mtlx auth                  auth commands
+  mtlx comments              comments commands
+  mtlx config                config commands
+  mtlx health                Check if the API server is healthy and reachable
+  mtlx materials             materials commands
+  mtlx notifications         notifications commands
+  mtlx search <query>        Search public materials (shortcut for `materials
+                             list --search`)
+  mtlx users                 users commands
+  mtlx docgen                Write the OpenCLI document to a file, or stdout if
+                             --output is omitted
 
 Options:
       --parallel  Number of parallel operations to run concurrently
@@ -405,19 +402,21 @@ Options:
 ```
 
 ```text
-mtlx download [userMaterial]
+mtlx download [material]
 
 Download a material file
 
 Positionals:
-  userMaterial  <user>/<name>, e.g. alice/copper                        [string]
+  material  <org>/<project>/<name> (e.g. acme/library/copper), or <name> with
+            --org/--project                                             [string]
 
 Options:
       --parallel  Number of parallel operations to run concurrently
                                                            [number] [default: 4]
-      --name      Material name (alternative to <user>/<name>)          [string]
+      --name      Material name (alternative to the positional)         [string]
   -o, --output    Output file path (defaults to the material name)      [string]
-      --user      User name                                             [string]
+      --org       Organization name                                     [string]
+      --project   Project name                                          [string]
   -h, --help      Show help                                            [boolean]
   -v, --version   Show version number                                  [boolean]
 ```
@@ -442,7 +441,7 @@ Options:
 ```text
 mtlx login
 
-Authenticate with the MTLX.ai platform
+Authenticate with Land of Assets
 
 Options:
       --parallel  Number of parallel operations to run concurrently
@@ -630,7 +629,8 @@ Options:
                                                            [number] [default: 4]
       --name         Material name                           [string] [required]
       --keywords     Keywords                                           [string]
-      --user         User name                                          [string]
+      --org          Organization name                                  [string]
+      --project      Project name                                       [string]
       --visibility   Material visibility
                              [string] [choices: "PRIVATE", "UNLISTED", "PUBLIC"]
       --license      Share license
@@ -675,10 +675,10 @@ mtlx auth
 auth commands
 
 Commands:
-  mtlx auth login   Authenticate with the MTLX.ai platform
+  mtlx auth login   Authenticate with Land of Assets
   mtlx auth logout  Clear stored authentication
   mtlx auth status  Show current authentication status
-  mtlx auth whoami  Show the current auth type and default user
+  mtlx auth whoami  Show the current auth type and default org/project
 
 Options:
       --parallel  Number of parallel operations to run concurrently
@@ -711,9 +711,10 @@ mtlx config
 config commands
 
 Commands:
-  mtlx config clear  Clear default user and/or API host from global config
-  mtlx config get    Get current default user and API host
-  mtlx config set    Set default user and/or API host
+  mtlx config clear  Clear default org, project, and/or API host from global
+                     config
+  mtlx config get    Get current default org, project, and API host
+  mtlx config set    Set default org, project, and/or API host
 
 Options:
       --parallel  Number of parallel operations to run concurrently
@@ -741,13 +742,13 @@ mtlx materials
 materials commands
 
 Commands:
-  mtlx materials delete [userMaterial]    Delete a material
-  mtlx materials download [userMaterial]  Download a material file
-  mtlx materials get [userMaterial]       Get material details
-  mtlx materials list                     List materials
-  mtlx materials update [userMaterial]    Update a material
-  mtlx materials upload <file>            Upload a .mtlx.zip (or .mtlx) file as
-                                          a new material
+  mtlx materials delete [material]    Delete a material
+  mtlx materials download [material]  Download a material file
+  mtlx materials get [material]       Get material details
+  mtlx materials list                 List materials
+  mtlx materials update [material]    Update a material
+  mtlx materials upload <file>        Upload a .mtlx.zip (or .mtlx) file as a
+                                      new material
 
 Options:
       --parallel  Number of parallel operations to run concurrently

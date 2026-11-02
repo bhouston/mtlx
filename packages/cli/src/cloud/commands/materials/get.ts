@@ -1,34 +1,34 @@
 import * as sdk from 'mtlx-sdk';
 import { defineCommand } from 'yargs-file-commands';
-import { formatOption, getUserOption, resolveUserAndName } from '../../lib/args.ts';
+import { formatOption, getOrgProjectOptions, resolveAssetRef } from '../../lib/args.ts';
 import { createClient } from '../../lib/client.ts';
 import { getCliDeps } from '../../lib/deps.ts';
 import { logOutput } from '../../lib/output.ts';
 
 export const command = defineCommand({
-  command: 'get [userMaterial]',
+  command: 'get [material]',
   describe: 'Get material details',
   builder: (yargs) =>
     yargs
-      .positional('userMaterial', {
+      .positional('material', {
         type: 'string',
-        description: '<user>/<name>, e.g. alice/copper',
+        description: '<org>/<project>/<name> (e.g. acme/library/copper), or <name> with --org/--project',
       })
       .options({
         name: {
           type: 'string',
-          description: 'Material name (alternative to <user>/<name>)',
+          description: 'Material name (alternative to the positional)',
         },
-        ...getUserOption(),
+        ...getOrgProjectOptions(),
         ...formatOption,
       }),
   handler: async (argv) => {
-    const { userName, name } = resolveUserAndName(argv.userMaterial, argv.user, argv.name);
+    const { orgName, projectName, name } = resolveAssetRef(argv.material, argv.org, argv.project, argv.name);
     const deps = getCliDeps(argv);
     const client = await createClient(deps);
 
     const asset = await sdk.getAsset(client, {
-      params: { userName, assetName: name },
+      params: { orgName, projectName, assetName: name },
     });
 
     logOutput(asset, argv.format, deps.logger);

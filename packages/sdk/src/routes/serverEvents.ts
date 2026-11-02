@@ -5,6 +5,9 @@ import type { ApiClient } from '../client.js';
 import { Enums } from '../lib/enums.js';
 import { assetSchema } from './assets.js';
 import { commentSchema } from './comments.js';
+import { orgSchema } from './orgs.js';
+import { productSchema } from './products.js';
+import { projectSchema } from './projects.js';
 
 // ---------------------------------------------------------------------------
 // Payload schemas per event type (sent as the SSE body)
@@ -27,13 +30,15 @@ export const serverEventNotificationTopicDataSchema = z.object({
 
 // Extended schemas for events that produce notifications (centralized copy generation)
 export const serverEventAssetModeratedDataSchema = serverEventNotificationTopicDataSchema.extend({
-  userName: z.string(),
+  orgName: z.string(),
+  projectName: z.string(),
   assetName: z.string(),
   reason: z.string(),
 });
 
 export const serverEventCommentModeratedDataSchema = serverEventNotificationTopicDataSchema.extend({
-  userName: z.string(),
+  orgName: z.string(),
+  projectName: z.string(),
   assetName: z.string(),
   commentId: z.number().int(),
   commentText: z.string(),
@@ -42,18 +47,27 @@ export const serverEventCommentModeratedDataSchema = serverEventNotificationTopi
 });
 
 export const serverEventAssetLikedDataSchema = serverEventNotificationTopicDataSchema.extend({
-  userName: z.string(),
+  orgName: z.string(),
+  projectName: z.string(),
   assetName: z.string(),
   actorName: z.string(),
 });
 
 export const serverEventCommentLikedDataSchema = serverEventNotificationTopicDataSchema.extend({
-  userName: z.string(),
+  orgName: z.string(),
+  projectName: z.string(),
   assetName: z.string(),
   commentId: z.number().int(),
   commentText: z.string(),
   actorName: z.string(),
   targetUserId: z.number().int(),
+});
+
+export const serverEventInviteDataSchema = serverEventNotificationTopicDataSchema.extend({
+  targetUserId: z.number().int(),
+  targetName: z.string(),
+  inviterName: z.string(),
+  role: z.string(),
 });
 
 // asset events — carry the full entity for created/updated; just identifiers for deleted
@@ -64,7 +78,8 @@ export const serverEventAssetCreatedUpdatedDataSchema = z.object({
 
 export const serverEventAssetDeletedDataSchema = z.object({
   assetId: z.number().int(),
-  userName: z.string(),
+  orgName: z.string(),
+  projectName: z.string(),
   assetName: z.string(),
 });
 
@@ -72,9 +87,48 @@ export const serverEventAssetDeletedDataSchema = z.object({
 export const serverEventCommentDataSchema = z.object({
   comment: commentSchema,
   assetId: z.number().int(),
-  userName: z.string(),
+  orgName: z.string(),
+  projectName: z.string(),
   assetName: z.string(),
   mentionedUserIds: z.array(z.number().int()).optional(),
+});
+
+// project events — carry the full entity for created/updated; just identifiers for deleted
+export const serverEventProjectCreatedUpdatedDataSchema = z.object({
+  project: projectSchema,
+});
+
+export const serverEventProjectDeletedDataSchema = z.object({
+  projectId: z.number().int(),
+  orgName: z.string(),
+  projectName: z.string(),
+});
+
+// product events — carry the full entity for created/updated; just identifiers for deleted
+export const serverEventProductCreatedUpdatedDataSchema = z.object({
+  product: productSchema,
+});
+
+export const serverEventProductDeletedDataSchema = z.object({
+  productId: z.number().int(),
+  orgName: z.string(),
+  projectName: z.string(),
+  productCode: z.string(),
+});
+
+// org events — carry the full entity for updated; just identifier for deleted/created
+export const serverEventOrgUpdatedDataSchema = z.object({
+  org: orgSchema,
+});
+
+export const serverEventOrgCreatedDeletedDataSchema = z.object({
+  orgName: z.string(),
+});
+
+// member events
+export const serverEventMemberDataSchema = z.object({
+  orgName: z.string(),
+  projectName: z.string().optional(),
 });
 
 // ---------------------------------------------------------------------------
@@ -92,7 +146,20 @@ export const serverEventDataSchemas = {
   'comment.new': serverEventCommentDataSchema,
   'comment.updated': serverEventCommentDataSchema,
   'external-auth.approved': serverEventNotificationTopicDataSchema,
+  'member.added': serverEventMemberDataSchema,
+  'member.removed': serverEventMemberDataSchema,
   'notification.new': serverEventNotificationNewDataSchema,
+  'org.created': serverEventOrgCreatedDeletedDataSchema,
+  'org.deleted': serverEventOrgCreatedDeletedDataSchema,
+  'org.invite': serverEventInviteDataSchema,
+  'org.updated': serverEventOrgUpdatedDataSchema,
+  'product.created': serverEventProductCreatedUpdatedDataSchema,
+  'product.deleted': serverEventProductDeletedDataSchema,
+  'product.updated': serverEventProductCreatedUpdatedDataSchema,
+  'project.created': serverEventProjectCreatedUpdatedDataSchema,
+  'project.deleted': serverEventProjectDeletedDataSchema,
+  'project.invite': serverEventInviteDataSchema,
+  'project.updated': serverEventProjectCreatedUpdatedDataSchema,
 } as const;
 
 // ---------------------------------------------------------------------------

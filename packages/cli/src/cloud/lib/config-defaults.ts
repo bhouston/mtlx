@@ -2,7 +2,8 @@ import { getConfig } from './config.ts';
 import type { CliDeps } from './deps.ts';
 
 type ConfigDefaults = {
-  user?: string;
+  org?: string;
+  project?: string;
 };
 
 // `yargs-file-commands` dynamically imports each command module, which can produce a module
@@ -28,12 +29,18 @@ export async function initializeConfigDefaults(deps: CliDeps): Promise<void> {
   const store = getStore();
   try {
     const config = await getConfig(deps);
-    store.user = config.user;
+    store.org = config.org;
+    store.project = config.project;
   } catch {
-    store.user = undefined;
+    store.org = undefined;
+    store.project = undefined;
   }
 }
 
-export function getUser(): string | undefined {
-  return getStore().user;
+export function getOrg(): string | undefined {
+  return getStore().org;
+}
+
+export function getProject(): string | undefined {
+  return getStore().project;
 }

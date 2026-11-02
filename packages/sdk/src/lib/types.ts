@@ -1,10 +1,10 @@
-import type { Stream } from 'node:stream';
+import type { Readable } from 'node:stream';
 import * as z from 'zod';
 
 export type BinaryResponse = 'arraybuffer' | 'stream' | 'blob';
 
 export type BinaryResponseType<T extends BinaryResponse> = T extends 'stream'
-  ? Stream
+  ? Readable
   : T extends 'arraybuffer'
     ? ArrayBuffer
     : Blob;
