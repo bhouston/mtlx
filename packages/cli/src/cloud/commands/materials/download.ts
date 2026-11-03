@@ -1,6 +1,6 @@
 import { writeFile } from 'node:fs/promises';
 import type { Readable } from 'node:stream';
-import { getMediaOriginalUrl } from 'mtlx-sdk';
+import { buildPath } from 'mtlx-sdk';
 import { defineCommand } from 'yargs-file-commands';
 import { getOrgProjectOptions, resolveAssetRef } from '../../lib/args.ts';
 import { createClient } from '../../lib/client.ts';
@@ -31,10 +31,14 @@ export const command = defineCommand({
     const { orgName, projectName, name } = resolveAssetRef(argv.material, argv.org, argv.project, argv.name);
     const client = await createClient(getCliDeps(argv));
 
-    const url = getMediaOriginalUrl(client, {
-      params: { orgName, projectName, assetName: name },
-      query: { download: true },
+    const path = buildPath('/media/$orgName/$projectName/$assetName.mtlx.zip', {
+      orgName,
+      projectName,
+      assetName: name,
     });
+    const url = new URL(path, client.host);
+    url.searchParams.set('download', 'true');
+    url.searchParams.set('original', 'true');
     const result = await client.axios.get(url.toString(), { responseType: 'stream' });
     const fileData = result.data as Readable;
 
