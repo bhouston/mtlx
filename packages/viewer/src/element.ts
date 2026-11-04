@@ -1,9 +1,12 @@
+import { ErrorOverlay } from './errorOverlay.js';
+import { ERROR_OVERLAY_STYLES } from './errorOverlayStyles.js';
 /**
  * `<material-viewer src="model.mtlx">` — a drop-in custom element in the spirit of Google's
  * `<model-viewer>`. Bundles the studio/bridge IBLs and shaderball geometry so a host page needs
  * nothing but this script and a `src` pointing at a `.mtlx` or `.mtlx.zip` file.
  *
  * Attributes:
+ * - `errors`: `silent` hides the error overlay; omitted shows errors. Error events always fire.
  * - `src` (required): the `.mtlx` / `.mtlx.zip` file to preview.
  * - `model`: a custom glTF/GLB URL to preview the material on, in place of the built-in shaderball.
  * - `ibl`: `bridge` (default) or `studio`, or a URL to a custom `.hdr`/`.exr`/`.png`/`.jpg` environment.
@@ -108,11 +111,13 @@ export class MaterialViewerElement extends HTMLElement {
       'intensity',
       'animation',
       'settings-panel',
+      'errors',
     ];
   }
 
   #viewer: Viewer | null = null;
   #generation = 0;
+  readonly #errors: ErrorOverlay;
   readonly #viewportEl: HTMLDivElement;
   readonly #toggleEl: HTMLButtonElement;
   readonly #playEl: HTMLButtonElement;
@@ -122,7 +127,8 @@ export class MaterialViewerElement extends HTMLElement {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
-    style.textContent = PANEL_STYLE;
+    style.textContent = PANEL_STYLE + ERROR_OVERLAY_STYLES;
+    this.#errors = new ErrorOverlay(this);
     this.#viewportEl = document.createElement('div');
     this.#viewportEl.className = 'viewport';
     this.#toggleEl = document.createElement('button');
@@ -144,7 +150,7 @@ export class MaterialViewerElement extends HTMLElement {
     this.#panelEl.innerHTML = PANEL_HTML;
     this.#panelEl.querySelector('#tone-mapping')!.innerHTML = optionsHtml(TONE_MAPPING_OPTIONS);
     this.#panelEl.querySelector('.close')!.addEventListener('click', () => this.#panelEl.classList.remove('open'));
-    shadow.append(style, this.#viewportEl, this.#playEl, this.#toggleEl, this.#panelEl);
+    shadow.append(style, this.#viewportEl, this.#playEl, this.#toggleEl, this.#panelEl, this.#errors.root);
     this.#bindControls();
   }
 
@@ -163,6 +169,10 @@ export class MaterialViewerElement extends HTMLElement {
   }
 
   attributeChangedCallback(name: string): void {
+    if (name === 'errors') {
+      this.#errors.syncVisibility();
+      return;
+    }
     if (!this.isConnected) return;
     if (name === 'settings-panel') {
       this.#syncPanelState();
@@ -177,7 +187,10 @@ export class MaterialViewerElement extends HTMLElement {
       void this.#load();
       return;
     }
-    void this.#viewer?.setSettings(this.#readSettings());
+    const generation = this.#generation;
+    void this.#viewer?.setSettings(this.#readSettings()).catch((error: unknown) => {
+      if (generation === this.#generation && this.isConnected) this.#error(error);
+    });
     this.#syncControls();
   }
 
@@ -289,8 +302,9 @@ export class MaterialViewerElement extends HTMLElement {
     const modelUrl = this.getAttribute('model');
     this.#viewer?.dispose();
     this.#viewer = null;
-    if (!src) return;
+    this.#errors.clear();
     const generation = ++this.#generation;
+    if (!src) return;
     try {
       const [data, shaderBall] = await Promise.all([fetchBytes(src), fetchBytes(SHADERBALL_URL)]);
       if (generation !== this.#generation) return;
@@ -308,7 +322,9 @@ export class MaterialViewerElement extends HTMLElement {
         // Matches the geometry attribute's 'custom' fallback above; a later `model` change goes
         // through a full #load() instead (see RELOAD_ATTRIBUTES), so this closure need not react to it.
         loadGeometry: modelUrl ? async () => ({ data: await fetchBytes(modelUrl) }) : undefined,
-        onError: (message) => this.dispatchEvent(new CustomEvent('error', { detail: message })),
+        onError: (message) => {
+          if (generation === this.#generation && this.isConnected) this.#error(message);
+        },
       });
       if (generation !== this.#generation) {
         viewer.dispose();
@@ -321,9 +337,13 @@ export class MaterialViewerElement extends HTMLElement {
       this.dispatchEvent(new Event('load'));
     } catch (error) {
       if (generation !== this.#generation) return;
-      const detail = error instanceof Error ? error.message : String(error);
-      this.dispatchEvent(new CustomEvent('error', { detail }));
+      this.#error(error, 'Unable to load material');
     }
+  }
+  #error(error: unknown, title = 'Viewer error'): void {
+    this.#errors.show(title, error, this.getAttribute('src'));
+    const detail = error instanceof Error ? error.message : String(error);
+    this.dispatchEvent(new CustomEvent('error', { detail }));
   }
 }
 

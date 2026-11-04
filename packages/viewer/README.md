@@ -17,6 +17,18 @@ Preview support follows three.js's MaterialX loader; it is not a full reference 
 npm install mtlx-viewer three
 ```
 
+## Custom element errors
+
+`<material-viewer>` shows loading, parsing, initialization and rendering failures in a translucent overlay at the top-left, above its controls. The overlay includes the error message, source and available cause details, a dismiss button, and **Copy to clipboard**. Starting another load clears the previous error.
+
+Omit `errors` to show errors (the default). Set `errors="silent"` to hide the overlay while preserving the existing `error` events, whose `event.detail` is the message string:
+
+```html
+<material-viewer src="/materials/example.mtlx" errors="silent"></material-viewer>
+```
+
+Changing `errors` applies immediately without reloading. Removing it reveals the current error unless dismissed or cleared.
+
 ## Scene
 
 `createMtlxScene` parses a `.mtlx` / `.mtlx.zip` file and builds a swappable preview scene: a

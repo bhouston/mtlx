@@ -54,6 +54,7 @@ const ATTRIBUTES: Array<[string, string]> = [
   ['background', '"environment" (default) shows the IBL behind the model; "none" leaves it transparent.'],
   ['tone-mapping', 'neutral (default), aces, agx, reinhard, cineon, linear, none.'],
   ['exposure / intensity', 'Numbers in -2..2 / 0..2.'],
+  ['errors', '"silent" hides the error overlay; omitted shows errors. Error events always fire.'],
   ['settings-panel', '"open" | "closed" | "hidden" (default) — a built-in overlay for the above.'],
 ];
 
