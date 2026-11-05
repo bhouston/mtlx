@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Tan wood-polymer composite with fine dispersed wood fibers and matte surface. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: longitudinalFiber. -->
+  <nodegraph name="NG_woodPlasticCompositeNatural">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_17" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="300, 4" /></multiply>
+    <add name="add_18" type="vector2"><input name="in1" type="vector2" nodename="multiply_17" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_19" type="float"><input name="texcoord" type="vector2" nodename="add_18" /><input name="amplitude" type="float" value="0.65" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <mix name="mix_20" type="color3"><input name="bg" type="color3" value="0.35750000000000004, 0.23399999999999999, 0.10400000000000001" /><input name="fg" type="color3" value="0.66, 0.432, 0.192" /><input name="mix" type="float" nodename="noise2d_19" /></mix>
+    <multiply name="multiply_21" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="300, 4" /></multiply>
+    <add name="add_22" type="vector2"><input name="in1" type="vector2" nodename="multiply_21" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_23" type="float"><input name="texcoord" type="vector2" nodename="add_22" /><input name="amplitude" type="float" value="0.000035" /><input name="pivot" type="float" value="0" /></noise2d>
+    <subtract name="subtract_24" type="float"><input name="in1" type="float" nodename="noise2d_19" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_25" type="float"><input name="in1" type="float" nodename="subtract_24" /><input name="in2" type="float" value="0.0675" /></multiply>
+    <add name="add_26" type="float"><input name="in1" type="float" value="0.45" /><input name="in2" type="float" nodename="multiply_25" /></add>
+    <clamp name="clamp_27" type="float"><input name="in" type="float" nodename="add_26" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_28" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_29" type="float"><input name="in1" type="float" nodename="noise2d_23" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_30" type="vector3"><input name="in" type="float" nodename="multiply_29" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_28" /></heighttonormal>
+    <normalmap name="normalmap_31" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_30" /></normalmap>
+    <constant name="constant_32" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_20" />
+    <output name="specular_roughness" type="float" nodename="clamp_27" />
+    <output name="metalness" type="float" nodename="constant_32" />
+    <output name="normal" type="vector3" nodename="normalmap_31" />
+    <output name="height" type="float" nodename="noise2d_23" />
+  </nodegraph>
+  <standard_surface name="SR_woodPlasticCompositeNatural" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_woodPlasticCompositeNatural" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_woodPlasticCompositeNatural" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_woodPlasticCompositeNatural" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_woodPlasticCompositeNatural" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_woodPlasticCompositeNatural" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_woodPlasticCompositeNatural" /></surfacematerial>
+</materialx>

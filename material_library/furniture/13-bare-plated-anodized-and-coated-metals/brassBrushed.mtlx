@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Clean warm yellow-gold brass with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: alignedBrush. -->
+  <nodegraph name="NG_brassBrushed">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="4, 500" /></multiply>
+    <add name="add_8" type="vector2"><input name="in1" type="vector2" nodename="multiply_7" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_9" type="float"><input name="texcoord" type="vector2" nodename="add_8" /><input name="amplitude" type="float" value="0.5" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_10" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="4, 500" /></multiply>
+    <add name="add_11" type="vector2"><input name="in1" type="vector2" nodename="multiply_10" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_12" type="float"><input name="texcoord" type="vector2" nodename="add_11" /><input name="amplitude" type="float" value="0.000018" /><input name="pivot" type="float" value="0" /></noise2d>
+    <mix name="mix_13" type="color3"><input name="bg" type="color3" value="0.8036, 0.5781999999999999, 0.22540000000000002" /><input name="fg" type="color3" value="0.8363999999999999, 0.6018, 0.2346" /><input name="mix" type="float" nodename="noise2d_9" /></mix>
+    <subtract name="subtract_14" type="float"><input name="in1" type="float" nodename="noise2d_9" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_15" type="float"><input name="in1" type="float" nodename="subtract_14" /><input name="in2" type="float" value="0.045" /></multiply>
+    <add name="add_16" type="float"><input name="in1" type="float" value="0.3" /><input name="in2" type="float" nodename="multiply_15" /></add>
+    <clamp name="clamp_17" type="float"><input name="in" type="float" nodename="add_16" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_18" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_19" type="float"><input name="in1" type="float" nodename="noise2d_12" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_20" type="vector3"><input name="in" type="float" nodename="multiply_19" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_18" /></heighttonormal>
+    <normalmap name="normalmap_21" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_20" /></normalmap>
+    <constant name="constant_22" type="float"><input name="value" type="float" value="1" /></constant>
+    <output name="base_color" type="color3" nodename="mix_13" />
+    <output name="specular_roughness" type="float" nodename="clamp_17" />
+    <output name="metalness" type="float" nodename="constant_22" />
+    <output name="normal" type="vector3" nodename="normalmap_21" />
+    <output name="height" type="float" nodename="noise2d_12" />
+  </nodegraph>
+  <standard_surface name="SR_brassBrushed" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0.78" />
+    <input name="base_color" type="color3" nodegraph="NG_brassBrushed" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_brassBrushed" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_brassBrushed" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_brassBrushed" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_brassBrushed" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_brassBrushed" /></surfacematerial>
+</materialx>

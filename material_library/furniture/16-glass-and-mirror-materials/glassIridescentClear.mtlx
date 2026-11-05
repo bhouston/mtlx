@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Near-colorless glass with a thin-film iridescent surface and angle-dependent rainbow reflections. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: pearlyLamellae. -->
+  <nodegraph name="NG_glassIridescentClear">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_11" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="10, 220" /></multiply>
+    <add name="add_12" type="vector2"><input name="in1" type="vector2" nodename="multiply_11" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_13" type="float"><input name="texcoord" type="vector2" nodename="add_12" /><input name="amplitude" type="float" value="0.6" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <mix name="mix_14" type="color3"><input name="bg" type="color3" value="0.26, 0.20800000000000002, 0.14300000000000002" /><input name="fg" type="color3" value="0.48, 0.384, 0.264" /><input name="mix" type="float" nodename="noise2d_13" /></mix>
+    <multiply name="multiply_15" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="10, 220" /></multiply>
+    <add name="add_16" type="vector2"><input name="in1" type="vector2" nodename="multiply_15" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_17" type="float"><input name="texcoord" type="vector2" nodename="add_16" /><input name="amplitude" type="float" value="0.000009" /><input name="pivot" type="float" value="0" /></noise2d>
+    <subtract name="subtract_18" type="float"><input name="in1" type="float" nodename="noise2d_13" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_19" type="float"><input name="in1" type="float" nodename="subtract_18" /><input name="in2" type="float" value="0.024" /></multiply>
+    <add name="add_20" type="float"><input name="in1" type="float" value="0.16" /><input name="in2" type="float" nodename="multiply_19" /></add>
+    <clamp name="clamp_21" type="float"><input name="in" type="float" nodename="add_20" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_22" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_23" type="float"><input name="in1" type="float" nodename="noise2d_17" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_24" type="vector3"><input name="in" type="float" nodename="multiply_23" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_22" /></heighttonormal>
+    <normalmap name="normalmap_25" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_24" /></normalmap>
+    <constant name="constant_26" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_14" />
+    <output name="specular_roughness" type="float" nodename="clamp_21" />
+    <output name="metalness" type="float" nodename="constant_26" />
+    <output name="normal" type="vector3" nodename="normalmap_25" />
+    <output name="height" type="float" nodename="noise2d_17" />
+  </nodegraph>
+  <standard_surface name="SR_glassIridescentClear" type="surfaceshader">
+    <input name="base" type="float" value="0" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.52" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="transmission" type="float" value="1" />
+    <input name="transmission_color" type="color3" value="0.995, 0.997, 0.996" />
+    <input name="transmission_depth" type="float" value="0.01" />
+    <input name="transmission_scatter" type="color3" value="0, 0, 0" />
+    <input name="thin_walled" type="boolean" value="false" />
+    <input name="coat" type="float" value="0.55" />
+    <input name="coat_roughness" type="float" value="0.11199999999999999" />
+    <input name="thin_film_thickness" type="float" value="460" />
+    <input name="thin_film_IOR" type="float" value="1.38" />
+    <input name="base_color" type="color3" nodegraph="NG_glassIridescentClear" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_glassIridescentClear" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_glassIridescentClear" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_glassIridescentClear" output="normal" />
+    <input name="coat_normal" type="vector3" nodegraph="NG_glassIridescentClear" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_glassIridescentClear" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_glassIridescentClear" /></surfacematerial>
+</materialx>

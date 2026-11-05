@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Terrazzo with white binder with muted green, pink, beige, and gray stone chips; irregular embedded mineral chips and smooth low-sheen honed surface. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: terrazzoChips. -->
+  <nodegraph name="NG_terrazzoWhiteMulticolorHoned">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="65" /></multiply>
+    <worleynoise2d name="worleynoise2d_8" type="float"><input name="texcoord" type="vector2" nodename="multiply_7" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <worleynoise2d name="worleynoise2d_9" type="vector2"><input name="texcoord" type="vector2" nodename="multiply_7" /></worleynoise2d>
+    <dotproduct name="dotproduct_10" type="float"><input name="in1" type="vector2" nodename="worleynoise2d_9" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <smoothstep name="smoothstep_11" type="float"><input name="in" type="float" nodename="dotproduct_10" /><input name="low" type="float" value="0.055" /><input name="high" type="float" value="0.12" /></smoothstep>
+    <mix name="mix_15" type="color3"><input name="bg" type="color3" value="0.09, 0.1, 0.11" /><input name="fg" type="color3" value="0.53, 0.45, 0.32" /><input name="mix" type="float" nodename="worleynoise2d_8" /></mix>
+    <mix name="mix_16" type="color3"><input name="bg" type="color3" value="0.76, 0.76, 0.74" /><input name="fg" type="color3" nodename="mix_15" /><input name="mix" type="float" nodename="smoothstep_11" /></mix>
+    <multiply name="multiply_17" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="65" /></multiply>
+    <add name="add_18" type="vector2"><input name="in1" type="vector2" nodename="multiply_17" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_19" type="float"><input name="texcoord" type="vector2" nodename="add_18" /><input name="amplitude" type="float" value="0.000001" /><input name="pivot" type="float" value="0" /></noise2d>
+    <subtract name="subtract_20" type="float"><input name="in1" type="float" nodename="smoothstep_11" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_21" type="float"><input name="in1" type="float" nodename="subtract_20" /><input name="in2" type="float" value="0.06" /></multiply>
+    <add name="add_22" type="float"><input name="in1" type="float" value="0.4" /><input name="in2" type="float" nodename="multiply_21" /></add>
+    <clamp name="clamp_23" type="float"><input name="in" type="float" nodename="add_22" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_24" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_25" type="float"><input name="in1" type="float" nodename="noise2d_19" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_26" type="vector3"><input name="in" type="float" nodename="multiply_25" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_24" /></heighttonormal>
+    <normalmap name="normalmap_27" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_26" /></normalmap>
+    <constant name="constant_28" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_16" />
+    <output name="specular_roughness" type="float" nodename="clamp_23" />
+    <output name="metalness" type="float" nodename="constant_28" />
+    <output name="normal" type="vector3" nodename="normalmap_27" />
+    <output name="height" type="float" nodename="noise2d_19" />
+  </nodegraph>
+  <standard_surface name="SR_terrazzoWhiteMulticolorHoned" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_terrazzoWhiteMulticolorHoned" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_terrazzoWhiteMulticolorHoned" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_terrazzoWhiteMulticolorHoned" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_terrazzoWhiteMulticolorHoned" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_terrazzoWhiteMulticolorHoned" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_terrazzoWhiteMulticolorHoned" /></surfacematerial>
+</materialx>

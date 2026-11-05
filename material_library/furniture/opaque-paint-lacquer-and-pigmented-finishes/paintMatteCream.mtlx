@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Opaque yellow-tinted cream paint; smooth matte dielectric surface. -->
+  <!-- UV 0..1 = 1 metre. Height output is in metres. Clean new finish; no wear. -->
+  <!-- Scales: growth bands 11-18 mm; pores 0.83 mm across / 5.6 mm along; end-grain fiber clusters 1.5 mm; rays 10 x 4.5 mm, sparse 10 percent pale modulation. -->
+  <!-- End grain rings 5.6 mm; plywood plies 1.9 mm; cork cells 2.4-11 mm; polymer texture 1.8-5.6 mm. -->
+  <!-- Relief: wood pores 1-45 micrometres by finish; cork 75 micrometres; polymer 1-45 micrometres. -->
+  <nodegraph name="NG_paintMatteCream">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="n1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="180, 180" /></multiply>
+    <add name="n2" type="vector2"><input name="in1" type="vector2" nodename="n1" /><input name="in2" type="vector2" value="3.17, 7.43" /></add>
+    <fractal2d name="n3" type="float"><input name="texcoord" type="vector2" nodename="n2" /><input name="amplitude" type="float" value="1" /><input name="octaves" type="integer" value="2" /></fractal2d>
+    <smoothstep name="n4" type="float"><input name="in" type="float" nodename="n3" /><input name="low" type="float" value="-0.55" /><input name="high" type="float" value="0.55" /></smoothstep>
+    <mix name="n5" type="float"><input name="bg" type="float" value="0.988" /><input name="fg" type="float" value="1.012" /><input name="mix" type="float" nodename="n4" /></mix>
+    <multiply name="n6" type="float"><input name="in1" type="float" nodename="n3" /><input name="in2" type="float" value="0.000002" /></multiply>
+    <constant name="n7" type="color3"><input name="value" type="color3" value="0.74, 0.65, 0.4" /></constant>
+    <multiply name="n8" type="color3"><input name="in1" type="color3" nodename="n7" /><input name="in2" type="float" nodename="n5" /></multiply>
+    <constant name="n9" type="float"><input name="value" type="float" value="0.67" /></constant>
+    <multiply name="n10" type="float"><input name="in1" type="float" nodename="n4" /><input name="in2" type="float" value="0.025" /></multiply>
+    <add name="n11" type="float"><input name="in1" type="float" nodename="n9" /><input name="in2" type="float" nodename="n10" /></add>
+    <add name="height_m" type="float"><input name="in1" type="float" nodename="n6" /><input name="in2" type="float" value="0" /></add>
+    <multiply name="n12" type="float"><input name="in1" type="float" nodename="height_m" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="n13" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n14" type="vector3"><input name="in" type="float" nodename="n12" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="n13" /></heighttonormal>
+    <normalmap name="n15" type="vector3"><input name="in" type="vector3" nodename="n14" /></normalmap>
+    <constant name="n16" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="n8" />
+    <output name="roughness" type="float" nodename="n11" />
+    <output name="metalness" type="float" nodename="n16" />
+    <output name="normal" type="vector3" nodename="n15" />
+    <output name="height" type="float" nodename="height_m" />
+  </nodegraph>
+  <standard_surface name="SR_paintMatteCream" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="base_color" type="color3" nodegraph="NG_paintMatteCream" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_paintMatteCream" output="roughness" />
+    <input name="metalness" type="float" nodegraph="NG_paintMatteCream" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_paintMatteCream" output="normal" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="coat" type="float" value="0" />
+    <input name="coat_roughness" type="float" value="0.08" />
+    <input name="coat_normal" type="vector3" nodegraph="NG_paintMatteCream" output="normal" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="sheen" type="float" value="0" />
+  </standard_surface>
+  <surfacematerial name="M_paintMatteCream" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_paintMatteCream" /></surfacematerial>
+</materialx>

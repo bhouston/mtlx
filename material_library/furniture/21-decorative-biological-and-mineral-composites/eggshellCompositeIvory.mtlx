@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Ivory eggshell-resin composite with fine pale shell fragments and a smooth satin surface. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: eggshellFragments. -->
+  <nodegraph name="NG_eggshellCompositeIvory">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_17" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="250" /></multiply>
+    <worleynoise2d name="worleynoise2d_18" type="vector2"><input name="texcoord" type="vector2" nodename="multiply_17" /></worleynoise2d>
+    <dotproduct name="dotproduct_19" type="float"><input name="in1" type="vector2" nodename="worleynoise2d_18" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <smoothstep name="smoothstep_20" type="float"><input name="in" type="float" nodename="dotproduct_19" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.065" /></smoothstep>
+    <mix name="mix_21" type="color3"><input name="bg" type="color3" value="0.48750000000000004, 0.44849999999999995, 0.35100000000000003" /><input name="fg" type="color3" value="0.75, 0.69, 0.54" /><input name="mix" type="float" nodename="smoothstep_20" /></mix>
+    <multiply name="multiply_22" type="float"><input name="in1" type="float" nodename="smoothstep_20" /><input name="in2" type="float" value="0.000008" /></multiply>
+    <subtract name="subtract_23" type="float"><input name="in1" type="float" nodename="smoothstep_20" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_24" type="float"><input name="in1" type="float" nodename="subtract_23" /><input name="in2" type="float" value="0.072" /></multiply>
+    <add name="add_25" type="float"><input name="in1" type="float" value="0.48" /><input name="in2" type="float" nodename="multiply_24" /></add>
+    <clamp name="clamp_26" type="float"><input name="in" type="float" nodename="add_25" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_27" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_28" type="float"><input name="in1" type="float" nodename="multiply_22" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_29" type="vector3"><input name="in" type="float" nodename="multiply_28" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_27" /></heighttonormal>
+    <normalmap name="normalmap_30" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_29" /></normalmap>
+    <constant name="constant_31" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_21" />
+    <output name="specular_roughness" type="float" nodename="clamp_26" />
+    <output name="metalness" type="float" nodename="constant_31" />
+    <output name="normal" type="vector3" nodename="normalmap_30" />
+    <output name="height" type="float" nodename="multiply_22" />
+  </nodegraph>
+  <standard_surface name="SR_eggshellCompositeIvory" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_eggshellCompositeIvory" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_eggshellCompositeIvory" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_eggshellCompositeIvory" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_eggshellCompositeIvory" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_eggshellCompositeIvory" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_eggshellCompositeIvory" /></surfacematerial>
+</materialx>

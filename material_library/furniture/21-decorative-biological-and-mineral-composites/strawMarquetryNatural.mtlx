@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Golden straw surface with fine longitudinal fibers and strong directional natural sheen. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: longitudinalFiber. -->
+  <nodegraph name="NG_strawMarquetryNatural">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_51" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="300, 4" /></multiply>
+    <add name="add_52" type="vector2"><input name="in1" type="vector2" nodename="multiply_51" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_53" type="float"><input name="texcoord" type="vector2" nodename="add_52" /><input name="amplitude" type="float" value="0.65" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <mix name="mix_54" type="color3"><input name="bg" type="color3" value="0.35750000000000004, 0.23399999999999999, 0.10400000000000001" /><input name="fg" type="color3" value="0.66, 0.432, 0.192" /><input name="mix" type="float" nodename="noise2d_53" /></mix>
+    <multiply name="multiply_55" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="300, 4" /></multiply>
+    <add name="add_56" type="vector2"><input name="in1" type="vector2" nodename="multiply_55" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_57" type="float"><input name="texcoord" type="vector2" nodename="add_56" /><input name="amplitude" type="float" value="0.000035" /><input name="pivot" type="float" value="0" /></noise2d>
+    <subtract name="subtract_58" type="float"><input name="in1" type="float" nodename="noise2d_53" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_59" type="float"><input name="in1" type="float" nodename="subtract_58" /><input name="in2" type="float" value="0.0675" /></multiply>
+    <add name="add_60" type="float"><input name="in1" type="float" value="0.45" /><input name="in2" type="float" nodename="multiply_59" /></add>
+    <clamp name="clamp_61" type="float"><input name="in" type="float" nodename="add_60" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_62" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_63" type="float"><input name="in1" type="float" nodename="noise2d_57" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_64" type="vector3"><input name="in" type="float" nodename="multiply_63" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_62" /></heighttonormal>
+    <normalmap name="normalmap_65" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_64" /></normalmap>
+    <constant name="constant_66" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_54" />
+    <output name="specular_roughness" type="float" nodename="clamp_61" />
+    <output name="metalness" type="float" nodename="constant_66" />
+    <output name="normal" type="vector3" nodename="normalmap_65" />
+    <output name="height" type="float" nodename="noise2d_57" />
+  </nodegraph>
+  <standard_surface name="SR_strawMarquetryNatural" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_strawMarquetryNatural" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_strawMarquetryNatural" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_strawMarquetryNatural" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_strawMarquetryNatural" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_strawMarquetryNatural" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_strawMarquetryNatural" /></surfacematerial>
+</materialx>

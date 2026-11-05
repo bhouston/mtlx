@@ -1,0 +1,48 @@
+{
+  "materials": 734,
+  "families": 6,
+  "validation": {
+    "transport": "mtlx MCP stdio",
+    "tool": "check_material",
+    "strict": true,
+    "rules": ["basic", "structure", "types", "unused"],
+    "checked": 734,
+    "failures": 0
+  },
+  "physicalScale": {
+    "uvMetersPerUnit": 1,
+    "heightUnit": "metre",
+    "growthBandsMm": [11, 18],
+    "endGrainRingSpacingMm": 5.6,
+    "poreClusterAcrossAlongMm": [0.83, 5.6],
+    "endGrainFiberClusterMm": 1.5,
+    "rayAcrossAlongMm": [10, 4.5],
+    "plywoodPliesMm": 1.9,
+    "corkCellMm": [2.4, 11],
+    "polymerTextureMm": [1.8, 5.6],
+    "woodReliefMicrometres": [1, 45],
+    "corkReliefMicrometres": 75,
+    "polymerReliefMicrometres": [1, 45],
+    "normalConversion": "Only intermediate UV and height convert to millimetres for renderer heighttonormal; output height remains metres."
+  },
+  "recipes": [
+    "Natural wood: species-specific linear base colors, irregular growth rings, fine fibers, correlated porous-band relief, sparse rays, finish-specific roughness and coat, separate end-grain geometry.",
+    "Figured wood: distinct straight and rift grain, cellular burl and birds-eye figures, curly/ribbon reflectance modulation, low-pass pale flecks.",
+    "Stains: separate neutral, honey, amber, cognac, walnut, espresso, and black color recipes retaining underlying grain.",
+    "Engineered wood: veneer faces, periodic thin plywood layers, particle aggregates, cork cell colors, fiberboard and paper fibers, screen-imprinted back texture.",
+    "Paint: matte/satin/gloss roughness, stippled powder coat, shallow continuous wrinkle, soft-touch sheen, dielectric binder with spatial metallic flake masks beneath clearcoat.",
+    "Laminate: opaque smooth or fine-textured resin, printed wood texture, shallow woven print, marble color veins beneath a flat resin surface."
+  ],
+  "iterations": {
+    "generationPasses": 5,
+    "strictMcpValidationPasses": 6,
+    "agentRenderCalls": 0,
+    "visualReview": "Parent rendered initial whiteOakClearSatin sheet on Apple M3; author inspected it and reduced growth-band and ray contrast, reduced ray coverage and scale, added per-ring phase variation and correlated fibers. Parent handles final representative visual verification."
+  },
+  "limitations": [
+    "These are procedural appearance approximations of catalog descriptions, not measured spectral or scanned reproductions.",
+    "Periodic ply edges can alias in distant views; inspect at detail scale.",
+    "Pore and fiber clusters use aggregate frequencies to avoid reproducing individual subpixel pores.",
+    "No new renderer bug confirmed during this task."
+  ]
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- deep wine red natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: fineHomogeneousLinoleum. -->
+  <nodegraph name="NG_furnitureLinoleumBurgundy">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="240" /></multiply>
+    <add name="add_2" type="vector2"><input name="in1" type="vector2" nodename="multiply_1" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_3" type="float"><input name="texcoord" type="vector2" nodename="add_2" /><input name="amplitude" type="float" value="0.6" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="480" /></multiply>
+    <add name="add_8" type="vector2"><input name="in1" type="vector2" nodename="multiply_7" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_9" type="float"><input name="texcoord" type="vector2" nodename="add_8" /><input name="amplitude" type="float" value="0.000009" /><input name="pivot" type="float" value="0" /></noise2d>
+    <mix name="mix_10" type="color3"><input name="bg" type="color3" value="0.14625, 0.0117, 0.029249999999999998" /><input name="fg" type="color3" value="0.15374999999999997, 0.012299999999999998, 0.030749999999999996" /><input name="mix" type="float" nodename="noise2d_3" /></mix>
+    <subtract name="subtract_11" type="float"><input name="in1" type="float" nodename="noise2d_3" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_12" type="float"><input name="in1" type="float" nodename="subtract_11" /><input name="in2" type="float" value="0.08" /></multiply>
+    <add name="add_13" type="float"><input name="in1" type="float" value="0.72" /><input name="in2" type="float" nodename="multiply_12" /></add>
+    <clamp name="clamp_14" type="float"><input name="in" type="float" nodename="add_13" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_15" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_16" type="float"><input name="in1" type="float" nodename="noise2d_9" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_17" type="vector3"><input name="in" type="float" nodename="multiply_16" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_15" /></heighttonormal>
+    <normalmap name="normalmap_18" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_17" /></normalmap>
+    <constant name="constant_19" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_10" />
+    <output name="specular_roughness" type="float" nodename="clamp_14" />
+    <output name="metalness" type="float" nodename="constant_19" />
+    <output name="normal" type="vector3" nodename="normalmap_18" />
+    <output name="height" type="float" nodename="noise2d_9" />
+  </nodegraph>
+  <standard_surface name="SR_furnitureLinoleumBurgundy" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_furnitureLinoleumBurgundy" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_furnitureLinoleumBurgundy" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_furnitureLinoleumBurgundy" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_furnitureLinoleumBurgundy" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_furnitureLinoleumBurgundy" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_furnitureLinoleumBurgundy" /></surfacematerial>
+</materialx>

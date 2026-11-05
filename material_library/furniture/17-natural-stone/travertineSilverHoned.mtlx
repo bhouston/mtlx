@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Silver-gray travertine with gray-beige bands and characteristic pore pattern; smooth honed surface with broad low-sheen dielectric highlights. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: sedimentBands. -->
+  <nodegraph name="NG_travertineSilverHoned">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="2, 60" /></multiply>
+    <add name="add_8" type="vector2"><input name="in1" type="vector2" nodename="multiply_7" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_9" type="float"><input name="texcoord" type="vector2" nodename="add_8" /><input name="amplitude" type="float" value="0.65" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <mix name="mix_10" type="color3"><input name="bg" type="color3" value="0.5249999999999999, 0.54, 0.5475" /><input name="fg" type="color3" value="0.8049999999999999, 0.828, 0.8394999999999999" /><input name="mix" type="float" nodename="noise2d_9" /></mix>
+    <multiply name="multiply_11" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="240" /></multiply>
+    <add name="add_12" type="vector2"><input name="in1" type="vector2" nodename="multiply_11" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_13" type="float"><input name="texcoord" type="vector2" nodename="add_12" /><input name="amplitude" type="float" value="0.000002" /><input name="pivot" type="float" value="0" /></noise2d>
+    <multiply name="multiply_14" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="220, 100" /></multiply>
+    <worleynoise2d name="worleynoise2d_15" type="float"><input name="texcoord" type="vector2" nodename="multiply_14" /><input name="jitter" type="float" value="0.7" /></worleynoise2d>
+    <smoothstep name="smoothstep_16" type="float"><input name="in" type="float" nodename="worleynoise2d_15" /><input name="low" type="float" value="0.08" /><input name="high" type="float" value="0.18" /></smoothstep>
+    <subtract name="subtract_17" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_16" /></subtract>
+    <multiply name="multiply_18" type="float"><input name="in1" type="float" nodename="subtract_17" /><input name="in2" type="float" value="0.55" /></multiply>
+    <mix name="mix_19" type="color3"><input name="bg" type="color3" nodename="mix_10" /><input name="fg" type="color3" value="0.22399999999999998, 0.2304, 0.2336" /><input name="mix" type="float" nodename="multiply_18" /></mix>
+    <subtract name="subtract_20" type="float"><input name="in1" type="float" nodename="noise2d_9" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_21" type="float"><input name="in1" type="float" nodename="subtract_20" /><input name="in2" type="float" value="0.06" /></multiply>
+    <add name="add_22" type="float"><input name="in1" type="float" value="0.4" /><input name="in2" type="float" nodename="multiply_21" /></add>
+    <clamp name="clamp_23" type="float"><input name="in" type="float" nodename="add_22" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_24" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_25" type="float"><input name="in1" type="float" nodename="noise2d_13" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_26" type="vector3"><input name="in" type="float" nodename="multiply_25" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_24" /></heighttonormal>
+    <normalmap name="normalmap_27" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_26" /></normalmap>
+    <constant name="constant_28" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_19" />
+    <output name="specular_roughness" type="float" nodename="clamp_23" />
+    <output name="metalness" type="float" nodename="constant_28" />
+    <output name="normal" type="vector3" nodename="normalmap_27" />
+    <output name="height" type="float" nodename="noise2d_13" />
+  </nodegraph>
+  <standard_surface name="SR_travertineSilverHoned" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_travertineSilverHoned" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_travertineSilverHoned" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_travertineSilverHoned" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_travertineSilverHoned" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_travertineSilverHoned" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_travertineSilverHoned" /></surfacematerial>
+</materialx>

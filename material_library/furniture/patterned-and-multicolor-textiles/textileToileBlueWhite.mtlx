@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Clean new furniture sample. UV 0..1 = 1 metre; heights in metres. -->
+  <!-- Woven textile with blue scenic toile print on white; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric. -->
+  <!-- weave: pitch 0.00055 m, relief 0.000004 m. Microfiber detail is statistical roughness below resolved yarn scale. -->
+  <nodegraph name="NG_textileToileBlueWhite">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="900, 900" /></multiply>
+    <add name="add_2" type="vector2"><input name="in1" type="vector2" nodename="multiply_1" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_3" type="float"><input name="texcoord" type="vector2" nodename="add_2" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_4" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="4, 4" /></multiply>
+    <add name="add_5" type="vector2"><input name="in1" type="vector2" nodename="multiply_4" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_6" type="float"><input name="texcoord" type="vector2" nodename="add_5" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="563.6363636363636, 490.9090909090909" /></multiply>
+    <add name="add_8" type="vector2"><input name="in1" type="vector2" nodename="multiply_7" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_9" type="float"><input name="texcoord" type="vector2" nodename="add_8" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <subtract name="subtract_10" type="float"><input name="in1" type="float" nodename="noise2d_9" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_11" type="float"><input name="in1" type="float" nodename="subtract_10" /><input name="in2" type="float" value="0.65" /></multiply>
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <multiply name="multiply_12" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="1818.181818181818" /></multiply>
+    <add name="add_13" type="float"><input name="in1" type="float" nodename="multiply_12" /><input name="in2" type="float" nodename="multiply_11" /></add>
+    <multiply name="multiply_14" type="float"><input name="in1" type="float" nodename="add_13" /><input name="in2" type="float" value="6.283185307179586" /></multiply>
+    <sin name="sin_15" type="float"><input name="in" type="float" nodename="multiply_14" /></sin>
+    <multiply name="multiply_16" type="float"><input name="in1" type="float" nodename="sin_15" /><input name="in2" type="float" value="0.5" /></multiply>
+    <add name="add_17" type="float"><input name="in1" type="float" nodename="multiply_16" /><input name="in2" type="float" value="0.5" /></add>
+    <multiply name="multiply_18" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="563.6363636363636, 490.9090909090909" /></multiply>
+    <add name="add_19" type="vector2"><input name="in1" type="vector2" nodename="multiply_18" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_20" type="float"><input name="texcoord" type="vector2" nodename="add_19" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <subtract name="subtract_21" type="float"><input name="in1" type="float" nodename="noise2d_20" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_22" type="float"><input name="in1" type="float" nodename="subtract_21" /><input name="in2" type="float" value="0.65" /></multiply>
+    <multiply name="multiply_23" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="1818.181818181818" /></multiply>
+    <add name="add_24" type="float"><input name="in1" type="float" nodename="multiply_23" /><input name="in2" type="float" nodename="multiply_22" /></add>
+    <multiply name="multiply_25" type="float"><input name="in1" type="float" nodename="add_24" /><input name="in2" type="float" value="6.283185307179586" /></multiply>
+    <sin name="sin_26" type="float"><input name="in" type="float" nodename="multiply_25" /></sin>
+    <multiply name="multiply_27" type="float"><input name="in1" type="float" nodename="sin_26" /><input name="in2" type="float" value="0.5" /></multiply>
+    <add name="add_28" type="float"><input name="in1" type="float" nodename="multiply_27" /><input name="in2" type="float" value="0.5" /></add>
+    <multiply name="multiply_29" type="float"><input name="in1" type="float" nodename="add_17" /><input name="in2" type="float" nodename="add_28" /></multiply>
+    <multiply name="multiply_30" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1272.7272727272725, 127.27272727272727" /></multiply>
+    <add name="add_31" type="vector2"><input name="in1" type="vector2" nodename="multiply_30" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_32" type="float"><input name="texcoord" type="vector2" nodename="add_31" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_33" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="127.27272727272727, 1272.7272727272725" /></multiply>
+    <add name="add_34" type="vector2"><input name="in1" type="vector2" nodename="multiply_33" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_35" type="float"><input name="texcoord" type="vector2" nodename="add_34" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <add name="add_36" type="float"><input name="in1" type="float" nodename="noise2d_32" /><input name="in2" type="float" nodename="noise2d_35" /></add>
+    <multiply name="multiply_37" type="float"><input name="in1" type="float" nodename="add_36" /><input name="in2" type="float" value="0.5" /></multiply>
+    <mix name="mix_38" type="float"><input name="bg" type="float" nodename="multiply_37" /><input name="fg" type="float" nodename="multiply_29" /><input name="mix" type="float" value="0.1" /></mix>
+    <mix name="mix_39" type="float"><input name="bg" type="float" value="0.96" /><input name="fg" type="float" value="1.01" /><input name="mix" type="float" nodename="mix_38" /></mix>
+    <multiply name="multiply_40" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="6" /></multiply>
+    <fract name="fract_41" type="float"><input name="in" type="float" nodename="multiply_40" /></fract>
+    <subtract name="subtract_42" type="float"><input name="in1" type="float" nodename="fract_41" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_43" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="5" /></multiply>
+    <fract name="fract_44" type="float"><input name="in" type="float" nodename="multiply_43" /></fract>
+    <subtract name="subtract_45" type="float"><input name="in1" type="float" nodename="fract_44" /><input name="in2" type="float" value="0.5" /></subtract>
+    <add name="add_46" type="float"><input name="in1" type="float" nodename="subtract_42" /><input name="in2" type="float" value="0.08" /></add>
+    <add name="add_47" type="float"><input name="in1" type="float" nodename="subtract_45" /><input name="in2" type="float" value="0.1" /></add>
+    <absval name="absval_48" type="float"><input name="in" type="float" nodename="add_46" /></absval>
+    <smoothstep name="smoothstep_49" type="float"><input name="in" type="float" nodename="absval_48" /><input name="low" type="float" value="0.13" /><input name="high" type="float" value="0.136" /></smoothstep>
+    <subtract name="subtract_50" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_49" /></subtract>
+    <absval name="absval_51" type="float"><input name="in" type="float" nodename="add_47" /></absval>
+    <smoothstep name="smoothstep_52" type="float"><input name="in" type="float" nodename="absval_51" /><input name="low" type="float" value="0.1" /><input name="high" type="float" value="0.10600000000000001" /></smoothstep>
+    <subtract name="subtract_53" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_52" /></subtract>
+    <multiply name="multiply_54" type="float"><input name="in1" type="float" nodename="subtract_50" /><input name="in2" type="float" nodename="subtract_53" /></multiply>
+    <add name="add_55" type="float"><input name="in1" type="float" nodename="subtract_42" /><input name="in2" type="float" value="0.08" /></add>
+    <absval name="absval_56" type="float"><input name="in" type="float" nodename="add_55" /></absval>
+    <subtract name="subtract_57" type="float"><input name="in1" type="float" nodename="subtract_45" /><input name="in2" type="float" value="0.01" /></subtract>
+    <multiply name="multiply_58" type="float"><input name="in1" type="float" nodename="subtract_57" /><input name="in2" type="float" value="0.8" /></multiply>
+    <add name="add_59" type="float"><input name="in1" type="float" nodename="absval_56" /><input name="in2" type="float" nodename="multiply_58" /></add>
+    <smoothstep name="smoothstep_60" type="float"><input name="in" type="float" nodename="add_59" /><input name="low" type="float" value="0.13" /><input name="high" type="float" value="0.14" /></smoothstep>
+    <subtract name="subtract_61" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_60" /></subtract>
+    <smoothstep name="smoothstep_62" type="float"><input name="in" type="float" nodename="subtract_45" /><input name="low" type="float" value="0.005" /><input name="high" type="float" value="0.012" /></smoothstep>
+    <multiply name="multiply_63" type="float"><input name="in1" type="float" nodename="subtract_61" /><input name="in2" type="float" nodename="smoothstep_62" /></multiply>
+    <subtract name="subtract_64" type="float"><input name="in1" type="float" nodename="subtract_42" /><input name="in2" type="float" value="0.25" /></subtract>
+    <subtract name="subtract_65" type="float"><input name="in1" type="float" nodename="subtract_42" /><input name="in2" type="float" value="0.25" /></subtract>
+    <multiply name="multiply_66" type="float"><input name="in1" type="float" nodename="subtract_64" /><input name="in2" type="float" nodename="subtract_65" /></multiply>
+    <multiply name="multiply_67" type="float"><input name="in1" type="float" nodename="multiply_66" /><input name="in2" type="float" value="2" /></multiply>
+    <subtract name="subtract_68" type="float"><input name="in1" type="float" nodename="subtract_45" /><input name="in2" type="float" value="0.12" /></subtract>
+    <subtract name="subtract_69" type="float"><input name="in1" type="float" nodename="subtract_45" /><input name="in2" type="float" value="0.12" /></subtract>
+    <multiply name="multiply_70" type="float"><input name="in1" type="float" nodename="subtract_68" /><input name="in2" type="float" nodename="subtract_69" /></multiply>
+    <add name="add_71" type="float"><input name="in1" type="float" nodename="multiply_67" /><input name="in2" type="float" nodename="multiply_70" /></add>
+    <smoothstep name="smoothstep_72" type="float"><input name="in" type="float" nodename="add_71" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.03" /></smoothstep>
+    <subtract name="subtract_73" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_72" /></subtract>
+    <smoothstep name="smoothstep_74" type="float"><input name="in" type="float" nodename="subtract_45" /><input name="low" type="float" value="-0.08" /><input name="high" type="float" value="-0.06" /></smoothstep>
+    <multiply name="multiply_75" type="float"><input name="in1" type="float" nodename="subtract_73" /><input name="in2" type="float" nodename="smoothstep_74" /></multiply>
+    <subtract name="subtract_76" type="float"><input name="in1" type="float" nodename="subtract_42" /><input name="in2" type="float" value="0.25" /></subtract>
+    <add name="add_77" type="float"><input name="in1" type="float" nodename="subtract_45" /><input name="in2" type="float" value="0.1" /></add>
+    <absval name="absval_78" type="float"><input name="in" type="float" nodename="subtract_76" /></absval>
+    <smoothstep name="smoothstep_79" type="float"><input name="in" type="float" nodename="absval_78" /><input name="low" type="float" value="0.012" /><input name="high" type="float" value="0.018000000000000002" /></smoothstep>
+    <subtract name="subtract_80" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_79" /></subtract>
+    <absval name="absval_81" type="float"><input name="in" type="float" nodename="add_77" /></absval>
+    <smoothstep name="smoothstep_82" type="float"><input name="in" type="float" nodename="absval_81" /><input name="low" type="float" value="0.1" /><input name="high" type="float" value="0.10600000000000001" /></smoothstep>
+    <subtract name="subtract_83" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_82" /></subtract>
+    <multiply name="multiply_84" type="float"><input name="in1" type="float" nodename="subtract_80" /><input name="in2" type="float" nodename="subtract_83" /></multiply>
+    <multiply name="multiply_85" type="float"><input name="in1" type="float" nodename="subtract_42" /><input name="in2" type="float" value="12" /></multiply>
+    <sin name="sin_86" type="float"><input name="in" type="float" nodename="multiply_85" /></sin>
+    <multiply name="multiply_87" type="float"><input name="in1" type="float" nodename="sin_86" /><input name="in2" type="float" value="0.025" /></multiply>
+    <add name="add_88" type="float"><input name="in1" type="float" nodename="multiply_87" /><input name="in2" type="float" value="0.23" /></add>
+    <add name="add_89" type="float"><input name="in1" type="float" nodename="subtract_45" /><input name="in2" type="float" nodename="add_88" /></add>
+    <absval name="absval_90" type="float"><input name="in" type="float" nodename="subtract_42" /></absval>
+    <smoothstep name="smoothstep_91" type="float"><input name="in" type="float" nodename="absval_90" /><input name="low" type="float" value="0.48" /><input name="high" type="float" value="0.486" /></smoothstep>
+    <subtract name="subtract_92" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_91" /></subtract>
+    <absval name="absval_93" type="float"><input name="in" type="float" nodename="add_89" /></absval>
+    <smoothstep name="smoothstep_94" type="float"><input name="in" type="float" nodename="absval_93" /><input name="low" type="float" value="0.006" /><input name="high" type="float" value="0.012" /></smoothstep>
+    <subtract name="subtract_95" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_94" /></subtract>
+    <multiply name="multiply_96" type="float"><input name="in1" type="float" nodename="subtract_92" /><input name="in2" type="float" nodename="subtract_95" /></multiply>
+    <max name="max_97" type="float"><input name="in1" type="float" nodename="multiply_54" /><input name="in2" type="float" nodename="multiply_63" /></max>
+    <max name="max_98" type="float"><input name="in1" type="float" nodename="multiply_75" /><input name="in2" type="float" nodename="multiply_84" /></max>
+    <max name="max_99" type="float"><input name="in1" type="float" nodename="max_98" /><input name="in2" type="float" nodename="multiply_96" /></max>
+    <max name="max_100" type="float"><input name="in1" type="float" nodename="max_97" /><input name="in2" type="float" nodename="max_99" /></max>
+    <mix name="mix_101" type="color3"><input name="bg" type="color3" value="0.76, 0.76, 0.73" /><input name="fg" type="color3" value="0.035, 0.14, 0.35" /><input name="mix" type="float" nodename="max_100" /></mix>
+    <multiply name="multiply_102" type="color3"><input name="in1" type="color3" nodename="mix_101" /><input name="in2" type="color3" value="1, 1, 1" /></multiply>
+    <mix name="mix_103" type="float"><input name="bg" type="float" value="0.97" /><input name="fg" type="float" value="1.03" /><input name="mix" type="float" nodename="noise2d_6" /></mix>
+    <multiply name="multiply_104" type="float"><input name="in1" type="float" nodename="mix_39" /><input name="in2" type="float" nodename="mix_103" /></multiply>
+    <multiply name="base_color" type="color3"><input name="in1" type="color3" nodename="multiply_102" /><input name="in2" type="float" nodename="multiply_104" /></multiply>
+    <mix name="roughness" type="float"><input name="bg" type="float" value="0.745" /><input name="fg" type="float" value="0.8150000000000001" /><input name="mix" type="float" nodename="mix_38" /></mix>
+    <multiply name="multiply_105" type="float"><input name="in1" type="float" nodename="mix_38" /><input name="in2" type="float" value="0.000004" /></multiply>
+    <multiply name="multiply_106" type="float"><input name="in1" type="float" nodename="noise2d_3" /><input name="in2" type="float" value="3.2e-7" /></multiply>
+    <add name="height" type="float"><input name="in1" type="float" nodename="multiply_105" /><input name="in2" type="float" nodename="multiply_106" /></add>
+    <multiply name="multiply_107" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1000, 1000" /></multiply>
+    <multiply name="multiply_108" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="multiply_108" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_107" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.2" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="specular_roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_textileToileBlueWhite" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="base_color" type="color3" nodegraph="NG_textileToileBlueWhite" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_textileToileBlueWhite" output="specular_roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_textileToileBlueWhite" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_textileToileBlueWhite" output="normal_out" />
+    <input name="specular" type="float" nodegraph="NG_textileToileBlueWhite" output="specular_out" />
+    <input name="sheen" type="float" value="0.23" />
+    <input name="sheen_color" type="color3" value="0.06525, 0.186, 0.4275" />
+    <input name="sheen_roughness" type="float" value="0.7" />
+    <input name="specular_anisotropy" type="float" value="0.1" />
+    <input name="diffuse_roughness" type="float" value="0.25" />
+  </standard_surface>
+  <surfacematerial name="M_textileToileBlueWhite" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_textileToileBlueWhite" /></surfacematerial>
+</materialx>
