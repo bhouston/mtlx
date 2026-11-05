@@ -67,17 +67,17 @@
     "@types/node": "^22.20.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "@types/three": "^0.186.0",
+    "@types/three": "^0.187.0",
     "esbuild": "^0.27.3",
     "playwright": "^1.63.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "three": "^0.186.0"
+    "three": "^0.187.0"
   },
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "three": "^0.186.0"
+    "three": "^0.187.0"
   },
   "peerDependenciesMeta": {
     "react": {
