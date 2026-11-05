@@ -5,6 +5,8 @@
 [catalog.json](catalog.json) to find a material by its exact lower camel case name.
 Each file contains one `M_<name>` material, `SR_<name>` standard surface, and
 `NG_<name>` graph. No image textures or external asset downloads are required.
+Each material also has a matching `<name>.txt` beside it with a short appearance
+description and suggested furniture applications for rendering and visualization.
 
 **Real world scale: UV 0–1 spans one meter in every material.** Assign mesh UVs
 accordingly: a two-meter surface spans two UV units. Every graph's `height` output
