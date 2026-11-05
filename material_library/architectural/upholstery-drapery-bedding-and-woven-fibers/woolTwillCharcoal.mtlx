@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Catalog: Charcoal; fine diagonal wool weave with fuzzy fibers and soft directional sheen. -->
+  <!-- Art-directed linear Rec.709; 1 UV = 1 m; height in m.  Surface-scale yarn/nap only; no folds, furniture or woven product arrangement. Silk/velvet anisotropic sheen is an approximation. -->
+  <!-- Recipe twill: feature frequencies 300, 380 per m; relief amplitude 3.5e-05 m; macro drift about 0.25 m. Subpixel detail requires filtering at distance. -->
+  <nodegraph name="NG_woolTwillCharcoal">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="multiply_2" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="3.1, 4.3" />
+    </multiply>
+    <add name="add_3" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_2" />
+      <input name="in2" type="vector2" value="11.37, 29.17" />
+    </add>
+    <fractal2d name="fractal2d_4" type="float">
+      <input name="texcoord" type="vector2" nodename="add_3" />
+      <input name="octaves" type="integer" value="3" />
+    </fractal2d>
+    <multiply name="multiply_5" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="300, 380" />
+    </multiply>
+    <add name="add_6" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_5" />
+      <input name="in2" type="vector2" value="3.71, 9.17" />
+    </add>
+    <fractal2d name="fractal2d_7" type="float">
+      <input name="texcoord" type="vector2" nodename="add_6" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <rotate2d name="rotate2d_12" type="vector2">
+      <input name="in" type="vector2" nodename="uv" />
+      <input name="amount" type="float" value="35" />
+    </rotate2d>
+    <separate2 name="separate2_13" type="multioutput">
+      <input name="in" type="vector2" nodename="rotate2d_12" />
+    </separate2>
+    <multiply name="multiply_14" type="float">
+      <input name="in1" type="float" nodename="separate2_13" output="outx" />
+      <input name="in2" type="float" value="1884.9556" />
+    </multiply>
+    <sin name="sin_15" type="float">
+      <input name="in" type="float" nodename="multiply_14" />
+    </sin>
+    <multiply name="multiply_16" type="float">
+      <input name="in1" type="float" nodename="separate2_13" output="outy" />
+      <input name="in2" type="float" value="2387.6104" />
+    </multiply>
+    <sin name="sin_17" type="float">
+      <input name="in" type="float" nodename="multiply_16" />
+    </sin>
+    <multiply name="multiply_18" type="float">
+      <input name="in1" type="float" nodename="sin_15" />
+      <input name="in2" type="float" value="0.5" />
+    </multiply>
+    <multiply name="multiply_19" type="float">
+      <input name="in1" type="float" nodename="sin_17" />
+      <input name="in2" type="float" value="0.5" />
+    </multiply>
+    <add name="add_20" type="float">
+      <input name="in1" type="float" nodename="multiply_18" />
+      <input name="in2" type="float" nodename="multiply_19" />
+    </add>
+    <multiply name="multiply_21" type="float">
+      <input name="in1" type="float" nodename="add_20" />
+      <input name="in2" type="float" value="3.5e-05" />
+    </multiply>
+    <multiply name="multiply_22" type="float">
+      <input name="in1" type="float" nodename="fractal2d_7" />
+      <input name="in2" type="float" value="7.7e-06" />
+    </multiply>
+    <add name="add_23" type="float">
+      <input name="in1" type="float" nodename="multiply_21" />
+      <input name="in2" type="float" nodename="multiply_22" />
+    </add>
+    <multiply name="multiply_24" type="float">
+      <input name="in1" type="float" nodename="add_20" />
+      <input name="in2" type="float" value="0.8" />
+    </multiply>
+    <add name="add_25" type="float">
+      <input name="in1" type="float" nodename="multiply_24" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="clamp_26" type="float">
+      <input name="in" type="float" nodename="add_25" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <multiply name="multiply_27" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="0.0196" />
+    </multiply>
+    <add name="add_28" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="multiply_27" />
+    </add>
+    <mix name="mix_29" type="color3">
+      <input name="bg" type="color3" value="0.04185, 0.04557, 0.04836" />
+      <input name="fg" type="color3" value="0.04815, 0.05243, 0.05564" />
+      <input name="mix" type="float" nodename="clamp_26" />
+    </mix>
+    <multiply name="base_color" type="color3">
+      <input name="in1" type="color3" nodename="mix_29" />
+      <input name="in2" type="float" nodename="add_28" />
+    </multiply>
+    <subtract name="subtract_31" type="float">
+      <input name="in1" type="float" nodename="clamp_26" />
+      <input name="in2" type="float" value="0.5" />
+    </subtract>
+    <multiply name="multiply_32" type="float">
+      <input name="in1" type="float" nodename="subtract_31" />
+      <input name="in2" type="float" value="-0.119" />
+    </multiply>
+    <add name="add_33" type="float">
+      <input name="in1" type="float" value="0.85" />
+      <input name="in2" type="float" nodename="multiply_32" />
+    </add>
+    <clamp name="roughness" type="float">
+      <input name="in" type="float" nodename="add_33" />
+      <input name="low" type="float" value="0.005" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <multiply name="multiply_36" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="8.75e-06" />
+    </multiply>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="add_23" />
+      <input name="in2" type="float" nodename="multiply_36" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+    <constant name="specular_weight" type="float">
+      <input name="value" type="float" value="0.2" />
+    </constant>
+    <output name="out_specular" type="float" nodename="specular_weight" />
+  </nodegraph>
+  <standard_surface name="SR_woolTwillCharcoal" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_woolTwillCharcoal" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_woolTwillCharcoal" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_woolTwillCharcoal" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_woolTwillCharcoal" output="out_normal" />
+    <input name="specular" type="float" nodegraph="NG_woolTwillCharcoal" output="out_specular" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="sheen" type="float" value="0.28" />
+    <input name="sheen_color" type="color3" value="0.093, 0.0986, 0.1028" />
+    <input name="sheen_roughness" type="float" value="0.75" />
+  </standard_surface>
+  <surfacematerial name="woolTwillCharcoal" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_woolTwillCharcoal" />
+  </surfacematerial>
+</materialx>
