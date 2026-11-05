@@ -1,0 +1,5 @@
+glassElectrochromicDarkGray
+
+Electrochromic glazing in its dark gray material state; strong neutral absorption with glossy reflections and reduced transmission.
+
+Use for rendering electrochromic window or roof glazing in the named clear or tinted visual state.

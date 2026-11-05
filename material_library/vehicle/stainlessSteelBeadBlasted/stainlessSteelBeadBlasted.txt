@@ -1,0 +1,5 @@
+stainlessSteelBeadBlasted
+
+Clean stainless steel with fine isotropic blast texture and broad metallic highlights.
+
+Use for rendering matte blasted metal housings, brackets, controls, and technical surfaces.

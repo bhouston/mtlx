@@ -1,0 +1,5 @@
+goldPlatedConductor
+
+Clean gold plating; warm yellow conductor reflectance and smooth fine-grained finish.
+
+Use for rendering gold-plated connector contacts and electronic contact pads.

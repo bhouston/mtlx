@@ -1,0 +1,5 @@
+glassSwitchablePrivacyFrosted
+
+Switchable privacy glazing in its scattering state; milky diffuse transmission through the laminate while outer glass reflections remain glossy.
+
+Use for rendering switchable privacy partitions and glazing in the named clear or frosted visual state.

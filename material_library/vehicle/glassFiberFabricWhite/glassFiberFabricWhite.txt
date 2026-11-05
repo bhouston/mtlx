@@ -1,0 +1,5 @@
+glassFiberFabricWhite
+
+White glass-fiber cloth; fine woven texture, pale diffuse response, and mild satin fiber reflections.
+
+Use for rendering exposed glass-fiber reinforcement cloth and visible fabric layers in composite cutaways.

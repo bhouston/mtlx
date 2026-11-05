@@ -1,0 +1,5 @@
+glassFilledNylonBlack
+
+black glass-filled nylon; matte fine fibrous surface texture, subtle flow mottling, opaque dielectric response.
+
+Use for rendering reinforced molded brackets, connectors, and technical housings with a fiber-filled surface appearance.

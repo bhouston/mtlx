@@ -1,0 +1,5 @@
+pvdfChemicalResistantBlack
+
+black PVDF chemical-resistant polymer; smooth dense satin dielectric surface with faint waxy translucency in the natural formulation.
+
+Use for rendering dense fluoropolymer housings, liners, and fittings in fluid-handling equipment views.

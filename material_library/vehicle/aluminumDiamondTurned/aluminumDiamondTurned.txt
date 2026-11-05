@@ -1,0 +1,5 @@
+aluminumDiamondTurned
+
+Bright diamond-turned aluminum finish with extremely fine directional cutting texture and strong anisotropic highlights.
+
+Use for rendering diamond-turned wheel faces and precision decorative aluminum surfaces.

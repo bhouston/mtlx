@@ -1,0 +1,5 @@
+displayEpaperWhite
+
+Reflective white electronic-paper state; matte diffuse light scattering with no self-emission.
+
+Use for rendering the reflective image areas of unlit electronic-paper labels and information displays.

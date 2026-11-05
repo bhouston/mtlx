@@ -1,0 +1,5 @@
+displayPolarizerBlack
+
+Dark display polarizer material; near-black absorbing surface with restrained directional reflection, no inherent emission.
+
+Use for rendering the dark polarizing layer of an unpowered or exposed display stack.

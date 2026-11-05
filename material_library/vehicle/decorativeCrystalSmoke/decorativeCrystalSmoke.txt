@@ -1,0 +1,5 @@
+decorativeCrystalSmoke
+
+Smoke-tinted decorative crystal glass; transparent absorption tint, glossy dielectric reflections, and dispersion where supported.
+
+Use for rendering decorative crystal controls, inserts, and interior accents.

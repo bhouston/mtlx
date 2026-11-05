@@ -1,0 +1,5 @@
+emissiveLedYellow
+
+yellow LED emitting material; narrow-band-like saturated emission with calibrated luminance, separate from any transparent encapsulant.
+
+Use for rendering powered colored LED source surfaces behind separately modeled lenses or diffusers.

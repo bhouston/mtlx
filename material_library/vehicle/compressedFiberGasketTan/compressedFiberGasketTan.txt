@@ -1,0 +1,5 @@
+compressedFiberGasketTan
+
+New tan compressed-fiber gasket material; fine fibrous texture and low gloss.
+
+Use for rendering cut edges and exposed faces of compressed-fiber gaskets.

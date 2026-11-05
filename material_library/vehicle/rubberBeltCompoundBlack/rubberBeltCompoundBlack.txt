@@ -1,0 +1,5 @@
+rubberBeltCompoundBlack
+
+New black power-transmission rubber compound; fine satin rubber skin with subtle textile imprint where present as surface texture.
+
+Use for rendering rubber drive-belt and flexible belt surfaces, with ribs and teeth supplied by geometry.

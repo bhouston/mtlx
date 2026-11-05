@@ -1,0 +1,5 @@
+acrylicDiffuserCoolWhite
+
+cool white translucent acrylic diffuser; soft bulk scattering and low-to-medium gloss, with no self-emission.
+
+Use for rendering light-diffusing lamp covers, illuminated control covers, and display backlight layers with a separate light source.

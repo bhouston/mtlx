@@ -1,0 +1,5 @@
+hydraulicFluidRed
+
+Fresh red hydraulic fluid; transparent tinted dielectric liquid with smooth surface reflections.
+
+Use for rendering fresh fluid volumes in hydraulic reservoirs and system cutaways.

@@ -1,0 +1,5 @@
+copperTinned
+
+Tin-coated copper appearance; pale silver metallic surface with fine plating texture.
+
+Use for rendering tinned copper conductors, terminals, and electrical hardware in detailed or cutaway views.

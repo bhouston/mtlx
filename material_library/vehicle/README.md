@@ -7,7 +7,8 @@ and [representative preview gallery](GALLERY.md).
 
 Each preset lives at `<catalogName>/<catalogName>.mtlx`. Its nodegraph, shader,
 and material are named `NG_<catalogName>`, `SR_<catalogName>`, and
-`M_<catalogName>` respectively. The catalog specification is retained in each file.
+`M_<catalogName>` respectively. The catalog specification is retained in each file. A companion `<catalogName>.txt`
+describes its appearance and typical uses in vehicle renders.
 
 **Real-world scale: UV 0–1 spans exactly one meter.** Apply metric UVs to the asset:
 a two-meter panel spans two UV units. All graph frequencies are features per meter,
@@ -31,6 +32,7 @@ The family generators and full-library validator are in `tools/`:
 python3 material_library/vehicle/tools/coatings.py
 python3 material_library/vehicle/tools/interiors.py
 node material_library/vehicle/tools/technical.mjs
+python3 material_library/vehicle/tools/descriptions.py
 ```
 
 The validator connects to `mtlx mcp` using the MCP stdio client and runs all four
@@ -38,6 +40,7 @@ rule groups in strict mode for every catalog entry:
 
 ```sh
 node material_library/vehicle/tools/verify.mjs
+python3 material_library/vehicle/tools/descriptions.py --check
 ```
 
 Render with the CLI following [the authoring guide](../../docs/material-authoring/AUTHORING.md):

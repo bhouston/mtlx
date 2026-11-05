@@ -1,0 +1,5 @@
+mirrorAluminumNeutral
+
+Aluminum mirror coating; bright neutral conductor reflections beneath any specified protective dielectric.
+
+Use for rendering rear-view mirrors, side mirrors, and other reflective vehicle mirror surfaces.

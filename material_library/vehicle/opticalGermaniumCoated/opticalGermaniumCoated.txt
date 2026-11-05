@@ -1,0 +1,5 @@
+opticalGermaniumCoated
+
+Coated germanium optical material; visibly opaque dark-gray surface with angle-dependent coated reflections; infrared transmission requires a spectral model.
+
+Use for rendering dark coated optics on thermal-imaging sensors in visible-light renders.

@@ -1,0 +1,5 @@
+clearcoatTintedAmber
+
+Transparent amber clearcoat; smooth gloss dielectric reflections and warm absorption through the coating.
+
+Use for rendering a transparent finish over a supplied paint, resin, wood, or decorative substrate.

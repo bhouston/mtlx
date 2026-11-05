@@ -1,0 +1,5 @@
+batteryPouchLaminateSilver
+
+New aluminum-polymer battery laminate; silver metallic response beneath a smooth transparent polymer skin.
+
+Use for rendering the metallic polymer-laminated outer surface of pouch cells.

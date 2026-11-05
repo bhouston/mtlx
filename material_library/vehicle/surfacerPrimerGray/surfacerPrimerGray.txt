@@ -1,0 +1,5 @@
+surfacerPrimerGray
+
+New gray primer-surfacer; opaque matte fine-grained coating for intentionally visible unfinished manufacturing surfaces.
+
+Use for rendering primed body panels and repair-preparation surfaces in assembly or process visualizations.

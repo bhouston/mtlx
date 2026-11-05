@@ -1,0 +1,5 @@
+radarTransparentPolymerBlack
+
+Opaque black low-loss polymer finish; fine satin dielectric surface. Radio-frequency transparency does not imply visible transparency.
+
+Use for rendering opaque sensor covers and radar-facing fascia surfaces, without implying measured electromagnetic performance.

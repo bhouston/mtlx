@@ -1,0 +1,5 @@
+photovoltaicThinFilmBlack
+
+Near-black thin-film photovoltaic coating; smooth low-reflectance semiconductor appearance and faint angle-dependent tint, no emission.
+
+Use for rendering the dark non-emissive active surface of thin-film solar panels.

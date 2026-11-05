@@ -1,0 +1,5 @@
+stitchingThreadRed
+
+red automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification.
+
+Use for rendering modeled upholstery seams, contrast stitching, and sewn fabric accessories.

@@ -1,0 +1,5 @@
+graphiteGasketDarkGray
+
+New graphite sheet material; dark gray fine flaky microtexture with weak directional metallic-looking sheen.
+
+Use for rendering exposed graphite gasket sheets and joint faces in service cutaways.

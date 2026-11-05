@@ -1,0 +1,5 @@
+glassElectrochromicDarkBlue
+
+Electrochromic glazing in its dark blue material state; strong blue absorption, glossy reflections, and reduced transparent transmission.
+
+Use for rendering electrochromic window or roof glazing in the named clear or tinted visual state.

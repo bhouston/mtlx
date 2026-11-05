@@ -1,0 +1,5 @@
+upholsterySpacerMeshBlack
+
+black spacer-mesh textile appearance; layered yarn texture with dark inter-yarn opacity and soft fiber sheen; material definition only.
+
+Use for rendering mesh seat inserts, breathable-looking seat-back panels, and technical upholstery accents.

@@ -1,0 +1,5 @@
+laserMarkedPolymerLightGray
+
+Light-gray laser-modified polymer appearance; fine matte opaque surface, without any prescribed symbol or pattern.
+
+Use for rendering pale laser-marked lettering and identification graphics on polymer parts.

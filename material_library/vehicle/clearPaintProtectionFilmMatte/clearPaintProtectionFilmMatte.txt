@@ -1,0 +1,5 @@
+clearPaintProtectionFilmMatte
+
+Colorless transparent protection film with matte outer surface; strong reflection diffusion while retaining transmitted paint color.
+
+Use for rendering a protective film layer over separately modeled painted bodywork, with the named reflection finish.

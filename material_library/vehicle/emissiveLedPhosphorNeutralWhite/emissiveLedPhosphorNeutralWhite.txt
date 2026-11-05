@@ -1,0 +1,5 @@
+emissiveLedPhosphorNeutralWhite
+
+neutral white phosphor-converted LED material; emissive spectral/color output with a pale yellow-white diffuse phosphor appearance when unpowered; calibrate luminance.
+
+Use for rendering the powered phosphor surface of white LED light sources behind separately modeled optics.

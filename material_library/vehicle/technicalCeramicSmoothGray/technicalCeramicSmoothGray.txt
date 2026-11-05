@@ -1,0 +1,5 @@
+technicalCeramicSmoothGray
+
+gray dense technical ceramic; fine smooth dielectric surface with low-to-medium satin gloss.
+
+Use for rendering smooth technical ceramic insulators, bushings, and housings in machinery views.

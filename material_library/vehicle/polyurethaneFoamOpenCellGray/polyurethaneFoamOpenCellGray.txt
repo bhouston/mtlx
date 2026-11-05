@@ -1,0 +1,5 @@
+polyurethaneFoamOpenCellGray
+
+Clean new gray open-cell polyurethane foam; visible fine cellular texture, matte diffuse scattering, and soft color variation.
+
+Use for rendering exposed seat cushioning, upholstered-panel padding, and foam surfaces in cabin cutaways.

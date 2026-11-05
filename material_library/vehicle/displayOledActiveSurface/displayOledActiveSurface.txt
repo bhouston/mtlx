@@ -1,0 +1,5 @@
+displayOledActiveSurface
+
+Active OLED image-producing material; texture-driven emissive color, very low non-emitting black level, and smooth low-reflectance surface.
+
+Use for rendering the powered image surface of an OLED display with an assigned emissive image signal.

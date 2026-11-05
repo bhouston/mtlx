@@ -1,0 +1,5 @@
+absSmoothSatinBlack
+
+black opaque ABS; smooth satin surface with subtle molding microtexture, no metal response.
+
+Use for rendering smooth molded interior trim, bezels, switch surrounds, and accessory housings.

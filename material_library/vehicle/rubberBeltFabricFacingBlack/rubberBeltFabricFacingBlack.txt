@@ -1,0 +1,5 @@
+rubberBeltFabricFacingBlack
+
+Black rubber-impregnated textile facing; fine woven albedo/normal texture, low gloss, and muted fiber sheen.
+
+Use for rendering fabric-faced rubber belt surfaces, with belt shape modeled separately.
