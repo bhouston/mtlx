@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- ivory fine silk-blend decorative textile; subtle yarn irregularity and luminous directional fiber sheen without self-emission. -->
+  <!-- Factory-new appearance target; colors are linear Rec.709 artistic reflectances, not measured OEM data.  -->
+  <nodegraph name="NG_decorativeSilkBlendIvory">
+    <!-- UV 0..1 is exactly one metre; all height values below are metres. weave: frequencies 1100 × 700 cycles/metre; relief amplitude 0.000004 m. -->
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="feature_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1100, 700" /></multiply>
+    <noise2d name="micro" type="float"><input name="texcoord" type="vector2" nodename="feature_uv" /><input name="amplitude" type="float" value="0.45" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <separate2 name="components" type="multioutput"><input name="in" type="vector2" nodename="feature_uv" /></separate2>
+    <multiply name="xphase" type="float"><input name="in1" type="float" nodename="components" output="outx" /><input name="in2" type="float" value="6.283185307179586" /></multiply>
+    <multiply name="yphase" type="float"><input name="in1" type="float" nodename="components" output="outy" /><input name="in2" type="float" value="6.283185307179586" /></multiply>
+    <sin name="warp" type="float"><input name="in" type="float" nodename="xphase" /></sin>
+    <sin name="weft" type="float"><input name="in" type="float" nodename="yphase" /></sin>
+    <multiply name="crossing" type="float"><input name="in1" type="float" nodename="warp" /><input name="in2" type="float" nodename="weft" /></multiply>
+    <multiply name="crossing_half" type="float"><input name="in1" type="float" nodename="crossing" /><input name="in2" type="float" value="0.35" /></multiply>
+    <add name="weave" type="float"><input name="in1" type="float" nodename="crossing_half" /><input name="in2" type="float" value="0.5" /></add>
+    <multiply name="yarn_minor" type="float"><input name="in1" type="float" nodename="micro" /><input name="in2" type="float" value="0.15" /></multiply>
+    <add name="yarn_surface" type="float"><input name="in1" type="float" nodename="weave" /><input name="in2" type="float" nodename="yarn_minor" /></add>
+    <multiply name="micro_relief" type="float"><input name="in1" type="float" nodename="micro" /><input name="in2" type="float" value="6e-7" /></multiply>
+    <multiply name="structure_relief" type="float"><input name="in1" type="float" nodename="yarn_surface" /><input name="in2" type="float" value="0.000004" /></multiply>
+    <add name="height" type="float"><input name="in1" type="float" nodename="structure_relief" /><input name="in2" type="float" nodename="micro_relief" /></add>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.6776, 0.616, 0.46640000000000004" /><input name="fg" type="color3" value="0.8624, 0.784, 0.5936000000000001" /><input name="mix" type="float" nodename="yarn_surface" /></mix>
+    <multiply name="roughness_detail" type="float"><input name="in1" type="float" nodename="yarn_surface" /><input name="in2" type="float" value="0.036000000000000004" /></multiply>
+    <add name="roughness" type="float"><input name="in1" type="float" nodename="roughness_detail" /><input name="in2" type="float" value="0.43" /></add>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="normal_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="texcoord" type="vector2" nodename="uv_mm" /><input name="scale" type="float" value="16" /></heighttonormal>
+    <normalmap name="normal_world" type="vector3"><input name="in" type="vector3" nodename="normal_tangent" /></normalmap>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.2" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="specular_roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="normal_world" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_decorativeSilkBlendIvory" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_decorativeSilkBlendIvory" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_decorativeSilkBlendIvory" output="specular_roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_decorativeSilkBlendIvory" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_decorativeSilkBlendIvory" output="normal_out" />
+    <input name="specular" type="float" nodegraph="NG_decorativeSilkBlendIvory" output="specular_out" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="sheen" type="float" value="0.7" />
+    <input name="sheen_color" type="color3" value="0.8774964387392122, 0.8366600265340756, 0.7280109889280518" />
+    <input name="sheen_roughness" type="float" value="0.6" />
+    <input name="specular_anisotropy" type="float" value="0.7" />
+  </standard_surface>
+  <surfacematerial name="M_decorativeSilkBlendIvory" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_decorativeSilkBlendIvory" /></surfacematerial>
+</materialx>

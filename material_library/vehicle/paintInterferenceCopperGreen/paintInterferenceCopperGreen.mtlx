@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Clear-coated interference-pigment finish shifting from copper to green; layered gloss response and fine pigment scale. -->
+  <nodegraph name="NG_paintInterferenceCopperGreen">
+    <!-- Real-world scale: texcoord 0 to 1 = one metre. All height values below are metres. Factory-new process texture only. -->
+    <texcoord name="uv" type="vector2"></texcoord>
+    <!-- Finish microstructure: coordinate frequencies 320, 320 per metre; relief amplitude 8e-06 m, correlated color and roughness. -->
+    <multiply name="finish_noise_coordinates" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="320, 320" /></multiply>
+    <fractal2d name="finish_noise" type="float"><input name="texcoord" type="vector2" nodename="finish_noise_coordinates" /><input name="octaves" type="integer" value="2" /><input name="amplitude" type="float" value="1" /></fractal2d>
+    <multiply name="finish_gain" type="float"><input name="in1" type="float" nodename="finish_noise" /><input name="in2" type="float" value="0.45" /></multiply>
+    <add name="finish_remap" type="float"><input name="in1" type="float" nodename="finish_gain" /><input name="in2" type="float" value="0.5" /></add>
+    <clamp name="finish_mask" type="float"><input name="in" type="float" nodename="finish_remap" /><input name="low" type="float" value="0" /><input name="high" type="float" value="1" /></clamp>
+    <multiply name="height" type="float"><input name="in1" type="float" nodename="finish_noise" /><input name="in2" type="float" value="8e-06" /></multiply>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.0162, 0.198, 0.045" /><input name="fg" type="color3" value="0.0198, 0.242, 0.055" /><input name="mix" type="float" nodename="finish_mask" /></mix>
+    <mix name="roughness" type="float"><input name="bg" type="float" value="0.215" /><input name="fg" type="float" value="0.265" /><input name="mix" type="float" nodename="finish_mask" /></mix>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0.0" /></constant>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000.0" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000.0" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16.0" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_paintInterferenceCopperGreen" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_paintInterferenceCopperGreen" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_paintInterferenceCopperGreen" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_paintInterferenceCopperGreen" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_paintInterferenceCopperGreen" output="normal_out" />
+    <input name="coat_normal" type="vector3" nodegraph="NG_paintInterferenceCopperGreen" output="normal_out" />
+    <input name="base" type="float" value="1.0" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0.0" />
+    <input name="coat" type="float" value="1.0" />
+    <input name="coat_roughness" type="float" value="0.085" />
+    <input name="coat_IOR" type="float" value="1.5" />
+    <input name="sheen" type="float" value="0.0" />
+    <input name="sheen_roughness" type="float" value="0.65" />
+    <input name="thin_film_thickness" type="float" value="370" />
+    <input name="thin_film_IOR" type="float" value="1.8" />
+  </standard_surface>
+  <surfacematerial name="M_paintInterferenceCopperGreen" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_paintInterferenceCopperGreen" /></surfacematerial>
+</materialx>
