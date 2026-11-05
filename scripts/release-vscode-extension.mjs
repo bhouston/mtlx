@@ -19,7 +19,7 @@ export function setVersion(version) {
 // Build, package, and publish the extension to both the VS Code Marketplace
 // and Open VSX (the registry Cursor and other VS Code-compatible editors
 // use). Requires VSCE_PAT / OVSX_PAT in the environment.
-export function publish() {
+export function publish({ skipDuplicate = false } = {}) {
   const missing = [!process.env.VSCE_PAT && 'VSCE_PAT', !process.env.OVSX_PAT && 'OVSX_PAT'].filter(Boolean);
   if (missing.length > 0) {
     throw new Error(
@@ -43,6 +43,7 @@ export function publish() {
       'exec',
       'vsce',
       'publish',
+      ...(skipDuplicate ? ['--skip-duplicate'] : []),
       '--packagePath',
       vsix,
       '--pat',
@@ -52,5 +53,9 @@ export function publish() {
       stdio: 'inherit',
     },
   );
-  execFileSync('npx', ['ovsx', 'publish', vsix, '--pat', process.env.OVSX_PAT], { stdio: 'inherit' });
+  execFileSync(
+    'npx',
+    ['ovsx', 'publish', vsix, ...(skipDuplicate ? ['--skip-duplicate'] : []), '--pat', process.env.OVSX_PAT],
+    { stdio: 'inherit' },
+  );
 }

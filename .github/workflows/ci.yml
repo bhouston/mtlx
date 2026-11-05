@@ -32,6 +32,8 @@ jobs:
       - run: pnpm lint
       - name: Check formatting
         run: pnpm exec oxfmt --check .
+      - name: Test release recovery safeguards
+        run: node --test scripts/resume-release.test.mjs
       - run: pnpm test --coverage
       # --- repository-specific steps (package-content check, size budget, e2e, docs, ...) go here ---
       - name: Verify published packages include dist
