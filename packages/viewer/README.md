@@ -1,363 +1,51 @@
 # mtlx-viewer
 
-<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+[![npm](https://img.shields.io/npm/v/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
+[![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/material-viewer/)
+[![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 
-[![npm version](https://img.shields.io/npm/v/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
-[![npm downloads](https://img.shields.io/npm/dm/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
-[![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
-[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
+Embed interactive MaterialX previews in any website with `<material-viewer>`. Works in plain HTML and any framework, with orbit controls, lighting, a settings panel, loading progress, and screenshot export. React is optional.
 
-Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca).
-Provides three.js MaterialX scenes and IBL environment assets used by the website, CLI preview, and VS Code
-extension. Callers own the rendering lifecycle, with optional shared helpers for renderer setup and cleanup.
-Preview support follows three.js's MaterialX loader; it is not a full reference MaterialX renderer.
+## Plain HTML
+
+Load the self-contained bundle from jsDelivr, then add the element. No build step or separate CSS is required.
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/mtlx-viewer/dist/material-viewer.js"></script>
+<material-viewer
+  src="https://mtlx.ben3d.ca/materials/copper/copper.mtlx"
+  alt="Copper material under neutral studio lighting"
+  settings-panel="closed"
+  style="display:block;width:100%;height:440px"
+></material-viewer>
+```
+
+The URL follows the latest npm release; add `@<version>` after `mtlx-viewer` to pin a release. Give the element a height. Remote materials and textures must allow CORS; rendering requires a GPU-backed WebGPU or WebGL2 browser context.
+
+## With a bundler
 
 ```sh
 npm install mtlx-viewer three
 ```
 
-## Custom element errors
-
-`<material-viewer>` shows loading, parsing, initialization and rendering failures in a translucent overlay at the top-left, above its controls. The overlay includes the error message, source and available cause details, a dismiss button, and **Copy to clipboard**. Starting another load clears the previous error.
-
-Omit `errors` to show errors (the default). Set `errors="silent"` to hide the overlay while preserving the existing `error` events, whose `event.detail` is the message string:
-
-```html
-<material-viewer src="/materials/example.mtlx" errors="silent"></material-viewer>
+```js
+import 'mtlx-viewer/element';
 ```
 
-Changing `errors` applies immediately without reloading. Removing it reveals the current error unless dismissed or cleared.
+Use the same HTML element as above. This import uses your installed Three.js instead of the CDN bundle.
 
-## Accessible material descriptions
+## React
 
-Set `alt` to describe the material's visible appearance. The description becomes the accessible
-name of the keyboard-focusable canvas; orbit, zoom, and arrow-key pan instructions are exposed
-separately. Omitted, empty, or whitespace-only descriptions keep the generic preview label.
-
-```html
-<material-viewer src="/materials/copper.mtlx" alt="Brushed copper with fine horizontal grooves"></material-viewer>
+```sh
+npm install mtlx-viewer three react react-dom
 ```
-
-The React wrapper accepts the same `alt` prop. Low-level hosts can pass
-`createViewer({ ..., alt: 'Brushed copper' })` and call `viewer.setAlt('Polished copper')` later.
-Changing the description does not reload materials, recreate the renderer, or reset the camera.
-The current description also takes effect if it changes while the custom element is loading.
-
-The website defaults to `Material preview of <filename>`. Hosts can override its React viewer's
-`alt` prop, or supply an `alt` query parameter in `/viewer` and `/embed` links. Shared viewer,
-embed, and iframe URLs preserve that description. For example:
-`/embed?materialUrl=/materials/copper/copper.mtlx&alt=Brushed%20copper`.
-These labels describe the preview; they do not replace the material's name or metadata.
-
-## Automatic loading progress
-
-Both `<material-viewer>` and React `MaterialViewer` show a top progress bar automatically.
-It covers material and shaderball downloads, renderer initialization, environment processing,
-MaterialX parsing, referenced textures, custom geometry, and the first render. Environment,
-geometry, and material changes start another loading cycle. Errors, source removal, and
-unmounting clear the bar. Texture failures remain available in preview diagnostics.
-
-The presentation and customization follow [Google model-viewer](https://modelviewer.dev/docs/#entrydocs-loading-slots-progressBar):
-a 5px bar fills left to right, waits one second at completion, then fades over 300ms.
-No enable attribute is needed. Change its color or height with CSS variables, or style the
-custom element's `default-progress-bar` part (avoid changing `transform`, which drives progress):
-
-```css
-material-viewer {
-  --progress-bar-color: #4285f4;
-  --progress-bar-height: 3px;
-}
-material-viewer::part(default-progress-bar) {
-  border-radius: 2px;
-}
-```
-
-Disable the bar with an empty replacement slot, exactly as in model-viewer:
-
-```html
-<material-viewer src="/materials/example.mtlx.zip">
-  <span slot="progress-bar"></span>
-</material-viewer>
-```
-
-Or hide only the default fill with `material-viewer::part(default-progress-bar) { display: none; }`.
-There is no dedicated disable attribute. Disabling the visual does not stop progress events.
-The React wrapper supports the same slot via children:
 
 ```tsx
 import { MaterialViewer } from 'mtlx-viewer/react';
 
-<MaterialViewer src="/materials/example.mtlx.zip" style={{ width: 512, height: 512 }}>
-  <span slot="progress-bar" />
-</MaterialViewer>;
+<MaterialViewer src="/materials/copper.mtlx.zip" alt="Brushed copper" style={{ height: 440 }} />;
 ```
 
-For custom UI, supply content in `slot="progress-bar"` and update it using `progress` events
-(React: `onProgress`). `detail.totalProgress` is the overall fraction from 0 to 1;
-`detail.reason` is `material-load`, `environment-update`, or `geometry-update`.
-The slot replaces the default bar; you control your replacement's appearance and visibility.
-The host's `aria-busy` attribute tracks the loading cycle even with a replacement slot.
+See the [element guide and live demo](https://mtlx.ben3d.ca/docs/material-viewer/) for attributes, events, camera controls, and screenshots, or the [viewer integration guide](https://mtlx.ben3d.ca/docs/viewer/) for React and lower-level Three.js APIs. Preview support follows Three.js's MaterialX loader.
 
-```js
-viewer.addEventListener('progress', ({ detail }) => {
-  customBar.hidden = detail.totalProgress === 1;
-  customBar.value = detail.totalProgress; // <progress max="1" slot="progress-bar">
-});
-viewer.addEventListener('error', () => {
-  customBar.hidden = true;
-});
-```
-
-Overall progress is a monotonic estimate of completed activities, not an elapsed-time prediction.
-Known material download sizes use byte progress; processing uses actual milestones and resource
-counts. No timer advances the overall percentage. A slow operation can hold the value steady;
-completion waits for pending resources and the render using them.
-
-The existing `loaded`, `total`, and `progress` fields still describe **only the material file
-download**, independently of `totalProgress`. Before headers arrive, these are `0`, `null`,
-and `null`. Download updates are sampled every 250ms and on completion; other loading work
-also emits events. Unknown or compressed Content-Length keeps `total` and `progress` null
-until download completion. A download can reach `progress: 1` while `totalProgress < 1`.
-Use the `load` event / React `onLoad` for initial preview readiness, not download completion.
-Changing/removing `src` or unmounting cancels obsolete work and notifications. Attach listeners
-before assigning `src` to receive the initial event. `createViewer({ onProgress })` provides
-the same overall progress for hosts managing their own UI.
-
-## Camera framing and sharing
-
-`camera-orbit="30deg 65deg 2m"` sets azimuth, polar angle measured from +Y, and distance from
-the target. `camera-target="0m 0m 0m"` selects the aim point. `field-of-view="35deg"` sets the
-vertical field of view. The React wrapper accepts the same hyphenated props; `createViewer`
-settings use `cameraOrbit`, `cameraTarget`, and `fieldOfView` (numeric degrees). All geometry
-is normalized to a one-meter cube, so these distances are normalized scene meters, not source
-mesh dimensions. Bare numbers use the same units. CSS expressions, percentages and `auto`
-components are not accepted.
-
-Orbit polar angles must be 0.01..179.99 degrees, distance 0.01..1000 meters, target components
--1000..1000 meters, and field of view 1..120 degrees. Invalid attributes/query values are ignored.
-Without camera options, the viewer automatically frames the geometry as before. Explicit camera
-options update in place; resizing preserves their absolute distance and the user's current orbit/pan.
-Removing all options restores automatic framing. Camera changes leave the material and renderer intact.
-
-`viewer.getCameraSettings()` captures the current camera, including orbit, pan and perspective
-zoom. The custom element returns the same object (or `null` before loading) and dispatches
-`camera-change` with that object as `event.detail`. React and low-level viewers expose
-`onCameraChange`. The website's Share menu captures this live framing in viewer links, embed
-links and iframe code, rather than copying only the initial camera attributes. URL search
-parameters use the camelCase names. For example:
-
-```html
-<material-viewer
-  src="material.mtlx"
-  camera-orbit="30deg 65deg 2m"
-  camera-target="0m 0.1m 0m"
-  field-of-view="35deg"
-></material-viewer>
-```
-
-## Scene
-
-`createMtlxScene` parses a `.mtlx` / `.mtlx.zip` file and builds a swappable preview scene: a
-shaderball/sphere/cube/plane wearing the material, ready to add to your own `THREE.Scene`. Callers own
-the renderer, camera, controls, and animation loop. The scene owns MaterialX parsing and its
-preview geometry, materials, and textures.
-
-```ts
-import { createMtlxScene, type MtlxScene } from 'mtlx-viewer';
-
-// The built-in shaderball is served from mtlx-static.ben3d.ca, not shipped in the package.
-const shaderBallUrl = 'https://mtlx-static.ben3d.ca/viewer/shaderball.glb';
-
-const preview: MtlxScene = await createMtlxScene(camera, controls, {
-  data: mtlxBytes, // ArrayBuffer of the .mtlx or .mtlx.zip
-  fileName: 'material.mtlx', // used for resource-path resolution and archive sniffing
-  shaderBall: await (await fetch(shaderBallUrl)).arrayBuffer(),
-  // optional:
-  materialName: 'Wood_Oak', // defaults to the document's last material
-  geometry: 'sphere', // 'totem' | 'sphere' | 'cube' | 'plane', defaults to 'totem'
-  autoRotate: true, // defaults to true
-  manager: myLoadingManager, // supply your own for setURLModifier/onProgress/onError
-});
-
-threeScene.add(preview.root);
-
-// each frame:
-preview.update(deltaSeconds);
-
-// switch materials/geometry without reparsing:
-const otherMaterial = preview.materialNames[1];
-if (otherMaterial) preview.setMaterial(otherMaterial);
-preview.setGeometry('plane');
-preview.autoRotate = false;
-preview.resetCamera(); // Restore the object's orientation, camera position, target, and zoom.
-
-// Before replacing the preview or removing its host:
-threeScene.remove(preview.root);
-preview.dispose();
-```
-
-`MtlxScene` also exposes `materialNames: string[]`, `activeMaterial: string`,
-`geometry: GeometryKind`, and `autoRotate: boolean` for driving your own UI.
-
-`preview.dispose()` releases the loaded geometries, materials, and their textures. The caller
-still disposes its renderer, controls, environments/PMREM targets, animation loop, and any blob URLs
-it created. If an asynchronous load completes after cancellation, dispose the returned preview
-immediately instead of attaching it to an abandoned scene.
-
-The `?url` imports above assume a bundler such as Vite. Other integrations should serve the exported
-assets themselves and pass fetched bytes. The snippets assume the caller has created `camera`,
-`controls`, `threeScene`, and its animation loop. Loose materials also need a loading manager able
-to resolve referenced textures; packaged `.mtlx.zip` inputs can contain those resources.
-
-Additional glTF/GLB geometry can be loaded without rebuilding the material scene:
-
-```ts
-await preview.addGeometry('bust', gltfBytes, geometryLoadingManager);
-preview.setGeometry('bust');
-```
-
-Names must match `[a-zA-Z_][a-zA-Z0-9_]*` and cannot duplicate existing geometry names. The optional
-loading manager resolves glTF sidecars. The preview owns the added geometries, their original
-materials/textures, and their Reset orientations. `preview.dispose()` releases them too.
-
-## Environments
-
-The default `studio` is generated on the GPU from Google model-viewer's neutral room, preserving
-HDR light-panel intensities. It downloads no environment image and reuses its filtered target
-when switching away and back. `bridge` remains an optional photographic HDR; custom HDR, EXR,
-PNG and JPEG environments still use `loadEnvironment` and `parseEnvironmentFile`.
-
-`background` is independent of the lighting: `white` (default) is a CSS white backdrop behind a
-transparent canvas, `environment` displays the active IBL, and `none` leaves the canvas transparent
-for the host page or image exports. White stays white when exposure or tone mapping changes.
-The CLI's render exports retain their existing transparent-background default.
-
-Set `environmentRotation` in shared viewer settings, `environment-rotation` on the custom element
-or React wrapper, or `environmentRotation` in website viewer/embed query parameters to rotate the
-lighting independently of the object and camera. The angle is a yaw in degrees, normalized into
-`[0, 360)` (for example, `-90` becomes `270`, and `360` becomes `0`). The default is `0`.
-Both settings panels include a Lighting rotation slider. This also rotates an `environment`
-backdrop; `white` and `none` stay independent. Rotation reuses the active filtered environment
-and does not trigger a download, environment regeneration, or material/renderer rebuild.
-
-The old 8-bit studio PNG and its bake scripts have been removed. Existing `ibl="studio"` embeds
-now use the generated HDR room. The room layout is adapted under Apache 2.0; see
-[LICENSE.model-viewer](LICENSE.model-viewer). Details and API recommendations are in
-[the model-viewer comparison](../../docs/model-viewer-comparison.md).
-
-## Shared host utilities
-
-Both the website and VS Code extension use these framework-independent modules:
-
-- `mtlx-viewer/diagnostics`: `computeChecks`, `summarizeInternalNodes`, and `formatFileSize` produce common inspection results without DOM or React dependencies.
-- `mtlx-viewer/settings`: `parseViewerSettings` validates rendering, lighting, rotation, material, and asset selections. Hosts can supply allowed custom IBL and geometry names. Persistence remains host-specific: website query parameters or VS Code webview state.
-- `mtlx-viewer/lifecycle`: `CleanupScope` releases resources in reverse ownership order, exactly once, including resources registered after disposal.
-- The main entry exports `createViewerRenderer`, `observeViewerResize`, and `applyViewerRenderingSettings`. These helpers share renderer initialization, pixel-ratio limits, resize handling, EV exposure, and lighting settings. Hosts retain their canvas sizing policy and animation loop.
-
-The website's query adapter supports the built-in environments and geometries. The extension's
-state adapter also supports configured assets and preserves its existing storage keys and saved camera.
-Its configuration determines initial rotation; reduced-motion preferences take precedence.
-
-## Inspection capabilities
-
-<!-- test:capabilities -->
-
-```ts
-import { supportedMaterialXCategories } from 'mtlx-viewer/capabilities';
-
-if (!supportedMaterialXCategories.includes('standard_surface')) throw new Error('Missing renderer capability');
-```
-
-`parseEnvironmentFile(bytes, sourceName)` loads additional equirectangular HDR, EXR, PNG and JPEG
-assets. `createEnvironmentSwitcher` also accepts custom names supplied by its host loader.
-
-The capability subpath is lightweight and can be imported in a host or worker without loading
-three.js. A test compares it to the installed three.js registries so upgrades cannot silently
-leave the inventory stale. Categories do not guarantee every input/type combination will render.
-
-## License
-
-MIT
-
-## Author
-
-[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).
-
-## React UI
-
-`mtlx-viewer/react` ships the React + Tailwind CSS components shared by the website and the VS Code
-extension webview: `ViewerSettingsPanel` (collapsible geometry/IBL/background/tone-mapping/bloom/AO/exposure
-controls), `MaterialSelect`, `InfoPanel`, `ValidityChecks`, `LogPanel`, plus the shadcn/ui primitives
-they build on (`Button`, `Card`, `Select`, `Switch`, `Slider`, …) and the `cn` class helper. React is an
-optional peer dependency; the rest of the package works without it.
-
-Import the theme from your Tailwind v4 entry stylesheet, then override the `:root` tokens to re-theme:
-
-```css
-@import 'tailwindcss';
-@import 'mtlx-viewer/styles/viewer.css';
-```
-
-```tsx
-import { InfoPanel, ViewerSettingsPanel } from 'mtlx-viewer/react';
-```
-
-## Rendering effects
-
-After initializing a `WebGPURenderer`, use `createViewerRendering(renderer, scene, camera)` and
-call its `render()` instead of rendering the scene directly. Its `configure({ bloom, ao, toneMapping })`
-method updates effects without rebuilding the material scene. Call `dispose()` before disposing the renderer.
-`DEFAULT_RENDERING_SETTINGS` and `TONE_MAPPING_OPTIONS` are also available through `mtlx-viewer/settings`
-without importing Three.js.
-
-Bloom and AO default on; tone mapping defaults to `neutral`. AO uses full-resolution, 32-sample GTAO
-with depth/normal-aware denoising and applies to indirect lighting through Three.js's AO context.
-Transparent surfaces are excluded from the AO pre-pass. Bloom runs in HDR before output tone mapping
-and color conversion. Disabled effects are omitted from the render graph. The passes resize with the
-renderer and release their render targets on disposal. This pipeline supports WebGPU and its WebGL2 fallback.
-
-The built-in totem starts 45° toward the front right. Auto-rotation takes 40 seconds per turn.
-
-## Screenshot export
-
-Both the shared `Viewer` and `<material-viewer>` expose `toBlob(options?)`. PNG is the default.
-The custom element waits for its current source to finish loading. Captures wait for pending
-settings and textures, render the full pipeline at the requested output size, and use asynchronous
-GPU readback rather than copying a possibly cleared display canvas.
-
-```ts
-const blob = await document.querySelector('material-viewer').toBlob({
-  width: 1600,
-  height: 1200,
-  background: 'white',
-  mimeType: 'image/png',
-});
-```
-
-`width` and `height` are exact image pixels, independent of device pixel ratio. If only one is
-specified, the other preserves the current canvas aspect ratio; if neither is specified, the current
-drawing-buffer size is used. Different aspect ratios keep the camera's vertical field of view.
-Dimensions must be positive integers up to 8192 with at most 16 megapixels total.
-
-`background` defaults to the current preview setting: `white`, `environment`, or `none` (transparent).
-The CSS white backdrop is explicitly composited into exported pixels. `mimeType` also accepts
-`image/jpeg` and `image/webp`; `quality` is an optional number from 0 to 1 for these encoders.
-JPEG composites transparency over white. Unsupported encoders reject rather than silently returning
-another file format. Exports contain the preview, without controls or other page overlays.
-
-The on-screen camera, canvas size, pixel ratio, and settings are preserved. Concurrent captures
-are serialized. If the source/settings change, resources fail, or the viewer is disposed before
-capture completes, the promise rejects so an outdated image is not mistaken for the new material.
-The website's **Download screenshot** button uses this API to save a PNG of the current preview.
-
-The React wrapper accepts a typed ref to the same custom-element API:
-
-```tsx
-import { useRef } from 'react';
-import { MaterialViewer, type MaterialViewerElement } from 'mtlx-viewer/react';
-
-const preview = useRef<MaterialViewerElement>(null);
-// After mounting: await preview.current?.toBlob({ width: 1200, background: 'none' });
-return <MaterialViewer ref={preview} src="/copper.mtlx" />;
-```
+MIT · Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).

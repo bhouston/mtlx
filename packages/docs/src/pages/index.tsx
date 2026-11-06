@@ -206,7 +206,7 @@ mtlx render copper.mtlx -o copper.png \\
             </div>
             <pre className="embed-example">
               <code>{`<script type="module"
-  src="https://mtlx.ben3d.ca/material-viewer.js">
+  src="https://cdn.jsdelivr.net/npm/mtlx-viewer/dist/material-viewer.js">
 </script>
 
 <material-viewer

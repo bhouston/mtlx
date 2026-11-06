@@ -1,90 +1,20 @@
-[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
-
 # Mtlx Viewer for MaterialX
 
-**See your [MaterialX](https://materialx.org) materials without leaving VS Code.** Open any `.mtlx` or
-`.mtlx.zip` file and get a live, physically based 3D preview, an interactive node graph, and a full
-validation report, all in one tab.
+[![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/vscode/)
+[![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
 
-![Mtlx Viewer switching between the 3D preview and the node graph](https://raw.githubusercontent.com/bhouston/mtlx/main/assets/extension.gif)
+Preview, inspect, and package MaterialX without leaving VS Code. Open `.mtlx` or `.mtlx.zip` files for an interactive 3D preview, node graph, and validation report. Saving a material or its textures refreshes the preview.
 
-Part of the [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca). Join the
-[Discord](https://discord.gg/wzQWaBBxup) for questions, feedback, and updates.
+![Material preview and node graph in VS Code](https://raw.githubusercontent.com/bhouston/mtlx/main/assets/extension.gif)
 
-## Features
+1. Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=benhouston3d.mtlx-vscode-extension) or [Open VSX](https://open-vsx.org/extension/benhouston3d/mtlx-vscode-extension).
+2. Open a `.mtlx` or `.mtlx.zip` file.
+3. Drag to orbit, scroll to zoom, or switch to the **Graph** tab to inspect nodes.
 
-- **Real-time 3D preview.** Materials render on a totem, sphere, cube, plane, or your own glTF model,
-  lit by HDR environments with bloom, ambient occlusion and a choice of tone mappers.
-- **Node graph view.** Switch to the **Graph** tab to pan, zoom, and click through nodes and nested
-  node graphs to inspect every parameter.
-- **Validation at a glance.** Structure, types, dependencies, textures and renderer support are
-  checked as the file opens, including archive contents and included documents.
-- **Live reload.** Save the material or any texture it uses and the preview updates.
-- **One-click packaging.** Right-click files in Explorer to bundle a `.mtlx` and its textures into a
-  portable `.mtlx.zip`, or unpack one back out.
-- **Bring your own lighting and models.** Add HDR/EXR environments and glTF/GLB geometry from disk
-  or a URL.
-- **Bug-report ready.** Copy or download diagnostics with validation issues, resource failures and
-  renderer logs.
+Use **Reopen Editor With → Text Editor** to edit XML. Right-click materials in Explorer to pack or unpack `.mtlx.zip` archives.
 
-## Get started
+Requires desktop VS Code 1.85+ with GPU acceleration. Preview support follows Three.js's MaterialX loader.
 
-1. Install **Mtlx Viewer for MaterialX** from the
-   [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=benhouston3d.mtlx-vscode-extension)
-   or [Open VSX](https://open-vsx.org/extension/benhouston3d/mtlx-vscode-extension).
-2. Open a `.mtlx` or `.mtlx.zip` file. It opens in the viewer automatically.
-3. Drag to orbit, scroll to zoom, and use **Viewer settings** to change geometry, lighting, bloom,
-   AO and tone mapping.
+See the [extension guide](https://mtlx.ben3d.ca/docs/vscode/) for settings, custom lighting and models, conversion workflows, and troubleshooting.
 
-To edit the XML, use **Reopen Editor With → Text Editor**. Run **Open with Mtlx Viewer** from the
-Command Palette to switch back.
-
-## Convert materials
-
-Right-click one or more `.mtlx` / `.mtlx.zip` files in Explorer and choose **Convert to .mtlx.zip**
-or **Convert to .mtlx**. Textures travel with the material, and existing files are never
-overwritten: packing `wood.mtlx` next to an existing `wood.mtlx.zip` creates `wood-2.mtlx.zip`.
-
-## Settings
-
-Set preview defaults under **Settings → Mtlx Viewer**, or in `settings.json`:
-
-```json
-{
-  "mtlx.preview.ibls": [{ "name": "courtyard", "source": "~/IBLs/courtyard.hdr" }],
-  "mtlx.preview.defaultIbl": "courtyard",
-  "mtlx.preview.geometries": [{ "name": "bust", "source": "models/bust.glb" }],
-  "mtlx.preview.defaultGeometry": "bust",
-  "mtlx.preview.toneMapping": "agx"
-}
-```
-
-| Setting                            | Default     | Values                                                                                     |
-| ---------------------------------- | ----------- | ------------------------------------------------------------------------------------------ |
-| `mtlx.preview.ibls`                | `[]`        | Extra named `.hdr`, `.exr`, `.png` or `.jpg` environments (path or URL)                    |
-| `mtlx.preview.defaultIbl`          | `"studio"`  | `bridge`, `studio`, or one of your environments                                            |
-| `mtlx.preview.geometries`          | `[]`        | Extra named `.gltf` / `.glb` models (path or URL)                                          |
-| `mtlx.preview.defaultGeometry`     | `"totem"`   | `totem`, `sphere`, `cube`, `plane`, or one of your models                                  |
-| `mtlx.preview.autoRotate`          | `true`      | Rotate the model; reduced-motion preferences turn it off                                   |
-| `mtlx.preview.bloom`               | `true`      | HDR bloom                                                                                  |
-| `mtlx.preview.ao`                  | `true`      | Ambient occlusion (GTAO)                                                                   |
-| `mtlx.preview.toneMapping`         | `"neutral"` | `neutral`, `aces`, `agx`, `reinhard`, `cineon`, `linear`, `none`                           |
-| `mtlx.preview.environmentRotation` | `0`         | Environment yaw in degrees, wrapped into 0..360; lighting and IBL backdrop rotate together |
-| `mtlx.preview.background`          | `"white"`   | `white`, `environment` (IBL), or `none` (transparent); lighting is independent             |
-
-Relative paths resolve from the workspace folder. See the
-[full settings reference](https://mtlx.ben3d.ca/extension#settings) for naming rules and limits.
-
-## Requirements
-
-Desktop VS Code 1.85+ (or a compatible editor such as Cursor or VSCodium) with GPU acceleration.
-Rendering uses three.js's MaterialX support, so a valid document can still use nodes the renderer
-cannot display yet. For loose `.mtlx` files, keep textures at their relative paths; `.mtlx.zip` is
-the most portable format.
-
-Found a material that doesn't render? [Open an issue](https://github.com/bhouston/mtlx/issues) with
-the downloaded diagnostics and, if you can, the material.
-
-## Author
-
-[Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
+MIT · Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Splices `mtlx --help` (and each command's help) into packages/cli/README.md between the
+// Splices `mtlx --help` (and each command's help) into docs/cli-help.md between the
 // begin:cli_help / end:cli_help markers, so the CLI reference can never drift from the binary.
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cli = join(root, 'packages/cli/bin/cli.js');
-const docPath = join(root, 'packages/cli/README.md');
+const docPath = join(root, 'docs/cli-help.md');
 
 const help = (args) =>
   execFileSync('node', [cli, ...args, '--help'], {
@@ -28,7 +28,7 @@ if (
   (doc.match(/<!-- end:cli_help -->/g) ?? []).length !== 1 ||
   !/<!-- begin:cli_help -->[\s\S]*<!-- end:cli_help -->/.test(doc)
 ) {
-  throw new Error('CLI README must contain begin:cli_help and end:cli_help markers');
+  throw new Error('CLI terminal help reference must contain begin:cli_help and end:cli_help markers');
 }
 if (!commands.length) throw new Error('No commands found in CLI help output');
 const updated = doc.replace(
@@ -36,8 +36,8 @@ const updated = doc.replace(
   `<!-- begin:cli_help -->\n\n${sections}\n\n<!-- end:cli_help -->`,
 );
 if (process.argv.includes('--check')) {
-  if (updated !== doc) throw new Error('CLI README help is stale; run pnpm docs:cli and commit the result');
-  console.log('CLI README help is current');
+  if (updated !== doc) throw new Error('CLI terminal help reference is stale; run pnpm docs:cli and commit the result');
+  console.log('CLI terminal help reference is current');
 } else {
   writeFileSync(docPath, updated);
   console.log(`Updated ${docPath} with ${commands.length} commands`);
