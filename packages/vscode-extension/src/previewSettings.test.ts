@@ -1,4 +1,7 @@
 import { expect, it } from 'vitest';
+import { DEFAULT_VIEWER_SETTINGS } from 'mtlx-viewer/settings';
+import { readFileSync } from 'node:fs';
+import { normalizePreviewState } from './preview/state.js';
 import { parsePreviewSettings, PREVIEW_NAME_PATTERN } from './previewSettings.js';
 it('defaults to neutral studio, totem and rotation', () => {
   expect(parsePreviewSettings({})).toMatchObject({
@@ -62,5 +65,22 @@ it('normalizes configured environment rotation and rejects invalid values', () =
   expect(parsePreviewSettings({ environmentRotation: Infinity })).toMatchObject({
     environmentRotation: 0,
     warnings: ['environmentRotation must be finite degrees; using 0.'],
+  });
+});
+
+it('keeps new preview lighting and contributed VS Code defaults aligned with the viewer', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const properties = manifest.contributes.configuration.properties;
+  const settings = parsePreviewSettings({});
+  const state = normalizePreviewState({}, settings);
+  expect(properties['mtlx.preview.defaultIbl'].default).toBe(DEFAULT_VIEWER_SETTINGS.ibl);
+  expect(properties['mtlx.preview.background'].default).toBe(DEFAULT_VIEWER_SETTINGS.background);
+  expect(state.settings).toMatchObject({
+    ibl: DEFAULT_VIEWER_SETTINGS.ibl,
+    background: DEFAULT_VIEWER_SETTINGS.background,
+  });
+  expect(parsePreviewSettings({ defaultIbl: 'missing', background: 'invalid' })).toMatchObject({
+    defaultIbl: DEFAULT_VIEWER_SETTINGS.ibl,
+    background: DEFAULT_VIEWER_SETTINGS.background,
   });
 });

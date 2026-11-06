@@ -1,5 +1,6 @@
 import {
   BACKGROUND_OPTIONS,
+  DEFAULT_VIEWER_SETTINGS,
   normalizeEnvironmentRotation,
   TONE_MAPPING_OPTIONS,
   type BackgroundKind,
@@ -67,15 +68,21 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
   };
   const toneMapping = TONE_MAPPING_OPTIONS.find((option) => option.value === (input.toneMapping ?? 'neutral'))?.value;
   if (!toneMapping) warnings.push('toneMapping is unknown; using neutral.');
-  const background = BACKGROUND_OPTIONS.find((option) => option.value === (input.background ?? 'white'))?.value;
-  if (!background) warnings.push('background is unknown; using white.');
+  const background = BACKGROUND_OPTIONS.find(
+    (option) => option.value === (input.background ?? DEFAULT_VIEWER_SETTINGS.background),
+  )?.value;
+  if (!background) warnings.push(`background is unknown; using ${DEFAULT_VIEWER_SETTINGS.background}.`);
   const environmentRotation = normalizeEnvironmentRotation(input.environmentRotation ?? 0);
   if (environmentRotation === undefined) warnings.push('environmentRotation must be finite degrees; using 0.');
   return {
     environmentRotation: environmentRotation ?? 0,
     ibls,
     geometries,
-    defaultIbl: defaultName('defaultIbl', ['studio', 'bridge', ...ibls.map((asset) => asset.name)], 'studio'),
+    defaultIbl: defaultName(
+      'defaultIbl',
+      ['studio', 'bridge', ...ibls.map((asset) => asset.name)],
+      DEFAULT_VIEWER_SETTINGS.ibl,
+    ),
     defaultGeometry: defaultName(
       'defaultGeometry',
       ['totem', 'sphere', 'cube', 'plane', ...geometries.map((asset) => asset.name)],
@@ -85,7 +92,7 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
     bloom: boolean('bloom'),
     ao: boolean('ao'),
     toneMapping: toneMapping ?? 'neutral',
-    background: background ?? 'white',
+    background: background ?? DEFAULT_VIEWER_SETTINGS.background,
     warnings,
   };
 }

@@ -164,7 +164,7 @@
           "default": "studio",
           "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
           "scope": "resource",
-          "description": "IBL name used for new previews. Built-ins: bridge, studio; or an additional IBL name."
+          "description": "IBL name used for new previews. Defaults to the same generated Neutral Studio lighting as the viewer. Built-ins: bridge, studio; or an additional IBL name."
         },
         "mtlx.preview.defaultGeometry": {
           "type": "string",
