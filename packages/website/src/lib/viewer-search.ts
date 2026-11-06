@@ -9,7 +9,7 @@ export type ViewerSearch = Partial<ViewerSettings> & { materialUrl?: string; alt
 export function viewerSearch(search: Record<string, unknown>): ViewerSearch {
   return {
     ...materialSearch(search),
-    ...(parseViewerSettings(search)),
+    ...parseViewerSettings(search),
     ...(typeof search.alt === 'string' && search.alt.trim() ? { alt: search.alt.trim() } : {}),
   };
 }
