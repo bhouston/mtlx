@@ -1,15 +1,31 @@
+<p align="center">
+  <a href="https://mtlx.ben3d.ca" target="_blank" rel="noopener noreferrer">
+    <img alt="mtlx logo" src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" height="96">
+  </a>
+</p>
+<br/>
+<p align="center">
+  <a href="https://npmjs.com/package/mtlx-cli"><img src="https://img.shields.io/npm/v/mtlx-cli.svg" alt="npm package"></a>
+  <a href="https://www.npmtrends.com/mtlx-cli"><img src="https://img.shields.io/npm/dw/mtlx-cli.svg" alt="npm downloads"></a>
+  <a href="https://codecov.io/gh/bhouston/mtlx"><img src="https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg" alt="coverage"></a>
+  <a href="https://discord.gg/wzQWaBBxup"><img src="https://img.shields.io/badge/chat-discord-blue?style=flat&logo=discord" alt="discord chat"></a>
+  <a href="https://mtlx.ben3d.ca/docs/cli/"><img src="https://img.shields.io/badge/docs-read-blue?style=flat" alt="documentation"></a>
+</p>
+<br/>
+
 # mtlx-cli
 
-<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+> Inspect, validate, preview, and package MaterialX from your terminal.
 
-[![npm](https://img.shields.io/npm/v/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
-[![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/cli/)
-[![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
-[![npm downloads](https://img.shields.io/npm/dm/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
-[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
-[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
+- ✅ Validate Materials
+- 👀 Preview in a Browser
+- 📦 Package for the Web
+- 🖼️ Render PNG Previews
+- ☁️ MTLX.ai Hosted Materials
 
-Inspect, validate, preview, and package MaterialX from your terminal. Includes the `mtlx` and `mtlx-ai` commands for local files and the MTLX.ai service.
+Includes the `mtlx` and `mtlx-ai` commands for local files and the MTLX.ai service.
+
+[Read the Docs to Learn More](https://mtlx.ben3d.ca/docs/cli/).
 
 ```sh
 npm install --global mtlx-cli
@@ -41,6 +57,10 @@ mtlx download alice/copper -o copper.mtlx.zip
 ```
 
 Read the [CLI guide](https://mtlx.ben3d.ca/docs/cli/) for conversion workflows and options, or the [agent guide](https://mtlx.ben3d.ca/docs/agents/) for MCP integration. Run `mtlx --help` or `mtlx <command> --help` for terminal help.
+
+## Contribution
+
+See [Contributing Guide](https://github.com/bhouston/mtlx/blob/main/CONTRIBUTING.md).
 
 ## License
 
