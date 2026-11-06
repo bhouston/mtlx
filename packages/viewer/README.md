@@ -29,6 +29,27 @@ Omit `errors` to show errors (the default). Set `errors="silent"` to hide the ov
 
 Changing `errors` applies immediately without reloading. Removing it reveals the current error unless dismissed or cleared.
 
+## Accessible material descriptions
+
+Set `alt` to describe the material's visible appearance. The description becomes the accessible
+name of the keyboard-focusable canvas; orbit, zoom, and arrow-key pan instructions are exposed
+separately. Omitted, empty, or whitespace-only descriptions keep the generic preview label.
+
+```html
+<material-viewer src="/materials/copper.mtlx" alt="Brushed copper with fine horizontal grooves"></material-viewer>
+```
+
+The React wrapper accepts the same `alt` prop. Low-level hosts can pass
+`createViewer({ ..., alt: 'Brushed copper' })` and call `viewer.setAlt('Polished copper')` later.
+Changing the description does not reload materials, recreate the renderer, or reset the camera.
+The current description also takes effect if it changes while the custom element is loading.
+
+The website defaults to `Material preview of <filename>`. Hosts can override its React viewer's
+`alt` prop, or supply an `alt` query parameter in `/viewer` and `/embed` links. Shared viewer,
+embed, and iframe URLs preserve that description. For example:
+`/embed?materialUrl=/materials/copper/copper.mtlx&alt=Brushed%20copper`.
+These labels describe the preview; they do not replace the material's name or metadata.
+
 ## Automatic loading progress
 
 Both `<material-viewer>` and React `MaterialViewer` show a top progress bar automatically.

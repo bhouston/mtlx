@@ -15,6 +15,7 @@ describe('shared viewer and embed search state', () => {
       geometry: 'sphere' as const,
       background: 'none' as const,
       materialName: 'Copper',
+      alt: 'Brushed copper with horizontal grain',
     };
     for (const route of ['viewer', 'embed'] as const) {
       const url = new URL(viewerShareUrl('https://mtlx.test', route, state));
@@ -46,4 +47,9 @@ describe('shared viewer and embed search state', () => {
       rotate: false,
     });
   });
+});
+
+it('validates accessible descriptions in iframe and shared links', () => {
+  expect(viewerSearch({ alt: '  Copper & brass  ' })).toEqual({ alt: 'Copper & brass' });
+  for (const alt of ['', ' ', null, true, 123, {}]) expect(viewerSearch({ alt })).toEqual({});
 });

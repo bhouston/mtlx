@@ -79,6 +79,7 @@ function ViewerPage() {
           preview={
             <MaterialViewer
               source={source}
+              alt={search.alt}
               settings={viewerSettings(search)}
               onSettingsChange={(patch) =>
                 void navigate({

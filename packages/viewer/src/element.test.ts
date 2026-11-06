@@ -12,6 +12,7 @@ const flush = async () => {
 let options: ViewerOptions;
 const setSettings = vi.fn();
 const dispose = vi.fn();
+const setAlt = vi.fn();
 beforeEach(() => {
   vi.stubGlobal(
     'fetch',
@@ -20,7 +21,12 @@ beforeEach(() => {
   setSettings.mockResolvedValue(undefined);
   mocks.createViewer.mockImplementation(async (value: ViewerOptions) => {
     options = value;
-    return { scene: { materialNames: ['Example'], activeMaterial: 'Example', animated: false }, setSettings, dispose };
+    return {
+      scene: { materialNames: ['Example'], activeMaterial: 'Example', animated: false },
+      setSettings,
+      setAlt,
+      dispose,
+    };
   });
 });
 afterEach(() => {
@@ -178,7 +184,7 @@ it('shows automatically through setup, completes, and ignores stale progress aft
   await flush();
   options.onProgress?.({ totalProgress: 0.5, reason: 'material-load' });
   expect(root.querySelector<HTMLElement>('[part="default-progress-bar"]')!.style.transform).toBe('scaleX(0.7)');
-  finish({ scene: { materialNames: [], activeMaterial: '', animated: false }, setSettings, dispose });
+  finish({ scene: { materialNames: [], activeMaterial: '', animated: false }, setSettings, setAlt, dispose });
   await flush();
   expect(viewer.getAttribute('aria-busy')).toBe('false');
   expect(root.querySelector('.complete')).not.toBeNull();
@@ -197,4 +203,41 @@ it('supports an empty replacement slot to disable the automatic bar', () => {
   viewer.append(replacement);
   const slot = viewer.shadowRoot!.querySelector<HTMLSlotElement>('slot[name="progress-bar"]')!;
   expect(slot.assignedElements()).toEqual([replacement]);
+});
+
+it('forwards accessible descriptions and updates them without loading or settings work', async () => {
+  const viewer = document.createElement('material-viewer');
+  viewer.setAttribute('src', '/material.mtlx');
+  viewer.setAttribute('alt', 'Brushed copper with fine horizontal grooves');
+  document.body.append(viewer);
+  await flush();
+  expect(options.alt).toBe('Brushed copper with fine horizontal grooves');
+  expect(setAlt).toHaveBeenLastCalledWith('Brushed copper with fine horizontal grooves');
+  const downloads = vi.mocked(fetch).mock.calls.length;
+  viewer.setAttribute('alt', 'Polished copper');
+  expect(setAlt).toHaveBeenLastCalledWith('Polished copper');
+  viewer.removeAttribute('alt');
+  expect(setAlt).toHaveBeenLastCalledWith(undefined);
+  expect(mocks.createViewer).toHaveBeenCalledOnce();
+  expect(vi.mocked(fetch).mock.calls).toHaveLength(downloads);
+  expect(setSettings).not.toHaveBeenCalled();
+});
+
+it('applies the latest description when alt changes during renderer initialization', async () => {
+  let finish!: (value: unknown) => void;
+  mocks.createViewer.mockImplementationOnce((value: ViewerOptions) => {
+    options = value;
+    return new Promise((resolve) => {
+      finish = resolve;
+    });
+  });
+  const viewer = mount();
+  await flush();
+  viewer.setAttribute('alt', 'Updated while loading');
+  finish({ scene: { materialNames: [], activeMaterial: '', animated: false }, setSettings, setAlt, dispose });
+  await flush();
+  expect(setAlt).toHaveBeenLastCalledWith('Updated while loading');
+  expect(mocks.createViewer).toHaveBeenCalledOnce();
+  expect(dispose).not.toHaveBeenCalled();
+  expect(setSettings).not.toHaveBeenCalled();
 });
