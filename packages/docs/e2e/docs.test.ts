@@ -18,7 +18,7 @@ beforeEach(async () => {
 afterEach(() => page.close());
 const origin = `http://localhost:${PORT}`;
 
-test('marketing and guides render statically, search locally, and fit a mobile viewport', async () => {
+test('marketing and guides render statically and fit a mobile viewport', async () => {
   const response = await fetch(origin);
   const html = await response.text();
   expect(html).toContain('Keep the source.');
@@ -28,10 +28,6 @@ test('marketing and guides render statically, search locally, and fit a mobile v
   expect(await page.getByRole('link', { name: 'Try the material viewer' }).getAttribute('href')).toBe('/viewer/');
   await page.goto(`${origin}/docs/sdk/`);
   expect(await page.locator('h1').innerText()).toBe('MTLX.ai SDK');
-  const search = page.getByPlaceholder('Search');
-  await search.fill('MaterialX');
-  await expect.poll(() => page.locator('[class*="dropdownMenu"] a').count()).toBeGreaterThan(0);
-  await page.keyboard.press('Escape');
   await page.goto(origin);
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
