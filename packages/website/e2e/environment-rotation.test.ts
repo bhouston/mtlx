@@ -39,7 +39,7 @@ test('rotates studio highlights without downloads or replacing the canvas and re
     await expect
       .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
       .toBe('ready');
-    const canvas = (await page.locator('canvas').elementHandle());
+    const canvas = await page.locator('canvas').elementHandle();
     const before = await canvas.screenshot();
     await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
     const rotation = page.getByRole('slider', { name: 'Environment rotation', exact: true });
