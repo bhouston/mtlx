@@ -71,7 +71,13 @@ const PANEL_STYLE = `
     background: rgba(20, 20, 24, 0.85); color: #fff; border-radius: 8px; padding: 10px 12px;
     font: 12px system-ui, sans-serif; display: none; flex-direction: column; gap: 8px;
   }
-  .panel.open { display: flex; }
+  .panel {
+    box-sizing: border-box; width: 488px; max-width: calc(100% - 16px);
+    max-height: calc(100% - 56px); overflow-y: auto; padding-top: 30px;
+  }
+  .panel.open { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+  .panel .column { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .panel label, .panel select, .panel input { min-width: 0; }
   .panel label { display: flex; flex-direction: column; gap: 2px; }
   .panel label.row { flex-direction: row; align-items: center; justify-content: space-between; }
   .panel select, .panel input[type="range"] { width: 100%; }
@@ -84,16 +90,19 @@ const PANEL_STYLE = `
 
 const PANEL_HTML = `
   <button type="button" class="close" aria-label="Close viewer settings">✕</button>
-  <label>Geometry<select id="geometry"></select></label>
-  <label>Environment<select id="ibl"></select></label>
-  <label>Material<select id="material"></select></label>
-  <label>Tone mapping<select id="tone-mapping"></select></label>
-  <label class="row"><span>Rotate</span><input id="rotate" type="checkbox" /></label>
-  <label class="row"><span>Background</span><input id="background" type="checkbox" /></label>
-  <label class="row"><span>Bloom</span><input id="bloom" type="checkbox" /></label>
-  <label class="row"><span>Ambient occlusion</span><input id="ao" type="checkbox" /></label>
-  <label>Exposure<input id="exposure" type="range" min="-2" max="2" step="0.1" /></label>
-  <label>Intensity<input id="intensity" type="range" min="0" max="2" step="0.1" /></label>
+  <div class="column">
+    <label>Geometry<select id="geometry"></select></label>
+    <label>Environment<select id="ibl"></select></label>
+    <label>Material<select id="material"></select></label>
+    <label>Tone mapping<select id="tone-mapping"></select></label>
+  </div>
+  <div class="column">
+    <label class="row"><span>Rotate</span><input id="rotate" type="checkbox" /></label>
+    <label class="row"><span>Background</span><input id="background" type="checkbox" /></label>
+    <label class="row"><span>Bloom</span><input id="bloom" type="checkbox" /></label>
+    <label class="row"><span>Ambient occlusion</span><input id="ao" type="checkbox" /></label>
+    <label>Exposure<input id="exposure" type="range" min="-2" max="2" step="0.1" /></label>
+  </div>
 `;
 
 export class MaterialViewerElement extends HTMLElement {
@@ -224,7 +233,6 @@ export class MaterialViewerElement extends HTMLElement {
     bind('bloom', 'bloom', (el) => (el.checked ? null : 'false'));
     bind('ao', 'ao', (el) => (el.checked ? null : 'false'));
     bind('exposure', 'exposure', (el) => el.value);
-    bind('intensity', 'intensity', (el) => el.value);
   }
 
   #playing = () => this.getAttribute('animation') !== 'pause';
@@ -273,7 +281,6 @@ export class MaterialViewerElement extends HTMLElement {
     set('bloom', settings.bloom);
     set('ao', settings.ao);
     set('exposure', String(settings.exposure));
-    set('intensity', String(settings.intensity));
   }
 
   #readSettings(): ViewerSettings {
