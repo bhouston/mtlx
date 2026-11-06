@@ -18,6 +18,8 @@ export interface MaterialSource {
 
 export interface MaterialViewerProps {
   source: MaterialSource | null;
+  /** Override the accessible description; defaults to the current material file name. */
+  alt?: string;
   /**
    * Files the document references by archive-relative path, served to the loader as blob: URLs
    * that stay stable while this array does, so an edited document reuses its decoded textures.
@@ -65,6 +67,7 @@ function resolveResource(urls: Map<string, string>, url: string): string | undef
 // resolves textures embedded in the archive itself, so this component needs no zip handling.
 export function MaterialViewer({
   source,
+  alt,
   resources,
   loadProgress,
   onError,
@@ -77,6 +80,7 @@ export function MaterialViewer({
 }: MaterialViewerProps) {
   const [localSettings, setLocalSettings] = useState<ViewerSettings>(DEFAULT_VIEWER_SETTINGS);
   const currentSettings = settings ?? localSettings;
+  const description = alt?.trim() || (source ? `Material preview of ${source.name}` : undefined);
   const updateSettings = (patch: Partial<ViewerSettings>) => {
     if (onSettingsChange) onSettingsChange(patch);
     else setLocalSettings((current) => ({ ...current, ...patch }));
@@ -107,9 +111,25 @@ export function MaterialViewer({
   // Identifies the viewer being built or shown, so callbacks from a superseded build never show through.
   const owner = useRef<object | null>(null);
   // Callbacks and the initial settings are read from a ref so a new source never rebuilds the viewer.
-  const callbacks = useRef({ onError, onLog, onStatus, onCameraChange, settings: currentSettings, animationMode });
+  const callbacks = useRef({
+    onError,
+    onLog,
+    onStatus,
+    onCameraChange,
+    description,
+    settings: currentSettings,
+    animationMode,
+  });
   useEffect(() => {
-    callbacks.current = { onError, onLog, onStatus, onCameraChange, settings: currentSettings, animationMode };
+    callbacks.current = {
+      onError,
+      onLog,
+      onStatus,
+      onCameraChange,
+      description,
+      settings: currentSettings,
+      animationMode,
+    };
   });
   useEffect(
     () => () => {
@@ -186,6 +206,7 @@ export function MaterialViewer({
         container,
         data: source.data,
         fileName: source.name,
+        alt: callbacks.current.description,
         shaderBall,
         settings: callbacks.current.settings,
         playing: callbacks.current.animationMode !== 'pause',
@@ -231,6 +252,10 @@ export function MaterialViewer({
       abort.abort();
     };
   }, [source]);
+
+  useEffect(() => {
+    viewer?.setAlt(description);
+  }, [viewer, description]);
 
   const {
     ibl,
@@ -279,6 +304,10 @@ export function MaterialViewer({
     cameraTarget,
     fieldOfView,
   ]);
+
+  useEffect(() => {
+    if (viewer && previewState === 'ready') callbacks.current.onCameraChange?.(viewer.getCameraSettings());
+  }, [source, viewer, previewState]);
 
   const loading = !!source && previewState !== 'ready' && previewState !== 'error';
   const activeProgress =

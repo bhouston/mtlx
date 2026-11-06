@@ -45,6 +45,7 @@ function registerElement(): Promise<unknown> {
 }
 
 const ATTRIBUTES: Array<[string, string]> = [
+  ['alt', 'Accessible description of the material; updates the focusable canvas without reloading.'],
   ['src', 'Required. The .mtlx or .mtlx.zip file to preview.'],
   ['model', 'A custom glTF/GLB URL to preview the material on, instead of the built-in shaderball.'],
   ['ibl', '"studio" (default), "bridge", or a URL to a custom .hdr/.exr/.png/.jpg environment.'],

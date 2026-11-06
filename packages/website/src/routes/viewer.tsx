@@ -33,7 +33,7 @@ function ViewerPage() {
   const navigate = Route.useNavigate();
   const { load, clear, source, fileMeta, analysis, fileError, loadProgress, logLines, appendLog } = useMaterialLoad();
   const localFile = useRef(false);
-  const currentCamera = useRef<Required<CameraSettings> | undefined>(undefined);
+  const currentCamera = useRef<{ source: typeof source; settings: Required<CameraSettings> } | undefined>(undefined);
   const [viewerError, setViewerError] = useState<string | null>(null);
   const [preview, setPreview] = useState<PreviewReport>({ state: 'idle', resources: 'unchecked', failedResources: [] });
 
@@ -70,7 +70,11 @@ function ViewerPage() {
         </p>
       </header>
       <ViewerToolbar
-        getCameraSettings={() => currentCamera.current}
+        getCameraSettings={() =>
+          preview.state === 'ready' && source && currentCamera.current?.source === source
+            ? currentCamera.current.settings
+            : undefined
+        }
         search={search}
         onLoadFile={loadFromFile}
         onLoadUrl={loadFromUrl}
@@ -87,8 +91,9 @@ function ViewerPage() {
             <MaterialViewer
               source={source}
               onCameraChange={(framing) => {
-                currentCamera.current = framing;
+                currentCamera.current = { source, settings: framing };
               }}
+              alt={search.alt}
               settings={viewerSettings(search)}
               onSettingsChange={(patch) =>
                 void navigate({

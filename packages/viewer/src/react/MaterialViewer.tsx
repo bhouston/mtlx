@@ -4,6 +4,8 @@ import type { MaterialViewerProgress } from '../element.js';
 
 export interface MaterialViewerProps {
   src?: string;
+  /** Accessible description announced for the focusable material preview. */
+  alt?: string;
   model?: string;
   ibl?: string;
   geometry?: string;

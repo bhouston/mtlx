@@ -18,6 +18,7 @@ describe('shared viewer and embed search state', () => {
       cameraOrbit: '35deg 65deg 2.4m',
       cameraTarget: '0.1m 0.2m -0.1m',
       fieldOfView: 35,
+      alt: 'Brushed copper with horizontal grain',
     };
     for (const route of ['viewer', 'embed'] as const) {
       const url = new URL(viewerShareUrl('https://mtlx.test', route, state));
@@ -49,4 +50,9 @@ describe('shared viewer and embed search state', () => {
       rotate: false,
     });
   });
+});
+
+it('validates accessible descriptions in iframe and shared links', () => {
+  expect(viewerSearch({ alt: '  Copper & brass  ' })).toEqual({ alt: 'Copper & brass' });
+  for (const alt of ['', ' ', null, true, 123, {}]) expect(viewerSearch({ alt })).toEqual({});
 });

@@ -58,3 +58,17 @@ it('forwards a progress-bar replacement child for disabling or customization', a
   );
   expect(host.querySelector('material-viewer > span')!.getAttribute('slot')).toBe('progress-bar');
 });
+
+it('updates the alt attribute while preserving the element and material source', async () => {
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  roots.push(root);
+  await act(async () => root.render(createElement(MaterialViewer, { src: '/copper.mtlx', alt: 'Brushed copper' })));
+  const element = host.querySelector('material-viewer')!;
+  expect(element.getAttribute('alt')).toBe('Brushed copper');
+  await act(async () => root.render(createElement(MaterialViewer, { src: '/copper.mtlx', alt: 'Polished copper' })));
+  expect(host.querySelector('material-viewer')).toBe(element);
+  expect(element.getAttribute('alt')).toBe('Polished copper');
+  expect(element.getAttribute('src')).toBe('/copper.mtlx');
+});

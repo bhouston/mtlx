@@ -12,6 +12,7 @@ import { ERROR_OVERLAY_STYLES } from './errorOverlayStyles.js';
  *
  * Attributes:
  * - `errors`: `silent` hides the error overlay; omitted shows errors. Error events always fire.
+ * - `alt`: accessible material description; updates the focusable canvas without reloading.
  * - `src` (required): the `.mtlx` / `.mtlx.zip` file to preview.
  * - `model`: a custom glTF/GLB URL to preview the material on, in place of the built-in shaderball.
  * - `ibl`: `studio` (default) or `bridge`, or a URL to a custom `.hdr`/`.exr`/`.png`/`.jpg` environment.
@@ -116,6 +117,7 @@ export class MaterialViewerElement extends HTMLElement {
   static get observedAttributes() {
     return [
       'src',
+      'alt',
       'model',
       'ibl',
       'geometry',
@@ -210,6 +212,10 @@ export class MaterialViewerElement extends HTMLElement {
     if (!this.isConnected) return;
     if (name === 'settings-panel') {
       this.#syncPanelState();
+      return;
+    }
+    if (name === 'alt') {
+      this.#viewer?.setAlt(this.getAttribute('alt') ?? undefined);
       return;
     }
     if (name === 'animation') {
@@ -404,6 +410,7 @@ export class MaterialViewerElement extends HTMLElement {
         container: this.#viewportEl,
         data,
         fileName: src,
+        alt: this.getAttribute('alt') ?? undefined,
         shaderBall,
         settings: this.#readSettings(),
         playing: this.#playing(),
@@ -434,6 +441,8 @@ export class MaterialViewerElement extends HTMLElement {
         return;
       }
       this.#viewer = viewer;
+      // The description may have changed while renderer/resources were being initialized.
+      viewer.setAlt(this.getAttribute('alt') ?? undefined);
       this.#buildOptions();
       this.#syncControls();
       this.#syncPlayButton();

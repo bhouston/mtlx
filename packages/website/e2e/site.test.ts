@@ -52,6 +52,10 @@ test('viewer renders a dropped .mtlx through the first completed frame and valid
   await page.setInputFiles('input[type=file]', materialPath);
   // Wait for a completed render, including shader compilation in the WebGL2 fallback.
   await expectReady();
+  expect(await page.locator('canvas').getAttribute('aria-label')).toBe('Material preview of copper.mtlx');
+  expect(await page.locator('canvas').getAttribute('aria-description')).toContain('Arrow keys pan');
+  await page.locator('canvas').focus();
+  expect(await page.locator('canvas').evaluate((canvas) => document.activeElement === canvas)).toBe(true);
   if (process.env.MTLX_SCREENSHOT) await page.screenshot({ path: process.env.MTLX_SCREENSHOT, fullPage: true });
 });
 
@@ -412,11 +416,13 @@ test('shared embed restores rendering state and controls update without rebuildi
     rotate: 'false',
     geometry: 'sphere',
     materialName: 'Copper',
+    alt: 'Copper and wood material comparison',
   });
   await page.goto(`http://localhost:${PORT}/embed?${params}`);
   await expect
     .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
     .toBe('ready');
+  expect(await page.locator('canvas').getAttribute('aria-label')).toBe('Copper and wood material comparison');
   expect(await page.getByLabel('Rotate', { exact: true }).isVisible()).toBe(false);
   await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
   expect(await page.getByLabel('IBL environment').inputValue()).toBe('studio');
