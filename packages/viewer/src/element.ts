@@ -1,3 +1,5 @@
+import { readMaterialResponse, type MaterialProgress } from './progress.js';
+export type { MaterialProgress } from './progress.js';
 import { ErrorOverlay } from './errorOverlay.js';
 import { ERROR_OVERLAY_STYLES } from './errorOverlayStyles.js';
 /**
@@ -46,8 +48,8 @@ const BUILTIN_IBLS: Record<string, URL> = {
 const RELOAD_ATTRIBUTES = new Set(['src', 'model']);
 const PANEL_STATES = new Set(['open', 'closed']);
 
-async function fetchBytes(url: string | URL): Promise<ArrayBuffer> {
-  const response = await fetch(url);
+async function fetchBytes(url: string | URL, signal?: AbortSignal): Promise<ArrayBuffer> {
+  const response = await fetch(url, { signal });
   if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
   return response.arrayBuffer();
 }
@@ -117,6 +119,7 @@ export class MaterialViewerElement extends HTMLElement {
 
   #viewer: Viewer | null = null;
   #generation = 0;
+  #abort: AbortController | null = null;
   readonly #errors: ErrorOverlay;
   readonly #viewportEl: HTMLDivElement;
   readonly #toggleEl: HTMLButtonElement;
@@ -198,6 +201,7 @@ export class MaterialViewerElement extends HTMLElement {
     document.removeEventListener('pointerdown', this.#closePanel);
     document.removeEventListener('keydown', this.#closePanel);
     this.#generation++;
+    this.#abort?.abort();
     this.#viewer?.dispose();
     this.#viewer = null;
   }
@@ -300,15 +304,27 @@ export class MaterialViewerElement extends HTMLElement {
   async #load(): Promise<void> {
     const src = this.getAttribute('src');
     const modelUrl = this.getAttribute('model');
+    this.#abort?.abort();
+    const abort = new AbortController();
+    this.#abort = abort;
     this.#viewer?.dispose();
     this.#viewer = null;
     this.#errors.clear();
     const generation = ++this.#generation;
     if (!src) return;
     try {
-      const [data, shaderBall] = await Promise.all([fetchBytes(src), fetchBytes(SHADERBALL_URL)]);
+      const material = async () => {
+        const response = await fetch(src, { signal: abort.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status} loading ${src}`);
+        return readMaterialResponse(response, abort.signal, (detail: MaterialProgress) => {
+          if (generation === this.#generation && this.isConnected)
+            this.dispatchEvent(new CustomEvent('progress', { detail }));
+        });
+      };
+      const [data, shaderBall] = await Promise.all([material(), fetchBytes(SHADERBALL_URL, abort.signal)]);
       if (generation !== this.#generation) return;
       const viewer = await createViewer({
+        signal: abort.signal,
         container: this.#viewportEl,
         data,
         fileName: src,
@@ -317,11 +333,11 @@ export class MaterialViewerElement extends HTMLElement {
         playing: this.#playing(),
         loadEnvironment: async (kind) => {
           const asset = BUILTIN_IBLS[kind];
-          return parseEnvironmentFile(await fetchBytes(asset ?? kind), asset ? asset.pathname : kind);
+          return parseEnvironmentFile(await fetchBytes(asset ?? kind, abort.signal), asset ? asset.pathname : kind);
         },
         // Matches the geometry attribute's 'custom' fallback above; a later `model` change goes
         // through a full #load() instead (see RELOAD_ATTRIBUTES), so this closure need not react to it.
-        loadGeometry: modelUrl ? async () => ({ data: await fetchBytes(modelUrl) }) : undefined,
+        loadGeometry: modelUrl ? async () => ({ data: await fetchBytes(modelUrl, abort.signal) }) : undefined,
         onError: (message) => {
           if (generation === this.#generation && this.isConnected) this.#error(message);
         },
@@ -341,6 +357,7 @@ export class MaterialViewerElement extends HTMLElement {
     }
   }
   #error(error: unknown, title = 'Viewer error'): void {
+    this.#abort?.abort();
     this.#errors.show(title, error, this.getAttribute('src'));
     const detail = error instanceof Error ? error.message : String(error);
     this.dispatchEvent(new CustomEvent('error', { detail }));
