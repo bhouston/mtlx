@@ -130,6 +130,18 @@ test('material-viewer guide promotes a working standalone jsDelivr embed', async
     'Copper material under neutral studio lighting',
   );
 
+  // The workspace element must work with src alone and allow ordinary host CSS overrides.
+  const element = page.locator('material-viewer');
+  await element.evaluate((host) => {
+    for (const name of host.getAttributeNames()) if (name !== 'src') host.removeAttribute(name);
+  });
+  expect(await element.evaluate((host) => host.getBoundingClientRect().height)).toBe(440);
+  const hostStyles = await page.addStyleTag({ content: 'material-viewer { width: 320px; height: 300px; }' });
+  expect(await element.evaluate((host) => host.getBoundingClientRect().height)).toBe(300);
+  expect(await element.evaluate((host) => host.getBoundingClientRect().width)).toBe(320);
+  await hostStyles.evaluate((style) => style.parentNode?.removeChild(style));
+  expect(await element.evaluate((host) => host.getBoundingClientRect().height)).toBe(440);
+
   // Exercise exactly the copyable HTML with the published CDN bundle, outside the documentation app.
   await page.route('**/__material-viewer-example/', (route) =>
     route.fulfill({

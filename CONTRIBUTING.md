@@ -51,7 +51,8 @@ gh workflow run release.yml --ref main -f dry_run=true  # preview only, publishe
 The Release workflow refuses any ref other than `main`, re-runs CI on the dispatched commit, and then uses semantic-release to compute the next version from the Conventional Commits since the last release tag, generate release notes, create the tag and GitHub Release, and publish:
 
 - npm packages, through npm trusted publishing (GitHub OIDC, no `NPM_TOKEN`);
-- VS Code extensions, where the repository has one, to the VS Code Marketplace and Open VSX.
+- VS Code extensions, where the repository has one, to the VS Code Marketplace and Open VSX;
+- the documentation site, built from the release tag and deployed to GitHub Pages.
 
 When there are no release-worthy commits, the run is a no-op. Never bump versions, edit changelogs, or push release tags by hand.
 
