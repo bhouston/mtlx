@@ -1,0 +1,5 @@
+batterySeparatorWhite
+
+New white microporous polymer separator; fine matte texture and slightly translucent diffuse scattering.
+
+Use for rendering thin separator sheets between electrodes in battery-cell cutaways.

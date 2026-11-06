@@ -1,0 +1,5 @@
+thermalInterfacePadWhite
+
+white thermally conductive filled silicone pad material; soft matte fine texture and diffuse opaque appearance.
+
+Use for rendering visible thermal pads between electronic modules and cooling surfaces.

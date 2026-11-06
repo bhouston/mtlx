@@ -1,0 +1,5 @@
+rubberTrackCompoundBlack
+
+New reinforced track rubber compound; dark charcoal elastic surface with fine molded texture and subdued sheen, no abrasion.
+
+Use for rendering new rubber track surfaces, with track lugs, pads, and reinforcement geometry supplied by the asset.

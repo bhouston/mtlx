@@ -1,0 +1,5 @@
+carbonLoadedPolymerBlack
+
+Black carbon-loaded conductive polymer; opaque fine-grained surface with low satin dielectric appearance.
+
+Use for rendering dark conductive-polymer housings, contacts, and internal equipment parts in technical views.

@@ -1,0 +1,5 @@
+agriculturalTireRubberBlack
+
+Factory-new heavy-duty agricultural tire compound; dark charcoal opaque rubber, fine molding skin, restrained satin sheen, no field dirt.
+
+Use for rendering new agricultural tire surfaces, with lug and tread geometry modeled separately.

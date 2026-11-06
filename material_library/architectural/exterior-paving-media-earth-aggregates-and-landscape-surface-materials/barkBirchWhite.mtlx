@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materialx version="1.39" colorspace="lin_rec709" doc="White birch bark surface with dark fine lenticel marks, pale papery fiber, and matte reflection; no peeling geometry included. Recipe: birch. mineral skin grains 1–2 mm with 8–120 micrometre relief, no stone distribution; organic longitudinal striae 3.8 mm/0.12 mm; tissue vein color spacing 3–15 mm. Sparse independently gated lenticels measure 7.5–23 mm horizontally by 0.3–0.92 mm vertically, with 4 micrometre depression; the white papery microfiber remains continuous. All colors are art-directed scene-linear Rec.709, not calibrated manufacturer measurements. UV 0–1 = 1 metre; height in metres. Relief is filtered surface appearance, not silhouette geometry.">
+  <nodegraph name="NG_barkBirchWhite">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="fibers_a_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="300, 12" />
+    </multiply>
+    <rotate2d name="fibers_a_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="fibers_a_scale" />
+      <input name="amount" type="float" value="11" />
+    </rotate2d>
+    <add name="fibers_a_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="fibers_a_rotate" />
+      <input name="in2" type="vector2" value="3.71, 8.29" />
+    </add>
+    <fractal2d name="fibers_a" type="float">
+      <input name="texcoord" type="vector2" nodename="fibers_a_offset" />
+      <input name="amplitude" type="float" value="3e-05" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <multiply name="fibers_b_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="12, 300" />
+    </multiply>
+    <rotate2d name="fibers_b_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="fibers_b_scale" />
+      <input name="amount" type="float" value="-31" />
+    </rotate2d>
+    <add name="fibers_b_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="fibers_b_rotate" />
+      <input name="in2" type="vector2" value="19.4, 31.7" />
+    </add>
+    <fractal2d name="fibers_b" type="float">
+      <input name="texcoord" type="vector2" nodename="fibers_b_offset" />
+      <input name="amplitude" type="float" value="1.65e-05" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <add name="fibers" type="float">
+      <input name="in1" type="float" nodename="fibers_a" />
+      <input name="in2" type="float" nodename="fibers_b" />
+    </add>
+    <multiply name="lenticel_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="20, 500" />
+    </multiply>
+    <add name="lenticel_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="lenticel_scale" />
+      <input name="in2" type="vector2" value="19.4, 31.7" />
+    </add>
+    <worleynoise2d name="lenticel_distance" type="float">
+      <input name="texcoord" type="vector2" nodename="lenticel_offset" />
+      <input name="jitter" type="float" value="0.5" />
+    </worleynoise2d>
+    <worleynoise2d name="lenticel_identity" type="float">
+      <input name="texcoord" type="vector2" nodename="lenticel_offset" />
+      <input name="jitter" type="float" value="0.5" />
+      <input name="style" type="integer" value="1" />
+    </worleynoise2d>
+    <multiply name="lenticel_radius_seed" type="float">
+      <input name="in1" type="float" nodename="lenticel_identity" />
+      <input name="in2" type="float" value="13.73" />
+    </multiply>
+    <fract name="lenticel_radius_random" type="float">
+      <input name="in" type="float" nodename="lenticel_radius_seed" />
+    </fract>
+    <multiply name="lenticel_radius_gain" type="float">
+      <input name="in1" type="float" nodename="lenticel_radius_random" />
+      <input name="in2" type="float" value="0.155" />
+    </multiply>
+    <add name="lenticel_radius" type="float">
+      <input name="in1" type="float" nodename="lenticel_radius_gain" />
+      <input name="in2" type="float" value="0.075" />
+    </add>
+    <divide name="lenticel_normalized_distance" type="float">
+      <input name="in1" type="float" nodename="lenticel_distance" />
+      <input name="in2" type="float" nodename="lenticel_radius" />
+    </divide>
+    <smoothstep name="lenticel_edge" type="float">
+      <input name="in" type="float" nodename="lenticel_normalized_distance" />
+      <input name="low" type="float" value="0.55" />
+      <input name="high" type="float" value="1" />
+    </smoothstep>
+    <subtract name="lenticel_disk" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="lenticel_edge" />
+    </subtract>
+    <smoothstep name="lenticel_presence" type="float">
+      <input name="in" type="float" nodename="lenticel_identity" />
+      <input name="low" type="float" value="0.72" />
+      <input name="high" type="float" value="0.82" />
+    </smoothstep>
+    <multiply name="lenticels" type="float">
+      <input name="in1" type="float" nodename="lenticel_disk" />
+      <input name="in2" type="float" nodename="lenticel_presence" />
+    </multiply>
+    <multiply name="lenticel_depth" type="float">
+      <input name="in1" type="float" nodename="lenticels" />
+      <input name="in2" type="float" value="-4e-06" />
+    </multiply>
+    <add name="papery_lenticel_height" type="float">
+      <input name="in1" type="float" nodename="fibers" />
+      <input name="in2" type="float" nodename="lenticel_depth" />
+    </add>
+    <mix name="base_color" type="color3">
+      <input name="bg" type="color3" value="0.8, 0.8, 0.78" />
+      <input name="fg" type="color3" value="0.025, 0.02, 0.016" />
+      <input name="mix" type="float" nodename="lenticels" />
+    </mix>
+    <mix name="roughness" type="float">
+      <input name="bg" type="float" value="0.85" />
+      <input name="fg" type="float" value="0.91" />
+      <input name="mix" type="float" nodename="lenticels" />
+    </mix>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="papery_lenticel_height" />
+      <input name="in2" type="float" value="0" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="base" type="float">
+      <input name="value" type="float" value="1" />
+    </constant>
+    <constant name="specular" type="float">
+      <input name="value" type="float" value="0.5" />
+    </constant>
+    <constant name="specular_IOR" type="float">
+      <input name="value" type="float" value="1.5" />
+    </constant>
+    <constant name="diffuse_roughness" type="float">
+      <input name="value" type="float" value="0.25" />
+    </constant>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+    <output name="out_base" type="float" nodename="base" />
+    <output name="out_specular" type="float" nodename="specular" />
+    <output name="out_specular_IOR" type="float" nodename="specular_IOR" />
+    <output name="out_diffuse_roughness" type="float" nodename="diffuse_roughness" />
+  </nodegraph>
+  <standard_surface name="SR_barkBirchWhite" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_barkBirchWhite" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_barkBirchWhite" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_barkBirchWhite" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_barkBirchWhite" output="out_normal" />
+    <input name="base" type="float" nodegraph="NG_barkBirchWhite" output="out_base" />
+    <input name="specular" type="float" nodegraph="NG_barkBirchWhite" output="out_specular" />
+    <input name="specular_IOR" type="float" nodegraph="NG_barkBirchWhite" output="out_specular_IOR" />
+    <input name="diffuse_roughness" type="float" nodegraph="NG_barkBirchWhite" output="out_diffuse_roughness" />
+  </standard_surface>
+  <surfacematerial name="M_barkBirchWhite" type="material" doc="White birch bark surface with dark fine lenticel marks, pale papery fiber, and matte reflection; no peeling geometry included.">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_barkBirchWhite" />
+  </surfacematerial>
+</materialx>

@@ -1,0 +1,5 @@
+polyesterLabelStockWhite
+
+New opaque white polyester label film; fine smooth satin polymer surface.
+
+Use for rendering polyester identification and warning-label substrates beneath separately modeled print.

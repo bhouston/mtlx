@@ -1,0 +1,5 @@
+opticalSapphireClear
+
+Colorless sapphire optical material; high-clarity dielectric transmission, smooth strong reflections, and no inherent emission.
+
+Use for rendering clear sensor windows and exposed optical protective elements.

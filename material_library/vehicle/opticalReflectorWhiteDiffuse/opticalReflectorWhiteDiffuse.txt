@@ -1,0 +1,5 @@
+opticalReflectorWhiteDiffuse
+
+Opaque bright white optical polymer coating; high diffuse reflectance, fine matte surface, non-emissive.
+
+Use for rendering nonemissive diffuse reflector cavities and white optical backing surfaces around separate light sources.

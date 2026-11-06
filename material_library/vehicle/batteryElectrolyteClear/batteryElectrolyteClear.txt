@@ -1,0 +1,5 @@
+batteryElectrolyteClear
+
+Clean colorless battery-electrolyte appearance; transparent dielectric liquid with smooth reflections, no bubbles or corrosion residue.
+
+Use for rendering clear liquid volumes inside battery-cell cutaways.

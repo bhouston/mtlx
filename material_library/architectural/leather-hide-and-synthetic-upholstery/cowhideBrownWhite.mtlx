@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materialx version="1.39" colorspace="lin_rec709" doc="Short natural hair surface with irregular brown and white pigment mottling and a soft directional sheen; no hide outline included. Recipe: fiber. hide grain 3.5–4.3 mm, height 45–65 micrometres; nap 2–30 mm filtered bundles. All colors are art-directed scene-linear Rec.709, not calibrated manufacturer measurements. UV 0–1 = 1 metre; height in metres. Relief is filtered surface appearance, not silhouette geometry.">
+  <nodegraph name="NG_cowhideBrownWhite">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="fibers_a_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="12, 420" />
+    </multiply>
+    <rotate2d name="fibers_a_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="fibers_a_scale" />
+      <input name="amount" type="float" value="11" />
+    </rotate2d>
+    <add name="fibers_a_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="fibers_a_rotate" />
+      <input name="in2" type="vector2" value="3.71, 8.29" />
+    </add>
+    <fractal2d name="fibers_a" type="float">
+      <input name="texcoord" type="vector2" nodename="fibers_a_offset" />
+      <input name="amplitude" type="float" value="2.5e-05" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <multiply name="fibers_b_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="420, 12" />
+    </multiply>
+    <rotate2d name="fibers_b_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="fibers_b_scale" />
+      <input name="amount" type="float" value="-31" />
+    </rotate2d>
+    <add name="fibers_b_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="fibers_b_rotate" />
+      <input name="in2" type="vector2" value="19.4, 31.7" />
+    </add>
+    <fractal2d name="fibers_b" type="float">
+      <input name="texcoord" type="vector2" nodename="fibers_b_offset" />
+      <input name="amplitude" type="float" value="1.375e-05" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <add name="fibers" type="float">
+      <input name="in1" type="float" nodename="fibers_a" />
+      <input name="in2" type="float" nodename="fibers_b" />
+    </add>
+    <multiply name="hide_patches_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="5, 7" />
+    </multiply>
+    <add name="hide_patches_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="hide_patches_scale" />
+      <input name="in2" type="vector2" value="3.71, 8.29" />
+    </add>
+    <fractal2d name="hide_patches" type="float">
+      <input name="texcoord" type="vector2" nodename="hide_patches_offset" />
+      <input name="amplitude" type="float" value="1" />
+      <input name="octaves" type="integer" value="3" />
+    </fractal2d>
+    <smoothstep name="pigment_patches" type="float">
+      <input name="in" type="float" nodename="hide_patches" />
+      <input name="low" type="float" value="-0.08" />
+      <input name="high" type="float" value="0.12" />
+    </smoothstep>
+    <mix name="base_color" type="color3">
+      <input name="bg" type="color3" value="0.74, 0.7, 0.62" />
+      <input name="fg" type="color3" value="0.105, 0.035, 0.012" />
+      <input name="mix" type="float" nodename="pigment_patches" />
+    </mix>
+    <mix name="roughness" type="float">
+      <input name="bg" type="float" value="0.64" />
+      <input name="fg" type="float" value="0.7" />
+      <input name="mix" type="float" nodename="pigment_patches" />
+    </mix>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="fibers" />
+      <input name="in2" type="float" value="0" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="base" type="float">
+      <input name="value" type="float" value="1" />
+    </constant>
+    <constant name="specular" type="float">
+      <input name="value" type="float" value="0.18" />
+    </constant>
+    <constant name="specular_IOR" type="float">
+      <input name="value" type="float" value="1.5" />
+    </constant>
+    <constant name="diffuse_roughness" type="float">
+      <input name="value" type="float" value="0.25" />
+    </constant>
+    <constant name="sheen" type="float">
+      <input name="value" type="float" value="0.3" />
+    </constant>
+    <constant name="sheen_color" type="color3">
+      <input name="value" type="color3" value="0.95, 0.905, 0.805" />
+    </constant>
+    <constant name="sheen_roughness" type="float">
+      <input name="value" type="float" value="0.7" />
+    </constant>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+    <output name="out_base" type="float" nodename="base" />
+    <output name="out_specular" type="float" nodename="specular" />
+    <output name="out_specular_IOR" type="float" nodename="specular_IOR" />
+    <output name="out_diffuse_roughness" type="float" nodename="diffuse_roughness" />
+    <output name="out_sheen" type="float" nodename="sheen" />
+    <output name="out_sheen_color" type="color3" nodename="sheen_color" />
+    <output name="out_sheen_roughness" type="float" nodename="sheen_roughness" />
+  </nodegraph>
+  <standard_surface name="SR_cowhideBrownWhite" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_cowhideBrownWhite" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_cowhideBrownWhite" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_cowhideBrownWhite" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_cowhideBrownWhite" output="out_normal" />
+    <input name="base" type="float" nodegraph="NG_cowhideBrownWhite" output="out_base" />
+    <input name="specular" type="float" nodegraph="NG_cowhideBrownWhite" output="out_specular" />
+    <input name="specular_IOR" type="float" nodegraph="NG_cowhideBrownWhite" output="out_specular_IOR" />
+    <input name="diffuse_roughness" type="float" nodegraph="NG_cowhideBrownWhite" output="out_diffuse_roughness" />
+    <input name="sheen" type="float" nodegraph="NG_cowhideBrownWhite" output="out_sheen" />
+    <input name="sheen_color" type="color3" nodegraph="NG_cowhideBrownWhite" output="out_sheen_color" />
+    <input name="sheen_roughness" type="float" nodegraph="NG_cowhideBrownWhite" output="out_sheen_roughness" />
+  </standard_surface>
+  <surfacematerial name="M_cowhideBrownWhite" type="material" doc="Short natural hair surface with irregular brown and white pigment mottling and a soft directional sheen; no hide outline included.">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_cowhideBrownWhite" />
+  </surfacematerial>
+</materialx>

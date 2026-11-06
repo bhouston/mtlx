@@ -1,0 +1,5 @@
+fiberglassGelcoatSatinGray
+
+gray opaque gelcoat over fiber composite; fine satin dielectric surface.
+
+Use for rendering gelcoated composite bodywork, equipment housings, and commercial-vehicle interior panels.

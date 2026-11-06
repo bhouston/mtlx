@@ -1,0 +1,5 @@
+projectionCombinerCoating
+
+Transparent optical-combiner coating; selective angle-dependent reflection and clear transmission, without inherent emission.
+
+Use for rendering the transparent reflective coating on head-up display combiner glass.

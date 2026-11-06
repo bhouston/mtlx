@@ -1,0 +1,5 @@
+compressedFiberGasketBlue
+
+New blue compressed-fiber gasket material; fine random fiber texture and matte opaque finish.
+
+Use for rendering cut edges and exposed faces of compressed-fiber gaskets.

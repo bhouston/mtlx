@@ -1,0 +1,5 @@
+melamineFoamLightGray
+
+New light-gray melamine acoustic foam; extremely fine open-cell texture, low gloss, and soft diffuse response.
+
+Use for rendering acoustic foam pads and exposed sound-absorbing foam in interior cutaways.

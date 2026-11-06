@@ -1,0 +1,5 @@
+upholsteryPlainWeaveNavyBlue
+
+navy blue plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave.
+
+Use for rendering woven cloth seats, seat inserts, and matching door-panel upholstery.

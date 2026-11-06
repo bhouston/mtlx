@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- brown metallic automotive basecoat with fine reflective flakes beneath a smooth gloss clearcoat; directional flake response and view-dependent brightness, not a uniformly metallic outer surface. -->
+  <nodegraph name="NG_paintMetallicGlossBrown">
+    <!-- Real-world scale: texcoord 0 to 1 = one metre. All height values below are metres. Factory-new process texture only. -->
+    <texcoord name="uv" type="vector2"></texcoord>
+    <!-- Finish microstructure: coordinate frequencies 320, 320 per metre; relief amplitude 8e-06 m, correlated color and roughness. -->
+    <multiply name="finish_noise_coordinates" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="320, 320" /></multiply>
+    <fractal2d name="finish_noise" type="float"><input name="texcoord" type="vector2" nodename="finish_noise_coordinates" /><input name="octaves" type="integer" value="2" /><input name="amplitude" type="float" value="1" /></fractal2d>
+    <multiply name="finish_gain" type="float"><input name="in1" type="float" nodename="finish_noise" /><input name="in2" type="float" value="0.45" /></multiply>
+    <add name="finish_remap" type="float"><input name="in1" type="float" nodename="finish_gain" /><input name="in2" type="float" value="0.5" /></add>
+    <clamp name="finish_mask" type="float"><input name="in" type="float" nodename="finish_remap" /><input name="low" type="float" value="0" /><input name="high" type="float" value="1" /></clamp>
+    <multiply name="height" type="float"><input name="in1" type="float" nodename="finish_noise" /><input name="in2" type="float" value="8e-06" /></multiply>
+    <multiply name="pigment_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1800, 1800" /></multiply>
+    <worleynoise2d name="pigment_distance" type="float"><input name="texcoord" type="vector2" nodename="pigment_uv" /><input name="jitter" type="float" value="0.75" /></worleynoise2d>
+    <smoothstep name="pigment_edges" type="float"><input name="in" type="float" nodename="pigment_distance" /><input name="low" type="float" value="0.07" /><input name="high" type="float" value="0.16" /></smoothstep>
+    <subtract name="pigment_mask" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="pigment_edges" /></subtract>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.078, 0.0325, 0.01365" /><input name="fg" type="color3" value="0.162, 0.0675, 0.02835" /><input name="mix" type="float" nodename="pigment_mask" /></mix>
+    <mix name="roughness" type="float"><input name="bg" type="float" value="0.20500000000000002" /><input name="fg" type="float" value="0.255" /><input name="mix" type="float" nodename="pigment_mask" /></mix>
+    <mix name="metalness" type="float"><input name="bg" type="float" value="0.0" /><input name="fg" type="float" value="0.85" /><input name="mix" type="float" nodename="pigment_mask" /></mix>
+    <multiply name="roughness_finish_detail" type="float"><input name="in1" type="float" nodename="finish_mask" /><input name="in2" type="float" value="0.008" /></multiply>
+    <add name="roughness_correlated" type="float"><input name="in1" type="float" nodename="roughness" /><input name="in2" type="float" nodename="roughness_finish_detail" /></add>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000.0" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000.0" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16.0" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <!-- Independent pigment-normal microstructure beneath smooth coat: fine flake tilt at 0.56 mm pitch (coarse at 1.54 mm). Clearcoat retains the application normal. -->
+    <multiply name="flake_tilt_coordinates" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1800, 1800" /></multiply>
+    <fractal2d name="flake_tilt" type="float"><input name="texcoord" type="vector2" nodename="flake_tilt_coordinates" /><input name="octaves" type="integer" value="2" /><input name="amplitude" type="float" value="1.4e-05" /></fractal2d>
+    <add name="substrate_height" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" nodename="flake_tilt" /></add>
+    <multiply name="substrate_height_mm" type="float"><input name="in1" type="float" nodename="substrate_height" /><input name="in2" type="float" value="1000.0" /></multiply>
+    <heighttonormal name="flake_tangent" type="vector3"><input name="in" type="float" nodename="substrate_height_mm" /><input name="scale" type="float" value="16.0" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="flake_world" type="vector3"><input name="in" type="vector3" nodename="flake_tangent" /></normalmap>
+    <output name="coat_normal_out" type="vector3" nodename="n_world" />
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness_correlated" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="flake_world" />
+  </nodegraph>
+  <standard_surface name="SR_paintMetallicGlossBrown" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_paintMetallicGlossBrown" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_paintMetallicGlossBrown" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_paintMetallicGlossBrown" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_paintMetallicGlossBrown" output="normal_out" />
+    <input name="coat_normal" type="vector3" nodegraph="NG_paintMetallicGlossBrown" output="coat_normal_out" />
+    <input name="base" type="float" value="1.0" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0.0" />
+    <input name="coat" type="float" value="1.0" />
+    <input name="coat_roughness" type="float" value="0.085" />
+    <input name="coat_IOR" type="float" value="1.5" />
+    <input name="sheen" type="float" value="0.0" />
+    <input name="sheen_roughness" type="float" value="0.65" />
+  </standard_surface>
+  <surfacematerial name="M_paintMetallicGlossBrown" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_paintMetallicGlossBrown" /></surfacematerial>
+</materialx>

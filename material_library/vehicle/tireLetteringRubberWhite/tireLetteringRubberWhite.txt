@@ -1,0 +1,5 @@
+tireLetteringRubberWhite
+
+White pigmented vulcanized rubber; opaque neutral white with fine rubber microtexture and low sheen.
+
+Use for rendering raised or inset white rubber tire lettering whose shape is supplied by the asset.

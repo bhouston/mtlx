@@ -1,0 +1,5 @@
+emissiveAmbientRgb
+
+Color-variable diffuse luminous material; RGB-controlled emission with calibrated luminance and scattering, retaining a neutral translucent appearance when unpowered.
+
+Use for rendering powered ambient-light strips and illuminated trim with the chosen RGB color.

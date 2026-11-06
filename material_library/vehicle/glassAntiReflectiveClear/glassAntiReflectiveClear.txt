@@ -1,0 +1,5 @@
+glassAntiReflectiveClear
+
+Clear anti-reflective coated glazing; low front-surface reflection, high transmission, and faint residual coating tint at grazing angles.
+
+Use for rendering low-reflection instrument glazing, optical windows, and specialist vehicle glass covers.

@@ -1,0 +1,5 @@
+stainlessSteelBrushed
+
+Clean brushed stainless steel; directional linear grain, medium roughness, and anisotropic highlights.
+
+Use for rendering directionally brushed metal trim, sill plates, controls, and accessory housings.

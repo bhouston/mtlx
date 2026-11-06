@@ -1,0 +1,5 @@
+nylonMoldedDarkGray
+
+dark gray opaque molded nylon; fine satin microtexture with slight waxy dielectric sheen.
+
+Use for rendering molded connectors, clips, brackets, and mechanical polymer components.

@@ -1,0 +1,5 @@
+ceramicFilledPolymerGray
+
+New gray ceramic-filled engineering polymer; fine dense mineral-filled texture and matte-to-satin dielectric response.
+
+Use for rendering dense filled-polymer housings and internal technical parts in equipment views.

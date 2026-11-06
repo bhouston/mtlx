@@ -1,0 +1,5 @@
+circuitBoardSolderMaskBlack
+
+black cured solder-mask coating; thin smooth satin-to-gloss dielectric resin with mild translucent depth where appropriate.
+
+Use for rendering the colored protective surface of printed circuit boards over a board substrate.

@@ -1,0 +1,5 @@
+brakeFluidClear
+
+Fresh nearly colorless brake fluid; clear dielectric liquid with a faint warm tint and smooth reflections.
+
+Use for rendering fresh fluid volumes in brake reservoirs and hydraulic-brake cutaways.

@@ -1,0 +1,5 @@
+sinteredMetalFrictionBronze
+
+New sintered metallic friction material; bronze-gray granular metallic texture and moderate roughness.
+
+Use for rendering new metallic friction linings in clutch and transmission cutaways.

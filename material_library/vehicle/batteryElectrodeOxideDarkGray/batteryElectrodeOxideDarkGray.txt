@@ -1,0 +1,5 @@
+batteryElectrodeOxideDarkGray
+
+New dark-gray metal-oxide electrode coating; fine granular matte dielectric appearance.
+
+Use for rendering oxide-coated electrode sheets in battery-cell cutaways.

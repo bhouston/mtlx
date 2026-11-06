@@ -1,0 +1,5 @@
+clearcoatUvCuredMatte
+
+Colorless UV-cured clear resin; fine matte surface and broad low-contrast dielectric highlights.
+
+Use for rendering a transparent finish over a supplied paint, resin, wood, or decorative substrate.

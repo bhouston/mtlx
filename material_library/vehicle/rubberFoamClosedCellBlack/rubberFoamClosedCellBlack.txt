@@ -1,0 +1,5 @@
+rubberFoamClosedCellBlack
+
+Black closed-cell rubber foam; fine cellular skin, low gloss, and soft diffuse highlights.
+
+Use for rendering closed-cell sealing strips, cushioning pads, and compressible gasket surfaces.

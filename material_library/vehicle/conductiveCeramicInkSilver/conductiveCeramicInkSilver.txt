@@ -1,0 +1,5 @@
+conductiveCeramicInkSilver
+
+Cured silver-filled conductive ceramic ink; fine silver-gray metallic microtexture and medium satin sheen.
+
+Use for rendering silver printed conductor traces and pads on exposed ceramic electronic substrates.

@@ -1,0 +1,5 @@
+phosphorescentFilmPaleGreen
+
+Pale-green photoluminescent film; matte translucent-looking pigment with time-dependent afterglow emission only when charged; distinguish emission from reflectance.
+
+Use for rendering pale-green glow-film markings with the intended charged or uncharged state set explicitly.

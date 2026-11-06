@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- yellow green fluorescent safety film; strongly saturated diffuse appearance under daylight; spectral fluorescence where supported, no unconditional light emission. -->
+  <!-- Factory-new appearance target; colors are linear Rec.709 artistic reflectances, not measured OEM data. RGB saturated pigment approximation; true fluorescence requires wavelength conversion, with no unconditional emission. -->
+  <nodegraph name="NG_fluorescentSafetyFilmYellowGreen">
+    <!-- UV 0..1 is exactly one metre; all height values below are metres. skin: frequencies 850 × 850 cycles/metre; relief amplitude 0.000001 m. -->
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="feature_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="850, 850" /></multiply>
+    <noise2d name="micro" type="float"><input name="texcoord" type="vector2" nodename="feature_uv" /><input name="amplitude" type="float" value="0.45" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="height" type="float"><input name="in1" type="float" nodename="micro" /><input name="in2" type="float" value="0.000001" /></multiply>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.532125, 0.9405, 0.0099" /><input name="fg" type="color3" value="0.542875, 0.9594999999999999, 0.0101" /><input name="mix" type="float" nodename="micro" /></mix>
+    <multiply name="roughness_detail" type="float"><input name="in1" type="float" nodename="micro" /><input name="in2" type="float" value="0.04" /></multiply>
+    <add name="roughness" type="float"><input name="in1" type="float" nodename="roughness_detail" /><input name="in2" type="float" value="0.48" /></add>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="normal_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="texcoord" type="vector2" nodename="uv_mm" /><input name="scale" type="float" value="16" /></heighttonormal>
+    <normalmap name="normal_world" type="vector3"><input name="in" type="vector3" nodename="normal_tangent" /></normalmap>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.5" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="specular_roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="normal_world" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_fluorescentSafetyFilmYellowGreen" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_fluorescentSafetyFilmYellowGreen" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_fluorescentSafetyFilmYellowGreen" output="specular_roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_fluorescentSafetyFilmYellowGreen" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_fluorescentSafetyFilmYellowGreen" output="normal_out" />
+    <input name="specular" type="float" nodegraph="NG_fluorescentSafetyFilmYellowGreen" output="specular_out" />
+    <input name="specular_IOR" type="float" value="1.5" />
+  </standard_surface>
+  <surfacematerial name="M_fluorescentSafetyFilmYellowGreen" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_fluorescentSafetyFilmYellowGreen" /></surfacematerial>
+</materialx>

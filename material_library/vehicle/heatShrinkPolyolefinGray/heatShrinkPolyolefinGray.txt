@@ -1,0 +1,5 @@
+heatShrinkPolyolefinGray
+
+gray heat-shrink polyolefin material; fine satin polymer surface; clear variant has low-haze transparent transmission.
+
+Use for rendering heat-shrink sleeves over cable joints, connectors, and wire terminations.

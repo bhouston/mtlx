@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materialx version="1.39" colorspace="lin_rec709" doc="Dark blue crystalline-silicon appearance with fine crystal mottling, subdued angle-dependent reflection, and negligible transmission; no cell grid included. Recipe: crystalline. diffuser molded skin 5 mm/2 micrometres; silicon crystal color domains 20 mm; thin-film thicknesses in nm; emission strength explicit. Opaque effective silicon/antireflection appearance; no cell grid, electrical response, or spectral optical calibration. All colors are art-directed scene-linear Rec.709, not calibrated manufacturer measurements. UV 0–1 = 1 metre; height in metres. Relief is filtered surface appearance, not silhouette geometry.">
+  <nodegraph name="NG_photovoltaicSiliconBlue">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="crystal_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="50, 45" />
+    </multiply>
+    <add name="crystal_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="crystal_scale" />
+      <input name="in2" type="vector2" value="6.3, 13.7" />
+    </add>
+    <worleynoise2d name="crystal_id" type="float">
+      <input name="texcoord" type="vector2" nodename="crystal_offset" />
+      <input name="jitter" type="float" value="0.95" />
+      <input name="style" type="integer" value="1" />
+    </worleynoise2d>
+    <multiply name="silicon_skin_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="180, 180" />
+    </multiply>
+    <add name="silicon_skin_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="silicon_skin_scale" />
+      <input name="in2" type="vector2" value="3.71, 8.29" />
+    </add>
+    <fractal2d name="silicon_skin" type="float">
+      <input name="texcoord" type="vector2" nodename="silicon_skin_offset" />
+      <input name="amplitude" type="float" value="1e-06" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <mix name="base_color" type="color3">
+      <input name="bg" type="color3" value="0.008, 0.022, 0.09" />
+      <input name="fg" type="color3" value="0.03375, 0.1545, 0.4305" />
+      <input name="mix" type="float" nodename="crystal_id" />
+    </mix>
+    <mix name="roughness" type="float">
+      <input name="bg" type="float" value="0.25" />
+      <input name="fg" type="float" value="0.31" />
+      <input name="mix" type="float" nodename="crystal_id" />
+    </mix>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="silicon_skin" />
+      <input name="in2" type="float" value="0" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="base" type="float">
+      <input name="value" type="float" value="1" />
+    </constant>
+    <constant name="specular" type="float">
+      <input name="value" type="float" value="0.5" />
+    </constant>
+    <constant name="specular_IOR" type="float">
+      <input name="value" type="float" value="1.5" />
+    </constant>
+    <constant name="diffuse_roughness" type="float">
+      <input name="value" type="float" value="0.25" />
+    </constant>
+    <constant name="specular_color" type="color3">
+      <input name="value" type="color3" value="0.7, 0.82, 1" />
+    </constant>
+    <constant name="thin_film_thickness" type="float">
+      <input name="value" type="float" value="75" />
+    </constant>
+    <constant name="thin_film_IOR" type="float">
+      <input name="value" type="float" value="1.45" />
+    </constant>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+    <output name="out_base" type="float" nodename="base" />
+    <output name="out_specular" type="float" nodename="specular" />
+    <output name="out_specular_IOR" type="float" nodename="specular_IOR" />
+    <output name="out_diffuse_roughness" type="float" nodename="diffuse_roughness" />
+    <output name="out_specular_color" type="color3" nodename="specular_color" />
+    <output name="out_thin_film_thickness" type="float" nodename="thin_film_thickness" />
+    <output name="out_thin_film_IOR" type="float" nodename="thin_film_IOR" />
+  </nodegraph>
+  <standard_surface name="SR_photovoltaicSiliconBlue" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_photovoltaicSiliconBlue" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_photovoltaicSiliconBlue" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_photovoltaicSiliconBlue" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_photovoltaicSiliconBlue" output="out_normal" />
+    <input name="base" type="float" nodegraph="NG_photovoltaicSiliconBlue" output="out_base" />
+    <input name="specular" type="float" nodegraph="NG_photovoltaicSiliconBlue" output="out_specular" />
+    <input name="specular_IOR" type="float" nodegraph="NG_photovoltaicSiliconBlue" output="out_specular_IOR" />
+    <input name="diffuse_roughness" type="float" nodegraph="NG_photovoltaicSiliconBlue" output="out_diffuse_roughness" />
+    <input name="specular_color" type="color3" nodegraph="NG_photovoltaicSiliconBlue" output="out_specular_color" />
+    <input name="thin_film_thickness" type="float" nodegraph="NG_photovoltaicSiliconBlue" output="out_thin_film_thickness" />
+    <input name="thin_film_IOR" type="float" nodegraph="NG_photovoltaicSiliconBlue" output="out_thin_film_IOR" />
+  </standard_surface>
+  <surfacematerial name="M_photovoltaicSiliconBlue" type="material" doc="Dark blue crystalline-silicon appearance with fine crystal mottling, subdued angle-dependent reflection, and negligible transmission; no cell grid included.">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_photovoltaicSiliconBlue" />
+  </surfacematerial>
+</materialx>

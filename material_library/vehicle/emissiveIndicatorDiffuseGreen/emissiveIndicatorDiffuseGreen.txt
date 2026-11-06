@@ -1,0 +1,5 @@
+emissiveIndicatorDiffuseGreen
+
+green diffuse luminous polymer material; soft scattering emission with a low-gloss surface; emitted intensity is a separately controlled parameter.
+
+Use for rendering powered diffuse indicator faces on controls and instrument panels.

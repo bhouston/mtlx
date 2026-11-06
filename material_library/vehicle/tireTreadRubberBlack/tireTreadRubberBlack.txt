@@ -1,0 +1,5 @@
+tireTreadRubberBlack
+
+New carbon-black-filled tread compound; very dark gray diffuse response, fine granular rubber texture, and broad restrained dielectric highlights; no wear polish.
+
+Use for rendering new tire tread surfaces, with tread blocks and grooves supplied by geometry.

@@ -1,0 +1,5 @@
+waterClear
+
+Clean colorless water; transparent dielectric liquid with smooth reflections, refraction, and very weak visible absorption.
+
+Use for rendering clean water volumes, droplets, and wet films in vehicle or equipment scenes.

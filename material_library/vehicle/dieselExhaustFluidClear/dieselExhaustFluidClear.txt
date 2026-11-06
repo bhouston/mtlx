@@ -1,0 +1,5 @@
+dieselExhaustFluidClear
+
+Clean colorless aqueous urea solution; transparent dielectric liquid with smooth reflections, no dried crystals.
+
+Use for rendering fresh fluid volumes in exhaust-treatment reservoirs and supply-system cutaways.

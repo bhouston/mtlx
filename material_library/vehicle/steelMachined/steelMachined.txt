@@ -1,0 +1,5 @@
+steelMachined
+
+Freshly machined steel; neutral gray metallic response with directional tool texture.
+
+Use for rendering freshly machined metal housings, faces, fittings, and technical components.

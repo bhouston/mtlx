@@ -1,0 +1,5 @@
+paintSolidGlossTan
+
+Opaque tan pigmented basecoat beneath a clear dielectric gloss coat; fine factory orange-peel microtexture, deep reflections, no metallic flakes or pearlescence.
+
+Use for rendering solid-color factory-painted body panels, bumpers, mirror caps, and matching exterior trim.

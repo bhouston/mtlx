@@ -1,0 +1,5 @@
+castIronMachined
+
+Freshly machined cast iron; fine directional cutting texture and moderately reflective gray metallic surface.
+
+Use for rendering freshly machined metal housings, faces, fittings, and technical components.

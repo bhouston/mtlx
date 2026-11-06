@@ -1,0 +1,5 @@
+seamSealerBlack
+
+black cured polymer seam-sealing compound; opaque, slightly irregular skin and matte-to-satin elastomer reflectance.
+
+Use for rendering cured seam-sealing material along modeled panel joints and body-shell seams.

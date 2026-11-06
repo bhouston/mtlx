@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- White pigmented glass-fiber composite; opaque smooth satin resin with faint substrate fiber print-through. -->
+  <!-- Real-world scale: UV 0..1 = 1 meter; height is meters. Recipe: fragments; feature frequency 450 × 60 per meter; relief span 8e-06 m. Coated fiber and wood substrate relief stays beneath the separate smooth dielectric coat. -->
+  <nodegraph name="NG_glassFiberCompositeWhite">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="tone_drift_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="4, 4" /></multiply>
+    <fractal2d name="tone_drift" type="float"><input name="texcoord" type="vector2" nodename="tone_drift_uv" /><input name="octaves" type="integer" value="2" /></fractal2d>
+    <multiply name="fragment_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="450, 60" /></multiply>
+    <worleynoise2d name="fragment_id" type="float"><input name="texcoord" type="vector2" nodename="fragment_uv" /><input name="jitter" type="float" value="0.7" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.66, 0.66, 0.6424" /><input name="fg" type="color3" value="0.84, 0.84, 0.8176" /><input name="mix" type="float" nodename="fragment_id" /></mix>
+    <multiply name="drift_amount" type="float"><input name="in1" type="float" nodename="tone_drift" /><input name="in2" type="float" value="0.025" /></multiply>
+    <add name="drift_gain" type="float"><input name="in1" type="float" nodename="drift_amount" /><input name="in2" type="float" value="1" /></add>
+    <multiply name="body_color" type="color3"><input name="in1" type="color3" nodename="base_color" /><input name="in2" type="float" nodename="drift_gain" /></multiply>
+    <subtract name="relief_center" type="float"><input name="in1" type="float" nodename="fragment_id" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="height" type="float"><input name="in1" type="float" nodename="relief_center" /><input name="in2" type="float" value="8e-06" /></multiply>
+    <subtract name="roughness_center" type="float"><input name="in1" type="float" nodename="fragment_id" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="roughness_variation" type="float"><input name="in1" type="float" nodename="roughness_center" /><input name="in2" type="float" value="-0.0795" /></multiply>
+    <add name="roughness" type="float"><input name="in1" type="float" value="0.53" /><input name="in2" type="float" nodename="roughness_variation" /></add>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.5" /></constant>
+    <output name="base_color_out" type="color3" nodename="body_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_glassFiberCompositeWhite" type="surfaceshader"><input name="base" type="float" value="1" /><input name="specular_IOR" type="float" value="1.5" /><input name="sheen" type="float" value="0" /><input name="sheen_roughness" type="float" value="0.7" /><input name="specular_anisotropy" type="float" value="0.6" /><input name="coat" type="float" value="0.15" /><input name="coat_roughness" type="float" value="0.4" /><input name="base_color" type="color3" nodegraph="NG_glassFiberCompositeWhite" output="base_color_out" /><input name="specular_roughness" type="float" nodegraph="NG_glassFiberCompositeWhite" output="roughness_out" /><input name="normal" type="vector3" nodegraph="NG_glassFiberCompositeWhite" output="normal_out" /><input name="metalness" type="float" nodegraph="NG_glassFiberCompositeWhite" output="metalness_out" /><input name="specular" type="float" nodegraph="NG_glassFiberCompositeWhite" output="specular_out" /></standard_surface>
+  <surfacematerial name="M_glassFiberCompositeWhite" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_glassFiberCompositeWhite" /></surfacematerial>
+</materialx>

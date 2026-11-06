@@ -1,0 +1,5 @@
+aluminumSatin
+
+Silver aluminum with uniform fine abrasion, soft metallic highlights, and modest anisotropy.
+
+Use for rendering clean exposed metal trim, housings, brackets, hardware, and technical components with the named finish.

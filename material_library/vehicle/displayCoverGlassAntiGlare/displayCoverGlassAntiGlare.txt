@@ -1,0 +1,5 @@
+displayCoverGlassAntiGlare
+
+Fine etched anti-glare display glass; broad softened reflections and slight transmission haze, no inherent emission.
+
+Use for rendering the outer transparent cover of instrument, infotainment, and equipment displays.
