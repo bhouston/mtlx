@@ -1,4 +1,4 @@
-// Compile and execute marked, standalone README examples in the installed tarball consumer.
+// Compile and execute marked, standalone documentation examples in the installed tarball consumer.
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -10,14 +10,14 @@ export function checkReadmeExamples(consumerDirectory) {
   const sourceDirectory = join(consumerDirectory, 'readme-examples');
   mkdirSync(sourceDirectory);
   for (const name of ['core', 'viewer']) {
-    const markdown = readFileSync(join(root, 'packages', name, 'README.md'), 'utf8');
+    const markdown = readFileSync(join(root, 'packages/docs/docs', `${name}.md`), 'utf8');
     for (const match of markdown.matchAll(/<!-- test:([\w-]+) -->\s*```ts\n([\s\S]*?)```/g)) {
       const fileName = `${name}-${match[1]}.ts`;
       writeFileSync(join(sourceDirectory, fileName), match[2]);
       examples.push(fileName);
     }
   }
-  if (examples.length !== 3) throw new Error('Expected three marked README consumer examples');
+  if (examples.length !== 3) throw new Error('Expected three marked documentation consumer examples');
   execFileSync(
     process.execPath,
     [
@@ -44,5 +44,5 @@ export function checkReadmeExamples(consumerDirectory) {
       stdio: 'inherit',
     });
   }
-  console.log(`Compiled and ran ${examples.length} README examples against the installed packages.`);
+  console.log(`Compiled and ran ${examples.length} documentation examples against the installed packages.`);
 }

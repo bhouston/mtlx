@@ -1,7 +1,7 @@
 {
   "name": "mtlx-viewer",
   "version": "0.6.0",
-  "description": "Shared three.js MaterialX preview scenes, IBL environment assets, and React/Tailwind viewer UI for the MaterialX website and VS Code viewers.",
+  "description": "Embed MaterialX previews with the framework-independent <material-viewer> web component, React wrapper, and Three.js viewer APIs.",
   "homepage": "https://mtlx.ben3d.ca",
   "license": "MIT",
   "repository": {

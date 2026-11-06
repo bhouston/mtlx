@@ -108,3 +108,69 @@ test('editor loads a material, displays a usable graph and preview, and old guid
   expect(await page.locator('h1').innerText()).toBe('VS Code extension');
   expect(errors).toEqual([]);
 });
+
+test('material-viewer guide promotes a working standalone jsDelivr embed', async () => {
+  await page.goto(`${origin}/docs/material-viewer/`);
+  expect(
+    await page.locator('.navbar').getByRole('link', { name: '<material-viewer>', exact: true }).getAttribute('href'),
+  ).toBe('/docs/material-viewer/');
+  const snippet = await page.locator('pre code').filter({ hasText: '<script type="module"' }).first().innerText();
+  expect(snippet).toContain('https://cdn.jsdelivr.net/npm/mtlx-viewer/dist/material-viewer.js');
+  const ready = () =>
+    page
+      .locator('material-viewer')
+      .evaluate(
+        (element) =>
+          'getCameraSettings' in element &&
+          typeof element.getCameraSettings === 'function' &&
+          element.getCameraSettings() != null,
+      );
+  await expect.poll(ready, { timeout: 30_000 }).toBe(true);
+  expect(await page.locator('material-viewer canvas').getAttribute('aria-label')).toBe(
+    'Copper material under neutral studio lighting',
+  );
+
+  // Exercise exactly the copyable HTML with the published CDN bundle, outside the documentation app.
+  await page.route('**/__material-viewer-example/', (route) =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: `<!doctype html><html><head><meta charset="utf-8"><title>Standalone embed</title></head><body>${snippet}</body></html>`,
+    }),
+  );
+  await page.addInitScript(() => {
+    document.addEventListener(
+      'load',
+      (event) => {
+        if (event.target instanceof HTMLElement && event.target.localName === 'material-viewer')
+          document.documentElement.dataset.materialViewerLoaded = 'true';
+      },
+      true,
+    );
+  });
+  await page.goto(`${origin}/__material-viewer-example/`);
+  await expect
+    .poll(() => page.locator('html').getAttribute('data-material-viewer-loaded'), { timeout: 30_000 })
+    .toBe('true');
+  const hardware = await page.evaluate(async () => {
+    const adapter = await navigator.gpu?.requestAdapter();
+    const gl = document.createElement('canvas').getContext('webgl2');
+    const debug = gl?.getExtension('WEBGL_debug_renderer_info');
+    return {
+      adapter: adapter
+        ? `${adapter.info.vendor} ${adapter.info.architecture} ${adapter.info.device} ${adapter.info.description}`.trim()
+        : '',
+      renderer: debug ? String(gl!.getParameter(debug.UNMASKED_RENDERER_WEBGL)) : '',
+    };
+  });
+  expect(hardware.renderer).not.toBe('');
+  expect(`${hardware.adapter} ${hardware.renderer}`).not.toMatch(/SwiftShader|llvmpipe|lavapipe|software/i);
+  console.log('Standalone embed hardware:', hardware);
+  await page.locator('material-viewer').getByRole('button', { name: 'Viewer settings', exact: true }).click();
+  expect(
+    await page
+      .locator('material-viewer')
+      .getByRole('button', { name: 'Close viewer settings', exact: true })
+      .isVisible(),
+  ).toBe(true);
+  expect(errors).toEqual([]);
+});
