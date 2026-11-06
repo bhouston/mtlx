@@ -24,13 +24,12 @@ module.exports = {
       },
     ],
   ],
-  themes: [[require.resolve('@easyops-cn/docusaurus-search-local'), { hashed: true, indexBlog: false }]],
   plugins: [
     [clidocPlugin, { input: 'mtlx.opencli.json', outputDir: 'docs/cli-reference', basePath: '/cli/reference' }],
   ],
   themeConfig: {
     image: 'img/material-preview.png',
-    colorMode: { defaultMode: 'light', respectPrefersColorScheme: true },
+    colorMode: { defaultMode: 'light', respectPrefersColorScheme: true, disableSwitch: true },
     navbar: {
       title: 'mtlx',
       logo: { alt: 'MaterialX tools', src: 'img/logo.webp' },
@@ -39,10 +38,14 @@ module.exports = {
         { to: '/editor', label: 'Editor', position: 'left' },
         { to: '/docs/material-viewer', label: '<material-viewer>', position: 'left' },
         { to: '/docs/cli', label: 'CLI', position: 'left' },
-        { to: '/docs/quick-start', label: 'Get started', position: 'left' },
         { to: '/docs/vscode', label: 'VS Code', position: 'left' },
-        { to: '/docs/core', label: 'Libraries', position: 'left' },
-        { href: 'https://github.com/bhouston/mtlx', label: 'GitHub', position: 'right' },
+        {
+          href: 'https://github.com/bhouston/mtlx',
+          html: '<span class="navbar-github-icon" aria-hidden="true"></span>',
+          'aria-label': 'GitHub repository',
+          title: 'GitHub repository',
+          position: 'right',
+        },
       ],
     },
     footer: {

@@ -26,6 +26,6 @@ artifact. Repository Pages settings and Cloudflare DNS must be configured separa
 [deployment](docs/deployment.md). No credentials are stored in this package.
 
 Hardware browser smoke tests run with `pnpm --filter mtlx-docs test:e2e` after the build. They use
-installed Google Chrome with the Metal backend and reject software renderers, exercising search,
+installed Google Chrome with the Metal backend and reject software renderers, exercising
 mobile navigation, editor/viewer rendering, screenshot download, URL sharing and browser history.
 CI validates static builds and links without relying on software GPU rendering.
