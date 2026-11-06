@@ -1,0 +1,5 @@
+glassCeramicFritDarkGray
+
+Opaque dark-gray fired ceramic enamel on glass; fine low-sheen ceramic texture.
+
+Use for rendering opaque ceramic frit borders and printed masking bands on separately modeled vehicle glazing.

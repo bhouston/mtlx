@@ -1,0 +1,5 @@
+displayEpaperBlack
+
+Reflective black electronic-paper state; dark matte absorbing appearance with no self-emission.
+
+Use for rendering the reflective image areas of unlit electronic-paper labels and information displays.

@@ -1,0 +1,5 @@
+ceramicFiberInsulationWhite
+
+New white ceramic-fiber insulation; fine fibrous matte texture and soft diffuse scattering.
+
+Use for rendering exposed ceramic-fiber insulation blankets around technical equipment in cutaway views.

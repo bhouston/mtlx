@@ -1,0 +1,5 @@
+glassBondingInterlayerClear
+
+Clear transparent glazing interlayer polymer; subtle bulk absorption and smooth dielectric transmission, without scattering unless the reference shows it.
+
+Use for rendering transparent bonding interlayers inside modeled laminated glazing in assembly and cutaway views.

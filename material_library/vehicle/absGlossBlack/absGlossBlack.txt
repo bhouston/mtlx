@@ -1,0 +1,5 @@
+absGlossBlack
+
+black opaque glossy ABS; smooth dielectric reflections; silver denotes metallic-effect pigmentation beneath the polymer surface.
+
+Use for rendering glossy molded bezels, decorative trim, and accessory housings.

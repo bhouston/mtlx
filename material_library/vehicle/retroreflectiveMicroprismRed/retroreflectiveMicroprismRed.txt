@@ -1,0 +1,5 @@
+retroreflectiveMicroprismRed
+
+red retroreflective optical polymer; tinted directional return toward the light source with glossy protective surface, no emission.
+
+Use for rendering microprismatic reflector and marker surfaces; exact light-source return requires a suitable renderer-specific optical model.

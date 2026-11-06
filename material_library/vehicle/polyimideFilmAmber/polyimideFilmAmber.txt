@@ -1,0 +1,5 @@
+polyimideFilmAmber
+
+New amber polyimide film; transparent tinted dielectric with smooth satin-to-gloss reflections and thickness-dependent absorption.
+
+Use for rendering thin insulating films and wraps around electronic and electrical assemblies.

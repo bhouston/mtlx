@@ -1,0 +1,5 @@
+glassLaminatedLightBlue
+
+light blue laminated safety glazing; transparent glass plies with a clear bonding interlayer, glossy surface reflections, refraction, and thickness-dependent absorption.
+
+Use for rendering laminated windscreens, roof panels, and other vehicle glazing, with physical glass thickness supplied by geometry.

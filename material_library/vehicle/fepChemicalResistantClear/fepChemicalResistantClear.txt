@@ -1,0 +1,5 @@
+fepChemicalResistantClear
+
+clear fluoropolymer material; smooth glossy-to-satin dielectric surface with transparent or diffusely translucent transmission as named.
+
+Use for rendering clear fluoropolymer tubing, covers, and exposed liners in equipment views.

@@ -1,0 +1,5 @@
+pvdMetalFinishGraphite
+
+graphite decorative physical-vapor-deposited metallic finish; smooth thin coating with conductor-like tinted reflections over a finely finished substrate.
+
+Use for rendering decorative metal trim, controls, badges, and accessories with the named deposited finish.

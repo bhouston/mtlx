@@ -1,0 +1,5 @@
+glassBulletResistantGray
+
+Gray-tinted multi-layer ballistic glazing appearance; transparent absorbing laminate and glossy glass reflections.
+
+Use for rendering thick laminated protective-glazing appearances in specialist vehicle visualizations; this preset does not establish ballistic performance.

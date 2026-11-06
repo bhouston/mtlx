@@ -1,0 +1,5 @@
+conductivePolymerInkBlack
+
+Cured black conductive polymer ink; fine matte-to-satin carbon-filled resin surface, non-emissive.
+
+Use for rendering dark printed conductor traces and contact graphics on supplied electronic substrates.

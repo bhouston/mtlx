@@ -1,0 +1,5 @@
+retroreflectiveMicroprismClear
+
+Colorless microstructured optical polymer; directional return toward the illumination source, smooth protective outer film, no self-emission; use a retroreflective scattering response.
+
+Use for rendering microprismatic reflector and marker surfaces; exact light-source return requires a suitable renderer-specific optical model.

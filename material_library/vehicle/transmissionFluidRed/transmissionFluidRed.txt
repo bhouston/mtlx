@@ -1,0 +1,5 @@
+transmissionFluidRed
+
+Fresh red transmission fluid; transparent red absorption tint and smooth glossy dielectric liquid response.
+
+Use for rendering fresh liquid volumes in transmission-system cutaways.

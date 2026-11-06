@@ -1,0 +1,5 @@
+circuitBoardLaminateNatural
+
+Natural glass-epoxy electrical laminate; pale amber-green semi-translucent resin with faint woven glass texture.
+
+Use for rendering exposed glass-epoxy circuit-board edges and uncoated laminate areas.

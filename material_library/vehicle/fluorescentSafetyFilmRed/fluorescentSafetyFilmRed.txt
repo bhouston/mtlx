@@ -1,0 +1,5 @@
+fluorescentSafetyFilmRed
+
+red fluorescent safety film; strongly saturated diffuse appearance under daylight; spectral fluorescence where supported, no unconditional light emission.
+
+Use for rendering bright fluorescent-looking warning graphics and visibility decals under scene lighting.

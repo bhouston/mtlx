@@ -1,0 +1,5 @@
+epsFoamWhite
+
+New white expanded-polystyrene foam; fine fused bead pattern and soft diffuse response.
+
+Use for rendering expanded-polystyrene inserts and visible lightweight insulation blocks.

@@ -1,0 +1,5 @@
+speakerGrilleClothBeige
+
+beige acoustically open woven cloth; fine yarn albedo and normal texture with inter-yarn opacity, low gloss, and soft fiber sheen.
+
+Use for rendering speaker grille coverings and other cloth-covered audio trim.

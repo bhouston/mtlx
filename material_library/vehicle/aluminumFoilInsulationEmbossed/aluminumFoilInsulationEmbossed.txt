@@ -1,0 +1,5 @@
+aluminumFoilInsulationEmbossed
+
+Clean aluminum foil insulation face; silver conductor response with fine embossed surface microtexture, without a prescribed part shape.
+
+Use for rendering reflective insulation facings and foil surfaces on visible thermal shields.

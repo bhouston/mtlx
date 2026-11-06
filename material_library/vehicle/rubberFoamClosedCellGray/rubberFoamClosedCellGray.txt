@@ -1,0 +1,5 @@
+rubberFoamClosedCellGray
+
+Gray closed-cell rubber foam; dense fine cellular texture and matte diffuse response.
+
+Use for rendering closed-cell sealing strips, cushioning pads, and compressible gasket surfaces.

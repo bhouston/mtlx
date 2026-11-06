@@ -1,0 +1,5 @@
+glassElectrochromicClear
+
+Electrochromic glazing in its clear material state; transparent layered glass with a slight residual tint and glossy dielectric reflections.
+
+Use for rendering electrochromic window or roof glazing in the named clear or tinted visual state.

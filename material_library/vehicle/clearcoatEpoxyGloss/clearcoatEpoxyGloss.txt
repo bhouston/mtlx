@@ -1,0 +1,5 @@
+clearcoatEpoxyGloss
+
+Clear epoxy finish; smooth glossy dielectric surface with slight warm absorption at increased optical depth.
+
+Use for rendering a transparent finish over a supplied paint, resin, wood, or decorative substrate.

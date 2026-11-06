@@ -1,0 +1,5 @@
+glassTintFilmMediumSmoke
+
+Transparent medium smoke tint film; absorption-based tint with smooth dielectric outer reflections, intended as an optical layer rather than opaque paint.
+
+Use for rendering a tint film layer over vehicle windows, with the underlying glass and thickness supplied by the asset.

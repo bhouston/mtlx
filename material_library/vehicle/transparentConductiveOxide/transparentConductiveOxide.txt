@@ -1,0 +1,5 @@
+transparentConductiveOxide
+
+Transparent conductive oxide coating; very thin clear film with subtle angle-dependent residual tint and reduced transmission appropriate to reference data.
+
+Use for rendering a transparent conductive-looking film over supplied glass, display, or sensor substrates.

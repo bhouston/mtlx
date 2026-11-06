@@ -1,0 +1,5 @@
+aluminizedGlassCloth
+
+New aluminized glass-fiber textile; silver reflective coating with visible woven microtexture and anisotropic yarn sheen.
+
+Use for rendering reflective fabric insulation wraps and cloth-faced thermal shields.

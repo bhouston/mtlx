@@ -1,0 +1,5 @@
+mirrorBlueTint
+
+Blue-tinted anti-glare mirror finish; slightly blue reflected spectrum, smooth high clarity, and coated dielectric front surface.
+
+Use for rendering rear-view mirrors, side mirrors, and other reflective vehicle mirror surfaces.

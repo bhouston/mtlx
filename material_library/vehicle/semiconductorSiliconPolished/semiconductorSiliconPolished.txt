@@ -1,0 +1,5 @@
+semiconductorSiliconPolished
+
+Clean polished silicon appearance; dark neutral-gray high-index reflective surface with a restrained colored reflection, no inherent emission.
+
+Use for rendering exposed polished silicon dies and semiconductor surfaces in sensor or electronics cutaways.

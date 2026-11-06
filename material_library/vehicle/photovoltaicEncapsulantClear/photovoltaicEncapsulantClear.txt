@@ -1,0 +1,5 @@
+photovoltaicEncapsulantClear
+
+Colorless photovoltaic encapsulant resin; clear dielectric transmission, smooth reflections, and slight thickness-dependent absorption.
+
+Use for rendering a clear encapsulating layer over supplied solar-cell surfaces.

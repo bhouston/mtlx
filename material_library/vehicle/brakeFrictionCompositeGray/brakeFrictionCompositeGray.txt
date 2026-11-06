@@ -1,0 +1,5 @@
+brakeFrictionCompositeGray
+
+New gray friction composite; fine mineral and fiber flecks, matte diffuse response, no brake dust or use glazing.
+
+Use for rendering new brake-pad friction faces in brake assemblies and cutaways.

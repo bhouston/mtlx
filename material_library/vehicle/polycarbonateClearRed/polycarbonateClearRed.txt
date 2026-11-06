@@ -1,0 +1,5 @@
+polycarbonateClearRed
+
+red transparent polycarbonate; smooth glossy dielectric surface with thickness-dependent absorption and refraction; no emission.
+
+Use for rendering transparent or tinted plastic lamp lenses, instrument covers, indicator windows, and decorative optical parts.

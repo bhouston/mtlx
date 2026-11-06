@@ -1,0 +1,5 @@
+eppFoamBlack
+
+New black expanded-polypropylene foam; fused bead surface pattern, matte polymer reflectance, and slight beadwise color variation.
+
+Use for rendering molded foam inserts, packaging-like supports, and visible energy-absorber forms in cutaways.

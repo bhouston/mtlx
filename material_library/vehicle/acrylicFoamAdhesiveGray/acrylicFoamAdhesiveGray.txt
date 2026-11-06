@@ -1,0 +1,5 @@
+acrylicFoamAdhesiveGray
+
+New gray acrylic foam adhesive material; fine closed-cell texture and low-satin polymer reflectance.
+
+Use for rendering the exposed faces and edges of foam mounting tapes behind trim and badges.

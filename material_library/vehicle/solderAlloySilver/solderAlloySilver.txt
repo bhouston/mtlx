@@ -1,0 +1,5 @@
+solderAlloySilver
+
+New solder alloy; pale silver metallic response with fine solidification texture and restrained gloss.
+
+Use for rendering solder joints and solder-coated connection areas on electronics.

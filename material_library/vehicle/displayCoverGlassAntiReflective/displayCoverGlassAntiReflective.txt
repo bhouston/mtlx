@@ -1,0 +1,5 @@
+displayCoverGlassAntiReflective
+
+Clear anti-reflective display cover glass; reduced front-surface glare with a faint residual angular coating tint.
+
+Use for rendering the outer transparent cover of instrument, infotainment, and equipment displays.
