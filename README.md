@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://mtlx.ben3d.ca" target="_blank" rel="noopener noreferrer">
-    <img alt="mtlx logo" src="https://raw.githubusercontent.com/bhouston/mtlx/main/packages/docs/static/img/icon-512.png" height="96">
+    <img alt="mtlx logo" src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" height="96">
   </a>
 </p>
 <br/>
@@ -79,6 +79,10 @@ mtlx transform material.mtlx -o material.mtlx.zip --profile web
 | [VS Code extension](https://marketplace.visualstudio.com/items?itemName=benhouston3d.mtlx-vscode-extension) | Previews, node graphs, and packaging inside your editor                | [Extension guide](https://mtlx.ben3d.ca/docs/vscode/) |
 
 Node tools require Node.js 22+. Browser rendering needs GPU-backed WebGPU or WebGL2. Validation covers selected document rules; preview support follows Three.js's MaterialX loader.
+
+## Releases
+
+See [RELEASING.md](RELEASING.md) for release instructions.
 
 ## Contribution
 

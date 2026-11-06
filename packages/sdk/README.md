@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://mtlx.ben3d.ca" target="_blank" rel="noopener noreferrer">
-    <img alt="mtlx logo" src="https://raw.githubusercontent.com/bhouston/mtlx/main/packages/docs/static/img/icon-512.png" height="96">
+    <img alt="mtlx logo" src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" height="96">
   </a>
 </p>
 <br/>
