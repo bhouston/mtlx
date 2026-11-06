@@ -122,10 +122,13 @@ it('emits material download progress independently of preview readiness', async 
   const progress = vi.fn();
   viewer.addEventListener('progress', progress);
   await flush();
-  expect(progress.mock.calls.map(([event]) => event.detail)).toEqual([
-    { loaded: 0, total: 3, progress: 0 },
-    { loaded: 3, total: 3, progress: 1 },
-  ]);
+  expect(progress.mock.calls.map(([event]) => event.detail)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ loaded: 0, total: 3, progress: 0, totalProgress: 0 }),
+      expect.objectContaining({ loaded: 3, total: 3, progress: 1, totalProgress: 0.3 }),
+    ]),
+  );
+  expect(progress.mock.lastCall![0].detail.totalProgress).toBe(1);
 });
 
 it.each(['error', 'replace', 'disconnect'])('stops active progress on %s', async (action) => {
@@ -158,4 +161,40 @@ it.each(['error', 'replace', 'disconnect'])('stops active progress on %s', async
   expect(vi.getTimerCount()).toBe(0);
   expect(() => stream.enqueue(new Uint8Array(1))).toThrow();
   vi.useRealTimers();
+});
+
+it('shows automatically through setup, completes, and ignores stale progress after removal', async () => {
+  let finish!: (value: unknown) => void;
+  mocks.createViewer.mockImplementationOnce((value: ViewerOptions) => {
+    options = value;
+    return new Promise((resolve) => {
+      finish = resolve;
+    });
+  });
+  const viewer = mount();
+  const root = viewer.shadowRoot!.querySelector<HTMLElement>('.mtlx-progress')!;
+  expect(root.hidden).toBe(false);
+  expect(viewer.getAttribute('aria-busy')).toBe('true');
+  await flush();
+  options.onProgress?.({ totalProgress: 0.5, reason: 'material-load' });
+  expect(root.querySelector<HTMLElement>('[part="default-progress-bar"]')!.style.transform).toBe('scaleX(0.7)');
+  finish({ scene: { materialNames: [], activeMaterial: '', animated: false }, setSettings, dispose });
+  await flush();
+  expect(viewer.getAttribute('aria-busy')).toBe('false');
+  expect(root.querySelector('.complete')).not.toBeNull();
+  options.onProgress?.({ totalProgress: 0, reason: 'environment-update' });
+  expect(viewer.getAttribute('aria-busy')).toBe('true');
+  viewer.removeAttribute('src');
+  expect(root.hidden).toBe(true);
+  options.onProgress?.({ totalProgress: 0.5, reason: 'environment-update' });
+  expect(root.hidden).toBe(true);
+});
+
+it('supports an empty replacement slot to disable the automatic bar', () => {
+  const viewer = mount();
+  const replacement = document.createElement('span');
+  replacement.slot = 'progress-bar';
+  viewer.append(replacement);
+  const slot = viewer.shadowRoot!.querySelector<HTMLSlotElement>('slot[name="progress-bar"]')!;
+  expect(slot.assignedElements()).toEqual([replacement]);
 });

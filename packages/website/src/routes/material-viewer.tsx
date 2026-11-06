@@ -125,6 +125,22 @@ function MaterialViewerTagPage() {
       </div>
 
       <section className="flex min-w-0 flex-col gap-4">
+        <h2 className="text-xl font-semibold">Loading progress</h2>
+        <p className="text-sm text-muted-foreground">
+          A top progress bar appears automatically during downloading, renderer setup, material and texture loading,
+          lighting, geometry, and the first render. It also appears when changing materials, environments, or geometry.
+          Progress events expose <code>detail.totalProgress</code> from 0 to 1.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Customize <code>--progress-bar-color</code>, <code>--progress-bar-height</code>, or
+          <code> material-viewer::part(default-progress-bar)</code>. To disable it, add an empty
+          <code> {'<span slot="progress-bar"></span>'}</code> child. The React component accepts the same child and
+          provides an <code>onProgress</code> callback. A custom progress-bar slot replaces the default bar; use
+          progress events to update your replacement.
+        </p>
+      </section>
+
+      <section className="flex min-w-0 flex-col gap-4">
         <h2 className="text-xl font-semibold">Attributes</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -153,7 +169,8 @@ function MaterialViewerTagPage() {
         </div>
         <p className="text-sm text-muted-foreground">
           Every attribute except <code>src</code> and <code>model</code> applies live — change it and the viewer updates
-          without a reload. The element also fires <code>load</code> and <code>error</code> events.
+          without a reload. The element also fires <code>load</code>, <code>progress</code>, and <code>error</code>{' '}
+          events.
         </p>
       </section>
     </main>

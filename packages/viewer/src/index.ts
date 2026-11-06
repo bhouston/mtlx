@@ -11,3 +11,4 @@ export * from './rendering.js';
 export * from './runtime.js';
 export * from './viewer.js';
 export * from './progress.js';
+export * from './loadingProgress.js';

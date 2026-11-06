@@ -47,3 +47,14 @@ it('forwards progress, load, and string errors, uses updated callbacks, and clea
   element.dispatchEvent(new CustomEvent('progress', { detail }));
   expect(updated).toHaveBeenCalledOnce();
 });
+
+it('forwards a progress-bar replacement child for disabling or customization', async () => {
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  roots.push(root);
+  await act(async () =>
+    root.render(createElement(MaterialViewer, {}, createElement('span', { slot: 'progress-bar' }))),
+  );
+  expect(host.querySelector('material-viewer > span')!.getAttribute('slot')).toBe('progress-bar');
+});

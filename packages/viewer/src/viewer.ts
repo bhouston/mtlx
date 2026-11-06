@@ -4,6 +4,7 @@
  * only I/O (how to fetch environments and geometries, where to log) and UI.
  */
 import * as THREE from 'three/webgpu';
+import { LoadingTracker, type LoadingProgress } from './loadingProgress.js';
 import { frameId, time } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createViewerEnvironmentSwitcher } from './neutralEnvironment.js';
@@ -38,6 +39,8 @@ export interface ViewerOptions {
   onReport?(report: PreviewReport): void;
   /** Transient status text; empty when cleared. */
   onStatus?: (patch: { environment?: string; geometry?: string }) => void;
+  /** Overall progress for setup, resources, settings changes, and rendering. */
+  onProgress?: (progress: LoadingProgress) => void;
   /** Loading milestones for progress UI. */
   onStage?: (stage: 'renderer' | 'environment' | 'material' | 'render' | 'ready') => void;
   /** The frame loop failed after startup; the viewer is already disposed. */
@@ -78,9 +81,14 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
   const report: PreviewReport = { state: 'loading', resources: 'unchecked', failedResources: [] };
   const publish = () => options.onReport?.({ ...report, failedResources: [...report.failedResources] });
   publish();
+  const tracker = new LoadingTracker((progress) => {
+    if (!scope.disposed) options.onProgress?.(progress);
+  });
+  const startup = tracker.start('material-load');
   let applied = { ...options.settings };
   let requestedEnvironment: string | undefined;
   let geometryGeneration = 0;
+  let materialGeneration = 0;
   const geometryLoads = new Map<string, Promise<void>>();
 
   try {
@@ -138,6 +146,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     });
     scope.own(() => environments.dispose());
     const setEnvironment = async (kind: string): Promise<void> => {
+      const progress = tracker.start('environment-update');
       requestedEnvironment = kind;
       onStatus?.({ environment: 'Loading environment…' });
       try {
@@ -156,8 +165,11 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
           onLog?.('Using fallback IBL: studio.');
           await setEnvironment('studio');
         }
+      } finally {
+        progress(1);
       }
     };
+    startup(0.2);
     onStage?.('environment');
     await setEnvironment(applied.ibl);
     if (scope.disposed) throw new Error('Viewer disposed');
@@ -169,20 +181,39 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     let reframe = () => {};
     observeViewerResize(scope, options.canvas ?? container, renderer, camera, !options.canvas, () => reframe());
 
+    startup(0.5);
     onStage?.('material');
     onLog?.(`Parsing MaterialX document (${options.fileName})...`);
     const manager = new THREE.LoadingManager();
+    let resourceProgress: ((value: number) => void) | undefined;
+    let resourcesPending = false;
+    let resourceWaiters: (() => void)[] = [];
+    const waitForResources = () =>
+      resourcesPending ? new Promise<void>((resolve) => resourceWaiters.push(resolve)) : Promise.resolve();
+    scope.own(() => {
+      for (const resolve of resourceWaiters.splice(0)) resolve();
+    });
     manager.onStart = () => {
       if (scope.disposed) return;
+      resourcesPending = true;
+      resourceProgress ??= tracker.start('material-load');
       report.resources = 'loading';
       publish();
     };
     manager.onLoad = () => {
       if (scope.disposed) return;
+      resourcesPending = false;
+      resourceProgress?.(1);
+      resourceProgress = undefined;
+      for (const resolve of resourceWaiters.splice(0)) resolve();
       report.resources = 'loaded';
       publish();
     };
-    manager.onProgress = (url, loaded, total) => onLog?.(`Loading ${url}: ${loaded}/${total}`);
+    manager.onProgress = (url, loaded, total) => {
+      if (scope.disposed) return;
+      resourceProgress?.(Math.min(0.95, loaded / total));
+      onLog?.(`Loading ${url}: ${loaded}/${total}`);
+    };
     manager.onError = (url) => {
       if (scope.disposed) return;
       if (!report.failedResources.includes(url)) report.failedResources.push(url);
@@ -227,6 +258,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     };
     const setGeometry = async (name: string) => {
       if (mtlxScene.geometry === name) return;
+      const progress = tracker.start('geometry-update');
       const request = ++geometryGeneration;
       onStatus?.({ geometry: `Loading geometry: ${name}…` });
       try {
@@ -239,17 +271,23 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
         const text = `Geometry failed to load: ${message(error)}`;
         onStatus?.({ geometry: text });
         onLog?.(text);
+      } finally {
+        progress(1);
       }
     };
     await setGeometry(applied.geometry);
     if (scope.disposed) throw new Error('Viewer disposed');
     applied.geometry = mtlxScene.geometry;
 
+    await waitForResources();
+    if (scope.disposed) throw new Error('Viewer disposed');
+    startup(0.9);
     onStage?.('render');
     rendering.render(); // A mounted canvas alone does not prove shader compilation succeeded.
     report.state = 'ready';
     publish();
     onStage?.('ready');
+    startup(1);
     // MaterialX time/frame compile to three's shared `time`/`frameId` uniforms, which three advances
     // from wall-clock on every render. Feed them from this clock instead so they can pause.
     // ponytail: the uniforms are module singletons, so the newest viewer on a page owns them.
@@ -298,6 +336,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       },
       async setSettings(next) {
         if (scope.disposed) return applied;
+        const materialChanged = !!next.materialName && next.materialName !== applied.materialName;
         applyRendering(next);
         Object.assign(applied, {
           bloom: next.bloom,
@@ -313,15 +352,34 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
           mtlxScene.setMaterial(next.materialName);
           applied.materialName = next.materialName;
         }
+        const changed = next.ibl !== requestedEnvironment || next.geometry !== mtlxScene.geometry || materialChanged;
+        const progress = changed
+          ? tracker.start(
+              next.ibl !== requestedEnvironment
+                ? 'environment-update'
+                : next.geometry !== mtlxScene.geometry
+                  ? 'geometry-update'
+                  : 'material-load',
+            )
+          : undefined;
         const pending: Promise<void>[] = [];
         if (next.ibl !== requestedEnvironment) pending.push(setEnvironment(next.ibl));
         if (next.geometry !== mtlxScene.geometry) pending.push(setGeometry(next.geometry));
         await Promise.all(pending);
+        if (progress && !scope.disposed) {
+          await waitForResources();
+          if (!scope.disposed) {
+            rendering.render();
+            progress(1);
+          }
+        }
         applied.geometry = mtlxScene.geometry;
         return { ...applied };
       },
       replaceMaterial(data, fileName) {
         if (scope.disposed) return;
+        const generation = ++materialGeneration;
+        const progress = tracker.start('material-load');
         onStage?.('material');
         onLog?.(`Parsing MaterialX document (${fileName})...`);
         Object.assign(report, { state: 'loading', resources: 'unchecked', failedResources: [] });
@@ -332,14 +390,29 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
           onStage?.('render');
           rendering.render();
         } catch (error) {
+          tracker.reset();
           report.state = 'error';
           publish();
           throw error;
         }
         onLog?.(`Material applied (${mtlxScene.materialNames.length} available).`);
-        report.state = 'ready';
-        publish();
-        onStage?.('ready');
+        void waitForResources()
+          .then(() => {
+            if (scope.disposed) return;
+            rendering.render();
+            progress(1);
+            if (generation !== materialGeneration) return;
+            report.state = 'ready';
+            publish();
+            onStage?.('ready');
+          })
+          .catch((error: unknown) => {
+            if (scope.disposed || generation !== materialGeneration) return;
+            tracker.reset();
+            report.state = 'error';
+            publish();
+            options.onError?.(message(error));
+          });
       },
       dispose: () => scope.dispose(),
     };
