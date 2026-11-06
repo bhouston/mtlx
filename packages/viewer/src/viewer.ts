@@ -4,6 +4,7 @@
  * only I/O (how to fetch environments and geometries, where to log) and UI.
  */
 import * as THREE from 'three/webgpu';
+import { setCanvasDescription } from './accessibility.js';
 import { LoadingTracker, type LoadingProgress } from './loadingProgress.js';
 import { frameId, time } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -26,6 +27,8 @@ export interface ViewerOptions {
   container: HTMLElement;
   data: ArrayBuffer;
   fileName: string;
+  /** Accessible description of the material, applied to the focusable canvas. */
+  alt?: string;
   shaderBall: ArrayBuffer;
   settings: ViewerSettings;
   /** Whether MaterialX `<time>`/`<frame>` nodes advance from the first frame; defaults to true. */
@@ -55,6 +58,8 @@ export interface Viewer {
   /** Whether MaterialX `<time>`/`<frame>` nodes run forward; `scene.animated` says whether the document has any. */
   readonly playing: boolean;
   setPlaying(playing: boolean): void;
+  /** Update the accessible description without reloading; empty/undefined restores the default. */
+  setAlt(alt?: string): void;
   /** Apply a full settings object; only changed fields do work. Resolves to what actually took effect. */
   setSettings(settings: ViewerSettings): Promise<ViewerSettings>;
   /**
@@ -116,7 +121,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       canvas.style.backgroundColor = previousBackground;
     });
     canvas.tabIndex = 0;
-    canvas.setAttribute('aria-label', 'Material preview. Arrow keys pan the camera.');
+    setCanvasDescription(canvas, options.alt);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.05, 1000);
@@ -333,6 +338,9 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       controls,
       get playing() {
         return playing;
+      },
+      setAlt(alt) {
+        if (!scope.disposed) setCanvasDescription(canvas, alt);
       },
       setPlaying(next) {
         playing = next;

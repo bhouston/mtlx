@@ -15,6 +15,7 @@ describe('shared viewer and embed search state', () => {
       geometry: 'sphere' as const,
       background: 'none' as const,
       materialName: 'Copper',
+      alt: 'Brushed copper with horizontal grain',
     };
     for (const route of ['viewer', 'embed'] as const) {
       const url = new URL(viewerShareUrl('https://mtlx.test', route, state));
@@ -56,4 +57,9 @@ it('preserves environment rotation in viewer and embed share links', () => {
     expect(url.searchParams.get('environmentRotation')).toBe('270');
     expect(viewerSettings(viewerSearch(Object.fromEntries(url.searchParams))).environmentRotation).toBe(270);
   }
+});
+
+it('validates accessible descriptions in iframe and shared links', () => {
+  expect(viewerSearch({ alt: '  Copper & brass  ' })).toEqual({ alt: 'Copper & brass' });
+  for (const alt of ['', ' ', null, true, 123, {}]) expect(viewerSearch({ alt })).toEqual({});
 });

@@ -26,6 +26,7 @@ function EmbedPage() {
     <div className="p-2">
       <MaterialViewer
         source={source}
+        alt={search.alt}
         onError={setViewerError}
         loadProgress={loadProgress}
         settings={viewerSettings(search)}
