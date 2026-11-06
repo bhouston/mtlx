@@ -12,7 +12,7 @@ GitHub repository Pages settings must use **GitHub Actions** as their build sour
 
 ## Cloudflare routing
 
-The intended routing matches the `ies-tools.ben3d.ca` reference project: a proxied CNAME from `mtlx.ben3d.ca` to `bhouston.github.io`. The existing Cloud Run service can remain available during verification and rollback, but automatic Cloud Run website deployment is replaced by the documentation workflow.
+The intended routing matches the `ies-tools.ben3d.ca` reference project: a proxied CNAME from `mtlx.ben3d.ca` to `bhouston.github.io`. The site is served from GitHub Pages; the former Cloud Run deployment has been removed from this repository.
 
 Before changing the record, confirm a successful Pages deployment, custom-domain configuration, and HTTPS readiness. Use the authenticated `cf` CLI to inspect and update the existing `mtlx` DNS record rather than creating duplicate records. Follow the CLI's current `cf dns --help`/record-update schema; credentials belong in the authenticated profile, never this repository.
 
@@ -28,7 +28,7 @@ Use the actual existing record ID from the inspection response. Remove `--dry-ru
 production cutover after the Pages deployment is verified. These commands update DNS; they do not
 upload the artifact or configure the GitHub Pages custom domain.
 
-Rollback changes the same record back to the previous origin. The former origin is `ghs.googlehosted.com`; record the current value at cutover rather than assuming it has not changed. The separate `mtlx-static.ben3d.ca` immutable asset host is unaffected.
+The separate `mtlx-static.ben3d.ca` immutable asset host is unaffected.
 
 ## Public routes
 

@@ -110,9 +110,8 @@ extension webview's ready/state-restoration protocol. On Linux CI use
 ## Deployment
 
 `vite.config.ts` configures Nitro's `node-server` output. The production entry is
-`.output/server/index.mjs`; `PORT` selects the listening port. The Docker build uses the repository
-root as context and `packages/website/Dockerfile`, exposes port 8080, and runs the server.
-Production uses the static Docusaurus artifact; see [documentation deployment](deployment.md). The Node server remains available for local development and manual Cloud Run rollback. Keep the worker, JS chunks and viewer assets together in either output.
+`.output/server/index.mjs`; `PORT` selects the listening port.
+Production uses the static Docusaurus artifact; see [documentation deployment](deployment.md). The Node server remains available for local development. Keep the worker, JS chunks and viewer assets together in either output.
 
 ## Implementation map
 
