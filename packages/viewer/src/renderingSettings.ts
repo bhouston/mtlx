@@ -1,3 +1,5 @@
+import { parseCameraSettings, type CameraSettings } from './cameraSettings.js';
+export { parseCameraSettings, type CameraSettings } from './cameraSettings.js';
 /** Tone mapping names shared by viewer controls and extension configuration. */
 export const TONE_MAPPING_OPTIONS = [
   { value: 'neutral', label: 'Neutral' },
@@ -54,10 +56,11 @@ export const DEFAULT_VIEWER_SETTINGS = {
   geometry: 'totem' as 'totem' | 'sphere' | 'cube' | 'plane',
 };
 /** Asset names may include host-configured environments and geometries. */
-export type ViewerSettings = Omit<typeof DEFAULT_VIEWER_SETTINGS, 'ibl' | 'geometry'> & {
-  ibl: string;
-  geometry: string;
-};
+export type ViewerSettings = Omit<typeof DEFAULT_VIEWER_SETTINGS, 'ibl' | 'geometry'> &
+  CameraSettings & {
+    ibl: string;
+    geometry: string;
+  };
 
 /** Finite yaw in degrees, wrapped into [0, 360); invalid values are ignored. */
 export function normalizeEnvironmentRotation(input: unknown): number | undefined {
@@ -70,7 +73,7 @@ export function parseViewerSettings(
   input: Record<string, unknown>,
   assets: { ibls?: readonly string[]; geometries?: readonly string[] } = {},
 ): Partial<ViewerSettings> {
-  const result: Partial<ViewerSettings> = {};
+  const result: Partial<ViewerSettings> = parseCameraSettings(input);
   if (typeof input.materialName === 'string' && input.materialName) result.materialName = input.materialName;
   for (const key of ['bloom', 'ao', 'rotate'] as const) {
     if (input[key] === true || input[key] === 'true') result[key] = true;

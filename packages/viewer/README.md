@@ -124,6 +124,38 @@ Changing/removing `src` or unmounting cancels obsolete work and notifications. A
 before assigning `src` to receive the initial event. `createViewer({ onProgress })` provides
 the same overall progress for hosts managing their own UI.
 
+## Camera framing and sharing
+
+`camera-orbit="30deg 65deg 2m"` sets azimuth, polar angle measured from +Y, and distance from
+the target. `camera-target="0m 0m 0m"` selects the aim point. `field-of-view="35deg"` sets the
+vertical field of view. The React wrapper accepts the same hyphenated props; `createViewer`
+settings use `cameraOrbit`, `cameraTarget`, and `fieldOfView` (numeric degrees). All geometry
+is normalized to a one-meter cube, so these distances are normalized scene meters, not source
+mesh dimensions. Bare numbers use the same units. CSS expressions, percentages and `auto`
+components are not accepted.
+
+Orbit polar angles must be 0.01..179.99 degrees, distance 0.01..1000 meters, target components
+-1000..1000 meters, and field of view 1..120 degrees. Invalid attributes/query values are ignored.
+Without camera options, the viewer automatically frames the geometry as before. Explicit camera
+options update in place; resizing preserves their absolute distance and the user's current orbit/pan.
+Removing all options restores automatic framing. Camera changes leave the material and renderer intact.
+
+`viewer.getCameraSettings()` captures the current camera, including orbit, pan and perspective
+zoom. The custom element returns the same object (or `null` before loading) and dispatches
+`camera-change` with that object as `event.detail`. React and low-level viewers expose
+`onCameraChange`. The website's Share menu captures this live framing in viewer links, embed
+links and iframe code, rather than copying only the initial camera attributes. URL search
+parameters use the camelCase names. For example:
+
+```html
+<material-viewer
+  src="material.mtlx"
+  camera-orbit="30deg 65deg 2m"
+  camera-target="0m 0.1m 0m"
+  field-of-view="35deg"
+></material-viewer>
+```
+
 ## Scene
 
 `createMtlxScene` parses a `.mtlx` / `.mtlx.zip` file and builds a swappable preview scene: a

@@ -341,7 +341,7 @@ test('material loading overlays a streamed progress bar and clears it on success
     expect(
       await page.getByText('Drag & drop a .mtlx or .mtlx.zip file anywhere here, or pick a sample above').count(),
     ).toBe(0);
-    expect(await progress.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(255, 255, 255)');
+    expect(await progress.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0.4)');
     expect(await page.locator('[data-preview-state]').getAttribute('aria-busy')).toBe('true');
     if (process.env.MTLX_PROGRESS_SCREENSHOT)
       await page.screenshot({ path: process.env.MTLX_PROGRESS_SCREENSHOT, fullPage: true });
@@ -450,10 +450,13 @@ test('Share copies matching viewer, embed, and iframe state', async () => {
   await page.goto(
     `http://localhost:${PORT}/viewer?materialUrl=/materials/compound/compound.mtlx&ibl=studio&geometry=plane&bloom=false&exposure=1&materialName=Copper`,
   );
+  await expectReady();
   const copy = async (name: string) => {
+    await page.evaluate(() => navigator.clipboard.writeText(''));
     await page.getByRole('button', { name: 'Share', exact: true }).click();
     await page.getByRole('menuitem', { name, exact: true }).click();
     await expect.poll(() => page.getByText('Copied to clipboard.', { exact: true }).count()).toBe(1);
+    await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).not.toBe('');
     return page.evaluate(() => navigator.clipboard.readText());
   };
   const viewer = new URL(await copy('Copy viewer link'));
@@ -484,5 +487,67 @@ test('viewer tabs inspect read-only graphs and preserve the 3D preview', async (
   await page.setViewportSize({ width: 375, height: 800 });
   expect((await page.locator('.mtlx-canvas').boundingBox())!.width).toBeGreaterThan(200);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  expect(pageErrors).toEqual([]);
+});
+
+test('Share captures live orbit, zoom and pan and restores camera framing without rebuilding', async () => {
+  await page.setViewportSize({ width: 1280, height: 1200 });
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  const params = new URLSearchParams({
+    materialUrl: '/materials/compound/compound.mtlx',
+    geometry: 'sphere',
+    rotate: 'false',
+    cameraOrbit: '20deg 65deg 2.4m',
+    cameraTarget: '0.1m 0.1m 0m',
+    fieldOfView: '32',
+  });
+  await page.goto(`http://localhost:${PORT}/viewer?${params}`);
+  await expectReady();
+  const copy = async () => {
+    await page.evaluate(() => navigator.clipboard.writeText(''));
+    await page.getByRole('button', { name: 'Share', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Copy viewer link', exact: true }).click();
+    await expect.poll(() => page.getByText('Copied to clipboard.', { exact: true }).count()).toBe(1);
+    await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).not.toBe('');
+    return new URL(await page.evaluate(() => navigator.clipboard.readText()));
+  };
+  const initial = await copy();
+  expect(initial.searchParams.get('cameraOrbit')).toBe('20deg 65deg 2.4m');
+  expect(initial.searchParams.get('cameraTarget')).toBe('0.1m 0.1m 0m');
+  expect(initial.searchParams.get('fieldOfView')).toBe('32');
+  const canvas = await page.locator('canvas').elementHandle();
+  await page.locator('canvas').click({ position: { x: 150, y: 150 } });
+  const bounds = (await page.locator('canvas').boundingBox())!;
+  const x = bounds.x + bounds.width / 2;
+  const y = bounds.y + bounds.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 50, y + 20, { steps: 5 });
+  await page.mouse.up();
+  await page.mouse.wheel(0, -180);
+  await page.mouse.down({ button: 'right' });
+  await page.mouse.move(x + 75, y + 35, { steps: 5 });
+  await page.mouse.up({ button: 'right' });
+  // Let orbit/pan damping settle before capturing the user's final framing.
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        let remaining = 120;
+        const frame = () => (--remaining ? requestAnimationFrame(frame) : resolve());
+        requestAnimationFrame(frame);
+      }),
+  );
+  const changed = await copy();
+  expect(changed.searchParams.get('cameraOrbit')).not.toBe(initial.searchParams.get('cameraOrbit'));
+  expect(changed.searchParams.get('cameraTarget')).not.toBe(initial.searchParams.get('cameraTarget'));
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
+  // Live gestures do not navigate/reapply initial settings on every rendered frame.
+  expect(new URL(page.url()).searchParams.get('cameraOrbit')).toBe('20deg 65deg 2.4m');
+  await page.goto(changed.href);
+  await expectReady();
+  const restored = await copy();
+  expect(restored.searchParams.get('cameraOrbit')).toBe(changed.searchParams.get('cameraOrbit'));
+  expect(restored.searchParams.get('cameraTarget')).toBe(changed.searchParams.get('cameraTarget'));
+  expect(restored.searchParams.get('fieldOfView')).toBe(changed.searchParams.get('fieldOfView'));
   expect(pageErrors).toEqual([]);
 });

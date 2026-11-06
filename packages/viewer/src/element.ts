@@ -17,6 +17,8 @@ import { ERROR_OVERLAY_STYLES } from './errorOverlayStyles.js';
  * - `model`: a custom glTF/GLB URL to preview the material on, in place of the built-in shaderball.
  * - `ibl`: `studio` (default) or `bridge`, or a URL to a custom `.hdr`/`.exr`/`.png`/`.jpg` environment.
  * - `geometry`: `totem` | `sphere` | `cube` | `plane` | `custom` (the last selects `model`, if given).
+ * - `camera-orbit`: azimuth/polar degrees and distance in scene meters, e.g. `30deg 65deg 2m`.
+ * - `camera-target`: aim point in scene meters, e.g. `0m 0m 0m`; `field-of-view`: vertical degrees (1..120).
  * - `material`: initial material name; defaults to the document's last material.
  * - `rotate`, `bloom`, `ao`: `"false"` to disable (all default on).
  * - `background`: `white` (default), `environment` to show the IBL, or `none` for transparency.
@@ -34,6 +36,8 @@ import { createViewer, type Viewer } from './viewer.js';
 import { parseEnvironmentFile } from './environment.js';
 import {
   DEFAULT_VIEWER_SETTINGS,
+  parseCameraSettings,
+  type CameraSettings,
   GEOMETRY_OPTIONS,
   IBL_OPTIONS,
   BACKGROUND_OPTIONS,
@@ -119,6 +123,9 @@ export class MaterialViewerElement extends HTMLElement {
       'model',
       'ibl',
       'geometry',
+      'camera-orbit',
+      'camera-target',
+      'field-of-view',
       'material',
       'rotate',
       'bloom',
@@ -325,6 +332,11 @@ export class MaterialViewerElement extends HTMLElement {
       DEFAULT_VIEWER_SETTINGS.toneMapping;
     return {
       ...DEFAULT_VIEWER_SETTINGS,
+      ...parseCameraSettings({
+        cameraOrbit: this.getAttribute('camera-orbit'),
+        cameraTarget: this.getAttribute('camera-target'),
+        fieldOfView: this.getAttribute('field-of-view'),
+      }),
       ibl: this.getAttribute('ibl') ?? DEFAULT_VIEWER_SETTINGS.ibl,
       geometry: this.getAttribute('geometry') ?? (this.getAttribute('model') ? 'custom' : 'totem'),
       materialName: this.getAttribute('material') ?? '',
@@ -341,6 +353,11 @@ export class MaterialViewerElement extends HTMLElement {
         normalizeEnvironmentRotation(this.getAttribute('environment-rotation')) ??
         DEFAULT_VIEWER_SETTINGS.environmentRotation,
     };
+  }
+
+  /** Current camera framing, or null before the viewer has loaded. */
+  getCameraSettings(): Required<CameraSettings> | null {
+    return this.#viewer?.getCameraSettings() ?? null;
   }
 
   async #load(): Promise<void> {
@@ -419,6 +436,10 @@ export class MaterialViewerElement extends HTMLElement {
         // Matches the geometry attribute's 'custom' fallback above; a later `model` change goes
         // through a full #load() instead (see RELOAD_ATTRIBUTES), so this closure need not react to it.
         loadGeometry: modelUrl ? async () => ({ data: await fetchBytes(modelUrl, abort.signal) }) : undefined,
+        onCameraChange: (settings) => {
+          if (generation === this.#generation && this.isConnected)
+            this.dispatchEvent(new CustomEvent('camera-change', { detail: settings }));
+        },
         onError: (message) => {
           if (generation === this.#generation && this.isConnected) this.#error(message);
         },

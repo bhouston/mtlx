@@ -1,3 +1,4 @@
+import type { CameraSettings } from '../cameraSettings.js';
 import { Children, isValidElement, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import type { MaterialViewerProgress } from '../element.js';
 
@@ -8,6 +9,9 @@ export interface MaterialViewerProps {
   model?: string;
   ibl?: string;
   geometry?: string;
+  'camera-orbit'?: string;
+  'camera-target'?: string;
+  'field-of-view'?: number | string;
   material?: string;
   rotate?: 'false' | 'true';
   bloom?: 'false' | 'true';
@@ -28,6 +32,7 @@ export interface MaterialViewerProps {
   onProgress?: (progress: MaterialViewerProgress) => void;
   /** The preview is ready, after downloading and initializing the renderer. */
   onLoad?: () => void;
+  onCameraChange?: (settings: Required<CameraSettings>) => void;
   onError?: (message: string) => void;
 }
 
@@ -35,18 +40,26 @@ declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
       'material-viewer': import('react').DetailedHTMLProps<import('react').HTMLAttributes<HTMLElement>, HTMLElement> &
-        Omit<MaterialViewerProps, 'onProgress' | 'onLoad' | 'onError'>;
+        Omit<MaterialViewerProps, 'onProgress' | 'onLoad' | 'onError' | 'onCameraChange'>;
     }
   }
 }
 
 /** React wrapper for `<material-viewer>`, with the same attributes and optional callbacks. */
-export function MaterialViewer({ src, onProgress, onLoad, onError, children, ...attributes }: MaterialViewerProps) {
+export function MaterialViewer({
+  src,
+  onProgress,
+  onLoad,
+  onError,
+  onCameraChange,
+  children,
+  ...attributes
+}: MaterialViewerProps) {
   const [registered, setRegistered] = useState(false);
   const element = useRef<HTMLElement>(null);
-  const callbacks = useRef({ onProgress, onLoad, onError });
+  const callbacks = useRef({ onProgress, onLoad, onError, onCameraChange });
   useEffect(() => {
-    callbacks.current = { onProgress, onLoad, onError };
+    callbacks.current = { onProgress, onLoad, onError, onCameraChange };
   });
   useEffect(() => {
     const target = element.current!;
@@ -55,6 +68,9 @@ export function MaterialViewer({ src, onProgress, onLoad, onError, children, ...
       callbacks.current.onProgress?.((event as CustomEvent<MaterialViewerProgress>).detail);
     const load = () => callbacks.current.onLoad?.();
     const error = (event: Event) => callbacks.current.onError?.((event as CustomEvent<string>).detail);
+    const camera = (event: Event) =>
+      callbacks.current.onCameraChange?.((event as CustomEvent<Required<CameraSettings>>).detail);
+    target.addEventListener('camera-change', camera);
     target.addEventListener('progress', progress);
     target.addEventListener('load', load);
     target.addEventListener('error', error);
@@ -73,6 +89,7 @@ export function MaterialViewer({ src, onProgress, onLoad, onError, children, ...
       });
     return () => {
       active = false;
+      target.removeEventListener('camera-change', camera);
       target.removeEventListener('progress', progress);
       target.removeEventListener('load', load);
       target.removeEventListener('error', error);

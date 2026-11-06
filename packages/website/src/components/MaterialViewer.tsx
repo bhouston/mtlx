@@ -1,3 +1,4 @@
+import type { CameraSettings } from 'mtlx-viewer/settings';
 import { DEFAULT_VIEWER_SETTINGS, type ViewerSettings } from '@/lib/viewer-search';
 import type { AnimationMode } from 'mtlx-viewer/settings';
 import { MaterialLoadingOverlay } from './MaterialLoadingOverlay';
@@ -26,6 +27,7 @@ export interface MaterialViewerProps {
   resources?: readonly { archivePath: string; data: Uint8Array }[];
   settings?: ViewerSettings;
   onSettingsChange?: (patch: Partial<ViewerSettings>) => void;
+  onCameraChange?: (settings: Required<CameraSettings>) => void;
   /** Play/pause for `<time>`/`<frame>` materials: `false` hides the button; defaults to playing. */
   animationMode?: AnimationMode;
   loadProgress?: MaterialLoadProgress | null;
@@ -73,6 +75,7 @@ export function MaterialViewer({
   onStatus,
   settings,
   onSettingsChange,
+  onCameraChange,
   animationMode,
 }: MaterialViewerProps) {
   const [localSettings, setLocalSettings] = useState<ViewerSettings>(DEFAULT_VIEWER_SETTINGS);
@@ -108,9 +111,25 @@ export function MaterialViewer({
   // Identifies the viewer being built or shown, so callbacks from a superseded build never show through.
   const owner = useRef<object | null>(null);
   // Callbacks and the initial settings are read from a ref so a new source never rebuilds the viewer.
-  const callbacks = useRef({ onError, onLog, onStatus, settings: currentSettings, animationMode, description });
+  const callbacks = useRef({
+    onError,
+    onLog,
+    onStatus,
+    onCameraChange,
+    description,
+    settings: currentSettings,
+    animationMode,
+  });
   useEffect(() => {
-    callbacks.current = { onError, onLog, onStatus, settings: currentSettings, animationMode, description };
+    callbacks.current = {
+      onError,
+      onLog,
+      onStatus,
+      onCameraChange,
+      description,
+      settings: currentSettings,
+      animationMode,
+    };
   });
   useEffect(
     () => () => {
@@ -197,6 +216,9 @@ export function MaterialViewer({
           if (!url) throw new Error(`Unknown IBL: ${kind}`);
           return parseEnvironmentFile(await fetchBytes(url, abort.signal), url);
         },
+        onCameraChange: (framing) => {
+          if (owner.current === token) callbacks.current.onCameraChange?.(framing);
+        },
         onLog: (line) => {
           if (owner.current === token) callbacks.current.onLog?.(line);
         },
@@ -247,6 +269,9 @@ export function MaterialViewer({
     intensity,
     environmentRotation,
     materialName,
+    cameraOrbit,
+    cameraTarget,
+    fieldOfView,
   } = currentSettings;
   useEffect(() => {
     void viewer?.setSettings({
@@ -261,6 +286,9 @@ export function MaterialViewer({
       intensity,
       environmentRotation,
       materialName,
+      cameraOrbit,
+      cameraTarget,
+      fieldOfView,
     });
   }, [
     viewer,
@@ -275,7 +303,14 @@ export function MaterialViewer({
     intensity,
     environmentRotation,
     materialName,
+    cameraOrbit,
+    cameraTarget,
+    fieldOfView,
   ]);
+
+  useEffect(() => {
+    if (viewer && previewState === 'ready') callbacks.current.onCameraChange?.(viewer.getCameraSettings());
+  }, [source, viewer, previewState]);
 
   const loading = !!source && previewState !== 'ready' && previewState !== 'error';
   const activeProgress =
