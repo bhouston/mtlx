@@ -1,5 +1,5 @@
-import { useEffect, useRef, type CSSProperties } from 'react';
-import type { MaterialProgress } from '../progress.js';
+import { Children, isValidElement, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import type { MaterialViewerProgress } from '../element.js';
 
 export interface MaterialViewerProps {
   src?: string;
@@ -20,7 +20,9 @@ export interface MaterialViewerProps {
   id?: string;
   className?: string;
   style?: CSSProperties;
-  onProgress?: (progress: MaterialProgress) => void;
+  /** Children may include an empty or custom `slot="progress-bar"` element. */
+  children?: ReactNode;
+  onProgress?: (progress: MaterialViewerProgress) => void;
   /** The preview is ready, after downloading and initializing the renderer. */
   onLoad?: () => void;
   onError?: (message: string) => void;
@@ -36,7 +38,8 @@ declare module 'react' {
 }
 
 /** React wrapper for `<material-viewer>`, with the same attributes and optional callbacks. */
-export function MaterialViewer({ src, onProgress, onLoad, onError, ...attributes }: MaterialViewerProps) {
+export function MaterialViewer({ src, onProgress, onLoad, onError, children, ...attributes }: MaterialViewerProps) {
+  const [registered, setRegistered] = useState(false);
   const element = useRef<HTMLElement>(null);
   const callbacks = useRef({ onProgress, onLoad, onError });
   useEffect(() => {
@@ -45,7 +48,8 @@ export function MaterialViewer({ src, onProgress, onLoad, onError, ...attributes
   useEffect(() => {
     const target = element.current!;
     let active = true;
-    const progress = (event: Event) => callbacks.current.onProgress?.((event as CustomEvent<MaterialProgress>).detail);
+    const progress = (event: Event) =>
+      callbacks.current.onProgress?.((event as CustomEvent<MaterialViewerProgress>).detail);
     const load = () => callbacks.current.onLoad?.();
     const error = (event: Event) => callbacks.current.onError?.((event as CustomEvent<string>).detail);
     target.addEventListener('progress', progress);
@@ -54,10 +58,15 @@ export function MaterialViewer({ src, onProgress, onLoad, onError, ...attributes
     // Register only in the browser, keeping the React entry safe to import during SSR.
     void import('../element.js')
       .then(() => {
-        if (active && src) target.setAttribute('src', src);
+        if (!active) return;
+        setRegistered(true);
+        if (src) target.setAttribute('src', src);
       })
       .catch((reason: unknown) => {
-        if (active) callbacks.current.onError?.(reason instanceof Error ? reason.message : String(reason));
+        if (active) {
+          setRegistered(true);
+          callbacks.current.onError?.(reason instanceof Error ? reason.message : String(reason));
+        }
       });
     return () => {
       active = false;
@@ -67,7 +76,34 @@ export function MaterialViewer({ src, onProgress, onLoad, onError, ...attributes
       target.removeAttribute('src');
     };
   }, [src]);
-  return <material-viewer {...attributes} ref={element} />;
+  const replaced = Children.toArray(children).some(
+    (child) => isValidElement<{ slot?: string }>(child) && child.props.slot === 'progress-bar',
+  );
+  return (
+    <material-viewer
+      {...attributes}
+      style={{ position: 'relative', display: 'block', ...attributes.style }}
+      ref={element}
+    >
+      {children}
+      {src && !registered && !replaced ? (
+        <span
+          slot="progress-bar"
+          aria-label="Loading material viewer"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '2%',
+            pointerEvents: 'none',
+            height: 'var(--progress-bar-height, 5px)',
+            backgroundColor: 'var(--progress-bar-color, rgba(0, 0, 0, 0.4))',
+          }}
+        />
+      ) : null}
+    </material-viewer>
+  );
 }
 
 export type { MaterialProgress } from '../progress.js';
+export type { MaterialViewerProgress } from '../element.js';
