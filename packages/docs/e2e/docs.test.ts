@@ -59,7 +59,7 @@ test('viewer preserves settings and camera sharing in the top-level URL without 
   expect(renderer).not.toBe('');
   expect(renderer).not.toMatch(/SwiftShader|llvmpipe|lavapipe/i);
   console.log('Docs renderer:', renderer);
-  const canvas = (await tool.locator('canvas').elementHandle());
+  const canvas = await tool.locator('canvas').elementHandle();
   expect(await canvas.getAttribute('aria-label')).toBe('Polished copper');
   await tool.getByRole('button', { name: 'Viewer settings', exact: true }).click();
   const rotation = tool.getByRole('slider', { name: 'Environment rotation', exact: true });
