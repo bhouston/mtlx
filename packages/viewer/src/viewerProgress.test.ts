@@ -97,3 +97,46 @@ it('keeps startup and replacement open until textures finish and their render su
   manager.itemEnd('replacement.png');
   expect(onProgress).toHaveBeenCalledTimes(notifications);
 });
+
+it(
+  'rejects capture promptly when disposal interrupts both settings and texture loading',
+  { timeout: 1000 },
+  async () => {
+    let manager!: THREE.LoadingManager;
+    const scene = {
+      root: new THREE.Group(),
+      activeMaterial: 'Example',
+      materialNames: ['Example'],
+      geometry: 'totem',
+      reframe: vi.fn(),
+      dispose: vi.fn(),
+      hasGeometry: () => true,
+      setGeometry: vi.fn(),
+      replaceMaterials: () => manager.itemStart('pending.png'),
+    };
+    mocks.createScene.mockImplementationOnce(async (_camera, _controls, options) => {
+      manager = options.manager;
+      return scene;
+    });
+    const viewer = await createViewer({
+      container: document.createElement('div'),
+      data: new ArrayBuffer(0),
+      shaderBall: new ArrayBuffer(0),
+      fileName: 'example.mtlx',
+      settings: DEFAULT_VIEWER_SETTINGS,
+      loadEnvironment: async () => new THREE.Texture(),
+    });
+    viewer.replaceMaterial(new ArrayBuffer(0), 'pending.mtlx');
+    const settings = viewer.setSettings({ ...DEFAULT_VIEWER_SETTINGS, geometry: 'sphere' });
+    for (let i = 0; i < 15; i++) await Promise.resolve();
+    expect(scene.setGeometry).toHaveBeenCalledWith('sphere');
+    const capture = viewer.toBlob();
+    const rejected = expect(capture).rejects.toThrow('disposed');
+    for (let i = 0; i < 5; i++) await Promise.resolve();
+    expect(mocks.capture).not.toHaveBeenCalled();
+    viewer.dispose();
+    await rejected;
+    await settings;
+    expect(mocks.capture).not.toHaveBeenCalled();
+  },
+);

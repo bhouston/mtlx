@@ -489,6 +489,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
         const capture = captureQueue.then(async () => {
           assertCurrent();
           if (settingsPending) await new Promise<void>((resolve) => settingsWaiters.push(resolve));
+          assertCurrent(); // Disposal may have released settings waiters while textures remain pending.
           await waitForResources();
           assertCurrent();
           // Fresh pass textures are essential: display nodes normally cache once per animation
