@@ -38,6 +38,7 @@ it('keeps startup and replacement open until textures finish and their render su
     data: new ArrayBuffer(0),
     shaderBall: new ArrayBuffer(0),
     fileName: 'example.mtlx',
+    alt: 'Brushed copper',
     settings: DEFAULT_VIEWER_SETTINGS,
     loadEnvironment: async () => new THREE.Texture(),
     onProgress,
@@ -48,6 +49,13 @@ it('keeps startup and replacement open until textures finish and their render su
   expect(mocks.render).not.toHaveBeenCalled();
   manager.itemEnd('texture.png');
   const viewer = await pending;
+  expect(mocks.render).toHaveBeenCalledOnce();
+  const canvas = viewer.controls.domElement!;
+  expect(canvas.getAttribute('aria-label')).toBe('Brushed copper');
+  expect(canvas.tabIndex).toBe(0);
+  expect(canvas.getAttribute('aria-description')).toContain('Arrow keys pan');
+  viewer.setAlt('Polished copper');
+  expect(canvas.getAttribute('aria-label')).toBe('Polished copper');
   expect(mocks.render).toHaveBeenCalledOnce();
   expect(onProgress.mock.lastCall![0].totalProgress).toBe(1);
   viewer.replaceMaterial(new ArrayBuffer(0), 'replacement.mtlx');
@@ -64,6 +72,8 @@ it('keeps startup and replacement open until textures finish and their render su
   expect(onReport.mock.lastCall![0].state).toBe('error');
   const notifications = onProgress.mock.calls.length;
   viewer.dispose();
+  viewer.setAlt('Obsolete description');
+  expect(canvas.getAttribute('aria-label')).toBe('Polished copper');
   manager.itemEnd('replacement.png');
   expect(onProgress).toHaveBeenCalledTimes(notifications);
 });
