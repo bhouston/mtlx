@@ -1,15 +1,31 @@
+<p align="center">
+  <a href="https://mtlx.ben3d.ca" target="_blank" rel="noopener noreferrer">
+    <img alt="mtlx logo" src="https://raw.githubusercontent.com/bhouston/mtlx/main/packages/docs/static/img/icon-512.png" height="96">
+  </a>
+</p>
+<br/>
+<p align="center">
+  <a href="https://npmjs.com/package/mtlx-core"><img src="https://img.shields.io/npm/v/mtlx-core.svg" alt="npm package"></a>
+  <a href="https://www.npmtrends.com/mtlx-core"><img src="https://img.shields.io/npm/dw/mtlx-core.svg" alt="npm downloads"></a>
+  <a href="https://codecov.io/gh/bhouston/mtlx"><img src="https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg" alt="coverage"></a>
+  <a href="https://discord.gg/wzQWaBBxup"><img src="https://img.shields.io/badge/chat-discord-blue?style=flat&logo=discord" alt="discord chat"></a>
+  <a href="https://mtlx.ben3d.ca/docs/core/"><img src="https://img.shields.io/badge/docs-read-blue?style=flat" alt="documentation"></a>
+</p>
+<br/>
+
 # mtlx-core
 
-<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+> Parse, validate, package, and transform MaterialX in TypeScript.
 
-[![npm](https://img.shields.io/npm/v/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
-[![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/core/)
-[![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
-[![npm downloads](https://img.shields.io/npm/dm/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
-[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
-[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
+- 🌐 Browser and Node Support
+- ✅ Document Validation Reports
+- 📦 `.mtlx.zip` Packaging
+- 🖼️ Texture Resizing and Conversion
+- 🕸️ Headless Graph Editing
 
-Parse, validate, package, and transform MaterialX in TypeScript or JavaScript. The root API works with bytes and text in browsers and Node; filesystem and texture-processing helpers use separate Node-only imports.
+The root API works with bytes and text in browsers and Node. Filesystem and texture-processing helpers use separate Node-only imports.
+
+[Read the Docs to Learn More](https://mtlx.ben3d.ca/docs/core/).
 
 ```sh
 npm install mtlx-core
@@ -40,6 +56,10 @@ await writeMaterialXPackage(pkg, 'material.mtlx.zip');
 Node.js 22+ is required for Node helpers. Installing the package includes native Sharp texture processing. Validation covers selected MaterialX rules; it does not guarantee renderer support.
 
 See the [core guide](https://mtlx.ben3d.ca/docs/core/) for the document model, headless graph editing, transforms, and [API reference](https://mtlx.ben3d.ca/docs/api/core/).
+
+## Contribution
+
+See [Contributing Guide](https://github.com/bhouston/mtlx/blob/main/CONTRIBUTING.md).
 
 ## License
 

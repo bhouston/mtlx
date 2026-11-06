@@ -1,15 +1,42 @@
+<p align="center">
+  <a href="https://mtlx.ben3d.ca" target="_blank" rel="noopener noreferrer">
+    <img alt="mtlx logo" src="https://raw.githubusercontent.com/bhouston/mtlx/main/packages/docs/static/img/icon-512.png" height="96">
+  </a>
+</p>
+<br/>
+<p align="center">
+  <a href="https://npmjs.com/package/mtlx-core"><img src="https://img.shields.io/npm/v/mtlx-core.svg" alt="npm package"></a>
+  <a href="https://www.npmtrends.com/mtlx-core"><img src="https://img.shields.io/npm/dw/mtlx-core.svg" alt="npm downloads"></a>
+  <a href="https://codecov.io/gh/bhouston/mtlx"><img src="https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg" alt="coverage"></a>
+  <a href="https://discord.gg/wzQWaBBxup"><img src="https://img.shields.io/badge/chat-discord-blue?style=flat&logo=discord" alt="discord chat"></a>
+  <a href="https://mtlx.ben3d.ca/docs/"><img src="https://img.shields.io/badge/docs-read-blue?style=flat" alt="documentation"></a>
+</p>
+<br/>
+
 # mtlx
 
-<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+> View, edit, validate, and ship MaterialX materials on the web.
 
-[![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/)
-[![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
-[![npm downloads](https://img.shields.io/npm/dm/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
-[![npm version](https://img.shields.io/npm/v/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
-[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
-[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
+- 🎨 Interactive 3D Material Preview
+- 🧩 Drop-In Web Component
+- 🕸️ Node Graph Editing
+- ✅ Validation and Inspection
+- 📦 Portable `.mtlx.zip` Packages
+- 💻 CLI and VS Code Extension
 
-TypeScript and JavaScript tools for viewing, editing, validating, and delivering [MaterialX](https://materialx.org) materials. Work with loose `.mtlx` files or portable `.mtlx.zip` archives in the browser, terminal, or VS Code.
+mtlx is a set of TypeScript and JavaScript tools for working with [MaterialX](https://materialx.org) materials. Work with loose `.mtlx` files or portable `.mtlx.zip` archives in the browser, terminal, or VS Code.
+
+[Read the Docs to Learn More](https://mtlx.ben3d.ca/docs/).
+
+## Packages
+
+| Package                                            | Version (click for changelogs)                                                                                                                                    |
+| -------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [mtlx-core](packages/core)                         | [![mtlx-core version](https://img.shields.io/npm/v/mtlx-core.svg?label=%20)](https://github.com/bhouston/mtlx/releases)                                           |
+| [mtlx-viewer](packages/viewer)                     | [![mtlx-viewer version](https://img.shields.io/npm/v/mtlx-viewer.svg?label=%20)](https://github.com/bhouston/mtlx/releases)                                       |
+| [mtlx-cli](packages/cli)                           | [![mtlx-cli version](https://img.shields.io/npm/v/mtlx-cli.svg?label=%20)](https://github.com/bhouston/mtlx/releases)                                             |
+| [mtlx-sdk](packages/sdk)                           | [![mtlx-sdk version](https://img.shields.io/npm/v/mtlx-sdk.svg?label=%20)](https://github.com/bhouston/mtlx/releases)                                             |
+| [mtlx-vscode-extension](packages/vscode-extension) | [![mtlx-vscode-extension version](https://img.shields.io/open-vsx/v/benhouston3d/mtlx-vscode-extension.svg?label=%20)](https://github.com/bhouston/mtlx/releases) |
 
 [Try the viewer](https://mtlx.ben3d.ca/viewer/) · [Open the editor](https://mtlx.ben3d.ca/editor/) · [Get started](https://mtlx.ben3d.ca/docs/quick-start/)
 
@@ -53,9 +80,9 @@ mtlx transform material.mtlx -o material.mtlx.zip --profile web
 
 Node tools require Node.js 22+. Browser rendering needs GPU-backed WebGPU or WebGL2. Validation covers selected document rules; preview support follows Three.js's MaterialX loader.
 
-## Contribute
+## Contribution
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup and the issue → branch → PR workflow. Full guides and API references live on the [documentation website](https://mtlx.ben3d.ca/docs/); release instructions are in [RELEASING.md](RELEASING.md).
+See [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 

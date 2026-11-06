@@ -1,15 +1,31 @@
+<p align="center">
+  <a href="https://mtlx.ben3d.ca" target="_blank" rel="noopener noreferrer">
+    <img alt="mtlx logo" src="https://raw.githubusercontent.com/bhouston/mtlx/main/packages/docs/static/img/icon-512.png" height="96">
+  </a>
+</p>
+<br/>
+<p align="center">
+  <a href="https://npmjs.com/package/mtlx-viewer"><img src="https://img.shields.io/npm/v/mtlx-viewer.svg" alt="npm package"></a>
+  <a href="https://www.npmtrends.com/mtlx-viewer"><img src="https://img.shields.io/npm/dw/mtlx-viewer.svg" alt="npm downloads"></a>
+  <a href="https://codecov.io/gh/bhouston/mtlx"><img src="https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg" alt="coverage"></a>
+  <a href="https://discord.gg/wzQWaBBxup"><img src="https://img.shields.io/badge/chat-discord-blue?style=flat&logo=discord" alt="discord chat"></a>
+  <a href="https://mtlx.ben3d.ca/docs/material-viewer/"><img src="https://img.shields.io/badge/docs-read-blue?style=flat" alt="documentation"></a>
+</p>
+<br/>
+
 # mtlx-viewer
 
-<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+> Embed interactive MaterialX previews in any website.
 
-[![npm](https://img.shields.io/npm/v/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
-[![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/material-viewer/)
-[![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
-[![npm downloads](https://img.shields.io/npm/dm/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
-[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
-[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
+- 🧩 `<material-viewer>` Web Component
+- ⚛️ Optional React Wrapper
+- 🎥 Orbit Controls and Lighting
+- 🎛️ Built-In Settings Panel
+- 📸 Screenshot Export
 
-Embed interactive MaterialX previews in any website with `<material-viewer>`. Works in plain HTML and any framework, with orbit controls, lighting, a settings panel, loading progress, and screenshot export. React is optional.
+Works in plain HTML and any framework. Load one script from a CDN or import it from npm, then add the element.
+
+[Read the Docs to Learn More](https://mtlx.ben3d.ca/docs/material-viewer/).
 
 ## Plain HTML
 
@@ -52,6 +68,10 @@ import { MaterialViewer } from 'mtlx-viewer/react';
 ```
 
 See the [element guide and live demo](https://mtlx.ben3d.ca/docs/material-viewer/) for attributes, events, camera controls, and screenshots, or the [viewer integration guide](https://mtlx.ben3d.ca/docs/viewer/) for React and lower-level Three.js APIs. Preview support follows Three.js's MaterialX loader.
+
+## Contribution
+
+See [Contributing Guide](https://github.com/bhouston/mtlx/blob/main/CONTRIBUTING.md).
 
 ## License
 
