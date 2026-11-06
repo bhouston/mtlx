@@ -58,10 +58,10 @@
   background: var(--ifm-background-surface-color);
   box-shadow: 0 20px 65px #1524491c;
 }
-.hero-preview img {
+.hero-preview material-viewer {
   display: block;
   width: 100%;
-  height: auto;
+  aspect-ratio: 960 / 700;
 }
 .package-section {
   padding-bottom: 5rem;
@@ -375,4 +375,9 @@
   .workflow-steps {
     gap: 1rem 0.8rem;
   }
+}
+
+.footer__copyright a {
+  color: var(--ifm-footer-link-color);
+  text-decoration: underline;
 }
