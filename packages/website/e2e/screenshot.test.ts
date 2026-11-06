@@ -145,7 +145,7 @@ test('website offers a PNG download of the current preview', async () => {
     await button.click();
     const download = await pending;
     expect(download.suggestedFilename()).toBe('copper.png');
-    const bytes = await readFile((await download.path()));
+    const bytes = await readFile(await download.path());
     expect(bytes.subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
     expect(bytes.readUInt32BE(16)).toBeGreaterThan(100);
     expect(bytes.readUInt32BE(20)).toBeGreaterThan(100);
