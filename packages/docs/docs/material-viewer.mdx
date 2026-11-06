@@ -1,40 +1,60 @@
 ---
-title: Embedding material-viewer
+title: The material-viewer element
+sidebar_label: <material-viewer>
 ---
 
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import LiveMaterialViewer from '@site/src/components/LiveMaterialViewer';
 
-Use the custom element for a standalone material preview. The script is built from the same source as the online viewer and is served unchanged alongside this static site.
+<LiveMaterialViewer />
+
+This is a live `<material-viewer>` showing copper under neutral studio lighting. Drag to orbit, scroll to zoom, and click the gear for settings.
+
+`<material-viewer>` is a web component for `.mtlx` and `.mtlx.zip` materials. It works in plain HTML and any framework, with no React dependency or build step.
+
+## Add it to a page
+
+Load the self-contained JavaScript bundle from jsDelivr, then add the element:
 
 ```html
-<script type="module" src="https://mtlx.ben3d.ca/material-viewer.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/mtlx-viewer/dist/material-viewer.js"></script>
 <material-viewer
   src="https://mtlx.ben3d.ca/materials/copper/copper.mtlx"
   alt="Copper material under neutral studio lighting"
   settings-panel="closed"
-  style="display:block;height:440px"
+  style="display:block;width:100%;height:440px"
 ></material-viewer>
 ```
 
-## Live example
+The unversioned URL follows the latest published npm release, subject to CDN and browser caching. To pin a release, insert its exact version after the package name: `mtlx-viewer@<version>/dist/material-viewer.js`.
 
-<BrowserOnly fallback={<p>Loading material preview…</p>}>
-  {() => (
-    <iframe
-      title="Embedded copper material preview"
-      src="/embed?materialUrl=/materials/copper/copper.mtlx&geometry=sphere&rotate=false&alt=Copper%20material%20under%20neutral%20studio%20lighting"
-      style={{ width: '100%', height: 480, border: 0 }}
-    />
-  )}
-</BrowserOnly>
+The bundle includes Three.js and the viewer code; no separate stylesheet or framework is needed. Set a height with CSS, and serve your material and textures over HTTP(S). Resources on another origin must allow CORS. A `.mtlx.zip` can carry the document and textures together.
+
+Rendering needs a real GPU-backed WebGPU or WebGL2 context. Preview support follows Three.js's MaterialX loader, so some valid MaterialX nodes may not render.
+
+## With npm or a bundler
+
+```sh
+npm install mtlx-viewer three
+```
+
+```js
+import 'mtlx-viewer/element';
+```
+
+Then use the same HTML element. This import registers the element and uses your installed Three.js; React is optional. For self-hosting without a bundler, copy `node_modules/mtlx-viewer/dist/material-viewer.js` to your public directory and point the script tag at it.
+
+For React applications, see the [React wrapper and viewer integration guide](viewer.md).
 
 ## Attributes
+
+This reference follows repository `main`. Published npm releases can have fewer attributes or methods; the CDN always serves a published release. To try unreleased features, use the [bundle built with this site](/material-viewer.js) or build the repository locally.
 
 | Attribute               | Behavior                                                                                 |
 | ----------------------- | ---------------------------------------------------------------------------------------- |
 | `src`                   | URL to a loose `.mtlx` or `.mtlx.zip` package                                            |
 | `alt`                   | Accessible description; changes update the current preview without reloading             |
 | `geometry`              | `totem`, `sphere`, `cube`, `plane`, or `custom` with `model`                             |
+| `material`              | Initial material name; defaults to the document’s last material                          |
 | `model`                 | Custom glTF/GLB preview model URL                                                        |
 | `ibl`                   | `studio` (default), `bridge`, or a custom HDR/EXR/PNG/JPEG URL                           |
 | `background`            | `white` (default), `environment`, or `none`                                              |
@@ -50,6 +70,20 @@ Use the custom element for a standalone material preview. The script is built fr
 | `errors`                | `silent` hides the overlay; error events still fire                                      |
 
 The built-in progress bar appears automatically during setup and updates. Customize `--progress-bar-color`, `--progress-bar-height`, or provide a `slot="progress-bar"` replacement. An empty replacement slot hides it.
+
+## Events and JavaScript
+
+Wait for registration before calling element methods. Listen for events to integrate with your own UI:
+
+```js
+await customElements.whenDefined('material-viewer');
+const viewer = document.querySelector('material-viewer');
+viewer.addEventListener('load', () => console.log('Material ready'));
+viewer.addEventListener('error', (event) => console.error(event.detail));
+viewer.addEventListener('progress', (event) => console.log(event.detail.totalProgress));
+viewer.addEventListener('camera-change', (event) => console.log(event.detail));
+viewer.setAttribute('geometry', 'sphere');
+```
 
 The component dispatches `load`, `error`, `progress`, and `camera-change` events. Use `getCameraSettings()` to read current framing after load. Source and custom-model changes reload the preview; inspection settings update it in place.
 
@@ -75,4 +109,4 @@ download.click();
 URL.revokeObjectURL(url);
 ```
 
-The React wrapper accepts a typed ref to the custom element. The online viewer also has a **Download screenshot** button. Source replacement or disposal cancels obsolete captures; see the generated viewer API for option and error details. These APIs follow repository main; published npm versions can lag behind the documentation.
+The React wrapper accepts a typed ref to the custom element. The online viewer also has a **Download screenshot** button. Source replacement or disposal cancels obsolete captures; see the generated viewer API for option and error details.

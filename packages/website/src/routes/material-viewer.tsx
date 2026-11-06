@@ -22,7 +22,7 @@ const TAG_MARKUP = `<material-viewer
   style="width: 100%; height: 100%">
 </material-viewer>`;
 
-const EMBED_SCRIPT_SRC = 'https://unpkg.com/mtlx-viewer/dist/material-viewer.js';
+const EMBED_SCRIPT_SRC = 'https://cdn.jsdelivr.net/npm/mtlx-viewer/dist/material-viewer.js';
 
 const EMBED_EXAMPLE = `<script type="module" src="${EMBED_SCRIPT_SRC}"></script>
 
