@@ -12,7 +12,6 @@ export default function LiveMaterialViewer() {
         src="https://mtlx.ben3d.ca/materials/copper/copper.mtlx"
         alt="Copper material under neutral studio lighting"
         settings-panel="closed"
-        style={{ display: 'block', width: '100%', height: 440 }}
       />
     </>
   );

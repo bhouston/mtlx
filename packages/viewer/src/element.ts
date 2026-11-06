@@ -69,7 +69,7 @@ const optionsHtml = (options: readonly SettingsOption[]) =>
   options.map(({ value, label }) => `<option value="${value}">${label}</option>`).join('');
 
 const PANEL_STYLE = `
-  :host { position: relative; }
+  :host { display: block; position: relative; height: 440px; }
   .viewport { position: absolute; inset: 0; }
   .play { position: absolute; right: 8px; top: 8px; z-index: 1; }
   .toggle {
@@ -203,7 +203,6 @@ export class MaterialViewerElement extends HTMLElement {
   };
 
   connectedCallback(): void {
-    if (!this.style.display) this.style.display = 'block';
     this.#syncPanelState();
     document.addEventListener('pointerdown', this.#closePanel);
     document.addEventListener('keydown', this.#closePanel);

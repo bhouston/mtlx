@@ -17,15 +17,10 @@ Load the self-contained bundle from jsDelivr, then add the element. No build ste
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/npm/mtlx-viewer/dist/material-viewer.js"></script>
-<material-viewer
-  src="https://mtlx.ben3d.ca/materials/copper/copper.mtlx"
-  alt="Copper material under neutral studio lighting"
-  settings-panel="closed"
-  style="display:block;width:100%;height:440px"
-></material-viewer>
+<material-viewer src="https://mtlx.ben3d.ca/materials/copper/copper.mtlx"></material-viewer>
 ```
 
-The URL follows the latest npm release; add `@<version>` after `mtlx-viewer` to pin a release. Give the element a height. Remote materials and textures must allow CORS; rendering requires a GPU-backed WebGPU or WebGL2 browser context.
+The URL follows the latest npm release; add `@<version>` after `mtlx-viewer` to pin a release. The element defaults to 440px tall; override its size with CSS. Remote materials and textures must allow CORS; rendering requires a GPU-backed WebGPU or WebGL2 browser context.
 
 ## With a bundler
 
