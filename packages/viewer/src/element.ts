@@ -20,7 +20,7 @@ import { ERROR_OVERLAY_STYLES } from './errorOverlayStyles.js';
  * - `rotate`, `bloom`, `ao`: `"false"` to disable (all default on).
  * - `background`: `white` (default), `environment` to show the IBL, or `none` for transparency.
  * - `tone-mapping`: one of {@link TONE_MAPPING_OPTIONS}; defaults to `neutral`.
- * - `exposure` (-2..2), `intensity` (0..2).
+ * - `exposure` (-2..2), `intensity` (0..2), `environment-rotation` (yaw in degrees, default 0).
  * - `animation`: `play` (default) | `pause` | `false` — for documents with `<time>`/`<frame>` nodes,
  *   a play/pause button appears; `false` hides it and leaves the animation running.
  * - `settings-panel`: `open` | `closed` | `hidden` (default) — a built-in overlay for the above.
@@ -36,6 +36,7 @@ import {
   GEOMETRY_OPTIONS,
   IBL_OPTIONS,
   BACKGROUND_OPTIONS,
+  normalizeEnvironmentRotation,
   TONE_MAPPING_OPTIONS,
   type SettingsOption,
   type ViewerSettings,
@@ -104,6 +105,7 @@ const PANEL_HTML = `
     <label class="row"><span>Background</span><select id="background"></select></label>
     <label class="row"><span>Bloom</span><input id="bloom" type="checkbox" /></label>
     <label class="row"><span>Ambient occlusion</span><input id="ao" type="checkbox" /></label>
+    <label>Lighting rotation<input id="environment-rotation" type="range" min="0" max="360" step="1" /></label>
     <label>Exposure<input id="exposure" type="range" min="-2" max="2" step="0.1" /></label>
   </div>
 `;
@@ -123,6 +125,7 @@ export class MaterialViewerElement extends HTMLElement {
       'tone-mapping',
       'exposure',
       'intensity',
+      'environment-rotation',
       'animation',
       'settings-panel',
       'errors',
@@ -249,6 +252,7 @@ export class MaterialViewerElement extends HTMLElement {
     bind('background', 'background', (el) => el.value);
     bind('bloom', 'bloom', (el) => (el.checked ? null : 'false'));
     bind('ao', 'ao', (el) => (el.checked ? null : 'false'));
+    bind('environment-rotation', 'environment-rotation', (el) => el.value);
     bind('exposure', 'exposure', (el) => el.value);
   }
 
@@ -299,6 +303,7 @@ export class MaterialViewerElement extends HTMLElement {
     set('background', settings.background);
     set('bloom', settings.bloom);
     set('ao', settings.ao);
+    set('environment-rotation', String(settings.environmentRotation));
     set('exposure', String(settings.exposure));
   }
 
@@ -326,6 +331,9 @@ export class MaterialViewerElement extends HTMLElement {
       toneMapping,
       exposure: number('exposure', DEFAULT_VIEWER_SETTINGS.exposure, -2, 2),
       intensity: number('intensity', DEFAULT_VIEWER_SETTINGS.intensity, 0, 2),
+      environmentRotation:
+        normalizeEnvironmentRotation(this.getAttribute('environment-rotation')) ??
+        DEFAULT_VIEWER_SETTINGS.environmentRotation,
     };
   }
 

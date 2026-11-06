@@ -198,3 +198,17 @@ it('supports an empty replacement slot to disable the automatic bar', () => {
   const slot = viewer.shadowRoot!.querySelector<HTMLSlotElement>('slot[name="progress-bar"]')!;
   expect(slot.assignedElements()).toEqual([replacement]);
 });
+
+it('updates environment yaw without reloading the material and normalizes attribute degrees', async () => {
+  const viewer = mount();
+  viewer.setAttribute('environment-rotation', '-90');
+  await flush();
+  expect(options.settings.environmentRotation).toBe(270);
+  viewer.setAttribute('environment-rotation', '450');
+  await flush();
+  expect(setSettings).toHaveBeenLastCalledWith(expect.objectContaining({ environmentRotation: 90 }));
+  expect(mocks.createViewer).toHaveBeenCalledOnce();
+  viewer.setAttribute('environment-rotation', 'not-an-angle');
+  await flush();
+  expect(setSettings).toHaveBeenLastCalledWith(expect.objectContaining({ environmentRotation: 0 }));
+});

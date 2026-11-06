@@ -11,7 +11,7 @@ import { createViewerEnvironmentSwitcher } from './neutralEnvironment.js';
 import { registerHdrTextureHandler } from './hdrTextureHandler.js';
 import { CleanupScope } from './lifecycle.js';
 import { createViewerRendering } from './rendering.js';
-import { IBL_OPTIONS, type ViewerSettings } from './renderingSettings.js';
+import { IBL_OPTIONS, normalizeEnvironmentRotation, type ViewerSettings } from './renderingSettings.js';
 import { applyViewerRenderingSettings, createViewerRenderer, observeViewerResize } from './runtime.js';
 import { createMtlxScene, type MtlxScene } from './scene.js';
 import { registerTiffTextureHandler } from './tiffTextureHandler.js';
@@ -85,7 +85,10 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     if (!scope.disposed) options.onProgress?.(progress);
   });
   const startup = tracker.start('material-load');
-  let applied = { ...options.settings };
+  let applied = {
+    ...options.settings,
+    environmentRotation: normalizeEnvironmentRotation(options.settings.environmentRotation) ?? 0,
+  };
   let requestedEnvironment: string | undefined;
   let geometryGeneration = 0;
   let materialGeneration = 0;
@@ -345,6 +348,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
           background: next.background,
           exposure: next.exposure,
           intensity: next.intensity,
+          environmentRotation: normalizeEnvironmentRotation(next.environmentRotation) ?? 0,
           rotate: next.rotate,
         });
         mtlxScene.autoRotate = next.rotate;

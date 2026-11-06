@@ -56,3 +56,11 @@ it('validates effect defaults and tone mapping names', () => {
   expect(invalid).toMatchObject({ bloom: true, ao: true, toneMapping: 'neutral' });
   expect(invalid.warnings).toHaveLength(3);
 });
+
+it('normalizes configured environment rotation and rejects invalid values', () => {
+  expect(parsePreviewSettings({ environmentRotation: -90 })).toMatchObject({ environmentRotation: 270, warnings: [] });
+  expect(parsePreviewSettings({ environmentRotation: Infinity })).toMatchObject({
+    environmentRotation: 0,
+    warnings: ['environmentRotation must be finite degrees; using 0.'],
+  });
+});

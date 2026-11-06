@@ -47,6 +47,7 @@ export const DEFAULT_VIEWER_SETTINGS = {
   background: 'white' as BackgroundKind,
   ...DEFAULT_RENDERING_SETTINGS,
   intensity: 1,
+  environmentRotation: 0,
   exposure: 0,
   rotate: false,
   materialName: '',
@@ -57,6 +58,13 @@ export type ViewerSettings = Omit<typeof DEFAULT_VIEWER_SETTINGS, 'ibl' | 'geome
   ibl: string;
   geometry: string;
 };
+
+/** Finite yaw in degrees, wrapped into [0, 360); invalid values are ignored. */
+export function normalizeEnvironmentRotation(input: unknown): number | undefined {
+  const degrees = typeof input === 'number' ? input : typeof input === 'string' && input.trim() ? Number(input) : NaN;
+  if (!Number.isFinite(degrees)) return undefined;
+  return ((degrees % 360) + 360) % 360;
+}
 
 export function parseViewerSettings(
   input: Record<string, unknown>,
@@ -76,6 +84,8 @@ export function parseViewerSettings(
     const value = typeof raw === 'number' ? raw : typeof raw === 'string' && raw.trim() ? Number(raw) : NaN;
     if (Number.isFinite(value)) result[key] = Math.min(max, Math.max(min, value));
   }
+  const environmentRotation = normalizeEnvironmentRotation(input.environmentRotation);
+  if (environmentRotation !== undefined) result.environmentRotation = environmentRotation;
   if (typeof input.ibl === 'string' && ['bridge', 'studio', ...(assets.ibls ?? [])].includes(input.ibl))
     result.ibl = input.ibl;
   if (
