@@ -1,6 +1,7 @@
 packages:
   - packages/*
 allowBuilds:
+  core-js: false
   '@parcel/watcher': false
   '@sentry/cli': true
   '@vscode/vsce-sign': true

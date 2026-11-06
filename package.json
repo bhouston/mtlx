@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "build": "pnpm -r build",
+    "build": "pnpm -r --filter !mtlx-docs build",
     "tsc": "pnpm -r exec tsc --noEmit",
     "dev": "pnpm --parallel --filter mtlx-core --filter mtlx-editor --filter static-assets --filter website dev",
     "test": "vitest run",
@@ -25,7 +25,9 @@
     "check:release": "node scripts/check-release.mjs",
     "generate:nodes": "pnpm --filter mtlx-core build && node scripts/generate-node-registry.mjs",
     "check:nodes": "pnpm --filter mtlx-core build && node scripts/generate-node-registry.mjs --check",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "docs:build": "pnpm --filter mtlx-docs build",
+    "docs:dev": "pnpm --filter mtlx-docs start"
   },
   "devDependencies": {
     "@anolilab/semantic-release-pnpm": "^8.1.36",
