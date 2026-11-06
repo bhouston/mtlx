@@ -1,5 +1,7 @@
+import Head from '@docusaurus/Head';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
+import type {} from 'mtlx-viewer/react';
 
 const packages = [
   {
@@ -40,6 +42,9 @@ export default function Home() {
       title="MaterialX tools for the web, terminal and editor"
       description="View, edit, validate and automate MaterialX with an open-source TypeScript toolkit for browsers, Node and VS Code."
     >
+      <Head>
+        <script type="module" src="/material-viewer.js" />
+      </Head>
       <header className="home-hero container">
         <div>
           <p className="eyebrow">MaterialX · TypeScript · Open source</p>
@@ -62,14 +67,12 @@ export default function Home() {
           </div>
         </div>
         <figure className="hero-preview">
-          <Link to="/viewer">
-            <img
-              src="/img/material-preview.png"
-              alt="A copper material under neutral studio lighting in the MaterialX viewer"
-              width="960"
-              height="700"
-            />
-          </Link>
+          <material-viewer
+            src="/materials/copper/copper.mtlx"
+            alt="A copper material on a totem under neutral studio lighting"
+            geometry="totem"
+            background="none"
+          />
         </figure>
       </header>
       <main>
