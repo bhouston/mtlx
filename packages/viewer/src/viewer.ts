@@ -6,6 +6,8 @@
 import * as THREE from 'three/webgpu';
 import { LoadingTracker, type LoadingProgress } from './loadingProgress.js';
 import { frameId, time } from 'three/tsl';
+import { applyCameraSettings, readCameraSettings } from './camera.js';
+import { parseCameraSettings, type CameraSettings } from './cameraSettings.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createViewerEnvironmentSwitcher } from './neutralEnvironment.js';
 import { registerHdrTextureHandler } from './hdrTextureHandler.js';
@@ -37,6 +39,8 @@ export interface ViewerOptions {
   resolveUrl?: (url: string) => string | undefined;
   onLog?: (message: string) => void;
   onReport?(report: PreviewReport): void;
+  /** Current camera framing after initialization and each orbit/pan/zoom change. */
+  onCameraChange?(settings: Required<CameraSettings>): void;
   /** Transient status text; empty when cleared. */
   onStatus?: (patch: { environment?: string; geometry?: string }) => void;
   /** Overall progress for setup, resources, settings changes, and rendering. */
@@ -52,6 +56,8 @@ export interface Viewer {
   readonly scene: MtlxScene;
   readonly camera: THREE.PerspectiveCamera;
   readonly controls: OrbitControls;
+  /** Capture current framing, including user orbit, pan and zoom, for a share link. */
+  getCameraSettings(): Required<CameraSettings>;
   /** Whether MaterialX `<time>`/`<frame>` nodes run forward; `scene.animated` says whether the document has any. */
   readonly playing: boolean;
   setPlaying(playing: boolean): void;
@@ -234,7 +240,18 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       materialName: applied.materialName,
     });
     scope.own(() => mtlxScene.dispose());
-    reframe = () => mtlxScene.reframe();
+    let cameraSettings = parseCameraSettings(applied);
+    const cameraKey = (settings: CameraSettings) =>
+      JSON.stringify([settings.cameraOrbit, settings.cameraTarget, settings.fieldOfView]);
+    const applyFraming = (settings: CameraSettings) => {
+      camera.fov = 45;
+      mtlxScene.resetCamera({ resetObjects: false });
+      applyCameraSettings(camera, controls, settings);
+    };
+    reframe = () => {
+      // An explicit orbit uses an absolute distance; resizing changes aspect only.
+      if (!Object.keys(cameraSettings).length) mtlxScene.reframe();
+    };
     if (scope.disposed) throw new Error('Viewer disposed');
     scene.add(mtlxScene.root);
     applied.materialName = mtlxScene.activeMaterial;
@@ -278,6 +295,11 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     await setGeometry(applied.geometry);
     if (scope.disposed) throw new Error('Viewer disposed');
     applied.geometry = mtlxScene.geometry;
+    if (Object.keys(cameraSettings).length) applyFraming(cameraSettings);
+    const cameraChanged = () => options.onCameraChange?.(readCameraSettings(camera, controls));
+    controls.addEventListener('change', cameraChanged);
+    scope.own(() => controls.removeEventListener('change', cameraChanged));
+    cameraChanged();
 
     await waitForResources();
     if (scope.disposed) throw new Error('Viewer disposed');
@@ -328,6 +350,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       scene: mtlxScene,
       camera,
       controls,
+      getCameraSettings: () => readCameraSettings(camera, controls),
       get playing() {
         return playing;
       },
@@ -336,6 +359,16 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
       },
       async setSettings(next) {
         if (scope.disposed) return applied;
+        const nextCamera = parseCameraSettings(next);
+        if (cameraKey(nextCamera) !== cameraKey(cameraSettings)) {
+          cameraSettings = nextCamera;
+          applyFraming(cameraSettings);
+        }
+        Object.assign(applied, {
+          cameraOrbit: nextCamera.cameraOrbit,
+          cameraTarget: nextCamera.cameraTarget,
+          fieldOfView: nextCamera.fieldOfView,
+        });
         const materialChanged = !!next.materialName && next.materialName !== applied.materialName;
         applyRendering(next);
         Object.assign(applied, {

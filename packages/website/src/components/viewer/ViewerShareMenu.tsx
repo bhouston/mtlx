@@ -1,3 +1,4 @@
+import type { CameraSettings } from 'mtlx-viewer/settings';
 import { useState } from 'react';
 import { Share2, Copy, Link2, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,10 +10,20 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { viewerShareUrl, viewerSettings, type ViewerSearch } from '@/lib/viewer-search';
 
-export function ViewerShareMenu({ search }: { search: ViewerSearch }) {
+export function ViewerShareMenu({
+  search,
+  getCameraSettings,
+}: {
+  search: ViewerSearch;
+  getCameraSettings?: () => CameraSettings | undefined;
+}) {
   const [message, setMessage] = useState('');
   const shareUrl = (route: 'viewer' | 'embed') =>
-    viewerShareUrl(window.location.origin, route, { ...viewerSettings(search), materialUrl: search.materialUrl });
+    viewerShareUrl(window.location.origin, route, {
+      ...viewerSettings(search),
+      ...getCameraSettings?.(),
+      materialUrl: search.materialUrl,
+    });
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);

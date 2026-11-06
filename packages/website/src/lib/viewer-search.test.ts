@@ -15,6 +15,9 @@ describe('shared viewer and embed search state', () => {
       geometry: 'sphere' as const,
       background: 'none' as const,
       materialName: 'Copper',
+      cameraOrbit: '35deg 65deg 2.4m',
+      cameraTarget: '0.1m 0.2m -0.1m',
+      fieldOfView: 35,
     };
     for (const route of ['viewer', 'embed'] as const) {
       const url = new URL(viewerShareUrl('https://mtlx.test', route, state));

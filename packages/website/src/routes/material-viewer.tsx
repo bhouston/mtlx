@@ -49,6 +49,12 @@ const ATTRIBUTES: Array<[string, string]> = [
   ['model', 'A custom glTF/GLB URL to preview the material on, instead of the built-in shaderball.'],
   ['ibl', '"studio" (default), "bridge", or a URL to a custom .hdr/.exr/.png/.jpg environment.'],
   ['geometry', '"totem" | "sphere" | "cube" | "plane" | "custom" (the last selects model, if given).'],
+  [
+    'camera-orbit',
+    'Azimuth, polar angle and distance, e.g. 30deg 65deg 2m (normalized scene meters). Omit for automatic framing.',
+  ],
+  ['camera-target', 'Aim point, e.g. 0m 0m 0m, in normalized scene meters.'],
+  ['field-of-view', 'Vertical field of view in degrees (1..120), e.g. 35deg.'],
   ['material', 'Initial material name; defaults to the document’s last material.'],
   ['rotate / bloom / ao', '"false" to disable; all default on.'],
   ['background', '"white" (default); "environment" shows the IBL; "none" leaves it transparent.'],

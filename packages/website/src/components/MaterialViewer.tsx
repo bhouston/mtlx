@@ -1,3 +1,4 @@
+import type { CameraSettings } from 'mtlx-viewer/settings';
 import { DEFAULT_VIEWER_SETTINGS, type ViewerSettings } from '@/lib/viewer-search';
 import type { AnimationMode } from 'mtlx-viewer/settings';
 import { MaterialLoadingOverlay } from './MaterialLoadingOverlay';
@@ -24,6 +25,7 @@ export interface MaterialViewerProps {
   resources?: readonly { archivePath: string; data: Uint8Array }[];
   settings?: ViewerSettings;
   onSettingsChange?: (patch: Partial<ViewerSettings>) => void;
+  onCameraChange?: (settings: Required<CameraSettings>) => void;
   /** Play/pause for `<time>`/`<frame>` materials: `false` hides the button; defaults to playing. */
   animationMode?: AnimationMode;
   loadProgress?: MaterialLoadProgress | null;
@@ -70,6 +72,7 @@ export function MaterialViewer({
   onStatus,
   settings,
   onSettingsChange,
+  onCameraChange,
   animationMode,
 }: MaterialViewerProps) {
   const [localSettings, setLocalSettings] = useState<ViewerSettings>(DEFAULT_VIEWER_SETTINGS);
@@ -104,9 +107,9 @@ export function MaterialViewer({
   // Identifies the viewer being built or shown, so callbacks from a superseded build never show through.
   const owner = useRef<object | null>(null);
   // Callbacks and the initial settings are read from a ref so a new source never rebuilds the viewer.
-  const callbacks = useRef({ onError, onLog, onStatus, settings: currentSettings, animationMode });
+  const callbacks = useRef({ onError, onLog, onStatus, onCameraChange, settings: currentSettings, animationMode });
   useEffect(() => {
-    callbacks.current = { onError, onLog, onStatus, settings: currentSettings, animationMode };
+    callbacks.current = { onError, onLog, onStatus, onCameraChange, settings: currentSettings, animationMode };
   });
   useEffect(
     () => () => {
@@ -192,6 +195,9 @@ export function MaterialViewer({
           if (!url) throw new Error(`Unknown IBL: ${kind}`);
           return parseEnvironmentFile(await fetchBytes(url, abort.signal), url);
         },
+        onCameraChange: (framing) => {
+          if (owner.current === token) callbacks.current.onCameraChange?.(framing);
+        },
         onLog: (line) => {
           if (owner.current === token) callbacks.current.onLog?.(line);
         },
@@ -226,8 +232,21 @@ export function MaterialViewer({
     };
   }, [source]);
 
-  const { ibl, geometry, rotate, bloom, ao, toneMapping, background, exposure, intensity, materialName } =
-    currentSettings;
+  const {
+    ibl,
+    geometry,
+    rotate,
+    bloom,
+    ao,
+    toneMapping,
+    background,
+    exposure,
+    intensity,
+    materialName,
+    cameraOrbit,
+    cameraTarget,
+    fieldOfView,
+  } = currentSettings;
   useEffect(() => {
     void viewer?.setSettings({
       ibl,
@@ -240,8 +259,26 @@ export function MaterialViewer({
       exposure,
       intensity,
       materialName,
+      cameraOrbit,
+      cameraTarget,
+      fieldOfView,
     });
-  }, [viewer, ibl, geometry, rotate, bloom, ao, toneMapping, background, exposure, intensity, materialName]);
+  }, [
+    viewer,
+    ibl,
+    geometry,
+    rotate,
+    bloom,
+    ao,
+    toneMapping,
+    background,
+    exposure,
+    intensity,
+    materialName,
+    cameraOrbit,
+    cameraTarget,
+    fieldOfView,
+  ]);
 
   const loading = !!source && previewState !== 'ready' && previewState !== 'error';
   const activeProgress =

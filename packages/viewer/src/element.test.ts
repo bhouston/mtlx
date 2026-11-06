@@ -198,3 +198,34 @@ it('supports an empty replacement slot to disable the automatic bar', () => {
   const slot = viewer.shadowRoot!.querySelector<HTMLSlotElement>('slot[name="progress-bar"]')!;
   expect(slot.assignedElements()).toEqual([replacement]);
 });
+
+it('applies validated camera attributes live without reloading the material or viewer', async () => {
+  const viewer = mount();
+  viewer.setAttribute('camera-orbit', '390deg 70deg 2m');
+  viewer.setAttribute('camera-target', '.1m 0m 0m');
+  viewer.setAttribute('field-of-view', '35deg');
+  await flush();
+  expect(options.settings).toMatchObject({
+    cameraOrbit: '30deg 70deg 2m',
+    cameraTarget: '0.1m 0m 0m',
+    fieldOfView: 35,
+  });
+  setSettings.mockClear();
+  viewer.setAttribute('camera-orbit', '60deg 80deg 3m');
+  await flush();
+  expect(mocks.createViewer).toHaveBeenCalledOnce();
+  expect(setSettings).toHaveBeenLastCalledWith(expect.objectContaining({ cameraOrbit: '60deg 80deg 3m' }));
+  const changed = vi.fn();
+  viewer.addEventListener('camera-change', changed);
+  options.onCameraChange?.({ cameraOrbit: '60deg 80deg 3m', cameraTarget: '0.1m 0m 0m', fieldOfView: 35 });
+  expect(changed.mock.calls[0]![0].detail).toEqual({
+    cameraOrbit: '60deg 80deg 3m',
+    cameraTarget: '0.1m 0m 0m',
+    fieldOfView: 35,
+  });
+  viewer.removeAttribute('camera-orbit');
+  viewer.setAttribute('field-of-view', 'Infinity');
+  await flush();
+  expect(setSettings.mock.lastCall![0].cameraOrbit).toBeUndefined();
+  expect(setSettings.mock.lastCall![0].fieldOfView).toBeUndefined();
+});
