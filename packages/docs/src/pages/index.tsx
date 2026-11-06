@@ -65,7 +65,6 @@ export default function Home() {
               Get started
             </Link>
           </div>
-          <p className="hero-platform">MIT licensed · Node and browsers · Local files stay local</p>
         </div>
         <figure className="hero-preview">
           <material-viewer
@@ -74,7 +73,6 @@ export default function Home() {
             geometry="totem"
             background="none"
           />
-          <figcaption>Neutral HDR studio lighting. Your camera, material and backdrop.</figcaption>
         </figure>
       </header>
       <main>

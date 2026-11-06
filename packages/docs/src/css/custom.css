@@ -19,6 +19,21 @@
 .navbar__logo img {
   border-radius: 4px;
 }
+/* GitHub mark: Primer Octicons (MIT); license in static/img/github.LICENSE.txt. */
+.navbar-github-icon {
+  display: block;
+  width: 1.4rem;
+  height: 1.4rem;
+  background-color: currentColor;
+  mask: url('../../static/img/github.svg') center / contain no-repeat;
+}
+/* Keep the compact tool navigation visible on tablets; retain the menu for docs navigation. */
+@media (min-width: 768px) and (max-width: 996px) {
+  .navbar .navbar__item {
+    display: inline-block;
+    padding-inline: 0.5rem;
+  }
+}
 .home-hero {
   display: grid;
   grid-template-columns: 1.05fr 1fr;
@@ -179,19 +194,8 @@
   color: var(--ifm-color-primary);
   font-style: normal;
 }
-.hero-platform {
-  font-size: 0.85rem;
-  color: var(--ifm-font-color-secondary);
-  margin: 1.2rem 0 0;
-}
 .hero-preview {
   margin: 0;
-}
-.hero-preview figcaption {
-  font-size: 0.8rem;
-  padding: 0.85rem 1rem;
-  color: var(--ifm-font-color-secondary);
-  border-top: 1px solid var(--ifm-color-emphasis-200);
 }
 .workflow-band {
   border-top: 1px solid var(--ifm-color-emphasis-200);
