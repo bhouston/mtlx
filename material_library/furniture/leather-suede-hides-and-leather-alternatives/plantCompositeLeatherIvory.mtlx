@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Clean new furniture sample. UV 0..1 = 1 metre; heights in metres. -->
+  <!-- warm ivory plant-fiber polymer composite; fine leather-like embossed texture and matte finish. -->
+  <!-- leather: pitch 0.001 m, relief 0.000025 m. Microfiber detail is statistical roughness below resolved yarn scale. -->
+  <nodegraph name="NG_plantCompositeLeatherIvory">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="900, 900" /></multiply>
+    <add name="add_2" type="vector2"><input name="in1" type="vector2" nodename="multiply_1" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_3" type="float"><input name="texcoord" type="vector2" nodename="add_2" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_4" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="4, 4" /></multiply>
+    <add name="add_5" type="vector2"><input name="in1" type="vector2" nodename="multiply_4" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_6" type="float"><input name="texcoord" type="vector2" nodename="add_5" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1000, 1000" /></multiply>
+    <add name="add_8" type="vector2"><input name="in1" type="vector2" nodename="multiply_7" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <worleynoise2d name="worleynoise2d_9" type="float"><input name="texcoord" type="vector2" nodename="add_8" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+    <smoothstep name="smoothstep_10" type="float"><input name="in" type="float" nodename="worleynoise2d_9" /><input name="low" type="float" value="0.1" /><input name="high" type="float" value="0.65" /></smoothstep>
+    <mix name="mix_11" type="float"><input name="bg" type="float" value="0.84" /><input name="fg" type="float" value="1.04" /><input name="mix" type="float" nodename="smoothstep_10" /></mix>
+    <multiply name="multiply_12" type="color3"><input name="in1" type="color3" value="0.72, 0.66, 0.52" /><input name="in2" type="color3" value="1, 1, 1" /></multiply>
+    <mix name="mix_13" type="float"><input name="bg" type="float" value="0.97" /><input name="fg" type="float" value="1.03" /><input name="mix" type="float" nodename="noise2d_6" /></mix>
+    <multiply name="multiply_14" type="float"><input name="in1" type="float" nodename="mix_11" /><input name="in2" type="float" nodename="mix_13" /></multiply>
+    <multiply name="base_color" type="color3"><input name="in1" type="color3" nodename="multiply_12" /><input name="in2" type="float" nodename="multiply_14" /></multiply>
+    <mix name="roughness" type="float"><input name="bg" type="float" value="0.43499999999999994" /><input name="fg" type="float" value="0.505" /><input name="mix" type="float" nodename="smoothstep_10" /></mix>
+    <multiply name="multiply_15" type="float"><input name="in1" type="float" nodename="smoothstep_10" /><input name="in2" type="float" value="0.000025" /></multiply>
+    <multiply name="multiply_16" type="float"><input name="in1" type="float" nodename="noise2d_3" /><input name="in2" type="float" value="0.0000020000000000000003" /></multiply>
+    <add name="height" type="float"><input name="in1" type="float" nodename="multiply_15" /><input name="in2" type="float" nodename="multiply_16" /></add>
+    <multiply name="multiply_17" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1000, 1000" /></multiply>
+    <multiply name="multiply_18" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="multiply_18" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_17" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.5" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="specular_roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_plantCompositeLeatherIvory" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="base_color" type="color3" nodegraph="NG_plantCompositeLeatherIvory" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_plantCompositeLeatherIvory" output="specular_roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_plantCompositeLeatherIvory" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_plantCompositeLeatherIvory" output="normal_out" />
+    <input name="specular" type="float" nodegraph="NG_plantCompositeLeatherIvory" output="specular_out" />
+    <input name="sheen" type="float" value="0.04" />
+    <input name="sheen_color" type="color3" value="0.85, 0.784, 0.623" />
+    <input name="sheen_roughness" type="float" value="0.7" />
+    <input name="specular_anisotropy" type="float" value="0.1" />
+    <input name="diffuse_roughness" type="float" value="0.25" />
+  </standard_surface>
+  <surfacematerial name="M_plantCompositeLeatherIvory" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_plantCompositeLeatherIvory" /></surfacematerial>
+</materialx>

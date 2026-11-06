@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Transparent green acrylic; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: microtexture. -->
+  <nodegraph name="NG_acrylicTransparentGreen">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="240" /></multiply>
+    <add name="add_2" type="vector2"><input name="in1" type="vector2" nodename="multiply_1" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_3" type="float"><input name="texcoord" type="vector2" nodename="add_2" /><input name="amplitude" type="float" value="0.6" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <constant name="constant_7" type="color3"><input name="value" type="color3" value="0.95, 0.95, 0.95" /></constant>
+    <multiply name="multiply_8" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="300" /></multiply>
+    <add name="add_9" type="vector2"><input name="in1" type="vector2" nodename="multiply_8" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_10" type="float"><input name="texcoord" type="vector2" nodename="add_9" /><input name="amplitude" type="float" value="1e-7" /><input name="pivot" type="float" value="0" /></noise2d>
+    <subtract name="subtract_11" type="float"><input name="in1" type="float" nodename="noise2d_3" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_12" type="float"><input name="in1" type="float" nodename="subtract_11" /><input name="in2" type="float" value="0.00825" /></multiply>
+    <add name="add_13" type="float"><input name="in1" type="float" value="0.055" /><input name="in2" type="float" nodename="multiply_12" /></add>
+    <clamp name="clamp_14" type="float"><input name="in" type="float" nodename="add_13" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_15" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_16" type="float"><input name="in1" type="float" nodename="noise2d_10" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_17" type="vector3"><input name="in" type="float" nodename="multiply_16" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_15" /></heighttonormal>
+    <normalmap name="normalmap_18" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_17" /></normalmap>
+    <constant name="constant_19" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="constant_7" />
+    <output name="specular_roughness" type="float" nodename="clamp_14" />
+    <output name="metalness" type="float" nodename="constant_19" />
+    <output name="normal" type="vector3" nodename="normalmap_18" />
+    <output name="height" type="float" nodename="noise2d_10" />
+  </nodegraph>
+  <standard_surface name="SR_acrylicTransparentGreen" type="surfaceshader">
+    <input name="base" type="float" value="0" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.49" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="transmission" type="float" value="1" />
+    <input name="transmission_color" type="color3" value="0.09, 0.33, 0.15000000000000002" />
+    <input name="transmission_depth" type="float" value="0.01" />
+    <input name="transmission_scatter" type="color3" value="0, 0, 0" />
+    <input name="thin_walled" type="boolean" value="false" />
+    <input name="base_color" type="color3" nodegraph="NG_acrylicTransparentGreen" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_acrylicTransparentGreen" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_acrylicTransparentGreen" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_acrylicTransparentGreen" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_acrylicTransparentGreen" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_acrylicTransparentGreen" /></surfacematerial>
+</materialx>

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- earthy orange-red terracotta concrete; fine visible aggregate, subtle cement mottling, and matte sealed finish. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: mineralMottle. -->
+  <nodegraph name="NG_concreteFineAggregateTerracotta">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_17" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="7" /></multiply>
+    <add name="add_18" type="vector2"><input name="in1" type="vector2" nodename="multiply_17" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_19" type="float"><input name="texcoord" type="vector2" nodename="add_18" /><input name="amplitude" type="float" value="0.6" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <mix name="mix_20" type="color3"><input name="bg" type="color3" value="0.3696, 0.1056, 0.0572" /><input name="fg" type="color3" value="0.4536, 0.1296, 0.07020000000000001" /><input name="mix" type="float" nodename="noise2d_19" /></mix>
+    <multiply name="multiply_21" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="45" /></multiply>
+    <add name="add_22" type="vector2"><input name="in1" type="vector2" nodename="multiply_21" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_23" type="float"><input name="texcoord" type="vector2" nodename="add_22" /><input name="amplitude" type="float" value="0.00005" /><input name="pivot" type="float" value="0" /></noise2d>
+    <multiply name="multiply_24" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="450" /></multiply>
+    <add name="add_25" type="vector2"><input name="in1" type="vector2" nodename="multiply_24" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_26" type="float"><input name="texcoord" type="vector2" nodename="add_25" /><input name="amplitude" type="float" value="0.000012" /><input name="pivot" type="float" value="0" /></noise2d>
+    <add name="add_27" type="float"><input name="in1" type="float" nodename="noise2d_23" /><input name="in2" type="float" nodename="noise2d_26" /></add>
+    <multiply name="multiply_28" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="250" /></multiply>
+    <worleynoise2d name="worleynoise2d_29" type="float"><input name="texcoord" type="vector2" nodename="multiply_28" /><input name="jitter" type="float" value="0.7" /></worleynoise2d>
+    <smoothstep name="smoothstep_30" type="float"><input name="in" type="float" nodename="worleynoise2d_29" /><input name="low" type="float" value="0.045" /><input name="high" type="float" value="0.13" /></smoothstep>
+    <subtract name="subtract_31" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_30" /></subtract>
+    <multiply name="multiply_32" type="float"><input name="in1" type="float" nodename="subtract_31" /><input name="in2" type="float" value="0.000075" /></multiply>
+    <subtract name="subtract_33" type="float"><input name="in1" type="float" nodename="add_27" /><input name="in2" type="float" nodename="multiply_32" /></subtract>
+    <mix name="mix_34" type="color3"><input name="bg" type="color3" nodename="mix_20" /><input name="fg" type="color3" value="0.20159999999999997, 0.0576, 0.0312" /><input name="mix" type="float" nodename="subtract_31" /></mix>
+    <subtract name="subtract_35" type="float"><input name="in1" type="float" nodename="noise2d_19" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_36" type="float"><input name="in1" type="float" nodename="subtract_35" /><input name="in2" type="float" value="0.08" /></multiply>
+    <add name="add_37" type="float"><input name="in1" type="float" value="0.79" /><input name="in2" type="float" nodename="multiply_36" /></add>
+    <clamp name="clamp_38" type="float"><input name="in" type="float" nodename="add_37" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_39" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_40" type="float"><input name="in1" type="float" nodename="subtract_33" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_41" type="vector3"><input name="in" type="float" nodename="multiply_40" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_39" /></heighttonormal>
+    <normalmap name="normalmap_42" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_41" /></normalmap>
+    <constant name="constant_43" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_34" />
+    <output name="specular_roughness" type="float" nodename="clamp_38" />
+    <output name="metalness" type="float" nodename="constant_43" />
+    <output name="normal" type="vector3" nodename="normalmap_42" />
+    <output name="height" type="float" nodename="subtract_33" />
+  </nodegraph>
+  <standard_surface name="SR_concreteFineAggregateTerracotta" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_concreteFineAggregateTerracotta" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_concreteFineAggregateTerracotta" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_concreteFineAggregateTerracotta" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_concreteFineAggregateTerracotta" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_concreteFineAggregateTerracotta" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_concreteFineAggregateTerracotta" /></surfacematerial>
+</materialx>

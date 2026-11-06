@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Clear decorative glass with an internal crackle appearance beneath a smooth glossy surface; clean manufactured finish. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: internalCrackle. -->
+  <nodegraph name="NG_glassCrackleClear">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="85" /></multiply>
+    <worleynoise2d name="worleynoise2d_8" type="vector2"><input name="texcoord" type="vector2" nodename="multiply_7" /></worleynoise2d>
+    <dotproduct name="dotproduct_9" type="float"><input name="in1" type="vector2" nodename="worleynoise2d_8" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <smoothstep name="smoothstep_10" type="float"><input name="in" type="float" nodename="dotproduct_9" /><input name="low" type="float" value="0.012" /><input name="high" type="float" value="0.035" /></smoothstep>
+    <constant name="constant_15" type="color3"><input name="value" type="color3" value="0.95, 0.95, 0.95" /></constant>
+    <multiply name="multiply_19" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="85" /></multiply>
+    <worleynoise2d name="worleynoise2d_20" type="vector2"><input name="texcoord" type="vector2" nodename="multiply_19" /></worleynoise2d>
+    <dotproduct name="dotproduct_21" type="float"><input name="in1" type="vector2" nodename="worleynoise2d_20" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <smoothstep name="smoothstep_22" type="float"><input name="in" type="float" nodename="dotproduct_21" /><input name="low" type="float" value="0.012" /><input name="high" type="float" value="0.035" /></smoothstep>
+    <subtract name="subtract_23" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_22" /></subtract>
+    <multiply name="multiply_24" type="float"><input name="in1" type="float" nodename="subtract_23" /><input name="in2" type="float" value="0.000004" /></multiply>
+    <subtract name="subtract_25" type="float"><input name="in1" type="float" nodename="smoothstep_10" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_26" type="float"><input name="in1" type="float" nodename="subtract_25" /><input name="in2" type="float" value="0.00825" /></multiply>
+    <add name="add_27" type="float"><input name="in1" type="float" value="0.055" /><input name="in2" type="float" nodename="multiply_26" /></add>
+    <clamp name="clamp_28" type="float"><input name="in" type="float" nodename="add_27" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_29" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_30" type="float"><input name="in1" type="float" nodename="multiply_24" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_31" type="vector3"><input name="in" type="float" nodename="multiply_30" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_29" /></heighttonormal>
+    <normalmap name="normalmap_32" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_31" /></normalmap>
+    <constant name="constant_33" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="constant_15" />
+    <output name="specular_roughness" type="float" nodename="clamp_28" />
+    <output name="metalness" type="float" nodename="constant_33" />
+    <output name="normal" type="vector3" nodename="normalmap_32" />
+    <output name="height" type="float" nodename="multiply_24" />
+  </nodegraph>
+  <standard_surface name="SR_glassCrackleClear" type="surfaceshader">
+    <input name="base" type="float" value="0" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.52" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="transmission" type="float" value="1" />
+    <input name="transmission_color" type="color3" value="0.97, 0.99, 0.985" />
+    <input name="transmission_depth" type="float" value="0.01" />
+    <input name="transmission_scatter" type="color3" value="0, 0, 0" />
+    <input name="thin_walled" type="boolean" value="false" />
+    <input name="base_color" type="color3" nodegraph="NG_glassCrackleClear" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_glassCrackleClear" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_glassCrackleClear" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_glassCrackleClear" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_glassCrackleClear" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_glassCrackleClear" /></surfacematerial>
+</materialx>

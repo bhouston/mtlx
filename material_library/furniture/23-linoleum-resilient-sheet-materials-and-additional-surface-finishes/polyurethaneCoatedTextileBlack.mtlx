@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- neutral black polyurethane-coated textile; subtle underlying fabric texture with a continuous matte polymer surface. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: wovenComposite. -->
+  <nodegraph name="NG_polyurethaneCoatedTextileBlack">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="500" /></multiply>
+    <separate2 name="separate2_8" type="multioutput"><input name="in" type="vector2" nodename="multiply_7" /></separate2>
+    <multiply name="multiply_9" type="float"><input name="in1" type="float" nodename="separate2_8" output="outx" /><input name="in2" type="float" value="6.2831853" /></multiply>
+    <sin name="sin_10" type="float"><input name="in" type="float" nodename="multiply_9" /></sin>
+    <multiply name="multiply_11" type="float"><input name="in1" type="float" nodename="separate2_8" output="outy" /><input name="in2" type="float" value="6.2831853" /></multiply>
+    <sin name="sin_12" type="float"><input name="in" type="float" nodename="multiply_11" /></sin>
+    <floor name="floor_13" type="float"><input name="in" type="float" nodename="separate2_8" output="outx" /></floor>
+    <floor name="floor_14" type="float"><input name="in" type="float" nodename="separate2_8" output="outy" /></floor>
+    <add name="add_15" type="float"><input name="in1" type="float" nodename="floor_13" /><input name="in2" type="float" nodename="floor_14" /></add>
+    <modulo name="modulo_16" type="float"><input name="in1" type="float" nodename="add_15" /><input name="in2" type="float" value="4" /></modulo>
+    <smoothstep name="smoothstep_17" type="float"><input name="in" type="float" nodename="modulo_16" /><input name="low" type="float" value="0.5" /><input name="high" type="float" value="1.5" /></smoothstep>
+    <mix name="mix_18" type="float"><input name="bg" type="float" nodename="sin_10" /><input name="fg" type="float" nodename="sin_12" /><input name="mix" type="float" nodename="smoothstep_17" /></mix>
+    <multiply name="multiply_19" type="float"><input name="in1" type="float" nodename="mix_18" /><input name="in2" type="float" value="0.5" /></multiply>
+    <add name="add_20" type="float"><input name="in1" type="float" nodename="multiply_19" /><input name="in2" type="float" value="0.5" /></add>
+    <mix name="mix_21" type="color3"><input name="bg" type="color3" value="0.004, 0.0045, 0.005" /><input name="fg" type="color3" value="0.012, 0.013499999999999998, 0.015" /><input name="mix" type="float" nodename="add_20" /></mix>
+    <multiply name="multiply_22" type="float"><input name="in1" type="float" nodename="add_20" /><input name="in2" type="float" value="0.000025" /></multiply>
+    <subtract name="subtract_23" type="float"><input name="in1" type="float" nodename="add_20" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_24" type="float"><input name="in1" type="float" nodename="subtract_23" /><input name="in2" type="float" value="0.08" /></multiply>
+    <add name="add_25" type="float"><input name="in1" type="float" value="0.6" /><input name="in2" type="float" nodename="multiply_24" /></add>
+    <clamp name="clamp_26" type="float"><input name="in" type="float" nodename="add_25" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_27" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_28" type="float"><input name="in1" type="float" nodename="multiply_22" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_29" type="vector3"><input name="in" type="float" nodename="multiply_28" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_27" /></heighttonormal>
+    <normalmap name="normalmap_30" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_29" /></normalmap>
+    <constant name="constant_31" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_21" />
+    <output name="specular_roughness" type="float" nodename="clamp_26" />
+    <output name="metalness" type="float" nodename="constant_31" />
+    <output name="normal" type="vector3" nodename="normalmap_30" />
+    <output name="height" type="float" nodename="multiply_22" />
+  </nodegraph>
+  <standard_surface name="SR_polyurethaneCoatedTextileBlack" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0.55" />
+    <input name="base_color" type="color3" nodegraph="NG_polyurethaneCoatedTextileBlack" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_polyurethaneCoatedTextileBlack" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_polyurethaneCoatedTextileBlack" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_polyurethaneCoatedTextileBlack" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_polyurethaneCoatedTextileBlack" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_polyurethaneCoatedTextileBlack" /></surfacematerial>
+</materialx>

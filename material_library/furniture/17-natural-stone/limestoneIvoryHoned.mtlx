@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Ivory limestone with subtle fine pores and occasional fossil-like mineral marks; smooth honed surface with broad low-sheen dielectric highlights. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: fineMineralPores. -->
+  <nodegraph name="NG_limestoneIvoryHoned">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="240" /></multiply>
+    <add name="add_2" type="vector2"><input name="in1" type="vector2" nodename="multiply_1" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_3" type="float"><input name="texcoord" type="vector2" nodename="add_2" /><input name="amplitude" type="float" value="0.6" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_4" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="240" /></multiply>
+    <add name="add_5" type="vector2"><input name="in1" type="vector2" nodename="multiply_4" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_6" type="float"><input name="texcoord" type="vector2" nodename="add_5" /><input name="amplitude" type="float" value="0.000012" /><input name="pivot" type="float" value="0" /></noise2d>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="320" /></multiply>
+    <worleynoise2d name="worleynoise2d_8" type="float"><input name="texcoord" type="vector2" nodename="multiply_7" /><input name="jitter" type="float" value="0.7" /></worleynoise2d>
+    <smoothstep name="smoothstep_9" type="float"><input name="in" type="float" nodename="worleynoise2d_8" /><input name="low" type="float" value="0.04" /><input name="high" type="float" value="0.12" /></smoothstep>
+    <subtract name="subtract_10" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_9" /></subtract>
+    <constant name="constant_11" type="color3"><input name="value" type="color3" value="0.75, 0.69, 0.54" /></constant>
+    <mix name="mix_12" type="color3"><input name="bg" type="color3" nodename="constant_11" /><input name="fg" type="color3" value="0.44999999999999996, 0.414, 0.324" /><input name="mix" type="float" nodename="subtract_10" /></mix>
+    <multiply name="multiply_13" type="float"><input name="in1" type="float" nodename="subtract_10" /><input name="in2" type="float" value="0.000025" /></multiply>
+    <subtract name="subtract_14" type="float"><input name="in1" type="float" nodename="noise2d_6" /><input name="in2" type="float" nodename="multiply_13" /></subtract>
+    <subtract name="subtract_15" type="float"><input name="in1" type="float" nodename="noise2d_3" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_16" type="float"><input name="in1" type="float" nodename="subtract_15" /><input name="in2" type="float" value="0.06" /></multiply>
+    <add name="add_17" type="float"><input name="in1" type="float" value="0.4" /><input name="in2" type="float" nodename="multiply_16" /></add>
+    <clamp name="clamp_18" type="float"><input name="in" type="float" nodename="add_17" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_19" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_20" type="float"><input name="in1" type="float" nodename="subtract_14" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_21" type="vector3"><input name="in" type="float" nodename="multiply_20" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_19" /></heighttonormal>
+    <normalmap name="normalmap_22" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_21" /></normalmap>
+    <constant name="constant_23" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_12" />
+    <output name="specular_roughness" type="float" nodename="clamp_18" />
+    <output name="metalness" type="float" nodename="constant_23" />
+    <output name="normal" type="vector3" nodename="normalmap_22" />
+    <output name="height" type="float" nodename="subtract_14" />
+  </nodegraph>
+  <standard_surface name="SR_limestoneIvoryHoned" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_limestoneIvoryHoned" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_limestoneIvoryHoned" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_limestoneIvoryHoned" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_limestoneIvoryHoned" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_limestoneIvoryHoned" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_limestoneIvoryHoned" /></surfacematerial>
+</materialx>

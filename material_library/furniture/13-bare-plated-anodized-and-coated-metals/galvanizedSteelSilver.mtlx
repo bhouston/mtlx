@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- New bright silver zinc-coated steel with crystalline spangle pattern and metallic reflections. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: zincSpangle. -->
+  <nodegraph name="NG_galvanizedSteelSilver">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="45" /></multiply>
+    <worleynoise2d name="worleynoise2d_8" type="float"><input name="texcoord" type="vector2" nodename="multiply_7" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <multiply name="multiply_9" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="350" /></multiply>
+    <add name="add_10" type="vector2"><input name="in1" type="vector2" nodename="multiply_9" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_11" type="float"><input name="texcoord" type="vector2" nodename="add_10" /><input name="amplitude" type="float" value="0.000003" /><input name="pivot" type="float" value="0" /></noise2d>
+    <mix name="mix_12" type="color3"><input name="bg" type="color3" value="0.5016, 0.5244, 0.5319999999999999" /><input name="fg" type="color3" value="0.8184, 0.8555999999999999, 0.868" /><input name="mix" type="float" nodename="worleynoise2d_8" /></mix>
+    <subtract name="subtract_13" type="float"><input name="in1" type="float" nodename="worleynoise2d_8" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_14" type="float"><input name="in1" type="float" nodename="subtract_13" /><input name="in2" type="float" value="0.056999999999999995" /></multiply>
+    <add name="add_15" type="float"><input name="in1" type="float" value="0.38" /><input name="in2" type="float" nodename="multiply_14" /></add>
+    <clamp name="clamp_16" type="float"><input name="in" type="float" nodename="add_15" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_17" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_18" type="float"><input name="in1" type="float" nodename="noise2d_11" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_19" type="vector3"><input name="in" type="float" nodename="multiply_18" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_17" /></heighttonormal>
+    <normalmap name="normalmap_20" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_19" /></normalmap>
+    <constant name="constant_21" type="float"><input name="value" type="float" value="1" /></constant>
+    <output name="base_color" type="color3" nodename="mix_12" />
+    <output name="specular_roughness" type="float" nodename="clamp_16" />
+    <output name="metalness" type="float" nodename="constant_21" />
+    <output name="normal" type="vector3" nodename="normalmap_20" />
+    <output name="height" type="float" nodename="noise2d_11" />
+  </nodegraph>
+  <standard_surface name="SR_galvanizedSteelSilver" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_galvanizedSteelSilver" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_galvanizedSteelSilver" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_galvanizedSteelSilver" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_galvanizedSteelSilver" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_galvanizedSteelSilver" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_galvanizedSteelSilver" /></surfacematerial>
+</materialx>

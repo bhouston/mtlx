@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- New black-pigmented oak with contrasting white pigment in open pores; clear satin finish. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: longitudinalFiber. -->
+  <nodegraph name="NG_woodFinishCerusedOakBlackWhite">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="300, 4" /></multiply>
+    <add name="add_8" type="vector2"><input name="in1" type="vector2" nodename="multiply_7" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_9" type="float"><input name="texcoord" type="vector2" nodename="add_8" /><input name="amplitude" type="float" value="0.65" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <mix name="mix_10" type="color3"><input name="bg" type="color3" value="0.00975, 0.00585, 0.0032500000000000003" /><input name="fg" type="color3" value="0.018, 0.010799999999999999, 0.006" /><input name="mix" type="float" nodename="noise2d_9" /></mix>
+    <multiply name="multiply_11" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="300, 4" /></multiply>
+    <add name="add_12" type="vector2"><input name="in1" type="vector2" nodename="multiply_11" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_13" type="float"><input name="texcoord" type="vector2" nodename="add_12" /><input name="amplitude" type="float" value="0.000035" /><input name="pivot" type="float" value="0" /></noise2d>
+    <smoothstep name="smoothstep_14" type="float"><input name="in" type="float" nodename="noise2d_9" /><input name="low" type="float" value="0.68" /><input name="high" type="float" value="0.82" /></smoothstep>
+    <mix name="mix_15" type="color3"><input name="bg" type="color3" nodename="mix_10" /><input name="fg" type="color3" value="0.69, 0.66, 0.57" /><input name="mix" type="float" nodename="smoothstep_14" /></mix>
+    <subtract name="subtract_16" type="float"><input name="in1" type="float" nodename="noise2d_9" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_17" type="float"><input name="in1" type="float" nodename="subtract_16" /><input name="in2" type="float" value="0.0675" /></multiply>
+    <add name="add_18" type="float"><input name="in1" type="float" value="0.45" /><input name="in2" type="float" nodename="multiply_17" /></add>
+    <clamp name="clamp_19" type="float"><input name="in" type="float" nodename="add_18" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_20" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_21" type="float"><input name="in1" type="float" nodename="noise2d_13" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_22" type="vector3"><input name="in" type="float" nodename="multiply_21" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_20" /></heighttonormal>
+    <normalmap name="normalmap_23" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_22" /></normalmap>
+    <constant name="constant_24" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_15" />
+    <output name="specular_roughness" type="float" nodename="clamp_19" />
+    <output name="metalness" type="float" nodename="constant_24" />
+    <output name="normal" type="vector3" nodename="normalmap_23" />
+    <output name="height" type="float" nodename="noise2d_13" />
+  </nodegraph>
+  <standard_surface name="SR_woodFinishCerusedOakBlackWhite" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_woodFinishCerusedOakBlackWhite" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_woodFinishCerusedOakBlackWhite" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_woodFinishCerusedOakBlackWhite" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_woodFinishCerusedOakBlackWhite" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_woodFinishCerusedOakBlackWhite" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_woodFinishCerusedOakBlackWhite" /></surfacematerial>
+</materialx>

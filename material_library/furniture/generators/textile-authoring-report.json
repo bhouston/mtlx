@@ -1,0 +1,73 @@
+{
+  "materials": 1190,
+  "families": {
+    "Woven upholstery and furnishing textiles": 420,
+    "Pile, loop, felt, knitted, and nonwoven textiles": 321,
+    "Patterned and multicolor textiles": 36,
+    "Leather, suede, hides, and leather alternatives": 246,
+    "Mesh, webbing, rope, and natural woven fibers": 79,
+    "Bedding, padding, insulation, and lining textiles": 88
+  },
+  "scale": "One UV unit = one meter; heights stored in meters. Height-to-normal converts both UVs and heights to millimeters at scale 16.",
+  "features": [
+    {
+      "feature": "fine satin/silk yarn",
+      "pitchMeters": 0.0003,
+      "heightMeters": 4e-6
+    },
+    {
+      "feature": "plain weave yarn",
+      "pitchMeters": 0.00055,
+      "heightMeters": 4e-6
+    },
+    {
+      "feature": "canvas yarn",
+      "pitchMeters": 0.0012,
+      "heightMeters": 4e-5
+    },
+    {
+      "feature": "linen/hemp/ramie yarn",
+      "pitchMeters": 0.0009,
+      "heightMeters": 4e-6
+    },
+    {
+      "feature": "knit loop",
+      "pitchMeters": 0.0018,
+      "heightMeters": 6e-5
+    },
+    {
+      "feature": "boucle loop",
+      "pitchMeters": 0.003,
+      "heightMeters": 0.0001
+    },
+    {
+      "feature": "mesh opening lattice",
+      "pitchMeters": 0.0028,
+      "heightMeters": 8e-5
+    },
+    {
+      "feature": "rattan/cane fiber",
+      "pitchMeters": 0.0008,
+      "heightMeters": 2.5e-5
+    }
+  ],
+  "validation": {
+    "protocol": "mtlx MCP stdio",
+    "rules": ["basic", "structure", "types", "unused"],
+    "strict": true,
+    "passed": 1190,
+    "failed": 0
+  },
+  "generationIterations": 4,
+  "mcpRenderCalls": 0,
+  "visualReview": "Parent hardware preview exposed coherent weave moire on cotton sphere/totem. Revised yarn phase jitter, microgeometry amplitude and statistical fiber treatment; parent rerenders final.",
+  "limitations": [
+    "Fine cloth preserves true mean yarn pitch while using primarily statistical directional microfibers and a low-contrast phase-jittered residual weave to control distant moire.",
+    "Sheen and anisotropy approximate microfibers; geometry does not model actual flyaway fibers or pile silhouette.",
+    "Decorative print motifs are original procedural interpretations. Scenic toile uses a repeated cottage/tree landscape.",
+    "Height-to-normal is the documented renderer workaround; cross-renderer normal response depends on implementation."
+  ],
+  "friction": ["No connected mtlx MCP tool; instantiated repository stdio server through MCP SDK."],
+  "guideCorrections": [],
+  "rendererBugs": []
+}
