@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Alternating pale and tan bonded wood layers with visible fiber grain and a matte surface; edge appearance only. -->
+  <!-- Authored linear Rec.709 art target; not a calibrated manufacturer sample. Regenerate with authoring/generate-mineral-wood.py. -->
+  <nodegraph name="NG_plywoodBirchEdgeRaw">
+    <texcoord name="uv" type="vector2" />
+    <!-- Metric UVs: one UV unit = one metre. Height values below are metres. -->
+    <dotproduct name="dotproduct_1" type="float">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="0, 1" />
+    </dotproduct>
+    <multiply name="multiply_2" type="float">
+      <input name="in1" type="float" nodename="dotproduct_1" />
+      <input name="in2" type="float" value="2094.3951" />
+    </multiply>
+    <multiply name="multiply_3" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="4, 35" />
+    </multiply>
+    <add name="add_4" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_3" />
+      <input name="in2" type="vector2" value="11.4469231, 11.5984615" />
+    </add>
+    <fractal2d name="fractal2d_5" type="float">
+      <input name="texcoord" type="vector2" nodename="add_4" />
+      <input name="amplitude" type="float" value="0.13" />
+      <input name="octaves" type="integer" value="1" />
+      <input name="lacunarity" type="float" value="2.03" />
+      <input name="diminish" type="float" value="0.5" />
+    </fractal2d>
+    <add name="add_6" type="float">
+      <input name="in1" type="float" nodename="multiply_2" />
+      <input name="in2" type="float" nodename="fractal2d_5" />
+    </add>
+    <sin name="sin_7" type="float">
+      <input name="in" type="float" nodename="add_6" />
+    </sin>
+    <multiply name="multiply_8" type="float">
+      <input name="in1" type="float" nodename="sin_7" />
+      <input name="in2" type="float" value="0.5" />
+    </multiply>
+    <add name="add_9" type="float">
+      <input name="in1" type="float" nodename="multiply_8" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <mix name="mix_10" type="color3">
+      <input name="bg" type="color3" value="0.35, 0.22, 0.095" />
+      <input name="fg" type="color3" value="0.64, 0.48, 0.27" />
+      <input name="mix" type="float" nodename="add_9" />
+    </mix>
+    <multiply name="multiply_11" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="320, 10" />
+    </multiply>
+    <add name="add_12" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_11" />
+      <input name="in2" type="vector2" value="11.4469231, 11.5984615" />
+    </add>
+    <fractal2d name="fractal2d_13" type="float">
+      <input name="texcoord" type="vector2" nodename="add_12" />
+      <input name="amplitude" type="float" value="8e-06" />
+      <input name="octaves" type="integer" value="1" />
+      <input name="lacunarity" type="float" value="2.03" />
+      <input name="diminish" type="float" value="0.5" />
+    </fractal2d>
+    <constant name="constant_14" type="float">
+      <input name="value" type="float" value="0.85" />
+    </constant>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="fractal2d_13" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <output name="base_color_out" type="color3" nodename="mix_10" />
+    <output name="roughness_out" type="float" nodename="constant_14" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_plywoodBirchEdgeRaw" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="base_color" type="color3" nodegraph="NG_plywoodBirchEdgeRaw" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_plywoodBirchEdgeRaw" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_plywoodBirchEdgeRaw" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_plywoodBirchEdgeRaw" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_plywoodBirchEdgeRaw" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_plywoodBirchEdgeRaw" />
+  </surfacematerial>
+</materialx>

@@ -1,0 +1,348 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Pale cream softwood with fine straight grain and small knots; oil-darkened grain with low satin reflection. Grain direction follows the material tangent. -->
+  <!-- Authored linear Rec.709 art target; not a calibrated manufacturer sample. Regenerate with authoring/generate-mineral-wood.py. -->
+  <nodegraph name="NG_spruceOiled">
+    <texcoord name="uv" type="vector2" />
+    <!-- Metric UVs: one UV unit = one metre. Height values below are metres. -->
+    <multiply name="multiply_1" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="2.5, 2" />
+    </multiply>
+    <add name="add_2" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_1" />
+      <input name="in2" type="vector2" value="57.2, 20.86" />
+    </add>
+    <floor name="floor_3" type="vector2">
+      <input name="in" type="vector2" nodename="add_2" />
+    </floor>
+    <cellnoise2d name="cellnoise2d_4" type="float">
+      <input name="texcoord" type="vector2" nodename="floor_3" />
+    </cellnoise2d>
+    <fract name="fract_5" type="vector2">
+      <input name="in" type="vector2" nodename="add_2" />
+    </fract>
+    <subtract name="subtract_6" type="vector2">
+      <input name="in1" type="vector2" nodename="fract_5" />
+      <input name="in2" type="vector2" value="0.5, 0.5" />
+    </subtract>
+    <multiply name="multiply_7" type="vector2">
+      <input name="in1" type="vector2" nodename="subtract_6" />
+      <input name="in2" type="vector2" value="0.4, 0.5" />
+    </multiply>
+    <multiply name="multiply_8" type="float">
+      <input name="in1" type="float" nodename="cellnoise2d_4" />
+      <input name="in2" type="float" value="13.73" />
+    </multiply>
+    <fract name="fract_9" type="float">
+      <input name="in" type="float" nodename="multiply_8" />
+    </fract>
+    <subtract name="subtract_10" type="float">
+      <input name="in1" type="float" nodename="fract_9" />
+      <input name="in2" type="float" value="0.5" />
+    </subtract>
+    <multiply name="multiply_11" type="float">
+      <input name="in1" type="float" nodename="subtract_10" />
+      <input name="in2" type="float" value="0.1" />
+    </multiply>
+    <multiply name="multiply_12" type="float">
+      <input name="in1" type="float" nodename="cellnoise2d_4" />
+      <input name="in2" type="float" value="29.17" />
+    </multiply>
+    <fract name="fract_13" type="float">
+      <input name="in" type="float" nodename="multiply_12" />
+    </fract>
+    <subtract name="subtract_14" type="float">
+      <input name="in1" type="float" nodename="fract_13" />
+      <input name="in2" type="float" value="0.5" />
+    </subtract>
+    <multiply name="multiply_15" type="float">
+      <input name="in1" type="float" nodename="subtract_14" />
+      <input name="in2" type="float" value="0.16" />
+    </multiply>
+    <combine2 name="combine2_16" type="vector2">
+      <input name="in1" type="float" nodename="multiply_11" />
+      <input name="in2" type="float" nodename="multiply_15" />
+    </combine2>
+    <subtract name="subtract_17" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_7" />
+      <input name="in2" type="vector2" nodename="combine2_16" />
+    </subtract>
+    <multiply name="multiply_18" type="vector2">
+      <input name="in1" type="vector2" nodename="subtract_17" />
+      <input name="in2" type="vector2" value="1, 0.45" />
+    </multiply>
+    <magnitude name="magnitude_19" type="float">
+      <input name="in" type="vector2" nodename="multiply_18" />
+    </magnitude>
+    <smoothstep name="smoothstep_20" type="float">
+      <input name="in" type="float" nodename="cellnoise2d_4" />
+      <input name="low" type="float" value="0.55" />
+      <input name="high" type="float" value="0.65" />
+    </smoothstep>
+    <smoothstep name="smoothstep_21" type="float">
+      <input name="in" type="float" nodename="magnitude_19" />
+      <input name="low" type="float" value="0.004" />
+      <input name="high" type="float" value="0.012" />
+    </smoothstep>
+    <subtract name="subtract_22" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="smoothstep_21" />
+    </subtract>
+    <multiply name="multiply_23" type="float">
+      <input name="in1" type="float" nodename="subtract_22" />
+      <input name="in2" type="float" nodename="smoothstep_20" />
+    </multiply>
+    <smoothstep name="smoothstep_24" type="float">
+      <input name="in" type="float" nodename="magnitude_19" />
+      <input name="low" type="float" value="0.015" />
+      <input name="high" type="float" value="0.06" />
+    </smoothstep>
+    <subtract name="subtract_25" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="smoothstep_24" />
+    </subtract>
+    <multiply name="multiply_26" type="float">
+      <input name="in1" type="float" nodename="subtract_25" />
+      <input name="in2" type="float" nodename="smoothstep_20" />
+    </multiply>
+    <dotproduct name="dotproduct_27" type="float">
+      <input name="in1" type="vector2" nodename="subtract_17" />
+      <input name="in2" type="vector2" value="1, 0" />
+    </dotproduct>
+    <multiply name="multiply_28" type="float">
+      <input name="in1" type="float" nodename="multiply_26" />
+      <input name="in2" type="float" value="0.65" />
+    </multiply>
+    <multiply name="multiply_29" type="float">
+      <input name="in1" type="float" nodename="dotproduct_27" />
+      <input name="in2" type="float" nodename="multiply_28" />
+    </multiply>
+    <combine2 name="combine2_30" type="vector2">
+      <input name="in1" type="float" nodename="multiply_29" />
+      <input name="in2" type="float" value="0" />
+    </combine2>
+    <subtract name="subtract_31" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" nodename="combine2_30" />
+    </subtract>
+    <multiply name="multiply_32" type="vector2">
+      <input name="in1" type="vector2" nodename="subtract_31" />
+      <input name="in2" type="vector2" value="65, 1.7" />
+    </multiply>
+    <add name="add_33" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_32" />
+      <input name="in2" type="vector2" value="41.37, 22.67" />
+    </add>
+    <fractal2d name="fractal2d_34" type="float">
+      <input name="texcoord" type="vector2" nodename="add_33" />
+      <input name="amplitude" type="float" value="1" />
+      <input name="octaves" type="integer" value="3" />
+      <input name="lacunarity" type="float" value="2.03" />
+      <input name="diminish" type="float" value="0.5" />
+    </fractal2d>
+    <multiply name="multiply_35" type="float">
+      <input name="in1" type="float" nodename="fractal2d_34" />
+      <input name="in2" type="float" value="0.6" />
+    </multiply>
+    <add name="add_36" type="float">
+      <input name="in1" type="float" nodename="multiply_35" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="clamp_37" type="float">
+      <input name="in" type="float" nodename="add_36" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <dotproduct name="dotproduct_42" type="float">
+      <input name="in1" type="vector2" nodename="subtract_31" />
+      <input name="in2" type="vector2" value="1, 0" />
+    </dotproduct>
+    <dotproduct name="dotproduct_43" type="float">
+      <input name="in1" type="vector2" nodename="subtract_31" />
+      <input name="in2" type="vector2" value="0, 1" />
+    </dotproduct>
+    <subtract name="subtract_44" type="float">
+      <input name="in1" type="float" nodename="dotproduct_42" />
+      <input name="in2" type="float" value="0.45" />
+    </subtract>
+    <multiply name="multiply_45" type="float">
+      <input name="in1" type="float" nodename="subtract_44" />
+      <input name="in2" type="float" nodename="subtract_44" />
+    </multiply>
+    <add name="add_46" type="float">
+      <input name="in1" type="float" nodename="multiply_45" />
+      <input name="in2" type="float" value="0.0036" />
+    </add>
+    <sqrt name="sqrt_47" type="float">
+      <input name="in" type="float" nodename="add_46" />
+    </sqrt>
+    <multiply name="multiply_48" type="float">
+      <input name="in1" type="float" nodename="sqrt_47" />
+      <input name="in2" type="float" value="125" />
+    </multiply>
+    <multiply name="multiply_49" type="float">
+      <input name="in1" type="float" nodename="dotproduct_43" />
+      <input name="in2" type="float" value="2.5" />
+    </multiply>
+    <add name="add_50" type="float">
+      <input name="in1" type="float" nodename="multiply_48" />
+      <input name="in2" type="float" nodename="multiply_49" />
+    </add>
+    <multiply name="multiply_51" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="12, 4" />
+    </multiply>
+    <add name="add_52" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_51" />
+      <input name="in2" type="vector2" value="41.37, 22.67" />
+    </add>
+    <fractal2d name="fractal2d_53" type="float">
+      <input name="texcoord" type="vector2" nodename="add_52" />
+      <input name="amplitude" type="float" value="0.35" />
+      <input name="octaves" type="integer" value="2" />
+      <input name="lacunarity" type="float" value="2.03" />
+      <input name="diminish" type="float" value="0.5" />
+    </fractal2d>
+    <add name="add_54" type="float">
+      <input name="in1" type="float" nodename="add_50" />
+      <input name="in2" type="float" nodename="fractal2d_53" />
+    </add>
+    <multiply name="multiply_55" type="float">
+      <input name="in1" type="float" nodename="add_54" />
+      <input name="in2" type="float" value="6.28318531" />
+    </multiply>
+    <sin name="sin_56" type="float">
+      <input name="in" type="float" nodename="multiply_55" />
+    </sin>
+    <smoothstep name="smoothstep_57" type="float">
+      <input name="in" type="float" nodename="sin_56" />
+      <input name="low" type="float" value="0.15" />
+      <input name="high" type="float" value="0.75" />
+    </smoothstep>
+    <divide name="divide_58" type="float">
+      <input name="in1" type="float" nodename="subtract_44" />
+      <input name="in2" type="float" nodename="sqrt_47" />
+    </divide>
+    <absval name="absval_59" type="float">
+      <input name="in" type="float" nodename="divide_58" />
+    </absval>
+    <multiply name="multiply_60" type="float">
+      <input name="in1" type="float" nodename="absval_59" />
+      <input name="in2" type="float" value="125" />
+    </multiply>
+    <smoothstep name="smoothstep_61" type="float">
+      <input name="in" type="float" nodename="multiply_60" />
+      <input name="low" type="float" value="80" />
+      <input name="high" type="float" value="125" />
+    </smoothstep>
+    <subtract name="subtract_62" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="smoothstep_61" />
+    </subtract>
+    <mix name="mix_63" type="float">
+      <input name="bg" type="float" value="0.3" />
+      <input name="fg" type="float" nodename="smoothstep_57" />
+      <input name="mix" type="float" nodename="subtract_62" />
+    </mix>
+    <mix name="mix_64" type="float">
+      <input name="bg" type="float" nodename="clamp_37" />
+      <input name="fg" type="float" nodename="mix_63" />
+      <input name="mix" type="float" value="0.45" />
+    </mix>
+    <mix name="mix_65" type="float">
+      <input name="bg" type="float" value="0.68" />
+      <input name="fg" type="float" value="1.32" />
+      <input name="mix" type="float" nodename="mix_64" />
+    </mix>
+    <multiply name="multiply_66" type="color3">
+      <input name="in1" type="color3" value="0.4758, 0.3822, 0.2418" />
+      <input name="in2" type="float" nodename="mix_65" />
+    </multiply>
+    <subtract name="subtract_67" type="float">
+      <input name="in1" type="float" nodename="clamp_37" />
+      <input name="in2" type="float" value="0.5" />
+    </subtract>
+    <multiply name="multiply_68" type="float">
+      <input name="in1" type="float" nodename="subtract_67" />
+      <input name="in2" type="float" value="2.5e-05" />
+    </multiply>
+    <multiply name="multiply_69" type="float">
+      <input name="in1" type="float" nodename="mix_63" />
+      <input name="in2" type="float" value="2.5e-05" />
+    </multiply>
+    <add name="add_70" type="float">
+      <input name="in1" type="float" nodename="multiply_68" />
+      <input name="in2" type="float" nodename="multiply_69" />
+    </add>
+    <multiply name="multiply_75" type="float">
+      <input name="in1" type="float" nodename="multiply_23" />
+      <input name="in2" type="float" value="0.85" />
+    </multiply>
+    <mix name="mix_76" type="color3">
+      <input name="bg" type="color3" nodename="multiply_66" />
+      <input name="fg" type="color3" value="0.055, 0.025, 0.008" />
+      <input name="mix" type="float" nodename="multiply_75" />
+    </mix>
+    <multiply name="multiply_77" type="float">
+      <input name="in1" type="float" nodename="multiply_23" />
+      <input name="in2" type="float" value="-4.5e-05" />
+    </multiply>
+    <add name="add_78" type="float">
+      <input name="in1" type="float" nodename="add_70" />
+      <input name="in2" type="float" nodename="multiply_77" />
+    </add>
+    <subtract name="subtract_79" type="float">
+      <input name="in1" type="float" nodename="mix_64" />
+      <input name="in2" type="float" value="0.5" />
+    </subtract>
+    <multiply name="multiply_80" type="float">
+      <input name="in1" type="float" nodename="subtract_79" />
+      <input name="in2" type="float" value="0.13" />
+    </multiply>
+    <add name="add_81" type="float">
+      <input name="in1" type="float" value="0.51" />
+      <input name="in2" type="float" nodename="multiply_80" />
+    </add>
+    <clamp name="clamp_82" type="float">
+      <input name="in" type="float" nodename="add_81" />
+      <input name="low" type="float" value="0.05" />
+      <input name="high" type="float" value="0.97" />
+    </clamp>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="add_78" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <output name="base_color_out" type="color3" nodename="mix_76" />
+    <output name="roughness_out" type="float" nodename="clamp_82" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_spruceOiled" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="base_color" type="color3" nodegraph="NG_spruceOiled" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_spruceOiled" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_spruceOiled" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_spruceOiled" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_spruceOiled" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_spruceOiled" />
+  </surfacematerial>
+</materialx>

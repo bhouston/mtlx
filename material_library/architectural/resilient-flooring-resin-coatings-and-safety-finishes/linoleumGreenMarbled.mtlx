@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Catalog: Green; linoleum with softly blended fibrous pigment marbling and a low satin sheen. -->
+  <!-- Art-directed linear Rec.709; 1 UV = 1 m; height in m.  -->
+  <!-- Recipe marbled: feature frequencies 7, 30 per m; relief amplitude 1e-05 m; macro drift about 0.25 m. -->
+  <nodegraph name="NG_linoleumGreenMarbled">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="multiply_2" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="3.1, 4.3" />
+    </multiply>
+    <add name="add_3" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_2" />
+      <input name="in2" type="vector2" value="11.37, 29.17" />
+    </add>
+    <fractal2d name="fractal2d_4" type="float">
+      <input name="texcoord" type="vector2" nodename="add_3" />
+      <input name="octaves" type="integer" value="3" />
+    </fractal2d>
+    <multiply name="multiply_5" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="7, 30" />
+    </multiply>
+    <add name="add_6" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_5" />
+      <input name="in2" type="vector2" value="3.71, 9.17" />
+    </add>
+    <fractal2d name="fractal2d_7" type="float">
+      <input name="texcoord" type="vector2" nodename="add_6" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <multiply name="multiply_11" type="float">
+      <input name="in1" type="float" nodename="fractal2d_7" />
+      <input name="in2" type="float" value="1e-05" />
+    </multiply>
+    <multiply name="multiply_12" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="0.4" />
+    </multiply>
+    <add name="add_13" type="float">
+      <input name="in1" type="float" nodename="fractal2d_7" />
+      <input name="in2" type="float" nodename="multiply_12" />
+    </add>
+    <multiply name="multiply_14" type="float">
+      <input name="in1" type="float" nodename="add_13" />
+      <input name="in2" type="float" value="0.8" />
+    </multiply>
+    <add name="add_15" type="float">
+      <input name="in1" type="float" nodename="multiply_14" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="clamp_16" type="float">
+      <input name="in" type="float" nodename="add_15" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <multiply name="multiply_17" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="0.042" />
+    </multiply>
+    <add name="add_18" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="multiply_17" />
+    </add>
+    <mix name="mix_19" type="color3">
+      <input name="bg" type="color3" value="0.068, 0.1955, 0.085" />
+      <input name="fg" type="color3" value="0.092, 0.2645, 0.115" />
+      <input name="mix" type="float" nodename="clamp_16" />
+    </mix>
+    <multiply name="base_color" type="color3">
+      <input name="in1" type="color3" nodename="mix_19" />
+      <input name="in2" type="float" nodename="add_18" />
+    </multiply>
+    <subtract name="subtract_21" type="float">
+      <input name="in1" type="float" nodename="clamp_16" />
+      <input name="in2" type="float" value="0.5" />
+    </subtract>
+    <multiply name="multiply_22" type="float">
+      <input name="in1" type="float" nodename="subtract_21" />
+      <input name="in2" type="float" value="-0.0756" />
+    </multiply>
+    <add name="add_23" type="float">
+      <input name="in1" type="float" value="0.54" />
+      <input name="in2" type="float" nodename="multiply_22" />
+    </add>
+    <clamp name="roughness" type="float">
+      <input name="in" type="float" nodename="add_23" />
+      <input name="low" type="float" value="0.005" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <multiply name="multiply_26" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="2.5e-06" />
+    </multiply>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="multiply_11" />
+      <input name="in2" type="float" nodename="multiply_26" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_linoleumGreenMarbled" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_linoleumGreenMarbled" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_linoleumGreenMarbled" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_linoleumGreenMarbled" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_linoleumGreenMarbled" output="out_normal" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+  </standard_surface>
+  <surfacematerial name="linoleumGreenMarbled" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_linoleumGreenMarbled" />
+  </surfacematerial>
+</materialx>

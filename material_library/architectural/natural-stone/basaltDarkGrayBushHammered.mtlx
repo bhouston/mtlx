@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Dark gray volcanic stone with fine mineral speckle and sparse pinholes; dense fine impact-pitted mineral surface with a dry diffuse response; no tooling layout specified. -->
+  <!-- Authored linear Rec.709 art target; not a calibrated manufacturer sample. Regenerate with authoring/generate-mineral-wood.py. -->
+  <nodegraph name="NG_basaltDarkGrayBushHammered">
+    <texcoord name="uv" type="vector2" />
+    <!-- Metric UVs: one UV unit = one metre. Height values below are metres. -->
+    <multiply name="multiply_1" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="3.1" />
+    </multiply>
+    <add name="add_2" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_1" />
+      <input name="in2" type="vector2" value="20.4692308, 6.02461538" />
+    </add>
+    <fractal2d name="fractal2d_3" type="float">
+      <input name="texcoord" type="vector2" nodename="add_2" />
+      <input name="amplitude" type="float" value="1" />
+      <input name="octaves" type="integer" value="3" />
+      <input name="lacunarity" type="float" value="2.03" />
+      <input name="diminish" type="float" value="0.5" />
+    </fractal2d>
+    <multiply name="multiply_4" type="float">
+      <input name="in1" type="float" nodename="fractal2d_3" />
+      <input name="in2" type="float" value="0.6" />
+    </multiply>
+    <add name="add_5" type="float">
+      <input name="in1" type="float" nodename="multiply_4" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="clamp_6" type="float">
+      <input name="in" type="float" nodename="add_5" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <rotate2d name="rotate2d_7" type="vector2">
+      <input name="in" type="vector2" nodename="uv" />
+      <input name="amount" type="float" value="31" />
+    </rotate2d>
+    <multiply name="multiply_8" type="vector2">
+      <input name="in1" type="vector2" nodename="rotate2d_7" />
+      <input name="in2" type="float" value="160" />
+    </multiply>
+    <add name="add_9" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_8" />
+      <input name="in2" type="vector2" value="24.0692308, 9.42461538" />
+    </add>
+    <fractal2d name="fractal2d_10" type="float">
+      <input name="texcoord" type="vector2" nodename="add_9" />
+      <input name="amplitude" type="float" value="0.00011" />
+      <input name="octaves" type="integer" value="2" />
+      <input name="lacunarity" type="float" value="2.03" />
+      <input name="diminish" type="float" value="0.5" />
+    </fractal2d>
+    <mix name="mix_11" type="float">
+      <input name="bg" type="float" value="0.91" />
+      <input name="fg" type="float" value="1.09" />
+      <input name="mix" type="float" nodename="clamp_6" />
+    </mix>
+    <multiply name="multiply_12" type="color3">
+      <input name="in1" type="color3" value="0.12, 0.135, 0.14" />
+      <input name="in2" type="float" nodename="mix_11" />
+    </multiply>
+    <rotate2d name="rotate2d_17" type="vector2">
+      <input name="in" type="vector2" nodename="uv" />
+      <input name="amount" type="float" value="31" />
+    </rotate2d>
+    <multiply name="multiply_18" type="vector2">
+      <input name="in1" type="vector2" nodename="rotate2d_17" />
+      <input name="in2" type="float" value="260" />
+    </multiply>
+    <add name="add_19" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_18" />
+      <input name="in2" type="vector2" value="42.3692308, 19.9246154" />
+    </add>
+    <worleynoise2d name="worleynoise2d_20" type="float">
+      <input name="texcoord" type="vector2" nodename="add_19" />
+      <input name="jitter" type="float" value="0.55" />
+    </worleynoise2d>
+    <smoothstep name="smoothstep_21" type="float">
+      <input name="in" type="float" nodename="worleynoise2d_20" />
+      <input name="low" type="float" value="0.036" />
+      <input name="high" type="float" value="0.24" />
+    </smoothstep>
+    <subtract name="subtract_22" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="smoothstep_21" />
+    </subtract>
+    <multiply name="multiply_23" type="float">
+      <input name="in1" type="float" nodename="subtract_22" />
+      <input name="in2" type="float" value="-2.5e-05" />
+    </multiply>
+    <subtract name="subtract_24" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="subtract_22" />
+    </subtract>
+    <mix name="mix_25" type="float">
+      <input name="bg" type="float" value="0.8" />
+      <input name="fg" type="float" value="1.2" />
+      <input name="mix" type="float" nodename="subtract_24" />
+    </mix>
+    <multiply name="multiply_26" type="color3">
+      <input name="in1" type="color3" nodename="multiply_12" />
+      <input name="in2" type="float" nodename="mix_25" />
+    </multiply>
+    <add name="add_27" type="float">
+      <input name="in1" type="float" nodename="fractal2d_10" />
+      <input name="in2" type="float" nodename="multiply_23" />
+    </add>
+    <rotate2d name="rotate2d_28" type="vector2">
+      <input name="in" type="vector2" nodename="uv" />
+      <input name="amount" type="float" value="31" />
+    </rotate2d>
+    <multiply name="multiply_29" type="vector2">
+      <input name="in1" type="vector2" nodename="rotate2d_28" />
+      <input name="in2" type="float" value="260" />
+    </multiply>
+    <add name="add_30" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_29" />
+      <input name="in2" type="vector2" value="42.3692308, 19.9246154" />
+    </add>
+    <worleynoise2d name="worleynoise2d_31" type="float">
+      <input name="texcoord" type="vector2" nodename="add_30" />
+      <input name="jitter" type="float" value="0.55" />
+    </worleynoise2d>
+    <smoothstep name="smoothstep_32" type="float">
+      <input name="in" type="float" nodename="worleynoise2d_31" />
+      <input name="low" type="float" value="0.036" />
+      <input name="high" type="float" value="0.24" />
+    </smoothstep>
+    <subtract name="subtract_33" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="smoothstep_32" />
+    </subtract>
+    <multiply name="multiply_34" type="float">
+      <input name="in1" type="float" nodename="subtract_33" />
+      <input name="in2" type="float" value="-0.00015" />
+    </multiply>
+    <add name="add_35" type="float">
+      <input name="in1" type="float" nodename="add_27" />
+      <input name="in2" type="float" nodename="multiply_34" />
+    </add>
+    <mix name="mix_36" type="float">
+      <input name="bg" type="float" value="0.86" />
+      <input name="fg" type="float" value="0.97" />
+      <input name="mix" type="float" nodename="subtract_33" />
+    </mix>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="add_35" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <output name="base_color_out" type="color3" nodename="multiply_26" />
+    <output name="roughness_out" type="float" nodename="mix_36" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_basaltDarkGrayBushHammered" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="base_color" type="color3" nodegraph="NG_basaltDarkGrayBushHammered" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_basaltDarkGrayBushHammered" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_basaltDarkGrayBushHammered" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_basaltDarkGrayBushHammered" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_basaltDarkGrayBushHammered" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_basaltDarkGrayBushHammered" />
+  </surfacematerial>
+</materialx>
