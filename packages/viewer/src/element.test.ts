@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import type { MaterialViewerElement } from './element.js';
 import type { ViewerOptions } from './viewer.js';
 const mocks = vi.hoisted(() => ({ createViewer: vi.fn() }));
 vi.mock('./viewer.js', () => ({ createViewer: mocks.createViewer }));
@@ -13,6 +14,7 @@ let options: ViewerOptions;
 const setSettings = vi.fn();
 const dispose = vi.fn();
 const setAlt = vi.fn();
+const toBlob = vi.fn();
 beforeEach(() => {
   vi.stubGlobal(
     'fetch',
@@ -26,6 +28,7 @@ beforeEach(() => {
       setSettings,
       setAlt,
       dispose,
+      toBlob,
     };
   });
 });
@@ -184,7 +187,7 @@ it('shows automatically through setup, completes, and ignores stale progress aft
   await flush();
   options.onProgress?.({ totalProgress: 0.5, reason: 'material-load' });
   expect(root.querySelector<HTMLElement>('[part="default-progress-bar"]')!.style.transform).toBe('scaleX(0.7)');
-  finish({ scene: { materialNames: [], activeMaterial: '', animated: false }, setSettings, setAlt, dispose });
+  finish({ scene: { materialNames: [], activeMaterial: '', animated: false }, setSettings, setAlt, dispose, toBlob });
   await flush();
   expect(viewer.getAttribute('aria-busy')).toBe('false');
   expect(root.querySelector('.complete')).not.toBeNull();
@@ -279,10 +282,28 @@ it('applies the latest description when alt changes during renderer initializati
   const viewer = mount();
   await flush();
   viewer.setAttribute('alt', 'Updated while loading');
-  finish({ scene: { materialNames: [], activeMaterial: '', animated: false }, setSettings, setAlt, dispose });
+  finish({ scene: { materialNames: [], activeMaterial: '', animated: false }, setSettings, setAlt, dispose, toBlob });
   await flush();
   expect(setAlt).toHaveBeenLastCalledWith('Updated while loading');
   expect(mocks.createViewer).toHaveBeenCalledOnce();
   expect(dispose).not.toHaveBeenCalled();
   expect(setSettings).not.toHaveBeenCalled();
+});
+
+it('waits for the current custom-element source before exporting and rejects unloaded viewers', async () => {
+  const element = mount() as MaterialViewerElement;
+  const blob = new Blob(['image'], { type: 'image/png' });
+  toBlob.mockResolvedValue(blob);
+  await expect(element.toBlob({ width: 512, background: 'none' })).resolves.toBe(blob);
+  expect(toBlob).toHaveBeenCalledWith({ width: 512, background: 'none' });
+  element.removeAttribute('src');
+  await expect(element.toBlob()).rejects.toThrow('not ready');
+});
+
+it('rejects a custom-element capture if the source changes while it is waiting', async () => {
+  const element = mount() as MaterialViewerElement;
+  await flush();
+  const capture = element.toBlob();
+  element.setAttribute('src', '/other.mtlx');
+  await expect(capture).rejects.toThrow('source changed');
 });

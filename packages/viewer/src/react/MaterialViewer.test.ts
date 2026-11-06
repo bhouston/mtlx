@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
-import { act, createElement } from 'react';
+import { act, createElement, createRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 vi.mock('../element.js', () => ({}));
+import type { MaterialViewerElement } from '../element.js';
 import { MaterialViewer } from './MaterialViewer.js';
 
 beforeEach(() => vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true));
@@ -71,4 +72,16 @@ it('updates the alt attribute while preserving the element and material source',
   expect(host.querySelector('material-viewer')).toBe(element);
   expect(element.getAttribute('alt')).toBe('Polished copper');
   expect(element.getAttribute('src')).toBe('/copper.mtlx');
+});
+
+it('exposes the custom-element API through a React ref and clears it on unmount', async () => {
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host);
+  roots.push(root);
+  const ref = createRef<MaterialViewerElement>();
+  await act(async () => root.render(createElement(MaterialViewer, { ref, src: '/copper.mtlx' })));
+  expect(ref.current).toBe(host.querySelector('material-viewer'));
+  await act(async () => root.render(null));
+  expect(ref.current).toBeNull();
 });

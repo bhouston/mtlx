@@ -318,3 +318,46 @@ and color conversion. Disabled effects are omitted from the render graph. The pa
 renderer and release their render targets on disposal. This pipeline supports WebGPU and its WebGL2 fallback.
 
 The built-in totem starts 45° toward the front right. Auto-rotation takes 40 seconds per turn.
+
+## Screenshot export
+
+Both the shared `Viewer` and `<material-viewer>` expose `toBlob(options?)`. PNG is the default.
+The custom element waits for its current source to finish loading. Captures wait for pending
+settings and textures, render the full pipeline at the requested output size, and use asynchronous
+GPU readback rather than copying a possibly cleared display canvas.
+
+```ts
+const blob = await document.querySelector('material-viewer').toBlob({
+  width: 1600,
+  height: 1200,
+  background: 'white',
+  mimeType: 'image/png',
+});
+```
+
+`width` and `height` are exact image pixels, independent of device pixel ratio. If only one is
+specified, the other preserves the current canvas aspect ratio; if neither is specified, the current
+drawing-buffer size is used. Different aspect ratios keep the camera's vertical field of view.
+Dimensions must be positive integers up to 8192 with at most 16 megapixels total.
+
+`background` defaults to the current preview setting: `white`, `environment`, or `none` (transparent).
+The CSS white backdrop is explicitly composited into exported pixels. `mimeType` also accepts
+`image/jpeg` and `image/webp`; `quality` is an optional number from 0 to 1 for these encoders.
+JPEG composites transparency over white. Unsupported encoders reject rather than silently returning
+another file format. Exports contain the preview, without controls or other page overlays.
+
+The on-screen camera, canvas size, pixel ratio, and settings are preserved. Concurrent captures
+are serialized. If the source/settings change, resources fail, or the viewer is disposed before
+capture completes, the promise rejects so an outdated image is not mistaken for the new material.
+The website's **Download screenshot** button uses this API to save a PNG of the current preview.
+
+The React wrapper accepts a typed ref to the same custom-element API:
+
+```tsx
+import { useRef } from 'react';
+import { MaterialViewer, type MaterialViewerElement } from 'mtlx-viewer/react';
+
+const preview = useRef<MaterialViewerElement>(null);
+// After mounting: await preview.current?.toBlob({ width: 1200, background: 'none' });
+return <MaterialViewer ref={preview} src="/copper.mtlx" />;
+```

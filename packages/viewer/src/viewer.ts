@@ -4,6 +4,7 @@
  * only I/O (how to fetch environments and geometries, where to log) and UI.
  */
 import * as THREE from 'three/webgpu';
+import { captureScreenshot, type ScreenshotOptions } from './screenshot.js';
 import { setCanvasDescription } from './accessibility.js';
 import { LoadingTracker, type LoadingProgress } from './loadingProgress.js';
 import { frameId, time } from 'three/tsl';
@@ -73,6 +74,8 @@ export interface Viewer {
    * geometry. Reports through `onReport`; throws (and keeps the previous material) on a parse failure.
    */
   replaceMaterial(data: ArrayBuffer, fileName: string): void;
+  /** Capture a completed preview frame, including postprocessing, without changing the on-screen view. */
+  toBlob(options?: ScreenshotOptions): Promise<Blob>;
   dispose(): void;
 }
 
@@ -103,6 +106,13 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
   let requestedEnvironment: string | undefined;
   let geometryGeneration = 0;
   let materialGeneration = 0;
+  let settingsRevision = 0;
+  let settingsPending = 0;
+  let settingsWaiters: (() => void)[] = [];
+  let captureQueue: Promise<unknown> = Promise.resolve();
+  scope.own(() => {
+    for (const resolve of settingsWaiters.splice(0)) resolve();
+  });
   const geometryLoads = new Map<string, Promise<void>>();
 
   try {
@@ -369,57 +379,64 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
         playing = next;
       },
       async setSettings(next) {
-        if (scope.disposed) return applied;
-        const nextCamera = parseCameraSettings(next);
-        if (cameraKey(nextCamera) !== cameraKey(cameraSettings)) {
-          cameraSettings = nextCamera;
-          applyFraming(cameraSettings);
-        }
-        Object.assign(applied, {
-          cameraOrbit: nextCamera.cameraOrbit,
-          cameraTarget: nextCamera.cameraTarget,
-          fieldOfView: nextCamera.fieldOfView,
-        });
-        const materialChanged = !!next.materialName && next.materialName !== applied.materialName;
-        applyRendering(next);
-        Object.assign(applied, {
-          bloom: next.bloom,
-          ao: next.ao,
-          toneMapping: next.toneMapping,
-          background: next.background,
-          exposure: next.exposure,
-          intensity: next.intensity,
-          environmentRotation: normalizeEnvironmentRotation(next.environmentRotation) ?? 0,
-          rotate: next.rotate,
-        });
-        mtlxScene.autoRotate = next.rotate;
-        if (next.materialName && mtlxScene.materialNames.includes(next.materialName)) {
-          mtlxScene.setMaterial(next.materialName);
-          applied.materialName = next.materialName;
-        }
-        const changed = next.ibl !== requestedEnvironment || next.geometry !== mtlxScene.geometry || materialChanged;
-        const progress = changed
-          ? tracker.start(
-              next.ibl !== requestedEnvironment
-                ? 'environment-update'
-                : next.geometry !== mtlxScene.geometry
-                  ? 'geometry-update'
-                  : 'material-load',
-            )
-          : undefined;
-        const pending: Promise<void>[] = [];
-        if (next.ibl !== requestedEnvironment) pending.push(setEnvironment(next.ibl));
-        if (next.geometry !== mtlxScene.geometry) pending.push(setGeometry(next.geometry));
-        await Promise.all(pending);
-        if (progress && !scope.disposed) {
-          await waitForResources();
-          if (!scope.disposed) {
-            rendering.render();
-            progress(1);
+        settingsRevision++;
+        settingsPending++;
+        try {
+          if (scope.disposed) return applied;
+          const nextCamera = parseCameraSettings(next);
+          if (cameraKey(nextCamera) !== cameraKey(cameraSettings)) {
+            cameraSettings = nextCamera;
+            applyFraming(cameraSettings);
           }
+          Object.assign(applied, {
+            cameraOrbit: nextCamera.cameraOrbit,
+            cameraTarget: nextCamera.cameraTarget,
+            fieldOfView: nextCamera.fieldOfView,
+          });
+          const materialChanged = !!next.materialName && next.materialName !== applied.materialName;
+          applyRendering(next);
+          Object.assign(applied, {
+            bloom: next.bloom,
+            ao: next.ao,
+            toneMapping: next.toneMapping,
+            background: next.background,
+            exposure: next.exposure,
+            intensity: next.intensity,
+            environmentRotation: normalizeEnvironmentRotation(next.environmentRotation) ?? 0,
+            rotate: next.rotate,
+          });
+          mtlxScene.autoRotate = next.rotate;
+          if (next.materialName && mtlxScene.materialNames.includes(next.materialName)) {
+            mtlxScene.setMaterial(next.materialName);
+            applied.materialName = next.materialName;
+          }
+          const changed = next.ibl !== requestedEnvironment || next.geometry !== mtlxScene.geometry || materialChanged;
+          const progress = changed
+            ? tracker.start(
+                next.ibl !== requestedEnvironment
+                  ? 'environment-update'
+                  : next.geometry !== mtlxScene.geometry
+                    ? 'geometry-update'
+                    : 'material-load',
+              )
+            : undefined;
+          const pending: Promise<void>[] = [];
+          if (next.ibl !== requestedEnvironment) pending.push(setEnvironment(next.ibl));
+          if (next.geometry !== mtlxScene.geometry) pending.push(setGeometry(next.geometry));
+          await Promise.all(pending);
+          if (progress && !scope.disposed) {
+            await waitForResources();
+            if (!scope.disposed) {
+              rendering.render();
+              progress(1);
+            }
+          }
+          applied.geometry = mtlxScene.geometry;
+          return { ...applied };
+        } finally {
+          settingsPending--;
+          if (!settingsPending) for (const resolve of settingsWaiters.splice(0)) resolve();
         }
-        applied.geometry = mtlxScene.geometry;
-        return { ...applied };
       },
       replaceMaterial(data, fileName) {
         if (scope.disposed) return;
@@ -458,6 +475,44 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
             publish();
             options.onError?.(message(error));
           });
+      },
+      toBlob(screenshotOptions = {}) {
+        const source = materialGeneration;
+        const revision = settingsRevision;
+        const assertCurrent = () => {
+          if (scope.disposed) throw new Error('Cannot capture a disposed viewer.');
+          if (source !== materialGeneration || revision !== settingsRevision)
+            throw new Error('The material or viewer settings changed during screenshot capture.');
+          if (report.state === 'error' || report.failedResources.length)
+            throw new Error('Cannot capture a preview with failed rendering or resources.');
+        };
+        const capture = captureQueue.then(async () => {
+          assertCurrent();
+          if (settingsPending) await new Promise<void>((resolve) => settingsWaiters.push(resolve));
+          assertCurrent(); // Disposal may have released settings waiters while textures remain pending.
+          await waitForResources();
+          assertCurrent();
+          // Fresh pass textures are essential: display nodes normally cache once per animation
+          // frame, while captures may change size/background several times within that frame.
+          const captureRendering = createViewerRendering(renderer, scene, camera, applied);
+          try {
+            return await captureScreenshot(
+              renderer,
+              scene,
+              camera,
+              () => captureRendering.render(),
+              screenshotOptions,
+              applied.background,
+              assertCurrent,
+              abort.signal,
+              () => rendering.render(),
+            );
+          } finally {
+            captureRendering.dispose();
+          }
+        });
+        captureQueue = capture.catch(() => {});
+        return capture;
       },
       dispose: () => scope.dispose(),
     };

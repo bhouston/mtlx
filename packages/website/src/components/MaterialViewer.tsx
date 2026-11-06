@@ -78,6 +78,8 @@ export function MaterialViewer({
   onCameraChange,
   animationMode,
 }: MaterialViewerProps) {
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState('');
   const [localSettings, setLocalSettings] = useState<ViewerSettings>(DEFAULT_VIEWER_SETTINGS);
   const currentSettings = settings ?? localSettings;
   const description = alt?.trim() || (source ? `Material preview of ${source.name}` : undefined);
@@ -331,6 +333,25 @@ export function MaterialViewer({
   const environmentMessage = run.environment;
   const materialNames = viewer?.scene.materialNames ?? [];
 
+  const downloadScreenshot = async () => {
+    if (!viewer || exporting) return;
+    setExporting(true);
+    setExportError('');
+    try {
+      const blob = await viewer.toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = (source?.name.split(/[\\/]/).pop() ?? 'material').replace(/\.mtlx(\.zip)?$/i, '') + '.png';
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      setExportError(error instanceof Error ? error.message : 'Unable to download the screenshot.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div
       aria-busy={!!progress}
@@ -344,6 +365,21 @@ export function MaterialViewer({
       />
       <AnimationToggle viewer={viewer} mode={animationMode} />
       <output className="sr-only">Preview: {previewState}</output>
+      {viewer ? (
+        <button
+          type="button"
+          disabled={exporting || previewState !== 'ready'}
+          onClick={() => void downloadScreenshot()}
+          className="absolute bottom-3 left-3 z-10 rounded-lg border border-white/15 bg-zinc-950/85 px-3 py-2 text-xs text-white shadow-lg backdrop-blur-xl hover:bg-zinc-800 disabled:opacity-50"
+        >
+          {exporting ? 'Saving screenshot…' : 'Download screenshot'}
+        </button>
+      ) : null}
+      {exportError ? (
+        <p role="alert" className="absolute bottom-14 left-3 z-10 rounded bg-zinc-950/90 p-2 text-xs text-white">
+          {exportError}
+        </p>
+      ) : null}
       <div
         ref={containerRef}
         className="relative aspect-square w-full shrink-0 overflow-hidden sm:h-full [&>canvas]:absolute [&>canvas]:inset-0"

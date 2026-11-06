@@ -1,8 +1,21 @@
 import type { CameraSettings } from '../cameraSettings.js';
-import { Children, isValidElement, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import {
+  Children,
+  isValidElement,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+  type Ref,
+} from 'react';
+import type { MaterialViewerElement } from '../element.js';
 import type { MaterialViewerProgress } from '../element.js';
 
 export interface MaterialViewerProps {
+  /** Access the custom-element API, including toBlob(). */
+  ref?: Ref<MaterialViewerElement>;
   src?: string;
   /** Accessible description announced for the focusable material preview. */
   alt?: string;
@@ -39,14 +52,18 @@ export interface MaterialViewerProps {
 declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
-      'material-viewer': import('react').DetailedHTMLProps<import('react').HTMLAttributes<HTMLElement>, HTMLElement> &
-        Omit<MaterialViewerProps, 'onProgress' | 'onLoad' | 'onError' | 'onCameraChange'>;
+      'material-viewer': import('react').DetailedHTMLProps<
+        import('react').HTMLAttributes<MaterialViewerElement>,
+        MaterialViewerElement
+      > &
+        Omit<MaterialViewerProps, 'onProgress' | 'onLoad' | 'onError' | 'onCameraChange' | 'ref'>;
     }
   }
 }
 
 /** React wrapper for `<material-viewer>`, with the same attributes and optional callbacks. */
 export function MaterialViewer({
+  ref: forwardedRef,
   src,
   onProgress,
   onLoad,
@@ -56,7 +73,8 @@ export function MaterialViewer({
   ...attributes
 }: MaterialViewerProps) {
   const [registered, setRegistered] = useState(false);
-  const element = useRef<HTMLElement>(null);
+  const element = useRef<MaterialViewerElement>(null);
+  useImperativeHandle(forwardedRef, () => element.current!, []);
   const callbacks = useRef({ onProgress, onLoad, onError, onCameraChange });
   useEffect(() => {
     callbacks.current = { onProgress, onLoad, onError, onCameraChange };
