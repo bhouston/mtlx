@@ -29,6 +29,46 @@ Omit `errors` to show errors (the default). Set `errors="silent"` to hide the ov
 
 Changing `errors` applies immediately without reloading. Removing it reveals the current error unless dismissed or cleared.
 
+## Download progress
+
+Listen for the optional `progress` event on `<material-viewer>`, or use `onProgress` on the
+React `MaterialViewer` from `mtlx-viewer/react`. Both receive the same `MaterialProgress` data:
+`loaded` and `total` in bytes, and `progress` as a fraction from 0 to 1.
+
+```js
+const viewer = document.querySelector('material-viewer');
+viewer.addEventListener('progress', ({ detail }) => {
+  if (detail.progress === null) progressBar.removeAttribute('value');
+  else progressBar.value = detail.progress; // <progress max="1">
+});
+viewer.setAttribute('src', '/materials/example.mtlx.zip');
+```
+
+```tsx
+import { MaterialViewer } from 'mtlx-viewer/react';
+
+<MaterialViewer
+  src="/materials/example.mtlx.zip"
+  style={{ width: 512, height: 512 }}
+  onProgress={({ loaded, total, progress }) => setDownload({ loaded, total, progress })}
+  onLoad={() => setReady(true)}
+  onError={(message) => setError(message)}
+/>;
+```
+
+The first notification fires when successful response headers arrive, with `loaded: 0` and
+the file size if available. Notifications then fire every 250 ms, including while a download
+stalls, followed by a final notification with `progress: 1` and the actual byte count.
+`total` and `progress` are `null` when a usable `Content-Length` is unavailable (including
+HTTP-compressed responses); use an indeterminate progress bar until completion.
+
+Progress covers the `src` file download. Parsing, textures, geometry, lighting, and renderer
+initialization follow; the existing `load` event / React `onLoad` callback signals preview readiness.
+Errors stop progress without emitting a successful completion. Changing/removing `src` or unmounting
+cancels the previous download and its notifications. Attach listeners before assigning `src` to
+receive the initial notification. The React wrapper uses the custom element's attribute names
+and supports `onProgress`, `onLoad`, and `onError` callbacks without requiring event listeners.
+
 ## Scene
 
 `createMtlxScene` parses a `.mtlx` / `.mtlx.zip` file and builds a swappable preview scene: a

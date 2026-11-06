@@ -15,7 +15,7 @@ const dispose = vi.fn();
 beforeEach(() => {
   vi.stubGlobal(
     'fetch',
-    vi.fn(async () => ({ ok: true, arrayBuffer: async () => new ArrayBuffer(0) })),
+    vi.fn(async () => ({ ok: true, headers: new Headers(), arrayBuffer: async () => new ArrayBuffer(0) })),
   );
   setSettings.mockResolvedValue(undefined);
   mocks.createViewer.mockImplementation(async (value: ViewerOptions) => {
@@ -99,7 +99,7 @@ it('ignores rejected fetches from an obsolete source', async () => {
       return new Promise<never>((_resolve, fail) => {
         reject = fail;
       });
-    return { ok: true, arrayBuffer: async () => new ArrayBuffer(0) };
+    return { ok: true, headers: new Headers(), arrayBuffer: async () => new ArrayBuffer(0) };
   });
   vi.stubGlobal('fetch', fetcher);
   const viewer = mount();
@@ -108,4 +108,54 @@ it('ignores rejected fetches from an obsolete source', async () => {
   await flush();
   expect(overlay(viewer).hidden).toBe(true);
   expect(mocks.createViewer).not.toHaveBeenCalled();
+});
+
+it('emits material download progress independently of preview readiness', async () => {
+  const response = new Response(new Uint8Array([1, 2, 3]), { headers: { 'content-length': '3' } });
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string | URL) =>
+      url === '/material.mtlx' ? response : { ok: true, arrayBuffer: async () => new ArrayBuffer(0) },
+    ),
+  );
+  const viewer = mount();
+  const progress = vi.fn();
+  viewer.addEventListener('progress', progress);
+  await flush();
+  expect(progress.mock.calls.map(([event]) => event.detail)).toEqual([
+    { loaded: 0, total: 3, progress: 0 },
+    { loaded: 3, total: 3, progress: 1 },
+  ]);
+});
+
+it.each(['error', 'replace', 'disconnect'])('stops active progress on %s', async (action) => {
+  vi.useFakeTimers();
+  let stream!: ReadableStreamDefaultController<Uint8Array>;
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) {
+      stream = controller;
+    },
+  });
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string | URL) => {
+      if (url === '/material.mtlx') return new Response(body, { headers: { 'content-length': '10' } });
+      if (action === 'error') throw new Error('Shaderball failed');
+      return { ok: true, arrayBuffer: async () => new ArrayBuffer(0) };
+    }),
+  );
+  const viewer = mount();
+  const progress = vi.fn();
+  viewer.addEventListener('progress', progress);
+  await flush();
+  if (action === 'replace') viewer.removeAttribute('src');
+  if (action === 'disconnect') viewer.remove();
+  await flush();
+  const count = progress.mock.calls.length;
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(progress).toHaveBeenCalledTimes(count);
+  expect(progress.mock.calls.every(([event]) => event.detail.progress !== 1)).toBe(true);
+  expect(vi.getTimerCount()).toBe(0);
+  expect(() => stream.enqueue(new Uint8Array(1))).toThrow();
+  vi.useRealTimers();
 });
