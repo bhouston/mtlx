@@ -5,7 +5,7 @@ import type { MaterialLoadProgress } from '@/lib/material-load';
 import { useEffect, useRef, useState } from 'react';
 import { Cache } from 'three';
 import { AnimationToggle, MaterialSelect, ViewerSettingsPanel } from 'mtlx-viewer/react';
-import type { Viewer } from 'mtlx-viewer';
+import type { Viewer, LoadingProgress } from 'mtlx-viewer';
 import type { PreviewReport } from 'mtlx-viewer/diagnostics';
 
 export type { PreviewReport } from 'mtlx-viewer/diagnostics';
@@ -88,6 +88,7 @@ export function MaterialViewer({
     state: PreviewReport['state'];
     stage: keyof typeof STAGE_PROGRESS;
     environment: string;
+    progress?: LoadingProgress;
     viewer: Viewer | null;
   }
   const [run, setRun] = useState<Run>({
@@ -173,7 +174,7 @@ export function MaterialViewer({
     }
     const abort = new AbortController();
     let created: Viewer | undefined;
-    patch({ source, state: 'loading', stage: 'renderer', environment: '', viewer: null });
+    patch({ source, state: 'loading', stage: 'renderer', environment: '', viewer: null, progress: undefined });
     (async () => {
       const { createViewer, parseEnvironmentFile } = await import('mtlx-viewer');
       const shaderBall = await fetchBytes(shaderBallUrl, abort.signal);
@@ -195,6 +196,7 @@ export function MaterialViewer({
           if (owner.current === token) callbacks.current.onLog?.(line);
         },
         onStage: (stage) => patch({ stage }),
+        onProgress: (progress) => patch({ progress }),
         onStatus: (status) => {
           if (status.environment !== undefined) patch({ environment: status.environment });
         },
@@ -242,7 +244,21 @@ export function MaterialViewer({
   }, [viewer, ibl, geometry, rotate, bloom, ao, toneMapping, background, exposure, intensity, materialName]);
 
   const loading = !!source && previewState !== 'ready' && previewState !== 'error';
-  const progress = loadProgress ?? (loading ? STAGE_PROGRESS[run.stage] : null);
+  const activeProgress =
+    previewState !== 'error' && run.source === source && run.progress && run.progress.totalProgress < 1;
+  const progress =
+    loadProgress ??
+    (loading || activeProgress
+      ? {
+          value: run.progress ? 80 + 19 * run.progress.totalProgress : STAGE_PROGRESS[run.stage].value,
+          label:
+            run.progress?.reason === 'environment-update'
+              ? 'Loading lighting…'
+              : run.progress?.reason === 'geometry-update'
+                ? 'Loading geometry…'
+                : STAGE_PROGRESS[run.stage].label,
+        }
+      : null);
   const environmentMessage = run.environment;
   const materialNames = viewer?.scene.materialNames ?? [];
 
@@ -271,12 +287,7 @@ export function MaterialViewer({
       >
         {environmentMessage}
       </output>
-      {progress && (!viewer || loadProgress) ? <MaterialLoadingOverlay progress={progress} /> : null}
-      {progress && viewer && !loadProgress ? (
-        <output className="absolute top-2 left-2 z-20 rounded bg-black/80 px-2 py-1 text-xs text-white">
-          {progress.label}
-        </output>
-      ) : null}
+      {source || progress ? <MaterialLoadingOverlay progress={progress} /> : null}
       {!source && !progress ? (
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/50">
           Drop a MaterialX file here, or choose a sample to get started.

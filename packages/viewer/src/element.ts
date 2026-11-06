@@ -1,4 +1,7 @@
 import { readMaterialResponse, type MaterialProgress } from './progress.js';
+import { ProgressBar, PROGRESS_BAR_STYLES } from './progressBar.js';
+import type { LoadingProgress } from './loadingProgress.js';
+export type MaterialViewerProgress = MaterialProgress & LoadingProgress;
 export type { MaterialProgress } from './progress.js';
 import { ErrorOverlay } from './errorOverlay.js';
 import { ERROR_OVERLAY_STYLES } from './errorOverlayStyles.js';
@@ -130,6 +133,9 @@ export class MaterialViewerElement extends HTMLElement {
   #generation = 0;
   #abort: AbortController | null = null;
   readonly #errors: ErrorOverlay;
+  readonly #progress = new ProgressBar();
+  #overall = 0;
+  #download: MaterialProgress = { loaded: 0, total: null, progress: null };
   readonly #viewportEl: HTMLDivElement;
   readonly #toggleEl: HTMLButtonElement;
   readonly #playEl: HTMLButtonElement;
@@ -139,7 +145,7 @@ export class MaterialViewerElement extends HTMLElement {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
-    style.textContent = PANEL_STYLE + ERROR_OVERLAY_STYLES;
+    style.textContent = PANEL_STYLE + ERROR_OVERLAY_STYLES + PROGRESS_BAR_STYLES;
     this.#errors = new ErrorOverlay(this);
     this.#viewportEl = document.createElement('div');
     this.#viewportEl.className = 'viewport';
@@ -162,7 +168,15 @@ export class MaterialViewerElement extends HTMLElement {
     this.#panelEl.innerHTML = PANEL_HTML;
     this.#panelEl.querySelector('#tone-mapping')!.innerHTML = optionsHtml(TONE_MAPPING_OPTIONS);
     this.#panelEl.querySelector('.close')!.addEventListener('click', () => this.#panelEl.classList.remove('open'));
-    shadow.append(style, this.#viewportEl, this.#playEl, this.#toggleEl, this.#panelEl, this.#errors.root);
+    shadow.append(
+      style,
+      this.#progress.root,
+      this.#viewportEl,
+      this.#playEl,
+      this.#toggleEl,
+      this.#panelEl,
+      this.#errors.root,
+    );
     this.#bindControls();
   }
 
@@ -210,6 +224,8 @@ export class MaterialViewerElement extends HTMLElement {
     document.removeEventListener('pointerdown', this.#closePanel);
     document.removeEventListener('keydown', this.#closePanel);
     this.#generation++;
+    this.#progress.clear();
+    this.removeAttribute('aria-busy');
     this.#abort?.abort();
     this.#viewer?.dispose();
     this.#viewer = null;
@@ -318,17 +334,48 @@ export class MaterialViewerElement extends HTMLElement {
     this.#viewer = null;
     this.#errors.clear();
     const generation = ++this.#generation;
+    this.#progress.clear();
+    this.setAttribute('aria-busy', String(!!src));
     if (!src) return;
+    this.#overall = 0;
+    this.#download = { loaded: 0, total: null, progress: null };
+    this.#publishProgress({ totalProgress: 0, reason: 'material-load' });
     try {
       const material = async () => {
         const response = await fetch(src, { signal: abort.signal });
         if (!response.ok) throw new Error(`HTTP ${response.status} loading ${src}`);
         return readMaterialResponse(response, abort.signal, (detail: MaterialProgress) => {
-          if (generation === this.#generation && this.isConnected)
-            this.dispatchEvent(new CustomEvent('progress', { detail }));
+          if (generation !== this.#generation || !this.isConnected || abort.signal.aborted) return;
+          this.#download = detail;
+          this.#publishProgress({
+            totalProgress: 0.3 * (detail.progress ?? 0) + 0.1 * geometryFraction,
+            reason: 'material-load',
+          });
         });
       };
-      const [data, shaderBall] = await Promise.all([material(), fetchBytes(SHADERBALL_URL, abort.signal)]);
+      let materialFraction = 0;
+      let geometryFraction = 0;
+      const assetsProgress = () =>
+        this.#publishProgress({
+          totalProgress: 0.3 * materialFraction + 0.1 * geometryFraction,
+          reason: 'material-load',
+        });
+      const [data, shaderBall] = await Promise.all([
+        material().then((bytes) => {
+          if (generation === this.#generation && !abort.signal.aborted) {
+            materialFraction = 1;
+            assetsProgress();
+          }
+          return bytes;
+        }),
+        fetchBytes(SHADERBALL_URL, abort.signal).then((bytes) => {
+          if (generation === this.#generation && !abort.signal.aborted) {
+            geometryFraction = 1;
+            assetsProgress();
+          }
+          return bytes;
+        }),
+      ]);
       if (generation !== this.#generation) return;
       const viewer = await createViewer({
         signal: abort.signal,
@@ -338,6 +385,13 @@ export class MaterialViewerElement extends HTMLElement {
         shaderBall,
         settings: this.#readSettings(),
         playing: this.#playing(),
+        onProgress: (progress) => {
+          if (generation !== this.#generation || !this.isConnected || abort.signal.aborted) return;
+          this.#publishProgress({
+            ...progress,
+            totalProgress: this.#viewer ? progress.totalProgress : 0.4 + 0.6 * progress.totalProgress,
+          });
+        },
         loadEnvironment: async (kind) => {
           const asset = BUILTIN_IBLS[kind];
           return parseEnvironmentFile(await fetchBytes(asset ?? kind, abort.signal), asset ? asset.pathname : kind);
@@ -357,13 +411,26 @@ export class MaterialViewerElement extends HTMLElement {
       this.#buildOptions();
       this.#syncControls();
       this.#syncPlayButton();
+      if (this.#overall < 1) this.#publishProgress({ totalProgress: 1, reason: 'material-load' });
       this.dispatchEvent(new Event('load'));
     } catch (error) {
       if (generation !== this.#generation) return;
       this.#error(error, 'Unable to load material');
     }
   }
+  #publishProgress(progress: LoadingProgress): void {
+    if (this.#overall === 1 && progress.totalProgress < 1) this.#overall = 0;
+    progress = { ...progress, totalProgress: Math.max(this.#overall, progress.totalProgress) };
+    this.#overall = progress.totalProgress;
+    this.#progress.update(progress.totalProgress);
+    this.setAttribute('aria-busy', String(progress.totalProgress < 1));
+    this.dispatchEvent(
+      new CustomEvent<MaterialViewerProgress>('progress', { detail: { ...this.#download, ...progress } }),
+    );
+  }
   #error(error: unknown, title = 'Viewer error'): void {
+    this.#progress.clear();
+    this.setAttribute('aria-busy', 'false');
     this.#abort?.abort();
     this.#errors.show(title, error, this.getAttribute('src'));
     const detail = error instanceof Error ? error.message : String(error);

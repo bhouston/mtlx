@@ -29,45 +29,79 @@ Omit `errors` to show errors (the default). Set `errors="silent"` to hide the ov
 
 Changing `errors` applies immediately without reloading. Removing it reveals the current error unless dismissed or cleared.
 
-## Download progress
+## Automatic loading progress
 
-Listen for the optional `progress` event on `<material-viewer>`, or use `onProgress` on the
-React `MaterialViewer` from `mtlx-viewer/react`. Both receive the same `MaterialProgress` data:
-`loaded` and `total` in bytes, and `progress` as a fraction from 0 to 1.
+Both `<material-viewer>` and React `MaterialViewer` show a top progress bar automatically.
+It covers material and shaderball downloads, renderer initialization, environment processing,
+MaterialX parsing, referenced textures, custom geometry, and the first render. Environment,
+geometry, and material changes start another loading cycle. Errors, source removal, and
+unmounting clear the bar. Texture failures remain available in preview diagnostics.
 
-```js
-const viewer = document.querySelector('material-viewer');
-viewer.addEventListener('progress', ({ detail }) => {
-  if (detail.progress === null) progressBar.removeAttribute('value');
-  else progressBar.value = detail.progress; // <progress max="1">
-});
-viewer.setAttribute('src', '/materials/example.mtlx.zip');
+The presentation and customization follow [Google model-viewer](https://modelviewer.dev/docs/#entrydocs-loading-slots-progressBar):
+a 5px bar fills left to right, waits one second at completion, then fades over 300ms.
+No enable attribute is needed. Change its color or height with CSS variables, or style the
+custom element's `default-progress-bar` part (avoid changing `transform`, which drives progress):
+
+```css
+material-viewer {
+  --progress-bar-color: #4285f4;
+  --progress-bar-height: 3px;
+}
+material-viewer::part(default-progress-bar) {
+  border-radius: 2px;
+}
 ```
+
+Disable the bar with an empty replacement slot, exactly as in model-viewer:
+
+```html
+<material-viewer src="/materials/example.mtlx.zip">
+  <span slot="progress-bar"></span>
+</material-viewer>
+```
+
+Or hide only the default fill with `material-viewer::part(default-progress-bar) { display: none; }`.
+There is no dedicated disable attribute. Disabling the visual does not stop progress events.
+The React wrapper supports the same slot via children:
 
 ```tsx
 import { MaterialViewer } from 'mtlx-viewer/react';
 
-<MaterialViewer
-  src="/materials/example.mtlx.zip"
-  style={{ width: 512, height: 512 }}
-  onProgress={({ loaded, total, progress }) => setDownload({ loaded, total, progress })}
-  onLoad={() => setReady(true)}
-  onError={(message) => setError(message)}
-/>;
+<MaterialViewer src="/materials/example.mtlx.zip" style={{ width: 512, height: 512 }}>
+  <span slot="progress-bar" />
+</MaterialViewer>;
 ```
 
-The first notification fires when successful response headers arrive, with `loaded: 0` and
-the file size if available. Notifications then fire every 250 ms, including while a download
-stalls, followed by a final notification with `progress: 1` and the actual byte count.
-`total` and `progress` are `null` when a usable `Content-Length` is unavailable (including
-HTTP-compressed responses); use an indeterminate progress bar until completion.
+For custom UI, supply content in `slot="progress-bar"` and update it using `progress` events
+(React: `onProgress`). `detail.totalProgress` is the overall fraction from 0 to 1;
+`detail.reason` is `material-load`, `environment-update`, or `geometry-update`.
+The slot replaces the default bar; you control your replacement's appearance and visibility.
+The host's `aria-busy` attribute tracks the loading cycle even with a replacement slot.
 
-Progress covers the `src` file download. Parsing, textures, geometry, lighting, and renderer
-initialization follow; the existing `load` event / React `onLoad` callback signals preview readiness.
-Errors stop progress without emitting a successful completion. Changing/removing `src` or unmounting
-cancels the previous download and its notifications. Attach listeners before assigning `src` to
-receive the initial notification. The React wrapper uses the custom element's attribute names
-and supports `onProgress`, `onLoad`, and `onError` callbacks without requiring event listeners.
+```js
+viewer.addEventListener('progress', ({ detail }) => {
+  customBar.hidden = detail.totalProgress === 1;
+  customBar.value = detail.totalProgress; // <progress max="1" slot="progress-bar">
+});
+viewer.addEventListener('error', () => {
+  customBar.hidden = true;
+});
+```
+
+Overall progress is a monotonic estimate of completed activities, not an elapsed-time prediction.
+Known material download sizes use byte progress; processing uses actual milestones and resource
+counts. No timer advances the overall percentage. A slow operation can hold the value steady;
+completion waits for pending resources and the render using them.
+
+The existing `loaded`, `total`, and `progress` fields still describe **only the material file
+download**, independently of `totalProgress`. Before headers arrive, these are `0`, `null`,
+and `null`. Download updates are sampled every 250ms and on completion; other loading work
+also emits events. Unknown or compressed Content-Length keeps `total` and `progress` null
+until download completion. A download can reach `progress: 1` while `totalProgress < 1`.
+Use the `load` event / React `onLoad` for initial preview readiness, not download completion.
+Changing/removing `src` or unmounting cancels obsolete work and notifications. Attach listeners
+before assigning `src` to receive the initial event. `createViewer({ onProgress })` provides
+the same overall progress for hosts managing their own UI.
 
 ## Scene
 

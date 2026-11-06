@@ -8,7 +8,9 @@ const LazyMaterialViewer = lazy(() =>
 
 const Fallback = (props: MaterialViewerProps) => (
   <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-border bg-black">
-    <MaterialLoadingOverlay progress={props.loadProgress ?? { value: 5, label: 'Loading viewer…' }} />
+    <MaterialLoadingOverlay
+      progress={props.loadProgress ?? { value: props.source ? 80 : 5, label: 'Loading viewer…' }}
+    />
   </div>
 );
 
