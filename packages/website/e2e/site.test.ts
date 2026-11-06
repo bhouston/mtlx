@@ -52,7 +52,41 @@ test('viewer renders a dropped .mtlx through the first completed frame and valid
   await page.setInputFiles('input[type=file]', materialPath);
   // Wait for a completed render, including shader compilation in the WebGL2 fallback.
   await expectReady();
+  expect(await page.locator('canvas').getAttribute('aria-label')).toBe('Material preview of copper.mtlx');
+  expect(await page.locator('canvas').getAttribute('aria-description')).toContain('Arrow keys pan');
+  await page.locator('canvas').focus();
+  expect(await page.locator('canvas').evaluate((canvas) => document.activeElement === canvas)).toBe(true);
   if (process.env.MTLX_SCREENSHOT) await page.screenshot({ path: process.env.MTLX_SCREENSHOT, fullPage: true });
+});
+
+test('neutral lighting needs no environment download and the backdrop changes independently', async () => {
+  const environmentRequests: string[] = [];
+  page.on('request', (request) => {
+    if (/\.(hdr|exr)([?#]|$)|studio-environment\.png/.test(request.url())) environmentRequests.push(request.url());
+  });
+  await page.goto(`http://localhost:${PORT}/viewer`);
+  await page.setInputFiles('input[type=file]', materialPath);
+  await expectReady();
+  const canvas = await page.locator('canvas').elementHandle();
+  expect(await canvas.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(255, 255, 255)');
+  await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
+  const background = page.getByRole('combobox', { name: 'Background', exact: true });
+  expect(await background.inputValue()).toBe('white');
+  expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('studio');
+  await background.selectOption('none');
+  await expect
+    .poll(() => canvas.evaluate((element) => getComputedStyle(element).backgroundColor))
+    .toBe('rgba(0, 0, 0, 0)');
+  await background.selectOption('environment');
+  await background.selectOption('white');
+  await page.getByRole('slider', { name: /Exposure/ }).focus();
+  await page.keyboard.press('Home');
+  await expect
+    .poll(() => canvas.evaluate((element) => getComputedStyle(element).backgroundColor))
+    .toBe('rgb(255, 255, 255)');
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
+  expect(environmentRequests).toEqual([]);
+  expect(pageErrors).toEqual([]);
 });
 
 test('a failed replacement clears old details and repeated loads resize the canvas correctly', async () => {
@@ -98,9 +132,9 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await page.keyboard.press('Space');
   expect(await rotation.isChecked()).toBe(true);
   await page.getByRole('combobox', { name: 'Geometry', exact: true }).selectOption('sphere');
-  expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('bridge');
+  expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('studio');
   expect(await page.getByRole('combobox', { name: 'IBL environment' }).locator('option').allTextContents()).toEqual([
-    'Studio',
+    'Neutral Studio',
     'San Giuseppe Bridge',
   ]);
   const canvas = await page.locator('canvas').elementHandle();
@@ -108,14 +142,14 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await expect
     .poll(() => page.locator('main').innerText(), { timeout: 30_000 })
     .toContain('Environment ready: San Giuseppe Bridge.');
-  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
   expect(await page.getByRole('combobox', { name: 'Geometry', exact: true }).inputValue()).toBe('sphere');
   await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('studio');
   await expect
-    .poll(async () => (await page.locator('main').innerText()).split('Environment ready: Studio.').length, {
+    .poll(async () => (await page.locator('main').innerText()).split('Environment ready: Neutral Studio.').length, {
       timeout: 30_000,
     })
-    .toBe(2);
+    .toBe(3);
   expect(await page.getByRole('combobox', { name: 'Material', exact: true }).count()).toBe(1);
   await page.setViewportSize({ width: 375, height: 800 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
@@ -240,7 +274,7 @@ test('rendering effects default on and toggle without replacing the scene', asyn
     await toneMapping.selectOption(value);
     await page.locator('canvas').screenshot();
   }
-  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
   await page.setViewportSize({ width: 375, height: 800 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
   await expectReady();
@@ -307,7 +341,7 @@ test('material loading overlays a streamed progress bar and clears it on success
     expect(
       await page.getByText('Drag & drop a .mtlx or .mtlx.zip file anywhere here, or pick a sample above').count(),
     ).toBe(0);
-    expect(await progress.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(255, 255, 255)');
+    expect(await progress.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0.4)');
     expect(await page.locator('[data-preview-state]').getAttribute('aria-busy')).toBe('true');
     if (process.env.MTLX_PROGRESS_SCREENSHOT)
       await page.screenshot({ path: process.env.MTLX_PROGRESS_SCREENSHOT, fullPage: true });
@@ -382,17 +416,18 @@ test('shared embed restores rendering state and controls update without rebuildi
     rotate: 'false',
     geometry: 'sphere',
     materialName: 'Copper',
+    alt: 'Copper and wood material comparison',
   });
   await page.goto(`http://localhost:${PORT}/embed?${params}`);
   await expect
     .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
     .toBe('ready');
+  expect(await page.locator('canvas').getAttribute('aria-label')).toBe('Copper and wood material comparison');
   expect(await page.getByLabel('Rotate', { exact: true }).isVisible()).toBe(false);
   await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
   expect(await page.getByLabel('IBL environment').inputValue()).toBe('studio');
   expect(await page.getByLabel('Bloom', { exact: true }).isChecked()).toBe(false);
   expect(await page.getByLabel('Ambient occlusion').isChecked()).toBe(false);
-  expect(await page.getByLabel('Environment intensity').inputValue()).toBe('0.7');
   expect(await page.getByLabel('Exposure', { exact: true }).inputValue()).toBe('-0.5');
   expect(await page.getByLabel('Tone mapping').inputValue()).toBe('agx');
   expect(await page.getByLabel('Geometry', { exact: true }).inputValue()).toBe('sphere');
@@ -400,7 +435,7 @@ test('shared embed restores rendering state and controls update without rebuildi
   const canvas = await page.locator('canvas').elementHandle();
   await page.getByLabel('Bloom', { exact: true }).check();
   await expect.poll(() => new URL(page.url()).searchParams.get('bloom')).toBe('true');
-  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
   await page.reload();
   await expect
     .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
@@ -415,10 +450,13 @@ test('Share copies matching viewer, embed, and iframe state', async () => {
   await page.goto(
     `http://localhost:${PORT}/viewer?materialUrl=/materials/compound/compound.mtlx&ibl=studio&geometry=plane&bloom=false&exposure=1&materialName=Copper`,
   );
+  await expectReady();
   const copy = async (name: string) => {
+    await page.evaluate(() => navigator.clipboard.writeText(''));
     await page.getByRole('button', { name: 'Share', exact: true }).click();
     await page.getByRole('menuitem', { name, exact: true }).click();
     await expect.poll(() => page.getByText('Copied to clipboard.', { exact: true }).count()).toBe(1);
+    await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).not.toBe('');
     return page.evaluate(() => navigator.clipboard.readText());
   };
   const viewer = new URL(await copy('Copy viewer link'));
@@ -449,5 +487,67 @@ test('viewer tabs inspect read-only graphs and preserve the 3D preview', async (
   await page.setViewportSize({ width: 375, height: 800 });
   expect((await page.locator('.mtlx-canvas').boundingBox())!.width).toBeGreaterThan(200);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  expect(pageErrors).toEqual([]);
+});
+
+test('Share captures live orbit, zoom and pan and restores camera framing without rebuilding', async () => {
+  await page.setViewportSize({ width: 1280, height: 1200 });
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  const params = new URLSearchParams({
+    materialUrl: '/materials/compound/compound.mtlx',
+    geometry: 'sphere',
+    rotate: 'false',
+    cameraOrbit: '20deg 65deg 2.4m',
+    cameraTarget: '0.1m 0.1m 0m',
+    fieldOfView: '32',
+  });
+  await page.goto(`http://localhost:${PORT}/viewer?${params}`);
+  await expectReady();
+  const copy = async () => {
+    await page.evaluate(() => navigator.clipboard.writeText(''));
+    await page.getByRole('button', { name: 'Share', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Copy viewer link', exact: true }).click();
+    await expect.poll(() => page.getByText('Copied to clipboard.', { exact: true }).count()).toBe(1);
+    await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).not.toBe('');
+    return new URL(await page.evaluate(() => navigator.clipboard.readText()));
+  };
+  const initial = await copy();
+  expect(initial.searchParams.get('cameraOrbit')).toBe('20deg 65deg 2.4m');
+  expect(initial.searchParams.get('cameraTarget')).toBe('0.1m 0.1m 0m');
+  expect(initial.searchParams.get('fieldOfView')).toBe('32');
+  const canvas = await page.locator('canvas').elementHandle();
+  await page.locator('canvas').click({ position: { x: 150, y: 150 } });
+  const bounds = (await page.locator('canvas').boundingBox())!;
+  const x = bounds.x + bounds.width / 2;
+  const y = bounds.y + bounds.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 50, y + 20, { steps: 5 });
+  await page.mouse.up();
+  await page.mouse.wheel(0, -180);
+  await page.mouse.down({ button: 'right' });
+  await page.mouse.move(x + 75, y + 35, { steps: 5 });
+  await page.mouse.up({ button: 'right' });
+  // Let orbit/pan damping settle before capturing the user's final framing.
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        let remaining = 120;
+        const frame = () => (--remaining ? requestAnimationFrame(frame) : resolve());
+        requestAnimationFrame(frame);
+      }),
+  );
+  const changed = await copy();
+  expect(changed.searchParams.get('cameraOrbit')).not.toBe(initial.searchParams.get('cameraOrbit'));
+  expect(changed.searchParams.get('cameraTarget')).not.toBe(initial.searchParams.get('cameraTarget'));
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
+  // Live gestures do not navigate/reapply initial settings on every rendered frame.
+  expect(new URL(page.url()).searchParams.get('cameraOrbit')).toBe('20deg 65deg 2.4m');
+  await page.goto(changed.href);
+  await expectReady();
+  const restored = await copy();
+  expect(restored.searchParams.get('cameraOrbit')).toBe(changed.searchParams.get('cameraOrbit'));
+  expect(restored.searchParams.get('cameraTarget')).toBe(changed.searchParams.get('cameraTarget'));
+  expect(restored.searchParams.get('fieldOfView')).toBe(changed.searchParams.get('fieldOfView'));
   expect(pageErrors).toEqual([]);
 });

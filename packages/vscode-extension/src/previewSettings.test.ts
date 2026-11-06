@@ -1,14 +1,14 @@
 import { expect, it } from 'vitest';
 import { parsePreviewSettings, PREVIEW_NAME_PATTERN } from './previewSettings.js';
-it('defaults to bridge, totem and rotation', () => {
+it('defaults to neutral studio, totem and rotation', () => {
   expect(parsePreviewSettings({})).toMatchObject({
-    defaultIbl: 'bridge',
+    defaultIbl: 'studio',
     defaultGeometry: 'totem',
     autoRotate: true,
     bloom: true,
     ao: true,
     toneMapping: 'neutral',
-    background: 'environment',
+    background: 'white',
     warnings: [],
   });
 });
@@ -39,13 +39,13 @@ it('rejects malformed names, collisions and unknown defaults without losing vali
   });
   expect(result.ibls).toEqual([{ name: 'good', source: 'a.hdr' }]);
   expect(result.geometries).toEqual([]);
-  expect(result).toMatchObject({ defaultIbl: 'bridge', defaultGeometry: 'totem', autoRotate: true });
+  expect(result).toMatchObject({ defaultIbl: 'studio', defaultGeometry: 'totem', autoRotate: true });
   expect(result.warnings).toHaveLength(8);
 });
 
 it('validates effect defaults and tone mapping names', () => {
   expect(parsePreviewSettings({ background: 'none' })).toMatchObject({ background: 'none', warnings: [] });
-  expect(parsePreviewSettings({ background: 'blue' })).toMatchObject({ background: 'environment' });
+  expect(parsePreviewSettings({ background: 'blue' })).toMatchObject({ background: 'white' });
   expect(parsePreviewSettings({ bloom: false, ao: false, toneMapping: 'agx' })).toMatchObject({
     bloom: false,
     ao: false,
@@ -55,4 +55,12 @@ it('validates effect defaults and tone mapping names', () => {
   const invalid = parsePreviewSettings({ bloom: 'false', ao: 0, toneMapping: 'neural' });
   expect(invalid).toMatchObject({ bloom: true, ao: true, toneMapping: 'neutral' });
   expect(invalid.warnings).toHaveLength(3);
+});
+
+it('normalizes configured environment rotation and rejects invalid values', () => {
+  expect(parsePreviewSettings({ environmentRotation: -90 })).toMatchObject({ environmentRotation: 270, warnings: [] });
+  expect(parsePreviewSettings({ environmentRotation: Infinity })).toMatchObject({
+    environmentRotation: 0,
+    warnings: ['environmentRotation must be finite degrees; using 0.'],
+  });
 });

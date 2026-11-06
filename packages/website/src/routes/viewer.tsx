@@ -1,3 +1,4 @@
+import type { CameraSettings } from 'mtlx-viewer/settings';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { MaterialViewer } from '@/components/MaterialViewerLazy';
@@ -32,6 +33,7 @@ function ViewerPage() {
   const navigate = Route.useNavigate();
   const { load, clear, source, fileMeta, analysis, fileError, loadProgress, logLines, appendLog } = useMaterialLoad();
   const localFile = useRef(false);
+  const currentCamera = useRef<{ source: typeof source; settings: Required<CameraSettings> } | undefined>(undefined);
   const [viewerError, setViewerError] = useState<string | null>(null);
   const [preview, setPreview] = useState<PreviewReport>({ state: 'idle', resources: 'unchecked', failedResources: [] });
 
@@ -67,7 +69,16 @@ function ViewerPage() {
           .
         </p>
       </header>
-      <ViewerToolbar search={search} onLoadFile={loadFromFile} onLoadUrl={loadFromUrl} />
+      <ViewerToolbar
+        getCameraSettings={() =>
+          preview.state === 'ready' && source && currentCamera.current?.source === source
+            ? currentCamera.current.settings
+            : undefined
+        }
+        search={search}
+        onLoadFile={loadFromFile}
+        onLoadUrl={loadFromUrl}
+      />
       {fileError && !analysis?.parseError ? (
         <p role="alert" className="text-sm text-destructive [overflow-wrap:anywhere]">
           {fileError}
@@ -79,6 +90,10 @@ function ViewerPage() {
           preview={
             <MaterialViewer
               source={source}
+              onCameraChange={(framing) => {
+                currentCamera.current = { source, settings: framing };
+              }}
+              alt={search.alt}
               settings={viewerSettings(search)}
               onSettingsChange={(patch) =>
                 void navigate({

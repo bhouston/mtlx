@@ -582,6 +582,7 @@ export const command = defineCommand({
       .option('format', {
         describe: 'Format of the <view> files when --output is a directory (an image --output uses its extension)',
         choices: IMAGE_FORMATS,
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion -- yargs widens the inferred format without this annotation.
         default: 'png' as ImageFormat,
       })
       .option('view', {
@@ -604,7 +605,7 @@ export const command = defineCommand({
       .option('size', { alias: 's', describe: 'Image width and height in pixels', type: 'number', default: 800 })
       .option('ibl', {
         describe:
-          'Lighting: studio (soft, dim room), bridge (outdoor, shows relief, green-yellow cast), sun (hard midday sun, strongest relief), overcast (soft medium daylight, near neutral), neutral (colorless grey studio, for judging albedo), strips (dark room with sharp softbox strips, for judging gloss and roughness breakup), dusk (warm, medium-dark street), night (very dark)',
+          'Lighting: studio (generated neutral HDR room), bridge (outdoor, shows relief, green-yellow cast), sun (hard midday sun, strongest relief), overcast (soft medium daylight, near neutral), neutral (colorless grey studio, for judging albedo), strips (dark room with sharp softbox strips, for judging gloss and roughness breakup), dusk (warm, medium-dark street), night (very dark)',
         choices: IBLS,
         default: 'studio',
       })
@@ -672,12 +673,12 @@ export const command = defineCommand({
         views: argv.view?.map(String),
         center: parsePair(argv.center, '--center'),
         range,
-        uvScale: argv.uvScale as number | undefined,
+        uvScale: argv.uvScale,
         geometry: argv.geometry as RenderOptions['geometry'],
         background: argv.background as RenderOptions['background'],
         ibl: argv.ibl as RenderOptions['ibl'],
       });
-      const uvScale = (argv.uvScale as number | undefined) ?? 1;
+      const uvScale = argv.uvScale ?? 1;
       const mirror = argv.mirror ? /^([uv])=(-?[\d.]+)$/.exec(String(argv.mirror)) : undefined;
       if (argv.mirror && !mirror) throw new Error('--mirror takes u=<meters> or v=<meters>, e.g. u=0.15');
       const crop = argv.crop ? String(argv.crop).split(',').map(Number) : undefined;

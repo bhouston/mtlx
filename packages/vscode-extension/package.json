@@ -50,7 +50,7 @@
     "@tailwindcss/cli": "^4.1.18",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@types/three": "^0.180.0",
+    "@types/three": "^0.187.0",
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^3.9.2",
     "esbuild": "^0.27.3",
@@ -58,7 +58,7 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tailwindcss": "^4.1.18",
-    "three": "^0.186.0"
+    "three": "^0.187.0"
   },
   "contributes": {
     "commands": [
@@ -161,7 +161,7 @@
         },
         "mtlx.preview.defaultIbl": {
           "type": "string",
-          "default": "bridge",
+          "default": "studio",
           "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
           "scope": "resource",
           "description": "IBL name used for new previews. Built-ins: bridge, studio; or an additional IBL name."
@@ -206,15 +206,22 @@
           "scope": "resource",
           "description": "Tone mapping for new previews: Neutral, ACES Filmic, AgX, Reinhard, Cineon, Linear, or None."
         },
+        "mtlx.preview.environmentRotation": {
+          "type": "number",
+          "default": 0,
+          "scope": "resource",
+          "description": "Environment lighting yaw in degrees. Full turns wrap to 0; the environment backdrop follows the lighting."
+        },
         "mtlx.preview.background": {
           "type": "string",
-          "default": "environment",
+          "default": "white",
           "enum": [
+            "white",
             "environment",
             "none"
           ],
           "scope": "resource",
-          "description": "Backdrop for new previews: the IBL environment, or none for a transparent backdrop."
+          "description": "Backdrop for new previews: white, the IBL environment, or none for transparency. Lighting is independent of the backdrop."
         }
       }
     }

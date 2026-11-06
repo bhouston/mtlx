@@ -1,5 +1,6 @@
 import {
   BACKGROUND_OPTIONS,
+  normalizeEnvironmentRotation,
   TONE_MAPPING_OPTIONS,
   type BackgroundKind,
   type RenderingSettings,
@@ -16,6 +17,7 @@ export interface PreviewSettings extends RenderingSettings {
   defaultGeometry: string;
   autoRotate: boolean;
   background: BackgroundKind;
+  environmentRotation: number;
   warnings: string[];
 }
 
@@ -65,12 +67,15 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
   };
   const toneMapping = TONE_MAPPING_OPTIONS.find((option) => option.value === (input.toneMapping ?? 'neutral'))?.value;
   if (!toneMapping) warnings.push('toneMapping is unknown; using neutral.');
-  const background = BACKGROUND_OPTIONS.find((option) => option.value === (input.background ?? 'environment'))?.value;
-  if (!background) warnings.push('background is unknown; using environment.');
+  const background = BACKGROUND_OPTIONS.find((option) => option.value === (input.background ?? 'white'))?.value;
+  if (!background) warnings.push('background is unknown; using white.');
+  const environmentRotation = normalizeEnvironmentRotation(input.environmentRotation ?? 0);
+  if (environmentRotation === undefined) warnings.push('environmentRotation must be finite degrees; using 0.');
   return {
+    environmentRotation: environmentRotation ?? 0,
     ibls,
     geometries,
-    defaultIbl: defaultName('defaultIbl', ['studio', 'bridge', ...ibls.map((asset) => asset.name)], 'bridge'),
+    defaultIbl: defaultName('defaultIbl', ['studio', 'bridge', ...ibls.map((asset) => asset.name)], 'studio'),
     defaultGeometry: defaultName(
       'defaultGeometry',
       ['totem', 'sphere', 'cube', 'plane', ...geometries.map((asset) => asset.name)],
@@ -80,7 +85,7 @@ export function parsePreviewSettings(input: Record<string, unknown>): PreviewSet
     bloom: boolean('bloom'),
     ao: boolean('ao'),
     toneMapping: toneMapping ?? 'neutral',
-    background: background ?? 'environment',
+    background: background ?? 'white',
     warnings,
   };
 }

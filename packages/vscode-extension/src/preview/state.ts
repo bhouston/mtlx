@@ -26,6 +26,7 @@ export const hostDefaults = (settings: PreviewSettings): ViewerSettings => ({
   background: settings.background,
   exposure: 0,
   intensity: 1,
+  environmentRotation: settings.environmentRotation,
   materialName: '',
 });
 
