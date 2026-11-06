@@ -21,7 +21,8 @@ viewer asset paths, generates the CLI OpenCLI document, and renders the core/SDK
 API references with TypeDoc. Generated files are ignored and rebuilt from source.
 
 The build output is `packages/docs/build`. `.github/workflows/docs.yml` publishes that directory
-as a GitHub Pages artifact and deploys it. CI builds the same output and uploads a review
+as a GitHub Pages artifact and deploys it from the release tag, called by the Release workflow
+(never on merges to `main`). CI builds the same output and uploads a review
 artifact. Repository Pages settings and Cloudflare DNS must be configured separately; see
 [deployment](docs/deployment.md). No credentials are stored in this package.
 

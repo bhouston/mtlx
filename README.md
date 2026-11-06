@@ -55,7 +55,7 @@ fallback, including the extension's bundled webview; real editor/GPU combination
 | [`mtlx-vscode-extension`](https://github.com/bhouston/mtlx/tree/main/packages/vscode-extension) | "Mtlx Viewer for MaterialX": preview, inspect, and convert MaterialX files inside VS Code.                                                                    |
 | [`mtlx-viewer`](https://github.com/bhouston/mtlx/tree/main/packages/viewer)                     | Shared three.js preview scenes and environment assets for applications.                                                                                       |
 
-The Docusaurus site in [`packages/docs`](packages/docs) publishes the documentation and marketing home to [mtlx.ben3d.ca](https://mtlx.ben3d.ca), including the [viewer](https://mtlx.ben3d.ca/viewer) and [editor](https://mtlx.ben3d.ca/editor). Build it with `pnpm docs:build`; GitHub Actions publishes the static artifact.
+The Docusaurus site in [`packages/docs`](packages/docs) publishes the documentation and marketing home to [mtlx.ben3d.ca](https://mtlx.ben3d.ca), including the [viewer](https://mtlx.ben3d.ca/viewer) and [editor](https://mtlx.ben3d.ca/editor). Build it with `pnpm docs:build`; GitHub Actions publishes the static artifact from the release tag as part of each release, not on merges to `main`.
 
 The browser editor at `/editor` combines a reusable node library and React Flow graph with the
 Three.js preview. See [mtlx-editor](packages/editor/README.md) for the component API and architecture.
