@@ -27,7 +27,7 @@ Load the self-contained JavaScript bundle from jsDelivr, then add the element:
 
 The unversioned URL follows the latest published npm release, subject to CDN and browser caching. To pin a release, insert its exact version after the package name: `mtlx-viewer@<version>/dist/material-viewer.js`.
 
-The bundle includes Three.js and the viewer code; no separate stylesheet or framework is needed. Set a height with CSS, and serve your material and textures over HTTP(S). Resources on another origin must allow CORS. A `.mtlx.zip` can carry the document and textures together.
+The bundle includes Three.js and the viewer code; no separate stylesheet or framework is needed. The element defaults to 440px tall; override its size with CSS. Serve your material and textures over HTTP(S). Resources on another origin must allow CORS. A `.mtlx.zip` can carry the document and textures together.
 
 Rendering needs a real GPU-backed WebGPU or WebGL2 context. Preview support follows Three.js's MaterialX loader, so some valid MaterialX nodes may not render.
 
