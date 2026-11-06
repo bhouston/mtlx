@@ -82,7 +82,7 @@ Node tools require Node.js 22+. Browser rendering needs GPU-backed WebGPU or Web
 
 ## Releases
 
-See [RELEASING.md](RELEASING.md) for release instructions.
+See [RELEASING.md](RELEASING.md) for how releases are published and [GitHub Releases](https://github.com/bhouston/mtlx/releases) for changes.
 
 ## Contribution
 
