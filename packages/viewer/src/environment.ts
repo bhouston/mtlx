@@ -1,13 +1,5 @@
-/**
- * IBL (image-based lighting) environment parsing for the MaterialX preview viewers. Two shared
- * environments ship as static assets under ../assets so every host gets the same look:
- *
- * - "studio": a neutral gray studio room, baked once from three.js's procedural RoomEnvironment
- *   (see scripts/bake-studio-environment.mjs) into an sRGB equirectangular PNG.
- * - "bridge": the real HDR photo environment (san_giuseppe_bridge_2k.hdr) from the three.js examples.
- *
- * Parsers take raw bytes rather than a URL — callers fetch/read the asset however fits their host
- * (Vite import, `vscode.workspace.fs.readFile`, etc.) and hand the bytes here.
+/** Environment file parsing and ownership shared by the MaterialX viewers.
+ * The default studio is generated in HDR at runtime; bridge is an optional HDR photo.
  */
 import { readExr, readHdr } from 'hdrify';
 import {
@@ -61,9 +53,9 @@ export async function parseEnvironmentFile(data: ArrayBuffer, source: string): P
 }
 
 /** Owns the active filtered environment and discards superseded asynchronous loads. */
-export function createEnvironmentSwitcher(
-  load: (kind: string) => Promise<Texture>,
-  prepare: (texture: Texture) => { texture: Texture; dispose(): void },
+export function createEnvironmentSwitcher<Source extends { dispose(): void } = Texture>(
+  load: (kind: string) => Promise<Source>,
+  prepare: (texture: Source) => { texture: Texture; dispose(): void },
   apply: (texture: Texture) => void,
 ) {
   let generation = 0;
@@ -72,7 +64,7 @@ export function createEnvironmentSwitcher(
   return {
     async set(kind: string): Promise<boolean> {
       const request = ++generation;
-      let source: Texture;
+      let source: Source;
       try {
         source = await load(kind);
       } catch (error) {

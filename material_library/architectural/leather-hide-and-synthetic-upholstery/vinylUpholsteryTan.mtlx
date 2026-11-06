@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materialx version="1.39" colorspace="lin_rec709" doc="Tan; opaque flexible vinyl with a fine embossed hide grain and slightly uniform satin highlights. Recipe: leather. hide grain 3.5–4.3 mm, height 45–65 micrometres; nap 2–30 mm filtered bundles. All colors are art-directed scene-linear Rec.709, not calibrated manufacturer measurements. UV 0–1 = 1 metre; height in metres. Relief is filtered surface appearance, not silhouette geometry.">
+  <nodegraph name="NG_vinylUpholsteryTan">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="hide_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="230, 280" />
+    </multiply>
+    <rotate2d name="hide_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="hide_scale" />
+      <input name="amount" type="float" value="13" />
+    </rotate2d>
+    <add name="hide_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="hide_rotate" />
+      <input name="in2" type="vector2" value="11.2, 13.4" />
+    </add>
+    <worleynoise2d name="hide_cells" type="vector2">
+      <input name="texcoord" type="vector2" nodename="hide_offset" />
+      <input name="jitter" type="float" value="0.95" />
+    </worleynoise2d>
+    <dotproduct name="hide_edge" type="float">
+      <input name="in1" type="vector2" nodename="hide_cells" />
+      <input name="in2" type="vector2" value="-1, 1" />
+    </dotproduct>
+    <smoothstep name="hide_grain" type="float">
+      <input name="in" type="float" nodename="hide_edge" />
+      <input name="low" type="float" value="0.015" />
+      <input name="high" type="float" value="0.18" />
+    </smoothstep>
+    <multiply name="pores_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="650, 650" />
+    </multiply>
+    <rotate2d name="pores_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="pores_scale" />
+      <input name="amount" type="float" value="17" />
+    </rotate2d>
+    <add name="pores_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="pores_rotate" />
+      <input name="in2" type="vector2" value="21.3, 7.9" />
+    </add>
+    <worleynoise2d name="pores_distance" type="float">
+      <input name="texcoord" type="vector2" nodename="pores_offset" />
+      <input name="jitter" type="float" value="0.6" />
+    </worleynoise2d>
+    <smoothstep name="pores_edge" type="float">
+      <input name="in" type="float" nodename="pores_distance" />
+      <input name="low" type="float" value="0.025" />
+      <input name="high" type="float" value="0.15" />
+    </smoothstep>
+    <subtract name="pores" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="pores_edge" />
+    </subtract>
+    <multiply name="grain_height" type="float">
+      <input name="in1" type="float" nodename="hide_grain" />
+      <input name="in2" type="float" value="4.5e-05" />
+    </multiply>
+    <multiply name="pore_depth" type="float">
+      <input name="in1" type="float" nodename="pores" />
+      <input name="in2" type="float" value="-8e-06" />
+    </multiply>
+    <add name="hide_height" type="float">
+      <input name="in1" type="float" nodename="grain_height" />
+      <input name="in2" type="float" nodename="pore_depth" />
+    </add>
+    <multiply name="tone_drift_noise_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="3.7, 4.9" />
+    </multiply>
+    <add name="tone_drift_noise_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="tone_drift_noise_scale" />
+      <input name="in2" type="vector2" value="15.1, 9.7" />
+    </add>
+    <fractal2d name="tone_drift_noise" type="float">
+      <input name="texcoord" type="vector2" nodename="tone_drift_noise_offset" />
+      <input name="amplitude" type="float" value="1" />
+      <input name="octaves" type="integer" value="2" />
+    </fractal2d>
+    <multiply name="tone_drift_gain" type="float">
+      <input name="in1" type="float" nodename="tone_drift_noise" />
+      <input name="in2" type="float" value="0.6" />
+    </multiply>
+    <add name="tone_drift_bias" type="float">
+      <input name="in1" type="float" nodename="tone_drift_gain" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="tone_drift" type="float">
+      <input name="in" type="float" nodename="tone_drift_bias" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <mix name="pigment_variation" type="float">
+      <input name="bg" type="float" value="0.988" />
+      <input name="fg" type="float" value="1.012" />
+      <input name="mix" type="float" nodename="hide_grain" />
+    </mix>
+    <multiply name="micro_color" type="color3">
+      <input name="in1" type="color3" value="0.48, 0.31, 0.15" />
+      <input name="in2" type="float" nodename="pigment_variation" />
+    </multiply>
+    <mix name="macro_pigment" type="float">
+      <input name="bg" type="float" value="0.9964" />
+      <input name="fg" type="float" value="1.0036" />
+      <input name="mix" type="float" nodename="tone_drift" />
+    </mix>
+    <multiply name="base_color" type="color3">
+      <input name="in1" type="color3" nodename="micro_color" />
+      <input name="in2" type="float" nodename="macro_pigment" />
+    </multiply>
+    <mix name="roughness" type="float">
+      <input name="bg" type="float" value="0.33" />
+      <input name="fg" type="float" value="0.39" />
+      <input name="mix" type="float" nodename="hide_grain" />
+    </mix>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="hide_height" />
+      <input name="in2" type="float" value="0" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="base" type="float">
+      <input name="value" type="float" value="1" />
+    </constant>
+    <constant name="specular" type="float">
+      <input name="value" type="float" value="0.5" />
+    </constant>
+    <constant name="specular_IOR" type="float">
+      <input name="value" type="float" value="1.5" />
+    </constant>
+    <constant name="diffuse_roughness" type="float">
+      <input name="value" type="float" value="0.25" />
+    </constant>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+    <output name="out_base" type="float" nodename="base" />
+    <output name="out_specular" type="float" nodename="specular" />
+    <output name="out_specular_IOR" type="float" nodename="specular_IOR" />
+    <output name="out_diffuse_roughness" type="float" nodename="diffuse_roughness" />
+  </nodegraph>
+  <standard_surface name="SR_vinylUpholsteryTan" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_vinylUpholsteryTan" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_vinylUpholsteryTan" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_vinylUpholsteryTan" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_vinylUpholsteryTan" output="out_normal" />
+    <input name="base" type="float" nodegraph="NG_vinylUpholsteryTan" output="out_base" />
+    <input name="specular" type="float" nodegraph="NG_vinylUpholsteryTan" output="out_specular" />
+    <input name="specular_IOR" type="float" nodegraph="NG_vinylUpholsteryTan" output="out_specular_IOR" />
+    <input name="diffuse_roughness" type="float" nodegraph="NG_vinylUpholsteryTan" output="out_diffuse_roughness" />
+  </standard_surface>
+  <surfacematerial name="M_vinylUpholsteryTan" type="material" doc="Tan; opaque flexible vinyl with a fine embossed hide grain and slightly uniform satin highlights.">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_vinylUpholsteryTan" />
+  </surfacematerial>
+</materialx>

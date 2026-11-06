@@ -1,0 +1,11 @@
+node_modules/
+build/
+.docusaurus/
+static/app/
+static/materials/
+static/material-viewer.js*
+static/viewer-assets/
+static/licenses/
+docs/api/
+docs/cli-reference/
+mtlx.opencli.json

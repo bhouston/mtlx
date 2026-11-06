@@ -67,7 +67,7 @@ export interface MtlxScene {
   /** Load an additional named glTF/GLB geometry; this scene owns its resources. */
   addGeometry(name: string, data: ArrayBuffer, manager?: THREE.LoadingManager): Promise<void>;
   /** Restore every geometry's orientation and the initial camera framing. */
-  resetCamera(): void;
+  resetCamera(options?: { resetObjects?: boolean }): void;
   /** After the viewport aspect changes, re-fit the object while keeping the user's orbit direction and relative zoom. */
   reframe(): void;
   /** Call every frame; advances the auto-rotation. */
@@ -144,7 +144,7 @@ function parseMaterialX(
       // Archive textures resolve to blob URLs via `archiveUrls`/`resolveUrl`. ImageBitmapLoader
       // prepends its path even to absolute URLs, so an archive must not inherit the document's
       // HTTP/filesystem folder.
-      const result = loader.parseBuffer(new TextEncoder().encode(text).buffer as ArrayBuffer, '', parseOptions);
+      const result = loader.parseBuffer(new TextEncoder().encode(text).buffer, '', parseOptions);
       return { ...result, animated: usesTimeNodes(text), dispose: () => loader.dispose() };
     }
     const result = loader.parseBuffer(data, fileName, parseOptions);
@@ -168,7 +168,7 @@ function computeTangentsIfPossible(geometry: THREE.BufferGeometry): void {
 
 async function loadShaderBall(manager: THREE.LoadingManager, shaderBall: ArrayBuffer): Promise<THREE.Group> {
   const gltf = await new GLTFLoader(manager).parseAsync(shaderBall, '');
-  const scene = gltf.scene as unknown as THREE.Group;
+  const scene = gltf.scene;
   scene.traverse((node) => {
     if ((node as THREE.Mesh).isMesh) computeTangentsIfPossible((node as THREE.Mesh).geometry);
   });
@@ -375,9 +375,9 @@ export async function createMtlxScene(
       if (!geometries[kind]) return;
       scene.geometry = kind;
       applyVisibility(kind);
-      applyMaterial(geometries[kind]!, materials[scene.activeMaterial]!);
+      applyMaterial(geometries[kind], materials[scene.activeMaterial]!);
     },
-    resetCamera() {
+    resetCamera({ resetObjects = true } = {}) {
       // Drain pending orbit/pan damping before restoring framing, so Reset remains still.
       const damping = controls.enableDamping;
       if (damping !== undefined) {
@@ -385,7 +385,7 @@ export async function createMtlxScene(
         controls.update();
         controls.enableDamping = damping;
       }
-      for (const [object, rotation] of originalRotations) object.rotation.copy(rotation);
+      if (resetObjects) for (const [object, rotation] of originalRotations) object.rotation.copy(rotation);
       camera.zoom = 1;
       fitted = frameCamera(camera, controls);
     },

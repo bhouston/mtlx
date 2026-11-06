@@ -1,0 +1,122 @@
+[
+  {
+    "name": "paintPureWhiteMatte",
+    "family": "Paint and interior coatings",
+    "source": "previews/paintPureWhiteMatte-bridge.avif"
+  },
+  {
+    "name": "venetianPlasterIvoryPolished",
+    "family": "Plaster, gypsum, stucco, and mineral renders",
+    "source": "previews/venetianPlasterIvoryPolished-bridge.avif"
+  },
+  {
+    "name": "concreteNaturalGrayAsCast",
+    "family": "Concrete and cementitious surfaces",
+    "source": "previews/concreteNaturalGrayAsCast-bridge.avif"
+  },
+  {
+    "name": "brickClayRed",
+    "family": "Brick, fired clay, mortar, and masonry finishes",
+    "source": "previews/brickClayRed-bridge.avif"
+  },
+  {
+    "name": "marbleCalacattaGoldPolished",
+    "family": "Natural stone",
+    "source": "previews/marbleCalacattaGoldPolished-bridge.avif"
+  },
+  {
+    "name": "zelligeGlazeEmerald",
+    "family": "Engineered stone, ceramic, porcelain, and glass-derived finishes",
+    "source": "previews/zelligeGlazeEmerald-bridge.avif"
+  },
+  {
+    "name": "pineRaw",
+    "family": "Natural wood and clear wood finishes",
+    "source": "previews/pineRaw-bridge.avif"
+  },
+  {
+    "name": "plywoodBirchEdgeRaw",
+    "family": "Engineered wood, laminates, lacquers, and composites",
+    "source": "previews/plywoodBirchEdgeRaw-bridge.avif"
+  },
+  {
+    "name": "clearPolyurethaneAmberGloss",
+    "family": "Transparent protective coatings and surface treatments",
+    "source": "previews/clearPolyurethaneAmberGloss-bridge.avif"
+  },
+  {
+    "name": "stainlessSteelBrushed",
+    "family": "Bare metals, plated metals, and patinas",
+    "source": "previews/stainlessSteelBrushed-bridge.avif"
+  },
+  {
+    "name": "aluminumAnodizedNatural",
+    "family": "Metal coatings and factory finishes",
+    "source": "previews/aluminumAnodizedNatural-bridge.avif"
+  },
+  {
+    "name": "glassTintedGray",
+    "family": "Architectural glass, mirrors, and optical films",
+    "source": "previews/glassTintedGray-bridge.avif"
+  },
+  {
+    "name": "asphaltShingleGranulesBlack",
+    "family": "Roofing, waterproofing, and weather membranes",
+    "source": "previews/asphaltShingleGranulesBlack-bridge.avif"
+  },
+  {
+    "name": "linoleumGrayMarbled",
+    "family": "Resilient flooring, resin coatings, and safety finishes",
+    "source": "previews/linoleumGrayMarbled-bridge.avif"
+  },
+  {
+    "name": "carpetWoolIvoryCutPile",
+    "family": "Carpet, felt, and textile surface finishes",
+    "source": "previews/carpetWoolIvoryCutPile-bridge.avif"
+  },
+  {
+    "name": "linenNatural",
+    "family": "Upholstery, drapery, bedding, and woven fibers",
+    "source": "previews/linenNatural-bridge.avif"
+  },
+  {
+    "name": "leatherTanSemiAniline",
+    "family": "Leather, hide, and synthetic upholstery",
+    "source": "previews/leatherTanSemiAniline-bridge.avif"
+  },
+  {
+    "name": "absPlasticWhite",
+    "family": "Plastics, elastomers, sealants, and adhesives",
+    "source": "previews/absPlasticWhite-bridge.avif"
+  },
+  {
+    "name": "vitreousChinaWhite",
+    "family": "Sanitary ceramics, enamel, and utility composites",
+    "source": "previews/vitreousChinaWhite-bridge.avif"
+  },
+  {
+    "name": "expandedPolystyreneWhite",
+    "family": "Insulation, exposed service materials, and construction substrates",
+    "source": "previews/expandedPolystyreneWhite-bridge.avif"
+  },
+  {
+    "name": "wallcoveringVinylWhiteLinenTexture",
+    "family": "Paper, wallcoverings, natural fiber finishes, and decorative coatings",
+    "source": "previews/wallcoveringVinylWhiteLinenTexture-bridge.avif"
+  },
+  {
+    "name": "barkBirchWhite",
+    "family": "Exterior paving media, earth, aggregates, and landscape surface materials",
+    "source": "previews/barkBirchWhite-bridge.avif"
+  },
+  {
+    "name": "waterClear",
+    "family": "Water, frozen water, moisture, and deposited matter",
+    "source": "previews/waterClear-bridge.avif"
+  },
+  {
+    "name": "emissiveDiffuserWarmWhite",
+    "family": "Luminous, display, and technical optical materials",
+    "source": "previews/emissiveDiffuserWarmWhite-bridge.avif"
+  }
+]

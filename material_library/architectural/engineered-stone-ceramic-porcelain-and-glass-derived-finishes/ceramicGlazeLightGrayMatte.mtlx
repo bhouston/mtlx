@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Light gray; opaque ceramic glaze with subtle firing variation, a fine dry texture, and broad muted highlights; no tile layout included. -->
+  <!-- Authored linear Rec.709 art target; not a calibrated manufacturer sample. Regenerate with authoring/generate-mineral-wood.py. -->
+  <nodegraph name="NG_ceramicGlazeLightGrayMatte">
+    <texcoord name="uv" type="vector2" />
+    <!-- Metric UVs: one UV unit = one metre. Height values below are metres. -->
+    <multiply name="multiply_1" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="3.1" />
+    </multiply>
+    <add name="add_2" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_1" />
+      <input name="in2" type="vector2" value="58.7, 20.17" />
+    </add>
+    <fractal2d name="fractal2d_3" type="float">
+      <input name="texcoord" type="vector2" nodename="add_2" />
+      <input name="amplitude" type="float" value="1" />
+      <input name="octaves" type="integer" value="3" />
+      <input name="lacunarity" type="float" value="2.03" />
+      <input name="diminish" type="float" value="0.5" />
+    </fractal2d>
+    <multiply name="multiply_4" type="float">
+      <input name="in1" type="float" nodename="fractal2d_3" />
+      <input name="in2" type="float" value="0.6" />
+    </multiply>
+    <add name="add_5" type="float">
+      <input name="in1" type="float" nodename="multiply_4" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="clamp_6" type="float">
+      <input name="in" type="float" nodename="add_5" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <rotate2d name="rotate2d_7" type="vector2">
+      <input name="in" type="vector2" nodename="uv" />
+      <input name="amount" type="float" value="31" />
+    </rotate2d>
+    <multiply name="multiply_8" type="vector2">
+      <input name="in1" type="vector2" nodename="rotate2d_7" />
+      <input name="in2" type="float" value="500" />
+    </multiply>
+    <add name="add_9" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_8" />
+      <input name="in2" type="vector2" value="62.3, 23.57" />
+    </add>
+    <fractal2d name="fractal2d_10" type="float">
+      <input name="texcoord" type="vector2" nodename="add_9" />
+      <input name="amplitude" type="float" value="3e-06" />
+      <input name="octaves" type="integer" value="2" />
+      <input name="lacunarity" type="float" value="2.03" />
+      <input name="diminish" type="float" value="0.5" />
+    </fractal2d>
+    <mix name="mix_11" type="float">
+      <input name="bg" type="float" value="0.975" />
+      <input name="fg" type="float" value="1.025" />
+      <input name="mix" type="float" nodename="clamp_6" />
+    </mix>
+    <multiply name="multiply_12" type="color3">
+      <input name="in1" type="color3" value="0.52, 0.52, 0.5" />
+      <input name="in2" type="float" nodename="mix_11" />
+    </multiply>
+    <subtract name="subtract_13" type="float">
+      <input name="in1" type="float" value="0.5" />
+      <input name="in2" type="float" nodename="clamp_6" />
+    </subtract>
+    <multiply name="multiply_14" type="float">
+      <input name="in1" type="float" nodename="subtract_13" />
+      <input name="in2" type="float" value="0.06" />
+    </multiply>
+    <add name="add_15" type="float">
+      <input name="in1" type="float" value="0.74" />
+      <input name="in2" type="float" nodename="multiply_14" />
+    </add>
+    <clamp name="clamp_16" type="float">
+      <input name="in" type="float" nodename="add_15" />
+      <input name="low" type="float" value="0.03" />
+      <input name="high" type="float" value="0.99" />
+    </clamp>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="fractal2d_10" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <output name="base_color_out" type="color3" nodename="multiply_12" />
+    <output name="roughness_out" type="float" nodename="clamp_16" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="coat_normal_out" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_ceramicGlazeLightGrayMatte" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="base_color" type="color3" nodegraph="NG_ceramicGlazeLightGrayMatte" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_ceramicGlazeLightGrayMatte" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_ceramicGlazeLightGrayMatte" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_ceramicGlazeLightGrayMatte" output="normal_out" />
+    <input name="coat_normal" type="vector3" nodegraph="NG_ceramicGlazeLightGrayMatte" output="coat_normal_out" />
+    <input name="coat" type="float" value="0.35" />
+    <input name="coat_roughness" type="float" value="0.1" />
+  </standard_surface>
+  <surfacematerial name="M_ceramicGlazeLightGrayMatte" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_ceramicGlazeLightGrayMatte" />
+  </surfacematerial>
+</materialx>

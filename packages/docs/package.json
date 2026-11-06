@@ -1,0 +1,39 @@
+{
+  "name": "mtlx-docs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "build": "pnpm generate && docusaurus build",
+    "start": "pnpm generate && docusaurus start --port 3825",
+    "serve": "docusaurus serve --port 3825",
+    "tsc": "tsc --noEmit",
+    "test:e2e": "vitest run --config vitest.e2e.config.mts"
+  },
+  "dependencies": {
+    "@clidoc/docusaurus": "^1.1.2",
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
+    "@mdx-js/react": "^3.1.1",
+    "clsx": "^2.1.1",
+    "mtlx-cli": "workspace:*",
+    "mtlx-core": "workspace:*",
+    "mtlx-editor": "workspace:*",
+    "mtlx-sdk": "workspace:*",
+    "mtlx-viewer": "workspace:*",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "website": "workspace:*"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.10.2",
+    "@docusaurus/theme-classic": "^3.10.2",
+    "@docusaurus/tsconfig": "^3.10.2",
+    "@docusaurus/types": "^3.10.2",
+    "@types/react": "^19.3.0",
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-markdown": "^4.14.1",
+    "typescript": "^6.0.3"
+  }
+}

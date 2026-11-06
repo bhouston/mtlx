@@ -1,3 +1,4 @@
+import type { CameraSettings } from 'mtlx-viewer/settings';
 import { DEFAULT_VIEWER_SETTINGS, type ViewerSettings } from '@/lib/viewer-search';
 import type { AnimationMode } from 'mtlx-viewer/settings';
 import { MaterialLoadingOverlay } from './MaterialLoadingOverlay';
@@ -5,7 +6,7 @@ import type { MaterialLoadProgress } from '@/lib/material-load';
 import { useEffect, useRef, useState } from 'react';
 import { Cache } from 'three';
 import { AnimationToggle, MaterialSelect, ViewerSettingsPanel } from 'mtlx-viewer/react';
-import type { Viewer } from 'mtlx-viewer';
+import type { Viewer, LoadingProgress } from 'mtlx-viewer';
 import type { PreviewReport } from 'mtlx-viewer/diagnostics';
 
 export type { PreviewReport } from 'mtlx-viewer/diagnostics';
@@ -17,6 +18,8 @@ export interface MaterialSource {
 
 export interface MaterialViewerProps {
   source: MaterialSource | null;
+  /** Override the accessible description; defaults to the current material file name. */
+  alt?: string;
   /**
    * Files the document references by archive-relative path, served to the loader as blob: URLs
    * that stay stable while this array does, so an edited document reuses its decoded textures.
@@ -24,6 +27,7 @@ export interface MaterialViewerProps {
   resources?: readonly { archivePath: string; data: Uint8Array }[];
   settings?: ViewerSettings;
   onSettingsChange?: (patch: Partial<ViewerSettings>) => void;
+  onCameraChange?: (settings: Required<CameraSettings>) => void;
   /** Play/pause for `<time>`/`<frame>` materials: `false` hides the button; defaults to playing. */
   animationMode?: AnimationMode;
   loadProgress?: MaterialLoadProgress | null;
@@ -37,7 +41,6 @@ export interface MaterialViewerProps {
 const STATIC_ASSETS = import.meta.env.DEV ? 'http://localhost:3001/viewer/' : 'https://mtlx-static.ben3d.ca/viewer/';
 const shaderBallUrl = `${STATIC_ASSETS}shaderball.glb`;
 const ENVIRONMENT_URLS: Record<string, string> = {
-  studio: `${STATIC_ASSETS}studio-environment.png`,
   bridge: `${STATIC_ASSETS}default-environment.hdr`,
 };
 const STAGE_PROGRESS = {
@@ -64,6 +67,7 @@ function resolveResource(urls: Map<string, string>, url: string): string | undef
 // resolves textures embedded in the archive itself, so this component needs no zip handling.
 export function MaterialViewer({
   source,
+  alt,
   resources,
   loadProgress,
   onError,
@@ -71,10 +75,14 @@ export function MaterialViewer({
   onStatus,
   settings,
   onSettingsChange,
+  onCameraChange,
   animationMode,
 }: MaterialViewerProps) {
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState('');
   const [localSettings, setLocalSettings] = useState<ViewerSettings>(DEFAULT_VIEWER_SETTINGS);
   const currentSettings = settings ?? localSettings;
+  const description = alt?.trim() || (source ? `Material preview of ${source.name}` : undefined);
   const updateSettings = (patch: Partial<ViewerSettings>) => {
     if (onSettingsChange) onSettingsChange(patch);
     else setLocalSettings((current) => ({ ...current, ...patch }));
@@ -88,6 +96,7 @@ export function MaterialViewer({
     state: PreviewReport['state'];
     stage: keyof typeof STAGE_PROGRESS;
     environment: string;
+    progress?: LoadingProgress;
     viewer: Viewer | null;
   }
   const [run, setRun] = useState<Run>({
@@ -104,9 +113,25 @@ export function MaterialViewer({
   // Identifies the viewer being built or shown, so callbacks from a superseded build never show through.
   const owner = useRef<object | null>(null);
   // Callbacks and the initial settings are read from a ref so a new source never rebuilds the viewer.
-  const callbacks = useRef({ onError, onLog, onStatus, settings: currentSettings, animationMode });
+  const callbacks = useRef({
+    onError,
+    onLog,
+    onStatus,
+    onCameraChange,
+    description,
+    settings: currentSettings,
+    animationMode,
+  });
   useEffect(() => {
-    callbacks.current = { onError, onLog, onStatus, settings: currentSettings, animationMode };
+    callbacks.current = {
+      onError,
+      onLog,
+      onStatus,
+      onCameraChange,
+      description,
+      settings: currentSettings,
+      animationMode,
+    };
   });
   useEffect(
     () => () => {
@@ -173,7 +198,7 @@ export function MaterialViewer({
     }
     const abort = new AbortController();
     let created: Viewer | undefined;
-    patch({ source, state: 'loading', stage: 'renderer', environment: '', viewer: null });
+    patch({ source, state: 'loading', stage: 'renderer', environment: '', viewer: null, progress: undefined });
     (async () => {
       const { createViewer, parseEnvironmentFile } = await import('mtlx-viewer');
       const shaderBall = await fetchBytes(shaderBallUrl, abort.signal);
@@ -183,18 +208,24 @@ export function MaterialViewer({
         container,
         data: source.data,
         fileName: source.name,
+        alt: callbacks.current.description,
         shaderBall,
         settings: callbacks.current.settings,
         playing: callbacks.current.animationMode !== 'pause',
         resolveUrl: (url) => resolveResource(resourceUrls.current, url),
         loadEnvironment: async (kind) => {
-          const url = ENVIRONMENT_URLS[kind] ?? ENVIRONMENT_URLS.studio!;
+          const url = ENVIRONMENT_URLS[kind];
+          if (!url) throw new Error(`Unknown IBL: ${kind}`);
           return parseEnvironmentFile(await fetchBytes(url, abort.signal), url);
+        },
+        onCameraChange: (framing) => {
+          if (owner.current === token) callbacks.current.onCameraChange?.(framing);
         },
         onLog: (line) => {
           if (owner.current === token) callbacks.current.onLog?.(line);
         },
         onStage: (stage) => patch({ stage }),
+        onProgress: (progress) => patch({ progress }),
         onStatus: (status) => {
           if (status.environment !== undefined) patch({ environment: status.environment });
         },
@@ -224,8 +255,26 @@ export function MaterialViewer({
     };
   }, [source]);
 
-  const { ibl, geometry, rotate, bloom, ao, toneMapping, background, exposure, intensity, materialName } =
-    currentSettings;
+  useEffect(() => {
+    viewer?.setAlt(description);
+  }, [viewer, description]);
+
+  const {
+    ibl,
+    geometry,
+    rotate,
+    bloom,
+    ao,
+    toneMapping,
+    background,
+    exposure,
+    intensity,
+    environmentRotation,
+    materialName,
+    cameraOrbit,
+    cameraTarget,
+    fieldOfView,
+  } = currentSettings;
   useEffect(() => {
     void viewer?.setSettings({
       ibl,
@@ -237,14 +286,71 @@ export function MaterialViewer({
       background,
       exposure,
       intensity,
+      environmentRotation,
       materialName,
+      cameraOrbit,
+      cameraTarget,
+      fieldOfView,
     });
-  }, [viewer, ibl, geometry, rotate, bloom, ao, toneMapping, background, exposure, intensity, materialName]);
+  }, [
+    viewer,
+    ibl,
+    geometry,
+    rotate,
+    bloom,
+    ao,
+    toneMapping,
+    background,
+    exposure,
+    intensity,
+    environmentRotation,
+    materialName,
+    cameraOrbit,
+    cameraTarget,
+    fieldOfView,
+  ]);
+
+  useEffect(() => {
+    if (viewer && previewState === 'ready') callbacks.current.onCameraChange?.(viewer.getCameraSettings());
+  }, [source, viewer, previewState]);
 
   const loading = !!source && previewState !== 'ready' && previewState !== 'error';
-  const progress = loadProgress ?? (loading ? STAGE_PROGRESS[run.stage] : null);
+  const activeProgress =
+    previewState !== 'error' && run.source === source && run.progress && run.progress.totalProgress < 1;
+  const progress =
+    loadProgress ??
+    (loading || activeProgress
+      ? {
+          value: run.progress ? 80 + 19 * run.progress.totalProgress : STAGE_PROGRESS[run.stage].value,
+          label:
+            run.progress?.reason === 'environment-update'
+              ? 'Loading lighting…'
+              : run.progress?.reason === 'geometry-update'
+                ? 'Loading geometry…'
+                : STAGE_PROGRESS[run.stage].label,
+        }
+      : null);
   const environmentMessage = run.environment;
   const materialNames = viewer?.scene.materialNames ?? [];
+
+  const downloadScreenshot = async () => {
+    if (!viewer || exporting) return;
+    setExporting(true);
+    setExportError('');
+    try {
+      const blob = await viewer.toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = (source?.name.split(/[\\/]/).pop() ?? 'material').replace(/\.mtlx(\.zip)?$/i, '') + '.png';
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      setExportError(error instanceof Error ? error.message : 'Unable to download the screenshot.');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <div
@@ -259,6 +365,21 @@ export function MaterialViewer({
       />
       <AnimationToggle viewer={viewer} mode={animationMode} />
       <output className="sr-only">Preview: {previewState}</output>
+      {viewer ? (
+        <button
+          type="button"
+          disabled={exporting || previewState !== 'ready'}
+          onClick={() => void downloadScreenshot()}
+          className="absolute bottom-3 left-3 z-10 rounded-lg border border-white/15 bg-zinc-950/85 px-3 py-2 text-xs text-white shadow-lg backdrop-blur-xl hover:bg-zinc-800 disabled:opacity-50"
+        >
+          {exporting ? 'Saving screenshot…' : 'Download screenshot'}
+        </button>
+      ) : null}
+      {exportError ? (
+        <p role="alert" className="absolute bottom-14 left-3 z-10 rounded bg-zinc-950/90 p-2 text-xs text-white">
+          {exportError}
+        </p>
+      ) : null}
       <div
         ref={containerRef}
         className="relative aspect-square w-full shrink-0 overflow-hidden sm:h-full [&>canvas]:absolute [&>canvas]:inset-0"
@@ -271,12 +392,7 @@ export function MaterialViewer({
       >
         {environmentMessage}
       </output>
-      {progress && (!viewer || loadProgress) ? <MaterialLoadingOverlay progress={progress} /> : null}
-      {progress && viewer && !loadProgress ? (
-        <output className="absolute top-2 left-2 z-20 rounded bg-black/80 px-2 py-1 text-xs text-white">
-          {progress.label}
-        </output>
-      ) : null}
+      {source || progress ? <MaterialLoadingOverlay progress={progress} /> : null}
       {!source && !progress ? (
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/50">
           Drop a MaterialX file here, or choose a sample to get started.

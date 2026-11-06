@@ -7,3 +7,7 @@ export * from './ViewerSettingsPanel.js';
 export * from './MaterialSelect.js';
 export * from './MaterialViewTabs.js';
 export * from './AnimationToggle.js';
+export * from './MaterialViewer.js';
+
+export type { ScreenshotOptions } from '../screenshot.js';
+export type { MaterialViewerElement } from '../element.js';

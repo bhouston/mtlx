@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Catalog: Pale green pigment with a matte surface and a green afterglow following excitation; emission intensity is time-dependent. -->
+  <!-- Art-directed linear Rec.709; 1 UV = 1 m; height in m. Emission 0.05 is an art-directed initial afterglow preview. The consuming application must animate emission after excitation; this file does not simulate excitation or decay time. -->
+  <!-- Recipe smooth: feature frequencies 210, 210 per m; relief amplitude 8e-06 m; macro drift about 0.25 m. -->
+  <nodegraph name="NG_photoluminescentCoatingPaleGreen">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="multiply_2" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="3.1, 4.3" />
+    </multiply>
+    <add name="add_3" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_2" />
+      <input name="in2" type="vector2" value="11.37, 29.17" />
+    </add>
+    <fractal2d name="fractal2d_4" type="float">
+      <input name="texcoord" type="vector2" nodename="add_3" />
+      <input name="octaves" type="integer" value="3" />
+    </fractal2d>
+    <multiply name="multiply_5" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="210, 210" />
+    </multiply>
+    <add name="add_6" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_5" />
+      <input name="in2" type="vector2" value="3.71, 9.17" />
+    </add>
+    <fractal2d name="fractal2d_7" type="float">
+      <input name="texcoord" type="vector2" nodename="add_6" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <multiply name="multiply_8" type="float">
+      <input name="in1" type="float" nodename="fractal2d_7" />
+      <input name="in2" type="float" value="0.8" />
+    </multiply>
+    <add name="add_9" type="float">
+      <input name="in1" type="float" nodename="multiply_8" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="clamp_10" type="float">
+      <input name="in" type="float" nodename="add_9" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <multiply name="multiply_11" type="float">
+      <input name="in1" type="float" nodename="fractal2d_7" />
+      <input name="in2" type="float" value="8e-06" />
+    </multiply>
+    <multiply name="multiply_12" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="0.0098" />
+    </multiply>
+    <add name="add_13" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="multiply_12" />
+    </add>
+    <mix name="mix_14" type="color3">
+      <input name="bg" type="color3" value="0.5018, 0.6755, 0.386" />
+      <input name="fg" type="color3" value="0.5382, 0.7245, 0.414" />
+      <input name="mix" type="float" nodename="clamp_10" />
+    </mix>
+    <multiply name="base_color" type="color3">
+      <input name="in1" type="color3" nodename="mix_14" />
+      <input name="in2" type="float" nodename="add_13" />
+    </multiply>
+    <subtract name="subtract_16" type="float">
+      <input name="in1" type="float" nodename="clamp_10" />
+      <input name="in2" type="float" value="0.5" />
+    </subtract>
+    <multiply name="multiply_17" type="float">
+      <input name="in1" type="float" nodename="subtract_16" />
+      <input name="in2" type="float" value="-0.12" />
+    </multiply>
+    <add name="add_18" type="float">
+      <input name="in1" type="float" value="0.86" />
+      <input name="in2" type="float" nodename="multiply_17" />
+    </add>
+    <clamp name="roughness" type="float">
+      <input name="in" type="float" nodename="add_18" />
+      <input name="low" type="float" value="0.005" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <multiply name="multiply_21" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="2e-06" />
+    </multiply>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="multiply_11" />
+      <input name="in2" type="float" nodename="multiply_21" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_photoluminescentCoatingPaleGreen" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_photoluminescentCoatingPaleGreen" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_photoluminescentCoatingPaleGreen" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_photoluminescentCoatingPaleGreen" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_photoluminescentCoatingPaleGreen" output="out_normal" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="emission" type="float" value="0.05" />
+    <input name="emission_color" type="color3" value="0.1, 0.64, 0.055" />
+  </standard_surface>
+  <surfacematerial name="photoluminescentCoatingPaleGreen" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_photoluminescentCoatingPaleGreen" />
+  </surfacematerial>
+</materialx>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materialx version="1.39" colorspace="lin_rec709" doc="Black; coarse organic wood-fiber appearance with irregular grain and a dry matte response; no chip geometry included. Recipe: fiber. mineral skin grains 1–2 mm with 8–120 micrometre relief, no stone distribution; organic longitudinal striae 3.8 mm/0.12 mm; tissue vein color spacing 3–15 mm. All colors are art-directed scene-linear Rec.709, not calibrated manufacturer measurements. UV 0–1 = 1 metre; height in metres. Relief is filtered surface appearance, not silhouette geometry.">
+  <nodegraph name="NG_mulchWoodBlack">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="fibers_a_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="5, 260" />
+    </multiply>
+    <rotate2d name="fibers_a_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="fibers_a_scale" />
+      <input name="amount" type="float" value="11" />
+    </rotate2d>
+    <add name="fibers_a_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="fibers_a_rotate" />
+      <input name="in2" type="vector2" value="3.71, 8.29" />
+    </add>
+    <fractal2d name="fibers_a" type="float">
+      <input name="texcoord" type="vector2" nodename="fibers_a_offset" />
+      <input name="amplitude" type="float" value="0.00012" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <multiply name="fibers_b_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="260, 5" />
+    </multiply>
+    <rotate2d name="fibers_b_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="fibers_b_scale" />
+      <input name="amount" type="float" value="-31" />
+    </rotate2d>
+    <add name="fibers_b_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="fibers_b_rotate" />
+      <input name="in2" type="vector2" value="19.4, 31.7" />
+    </add>
+    <fractal2d name="fibers_b" type="float">
+      <input name="texcoord" type="vector2" nodename="fibers_b_offset" />
+      <input name="amplitude" type="float" value="6.6e-05" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <add name="fibers" type="float">
+      <input name="in1" type="float" nodename="fibers_a" />
+      <input name="in2" type="float" nodename="fibers_b" />
+    </add>
+    <multiply name="fiber_tone_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="5, 260" />
+    </multiply>
+    <rotate2d name="fiber_tone_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="fiber_tone_scale" />
+      <input name="amount" type="float" value="11" />
+    </rotate2d>
+    <add name="fiber_tone_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="fiber_tone_rotate" />
+      <input name="in2" type="vector2" value="3.71, 8.29" />
+    </add>
+    <fractal2d name="fiber_tone" type="float">
+      <input name="texcoord" type="vector2" nodename="fiber_tone_offset" />
+      <input name="amplitude" type="float" value="1" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <multiply name="fiber_mask_gain" type="float">
+      <input name="in1" type="float" nodename="fiber_tone" />
+      <input name="in2" type="float" value="0.6" />
+    </multiply>
+    <add name="fiber_mask_bias" type="float">
+      <input name="in1" type="float" nodename="fiber_mask_gain" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="fiber_mask" type="float">
+      <input name="in" type="float" nodename="fiber_mask_bias" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <multiply name="tone_drift_noise_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="3.7, 4.9" />
+    </multiply>
+    <add name="tone_drift_noise_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="tone_drift_noise_scale" />
+      <input name="in2" type="vector2" value="15.1, 9.7" />
+    </add>
+    <fractal2d name="tone_drift_noise" type="float">
+      <input name="texcoord" type="vector2" nodename="tone_drift_noise_offset" />
+      <input name="amplitude" type="float" value="1" />
+      <input name="octaves" type="integer" value="2" />
+    </fractal2d>
+    <multiply name="tone_drift_gain" type="float">
+      <input name="in1" type="float" nodename="tone_drift_noise" />
+      <input name="in2" type="float" value="0.6" />
+    </multiply>
+    <add name="tone_drift_bias" type="float">
+      <input name="in1" type="float" nodename="tone_drift_gain" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="tone_drift" type="float">
+      <input name="in" type="float" nodename="tone_drift_bias" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <mix name="pigment_variation" type="float">
+      <input name="bg" type="float" value="0.78" />
+      <input name="fg" type="float" value="1.22" />
+      <input name="mix" type="float" nodename="fiber_mask" />
+    </mix>
+    <multiply name="micro_color" type="color3">
+      <input name="in1" type="color3" value="0.012, 0.014, 0.016" />
+      <input name="in2" type="float" nodename="pigment_variation" />
+    </multiply>
+    <mix name="macro_pigment" type="float">
+      <input name="bg" type="float" value="0.934" />
+      <input name="fg" type="float" value="1.066" />
+      <input name="mix" type="float" nodename="tone_drift" />
+    </mix>
+    <multiply name="base_color" type="color3">
+      <input name="in1" type="color3" nodename="micro_color" />
+      <input name="in2" type="float" nodename="macro_pigment" />
+    </multiply>
+    <mix name="roughness" type="float">
+      <input name="bg" type="float" value="0.85" />
+      <input name="fg" type="float" value="0.91" />
+      <input name="mix" type="float" nodename="fiber_mask" />
+    </mix>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="fibers" />
+      <input name="in2" type="float" value="0" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="base" type="float">
+      <input name="value" type="float" value="1" />
+    </constant>
+    <constant name="specular" type="float">
+      <input name="value" type="float" value="0.5" />
+    </constant>
+    <constant name="specular_IOR" type="float">
+      <input name="value" type="float" value="1.5" />
+    </constant>
+    <constant name="diffuse_roughness" type="float">
+      <input name="value" type="float" value="0.25" />
+    </constant>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+    <output name="out_base" type="float" nodename="base" />
+    <output name="out_specular" type="float" nodename="specular" />
+    <output name="out_specular_IOR" type="float" nodename="specular_IOR" />
+    <output name="out_diffuse_roughness" type="float" nodename="diffuse_roughness" />
+  </nodegraph>
+  <standard_surface name="SR_mulchWoodBlack" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_mulchWoodBlack" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_mulchWoodBlack" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_mulchWoodBlack" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_mulchWoodBlack" output="out_normal" />
+    <input name="base" type="float" nodegraph="NG_mulchWoodBlack" output="out_base" />
+    <input name="specular" type="float" nodegraph="NG_mulchWoodBlack" output="out_specular" />
+    <input name="specular_IOR" type="float" nodegraph="NG_mulchWoodBlack" output="out_specular_IOR" />
+    <input name="diffuse_roughness" type="float" nodegraph="NG_mulchWoodBlack" output="out_diffuse_roughness" />
+  </standard_surface>
+  <surfacematerial name="M_mulchWoodBlack" type="material" doc="Black; coarse organic wood-fiber appearance with irregular grain and a dry matte response; no chip geometry included.">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_mulchWoodBlack" />
+  </surfacematerial>
+</materialx>

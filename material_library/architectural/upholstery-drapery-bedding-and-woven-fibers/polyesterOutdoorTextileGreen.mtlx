@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Catalog: Green; solution-dyed synthetic textile with fine coarse-yarn weave and subdued fiber highlights. -->
+  <!-- Art-directed linear Rec.709; 1 UV = 1 m; height in m.  Surface-scale yarn/nap only; no folds, furniture or woven product arrangement. Silk/velvet anisotropic sheen is an approximation. -->
+  <!-- Recipe weave: feature frequencies 380, 430 per m; relief amplitude 2.5e-05 m; macro drift about 0.25 m. Subpixel detail requires filtering at distance. -->
+  <nodegraph name="NG_polyesterOutdoorTextileGreen">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="multiply_2" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="3.1, 4.3" />
+    </multiply>
+    <add name="add_3" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_2" />
+      <input name="in2" type="vector2" value="11.37, 29.17" />
+    </add>
+    <fractal2d name="fractal2d_4" type="float">
+      <input name="texcoord" type="vector2" nodename="add_3" />
+      <input name="octaves" type="integer" value="3" />
+    </fractal2d>
+    <multiply name="multiply_5" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="380, 430" />
+    </multiply>
+    <add name="add_6" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_5" />
+      <input name="in2" type="vector2" value="3.71, 9.17" />
+    </add>
+    <fractal2d name="fractal2d_7" type="float">
+      <input name="texcoord" type="vector2" nodename="add_6" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <separate2 name="separate2_12" type="multioutput">
+      <input name="in" type="vector2" nodename="uv" />
+    </separate2>
+    <multiply name="multiply_13" type="float">
+      <input name="in1" type="float" nodename="separate2_12" output="outx" />
+      <input name="in2" type="float" value="2387.6104" />
+    </multiply>
+    <sin name="sin_14" type="float">
+      <input name="in" type="float" nodename="multiply_13" />
+    </sin>
+    <multiply name="multiply_15" type="float">
+      <input name="in1" type="float" nodename="separate2_12" output="outy" />
+      <input name="in2" type="float" value="2701.7697" />
+    </multiply>
+    <sin name="sin_16" type="float">
+      <input name="in" type="float" nodename="multiply_15" />
+    </sin>
+    <multiply name="multiply_17" type="float">
+      <input name="in1" type="float" nodename="sin_14" />
+      <input name="in2" type="float" value="0.5" />
+    </multiply>
+    <multiply name="multiply_18" type="float">
+      <input name="in1" type="float" nodename="sin_16" />
+      <input name="in2" type="float" value="0.5" />
+    </multiply>
+    <add name="add_19" type="float">
+      <input name="in1" type="float" nodename="multiply_17" />
+      <input name="in2" type="float" nodename="multiply_18" />
+    </add>
+    <multiply name="multiply_20" type="float">
+      <input name="in1" type="float" nodename="add_19" />
+      <input name="in2" type="float" value="2.5e-05" />
+    </multiply>
+    <multiply name="multiply_21" type="float">
+      <input name="in1" type="float" nodename="fractal2d_7" />
+      <input name="in2" type="float" value="5.5e-06" />
+    </multiply>
+    <add name="add_22" type="float">
+      <input name="in1" type="float" nodename="multiply_20" />
+      <input name="in2" type="float" nodename="multiply_21" />
+    </add>
+    <multiply name="multiply_23" type="float">
+      <input name="in1" type="float" nodename="add_19" />
+      <input name="in2" type="float" value="0.8" />
+    </multiply>
+    <add name="add_24" type="float">
+      <input name="in1" type="float" nodename="multiply_23" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="clamp_25" type="float">
+      <input name="in" type="float" nodename="add_24" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <multiply name="multiply_26" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="0.0196" />
+    </multiply>
+    <add name="add_27" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="multiply_26" />
+    </add>
+    <mix name="mix_28" type="color3">
+      <input name="bg" type="color3" value="0.0744, 0.2139, 0.093" />
+      <input name="fg" type="color3" value="0.0856, 0.2461, 0.107" />
+      <input name="mix" type="float" nodename="clamp_25" />
+    </mix>
+    <multiply name="base_color" type="color3">
+      <input name="in1" type="color3" nodename="mix_28" />
+      <input name="in2" type="float" nodename="add_27" />
+    </multiply>
+    <subtract name="subtract_30" type="float">
+      <input name="in1" type="float" nodename="clamp_25" />
+      <input name="in2" type="float" value="0.5" />
+    </subtract>
+    <multiply name="multiply_31" type="float">
+      <input name="in1" type="float" nodename="subtract_30" />
+      <input name="in2" type="float" value="-0.119" />
+    </multiply>
+    <add name="add_32" type="float">
+      <input name="in1" type="float" value="0.85" />
+      <input name="in2" type="float" nodename="multiply_31" />
+    </add>
+    <clamp name="roughness" type="float">
+      <input name="in" type="float" nodename="add_32" />
+      <input name="low" type="float" value="0.005" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <multiply name="multiply_35" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="6.25e-06" />
+    </multiply>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="add_22" />
+      <input name="in2" type="float" nodename="multiply_35" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+    <constant name="specular_weight" type="float">
+      <input name="value" type="float" value="0.2" />
+    </constant>
+    <output name="out_specular" type="float" nodename="specular_weight" />
+  </nodegraph>
+  <standard_surface name="SR_polyesterOutdoorTextileGreen" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_polyesterOutdoorTextileGreen" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_polyesterOutdoorTextileGreen" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_polyesterOutdoorTextileGreen" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_polyesterOutdoorTextileGreen" output="out_normal" />
+    <input name="specular" type="float" nodegraph="NG_polyesterOutdoorTextileGreen" output="out_specular" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="sheen" type="float" value="0.28" />
+    <input name="sheen_color" type="color3" value="0.142, 0.352, 0.17" />
+    <input name="sheen_roughness" type="float" value="0.75" />
+  </standard_surface>
+  <surfacematerial name="polyesterOutdoorTextileGreen" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_polyesterOutdoorTextileGreen" />
+  </surfacematerial>
+</materialx>

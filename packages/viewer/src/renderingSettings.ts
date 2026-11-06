@@ -1,3 +1,5 @@
+import { parseCameraSettings, type CameraSettings } from './cameraSettings.js';
+export { parseCameraSettings, type CameraSettings } from './cameraSettings.js';
 /** Tone mapping names shared by viewer controls and extension configuration. */
 export const TONE_MAPPING_OPTIONS = [
   { value: 'neutral', label: 'Neutral' },
@@ -27,12 +29,13 @@ export const GEOMETRY_OPTIONS: SettingsOption[] = [
   { value: 'plane', label: 'Plane' },
 ];
 export const IBL_OPTIONS: SettingsOption[] = [
-  { value: 'studio', label: 'Studio' },
+  { value: 'studio', label: 'Neutral Studio' },
   { value: 'bridge', label: 'San Giuseppe Bridge' },
 ];
 
 /** `none` lights the scene with the IBL but leaves the backdrop transparent (clear alpha 0). */
 export const BACKGROUND_OPTIONS = [
+  { value: 'white', label: 'White' },
   { value: 'environment', label: 'Environment' },
   { value: 'none', label: 'None' },
 ] as const;
@@ -42,26 +45,35 @@ export type BackgroundKind = (typeof BACKGROUND_OPTIONS)[number]['value'];
 export type AnimationMode = false | 'play' | 'pause' | undefined;
 
 export const DEFAULT_VIEWER_SETTINGS = {
-  ibl: 'bridge' as 'bridge' | 'studio',
-  background: 'environment' as BackgroundKind,
+  ibl: 'studio' as 'bridge' | 'studio',
+  background: 'white' as BackgroundKind,
   ...DEFAULT_RENDERING_SETTINGS,
   intensity: 1,
+  environmentRotation: 0,
   exposure: 0,
   rotate: false,
   materialName: '',
   geometry: 'totem' as 'totem' | 'sphere' | 'cube' | 'plane',
 };
 /** Asset names may include host-configured environments and geometries. */
-export type ViewerSettings = Omit<typeof DEFAULT_VIEWER_SETTINGS, 'ibl' | 'geometry'> & {
-  ibl: string;
-  geometry: string;
-};
+export type ViewerSettings = Omit<typeof DEFAULT_VIEWER_SETTINGS, 'ibl' | 'geometry'> &
+  CameraSettings & {
+    ibl: string;
+    geometry: string;
+  };
+
+/** Finite yaw in degrees, wrapped into [0, 360); invalid values are ignored. */
+export function normalizeEnvironmentRotation(input: unknown): number | undefined {
+  const degrees = typeof input === 'number' ? input : typeof input === 'string' && input.trim() ? Number(input) : NaN;
+  if (!Number.isFinite(degrees)) return undefined;
+  return ((degrees % 360) + 360) % 360;
+}
 
 export function parseViewerSettings(
   input: Record<string, unknown>,
   assets: { ibls?: readonly string[]; geometries?: readonly string[] } = {},
 ): Partial<ViewerSettings> {
-  const result: Partial<ViewerSettings> = {};
+  const result: Partial<ViewerSettings> = parseCameraSettings(input);
   if (typeof input.materialName === 'string' && input.materialName) result.materialName = input.materialName;
   for (const key of ['bloom', 'ao', 'rotate'] as const) {
     if (input[key] === true || input[key] === 'true') result[key] = true;
@@ -75,6 +87,8 @@ export function parseViewerSettings(
     const value = typeof raw === 'number' ? raw : typeof raw === 'string' && raw.trim() ? Number(raw) : NaN;
     if (Number.isFinite(value)) result[key] = Math.min(max, Math.max(min, value));
   }
+  const environmentRotation = normalizeEnvironmentRotation(input.environmentRotation);
+  if (environmentRotation !== undefined) result.environmentRotation = environmentRotation;
   if (typeof input.ibl === 'string' && ['bridge', 'studio', ...(assets.ibls ?? [])].includes(input.ibl))
     result.ibl = input.ibl;
   if (

@@ -18,9 +18,10 @@ const mocked = vi.hoisted(() => {
       },
     } as vscode.Uri;
   };
+  const configuration: Record<string, unknown> = {};
   return {
     uri,
-    configuration: {} as Record<string, unknown>,
+    configuration,
     configurationChanged: undefined as ((event: { affectsConfiguration: () => boolean }) => void) | undefined,
     readFile: vi.fn(),
     clipboard: vi.fn(),
@@ -250,7 +251,7 @@ it('delivers defaults, reloads changed settings, and only serves configured asse
   host.receive('ready');
   await vi.waitFor(() => expect(host.postMessage).toHaveBeenCalledTimes(1));
   expect(host.postMessage.mock.calls[0]![0].settings).toMatchObject({
-    defaultIbl: 'bridge',
+    defaultIbl: 'studio',
     defaultGeometry: 'totem',
     autoRotate: true,
     bloom: true,

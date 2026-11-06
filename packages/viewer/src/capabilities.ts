@@ -1,4 +1,4 @@
-/** Three.js 0.186 MaterialX category inventory. Kept in sync by capabilities.test.ts.
+/** Three.js 0.187 MaterialX category inventory. Kept in sync by capabilities.test.ts.
  * Category support alone does not guarantee support for every input/type combination. */
 export const supportedMaterialXCategories: readonly string[] = [
   'absval',
@@ -30,6 +30,7 @@ export const supportedMaterialXCategories: readonly string[] = [
   'crossproduct',
   'determinant',
   'difference',
+  'displacement',
   'distance',
   'divide',
   'dodge',
@@ -37,6 +38,7 @@ export const supportedMaterialXCategories: readonly string[] = [
   'dotproduct',
   'exp',
   'extract',
+  'facingratio',
   'floor',
   'fract',
   'fractal2d',
@@ -52,6 +54,7 @@ export const supportedMaterialXCategories: readonly string[] = [
   'heighttonormal',
   'hextiledimage',
   'hextilednormalmap',
+  'hsvadjust',
   'hsvtorgb',
   'ifequal',
   'ifgreater',
@@ -59,7 +62,6 @@ export const supportedMaterialXCategories: readonly string[] = [
   'image',
   'invert',
   'invertmatrix',
-  'length',
   'ln',
   'luminance',
   'magnitude',
@@ -87,6 +89,8 @@ export const supportedMaterialXCategories: readonly string[] = [
   'ramp_gradient',
   'ramplr',
   'ramptb',
+  'randomcolor',
+  'randomfloat',
   'range',
   'reflect',
   'refract',
@@ -109,6 +113,7 @@ export const supportedMaterialXCategories: readonly string[] = [
   'sqrt',
   'standard_surface',
   'subtract',
+  'surface_unlit',
   'surfacematerial',
   'switch',
   'tan',
@@ -121,6 +126,7 @@ export const supportedMaterialXCategories: readonly string[] = [
   'transformpoint',
   'transformvector',
   'transpose',
+  'triplanarprojection',
   'unifiednoise2d',
   'unifiednoise3d',
   'unpremult',

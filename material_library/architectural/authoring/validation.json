@@ -1,0 +1,15 @@
+{
+  "materialCount": 1277,
+  "familyCount": 24,
+  "rules": ["basic", "structure", "types", "unused"],
+  "strict": true,
+  "passed": 1277,
+  "failures": [],
+  "previews": {
+    "materials": 72,
+    "contactSheets": 288,
+    "channelChecks": 10,
+    "families": 24,
+    "hashesMatch": true
+  }
+}

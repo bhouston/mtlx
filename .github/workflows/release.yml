@@ -7,6 +7,10 @@ on:
         description: 'Validate and preview the release without publishing'
         type: boolean
         default: false
+      recover_tag:
+        description: 'Resume an interrupted stable release from its existing tag (for example v0.10.0)'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -18,12 +22,28 @@ concurrency:
 jobs:
   guard:
     runs-on: ubuntu-latest
+    outputs:
+      recovery_sha: ${{ steps.recovery.outputs.sha }}
     steps:
       - name: Require dispatch against main
         if: github.ref != 'refs/heads/main'
         run: |
           echo "::error::Release must be dispatched with ref=main (got ${{ github.ref }})."
           exit 1
+
+      - name: Validate recovery tag
+        id: recovery
+        if: inputs.recover_tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RECOVER_TAG: ${{ inputs.recover_tag }}
+        run: |
+          [[ "$RECOVER_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Expected vX.Y.Z"; exit 1; }
+          sha="$(gh api "repos/${{ github.repository }}/git/ref/tags/$RECOVER_TAG" --jq 'select(.object.type == "commit") | .object.sha')"
+          [[ "$sha" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::Expected a lightweight release tag"; exit 1; }
+          recovery_status="$(gh api "repos/${{ github.repository }}/compare/$sha...${{ github.sha }}" --jq .status)"
+          [[ "$recovery_status" == "ahead" || "$recovery_status" == "identical" ]] || { echo "::error::Release tag is not an ancestor of main"; exit 1; }
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
   checks:
     needs: guard
@@ -37,12 +57,21 @@ jobs:
     permissions:
       contents: write
       id-token: write
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     env:
       HUSKY: '0'
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        if: inputs.recover_tag != ''
+        with:
+          ref: ${{ needs.guard.outputs.recovery_sha }}
+          path: release-source
           fetch-depth: 0
           persist-credentials: false
       - name: Verify main has not advanced since dispatch
@@ -60,13 +89,49 @@ jobs:
           node-version-file: '.nvmrc'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+        working-directory: ${{ inputs.recover_tag != '' && 'release-source' || '.' }}
       - run: pnpm build
+        working-directory: ${{ inputs.recover_tag != '' && 'release-source' || '.' }}
       - name: Release
+        if: inputs.recover_tag == ''
         run: pnpm release ${{ inputs.dry_run && '--dry-run' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      - name: Resume interrupted release
+        if: inputs.recover_tag != ''
+        working-directory: release-source
+        run: node ../scripts/resume-release.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+          RECOVER_TAG: ${{ inputs.recover_tag }}
+          RECOVERY_SHA: ${{ needs.guard.outputs.recovery_sha }}
+          RECOVERY_DRY_RUN: ${{ inputs.dry_run }}
+      - name: Find the release tag
+        id: tag
+        if: ${{ !inputs.dry_run }}
+        # A recovered release reuses its existing tag (validated by the guard job); otherwise
+        # semantic-release tags HEAD only when it publishes a release.
+        env:
+          RECOVER_TAG: ${{ inputs.recover_tag }}
+        run: |
+          tag="${RECOVER_TAG:-$(git tag --points-at HEAD --list 'v*' | head -n 1)}"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
       - name: Summary
         if: inputs.dry_run
         run: echo "Dry run complete; nothing was published and no tag was created." >> "$GITHUB_STEP_SUMMARY"
+
+  website:
+    needs: release
+    if: ${{ needs.release.outputs.tag != '' }}
+    uses: ./.github/workflows/docs.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    with:
+      ref: ${{ needs.release.outputs.tag }}

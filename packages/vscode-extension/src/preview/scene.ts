@@ -1,7 +1,6 @@
 import * as THREE from 'three/webgpu';
-import { createViewer, dataUrlToArrayBuffer, parseEnvironmentFile, type Viewer } from 'mtlx-viewer';
+import { createViewer, parseEnvironmentFile, type Viewer } from 'mtlx-viewer';
 import type { ViewerSettings } from 'mtlx-viewer/settings';
-import studioEnvironmentDataUrl from '../../../static-assets/public/viewer/studio-environment.png';
 import type { PreviewSettings } from '../previewSettings.js';
 import { requestAsset } from './host.js';
 import type { PreviewCamera } from './state.js';
@@ -59,8 +58,6 @@ export async function startPreviewScene(options: PreviewSceneOptions): Promise<V
         return textureUrls.get(url) ?? textureUrls.get(normalized);
       },
       loadEnvironment: async (kind) => {
-        if (kind === 'studio')
-          return parseEnvironmentFile(dataUrlToArrayBuffer(studioEnvironmentDataUrl), 'studio.png');
         if (kind === 'bridge') {
           const url = document.body.dataset.hdrUrl!;
           const response = await fetch(url, { signal: abort.signal });
@@ -112,7 +109,7 @@ export async function startPreviewScene(options: PreviewSceneOptions): Promise<V
     viewer.controls.target.fromArray(saved.target);
     viewer.scene.root.children
       .find((child) => child.visible)
-      ?.rotation.set(saved.rotation[0]!, saved.rotation[1]!, saved.rotation[2]!);
+      ?.rotation.set(saved.rotation[0], saved.rotation[1], saved.rotation[2]);
     viewer.controls.update();
   }
   viewer.controls.addEventListener('end', saveCamera);

@@ -1,6 +1,7 @@
 import { Settings, X } from 'lucide-react';
 import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import {
+  BACKGROUND_OPTIONS,
   GEOMETRY_OPTIONS,
   IBL_OPTIONS,
   TONE_MAPPING_OPTIONS,
@@ -54,7 +55,7 @@ export function ViewerSettingsPanel({
   return (
     <div
       ref={root}
-      className={cn('pointer-events-none absolute inset-3 z-10 ml-auto max-w-md text-xs text-white', className)}
+      className={cn('pointer-events-none absolute inset-3 z-10 ml-auto max-w-2xl text-xs text-white', className)}
       {...props}
     >
       <button
@@ -82,108 +83,118 @@ export function ViewerSettingsPanel({
             <X className="size-4" />
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-white/10 p-4 sm:grid-cols-3">
-          <label className="flex min-w-0 items-center gap-2">
-            Geometry
-            <select
-              aria-label="Geometry"
-              className={selectClass}
-              value={settings.geometry}
-              onChange={(event) => onChange({ geometry: event.target.value })}
-            >
-              {geometries.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={rotating}
-              disabled={rotateDisabled}
-              aria-label="Rotate"
-              onChange={(event) => onChange({ rotate: event.target.checked })}
-            />
-            Rotate
-          </label>
-          <label className="flex min-w-0 items-center gap-2">
-            IBL
-            <select
-              aria-label="IBL environment"
-              className={selectClass}
-              value={settings.ibl}
-              onChange={(event) => onChange({ ibl: event.target.value })}
-            >
-              {ibls.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex items-center gap-2">
-            Tone mapping
-            <select
-              aria-label="Tone mapping"
-              className={selectClass}
-              value={settings.toneMapping}
-              onChange={(event) => onChange({ toneMapping: event.target.value as RenderingSettings['toneMapping'] })}
-            >
-              {TONE_MAPPING_OPTIONS.map(({ value, label }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={settings.background !== 'none'}
-              aria-label="Background"
-              onChange={(event) => onChange({ background: event.target.checked ? 'environment' : 'none' })}
-            />
-            Background
-          </label>
-          {(['bloom', 'ao'] as const).map((effect) => (
-            <label key={effect} className="flex items-center gap-2">
+        <div className="grid grid-cols-2 gap-4 border-t border-white/10 p-4">
+          <div className="flex min-w-0 flex-col gap-3">
+            <label className="flex min-w-0 items-center gap-2">
+              Geometry
+              <select
+                aria-label="Geometry"
+                className={selectClass}
+                value={settings.geometry}
+                onChange={(event) => onChange({ geometry: event.target.value })}
+              >
+                {geometries.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex min-w-0 items-center gap-2">
+              IBL
+              <select
+                aria-label="IBL environment"
+                className={selectClass}
+                value={settings.ibl}
+                onChange={(event) => onChange({ ibl: event.target.value })}
+              >
+                {ibls.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex items-center gap-2">
+              Tone mapping
+              <select
+                aria-label="Tone mapping"
+                className={selectClass}
+                value={settings.toneMapping}
+                onChange={(event) => onChange({ toneMapping: event.target.value as RenderingSettings['toneMapping'] })}
+              >
+                {TONE_MAPPING_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className="flex min-w-0 flex-col gap-3">
+            <label className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={settings[effect]}
-                aria-label={effect === 'ao' ? 'Ambient occlusion' : 'Bloom'}
-                onChange={(event) => onChange({ [effect]: event.target.checked })}
+                checked={rotating}
+                disabled={rotateDisabled}
+                aria-label="Rotate"
+                onChange={(event) => onChange({ rotate: event.target.checked })}
               />
-              {effect === 'ao' ? 'AO' : 'Bloom'}
+              Rotate
             </label>
-          ))}
-          <label className="flex items-center gap-2">
-            Exposure ({settings.exposure.toFixed(1)} EV)
-            <input
-              aria-label="Exposure"
-              type="range"
-              min="-2"
-              max="2"
-              step="0.1"
-              value={settings.exposure}
-              onChange={(event) => onChange({ exposure: Number(event.target.value) })}
-              className="w-24"
-            />
-          </label>
-          <label className="flex items-center gap-2">
-            Intensity
-            <input
-              aria-label="Environment intensity"
-              type="range"
-              min="0"
-              max="2"
-              step="0.1"
-              value={settings.intensity}
-              onChange={(event) => onChange({ intensity: Number(event.target.value) })}
-              className="w-24"
-            />
-          </label>
+            <label className="flex items-center gap-2">
+              Background
+              <select
+                aria-label="Background"
+                className={selectClass}
+                value={settings.background}
+                onChange={(event) => onChange({ background: event.target.value as ViewerSettings['background'] })}
+              >
+                {BACKGROUND_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {(['bloom', 'ao'] as const).map((effect) => (
+              <label key={effect} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={settings[effect]}
+                  aria-label={effect === 'ao' ? 'Ambient occlusion' : 'Bloom'}
+                  onChange={(event) => onChange({ [effect]: event.target.checked })}
+                />
+                {effect === 'ao' ? 'AO' : 'Bloom'}
+              </label>
+            ))}
+            <label className="flex items-center gap-2">
+              Lighting rotation ({settings.environmentRotation.toFixed(0)}°)
+              <input
+                aria-label="Environment rotation"
+                type="range"
+                min="0"
+                max="360"
+                step="1"
+                value={settings.environmentRotation}
+                onChange={(event) => onChange({ environmentRotation: Number(event.target.value) })}
+                className="w-24"
+              />
+            </label>
+            <label className="flex items-center gap-2">
+              Exposure ({settings.exposure.toFixed(1)} EV)
+              <input
+                aria-label="Exposure"
+                type="range"
+                min="-2"
+                max="2"
+                step="0.1"
+                value={settings.exposure}
+                onChange={(event) => onChange({ exposure: Number(event.target.value) })}
+                className="w-24"
+              />
+            </label>
+          </div>
         </div>
       </div>
     </div>
