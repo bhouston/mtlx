@@ -68,7 +68,7 @@ it('resolves locally hosted samples and makes their URLs portable across deploym
   const { presetUrl, materialSearch } = await import('./presets.js');
   const compound = PRESET_MATERIALS.find((preset) => preset.name === 'compound')!;
   expect(presetUrl(compound)).toBe('/materials/compound/compound.mtlx');
-  expect(presetUrl(compound, 'http://localhost:3123')).toBe('http://localhost:3123/materials/compound/compound.mtlx');
+  expect(presetUrl(compound, 'http://localhost:3803')).toBe('http://localhost:3803/materials/compound/compound.mtlx');
   expect(resolveMaterialParam(presetUrl(compound))).toEqual({
     folderUrl: '/materials/compound/',
     fileName: 'compound.mtlx',

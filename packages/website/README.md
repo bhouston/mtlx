@@ -16,7 +16,7 @@ pnpm --filter mtlx-viewer build
 pnpm --filter website dev
 ```
 
-Open `http://localhost:3000/viewer`. The website uses Vite's `?url` asset imports. Large material
+Open `http://localhost:3800/viewer`. The website uses Vite's `?url` asset imports. Large material
 analysis runs in a worker; loose remote materials resolve dependencies relative to their URL.
 A blue-on-white progress overlay appears immediately while loading, advances with streamed bytes
 when a download size is available, and shows the checking and rendering stages before the preview.
@@ -103,9 +103,13 @@ pnpm --filter website start
 
 E2E tests require the production website under `.output/` and the built extension assets under
 `packages/vscode-extension/media/`; `pnpm build` produces both. They start their own server on
-port 3123 and exercise Chromium rendering, keyboard controls, narrow layouts, sharing, and the
+port 3803 and exercise Chromium rendering, keyboard controls, narrow layouts, sharing, and the
 extension webview's ready/state-restoration protocol. On Linux CI use
 `pnpm exec playwright install --with-deps chromium`. Unit tests run with `pnpm test`.
+
+Local server defaults are `3800` for development, `3801` for `start`, `3802` for
+`preview`, and `3803` for E2E tests. Override the production port with `PORT` and
+the E2E port with `MTLX_E2E_PORT`.
 
 ## Deployment
 
