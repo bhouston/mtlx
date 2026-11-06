@@ -1,0 +1,9 @@
+<!-- in: uv, band_rand, band_rand2. out: h_band = broom strokes rotated +-15 deg and pressed 0.4..1.2x per band -->
+<subtract name="bb_a0" type="float"><input name="in1" type="float" nodename="band_rand" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="bb_ang" type="float"><input name="in1" type="float" nodename="bb_a0" /><input name="in2" type="float" value="30" /></multiply>
+<rotate2d name="bb_uv" type="vector2"><input name="in" type="vector2" nodename="uv" /><input name="amount" type="float" nodename="bb_ang" /></rotate2d>
+<multiply name="bb_p" type="vector2"><input name="in1" type="vector2" nodename="bb_uv" /><input name="in2" type="vector2" value="3, 330" /></multiply>
+<noise2d name="bb_n" type="float"><input name="texcoord" type="vector2" nodename="bb_p" /><input name="amplitude" type="float" value="0.00018" /></noise2d>
+<multiply name="bb_pr0" type="float"><input name="in1" type="float" nodename="band_rand2" /><input name="in2" type="float" value="0.8" /></multiply>
+<add name="bb_pr" type="float"><input name="in1" type="float" nodename="bb_pr0" /><input name="in2" type="float" value="0.4" /></add>
+<multiply name="h_band" type="float"><input name="in1" type="float" nodename="bb_n" /><input name="in2" type="float" nodename="bb_pr" /></multiply>

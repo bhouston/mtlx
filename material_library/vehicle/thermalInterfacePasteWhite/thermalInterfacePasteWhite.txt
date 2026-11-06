@@ -1,0 +1,5 @@
+thermalInterfacePasteWhite
+
+white thermal interface compound; dense fine paste texture with subdued satin reflections and no metallic sparkle.
+
+Use for rendering thin visible thermal-compound layers in electronics assembly cutaways.

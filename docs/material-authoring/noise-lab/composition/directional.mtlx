@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Directional structure: stripes vs strokes, corrugation vs grooves, per-band random rotation. UV 1 = 1 m. -->
+  <nodegraph name="NG_directional">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <ifgreater name="q_right" type="float"><input name="value1" type="float" nodename="uv_sep" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+    <ifgreater name="q_top" type="float"><input name="value1" type="float" nodename="uv_sep" output="outy" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+    <multiply name="multiply_5" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="6.0, 3.0" /></multiply>
+    <!-- Quadrants: BL sin stripes | BR stretched-noise corrugation | TL flat-bottom smoothstep grooves | TR per-band rotated broom. -->
+    <noise2d name="wobble" type="float"><input name="texcoord" type="vector2" nodename="multiply_5" /><input name="amplitude" type="float" value="0.003" /></noise2d>
+    <add name="v_wob" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" nodename="wobble" /></add>
+    <multiply name="multiply_8" type="float"><input name="in1" type="float" nodename="v_wob" /><input name="in2" type="float" value="2073.456" /></multiply>
+    <sin name="sin_9" type="float"><input name="in" type="float" nodename="multiply_8" /></sin>
+    <multiply name="h_sin" type="float"><input name="in1" type="float" nodename="sin_9" /><input name="in2" type="float" value="8e-05" /></multiply>
+    <combine2 name="uv_wob" type="vector2"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" nodename="v_wob" /></combine2>
+    <multiply name="multiply_12" type="vector2"><input name="in1" type="vector2" nodename="uv_wob" /><input name="in2" type="vector2" value="3.0, 330.0" /></multiply>
+    <noise2d name="stroke_a" type="float"><input name="texcoord" type="vector2" nodename="multiply_12" /><input name="amplitude" type="float" value="0.00016" /></noise2d>
+    <add name="add_14" type="vector2"><input name="in1" type="vector2" nodename="uv_wob" /><input name="in2" type="vector2" value="0.37, 0.0021" /></add>
+    <multiply name="multiply_15" type="vector2"><input name="in1" type="vector2" nodename="add_14" /><input name="in2" type="vector2" value="5.0, 461.99999999999994" /></multiply>
+    <noise2d name="stroke_b" type="float"><input name="texcoord" type="vector2" nodename="multiply_15" /><input name="amplitude" type="float" value="0.00011" /></noise2d>
+    <add name="h_stroke" type="float"><input name="in1" type="float" nodename="stroke_a" /><input name="in2" type="float" nodename="stroke_b" /></add>
+    <multiply name="multiply_18" type="vector2"><input name="in1" type="vector2" nodename="uv_wob" /><input name="in2" type="vector2" value="3.0, 330.0" /></multiply>
+    <noise2d name="noise2d_19" type="float"><input name="texcoord" type="vector2" nodename="multiply_18" /><input name="amplitude" type="float" value="1.0" /></noise2d>
+    <smoothstep name="groove_mask" type="float"><input name="in" type="float" nodename="noise2d_19" /><input name="low" type="float" value="0.15" /><input name="high" type="float" value="0.25" /></smoothstep>
+    <multiply name="h_groove" type="float"><input name="in1" type="float" nodename="groove_mask" /><input name="in2" type="float" value="-0.00015" /></multiply>
+    <multiply name="multiply_22" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="2.5" /></multiply>
+    <noise2d name="noise2d_23" type="float"><input name="texcoord" type="vector2" nodename="multiply_22" /><input name="amplitude" type="float" value="0.06" /></noise2d>
+    <add name="add_24" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" nodename="noise2d_23" /></add>
+    <multiply name="multiply_25" type="float"><input name="in1" type="float" nodename="add_24" /><input name="in2" type="float" value="6.0" /></multiply>
+    <floor name="band" type="float"><input name="in" type="float" nodename="multiply_25" /></floor>
+    <combine2 name="combine2_27" type="vector2"><input name="in1" type="float" nodename="band" /><input name="in2" type="float" value="7.5" /></combine2>
+    <cellnoise2d name="band_rand_angle" type="float"><input name="texcoord" type="vector2" nodename="combine2_27" /></cellnoise2d>
+    <combine2 name="combine2_29" type="vector2"><input name="in1" type="float" nodename="band" /><input name="in2" type="float" value="19.5" /></combine2>
+    <cellnoise2d name="band_rand_phase" type="float"><input name="texcoord" type="vector2" nodename="combine2_29" /></cellnoise2d>
+    <combine2 name="combine2_31" type="vector2"><input name="in1" type="float" nodename="band" /><input name="in2" type="float" value="31.5" /></combine2>
+    <cellnoise2d name="band_rand_press" type="float"><input name="texcoord" type="vector2" nodename="combine2_31" /></cellnoise2d>
+    <subtract name="subtract_33" type="float"><input name="in1" type="float" nodename="band_rand_angle" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="band_angle" type="float"><input name="in1" type="float" nodename="subtract_33" /><input name="in2" type="float" value="30.0" /></multiply>
+    <rotate2d name="uv_rot" type="vector2"><input name="in" type="vector2" nodename="uv_wob" /><input name="amount" type="float" nodename="band_angle" /></rotate2d>
+    <combine2 name="combine2_36" type="vector2"><input name="in1" type="float" value="0.0" /><input name="in2" type="float" nodename="band_rand_phase" /></combine2>
+    <add name="add_37" type="vector2"><input name="in1" type="vector2" nodename="uv_rot" /><input name="in2" type="vector2" nodename="combine2_36" /></add>
+    <multiply name="multiply_38" type="float"><input name="in1" type="float" nodename="band_rand_press" /><input name="in2" type="float" value="0.8" /></multiply>
+    <add name="add_39" type="float"><input name="in1" type="float" nodename="multiply_38" /><input name="in2" type="float" value="0.4" /></add>
+    <multiply name="multiply_40" type="vector2"><input name="in1" type="vector2" nodename="add_37" /><input name="in2" type="vector2" value="3.0, 330.0" /></multiply>
+    <noise2d name="noise2d_41" type="float"><input name="texcoord" type="vector2" nodename="multiply_40" /><input name="amplitude" type="float" value="0.00016" /></noise2d>
+    <multiply name="multiply_42" type="vector2"><input name="in1" type="vector2" nodename="add_37" /><input name="in2" type="vector2" value="5.0, 461.99999999999994" /></multiply>
+    <noise2d name="noise2d_43" type="float"><input name="texcoord" type="vector2" nodename="multiply_42" /><input name="amplitude" type="float" value="0.00011" /></noise2d>
+    <add name="add_44" type="float"><input name="in1" type="float" nodename="noise2d_41" /><input name="in2" type="float" nodename="noise2d_43" /></add>
+    <multiply name="h_band" type="float"><input name="in1" type="float" nodename="add_44" /><input name="in2" type="float" nodename="add_39" /></multiply>
+    <mix name="mix_46" type="float"><input name="bg" type="float" nodename="h_sin" /><input name="fg" type="float" nodename="h_stroke" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="mix_47" type="float"><input name="bg" type="float" nodename="h_groove" /><input name="fg" type="float" nodename="h_band" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="height" type="float"><input name="bg" type="float" nodename="mix_46" /><input name="fg" type="float" nodename="mix_47" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="base_color" type="color3"><input name="value" type="color3" value="0.4, 0.39, 0.37" /></constant>
+    <constant name="roughness" type="float"><input name="value" type="float" value="0.8" /></constant>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0.0" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+  </nodegraph>
+  <standard_surface name="SR_directional" type="surfaceshader">
+    <input name="base" type="float" value="1.0" />
+    <input name="base_color" type="color3" nodegraph="NG_directional" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_directional" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_directional" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_directional" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_directional" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_directional" /></surfacematerial>
+</materialx>

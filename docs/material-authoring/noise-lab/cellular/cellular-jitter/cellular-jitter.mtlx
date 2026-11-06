@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Diagnostic (emission, unlit). Effect of worley jitter on cell regularity and on pit clipping.
+       10 cells per meter. TL jitter 0, TR 0.5, BL 0.75, BR 1.
+       Grey = F1 (black 0 .. white 1). White lines = borders. Black dots = feature points.
+       Blue = F1 < 0.25 (a pit of radius 0.25 cell). Red = F2 < 0.25: the pixel is within 0.25 of TWO points,
+       so the 0.25-radius pit is cut off by the Voronoi border there (clipped). Rule: r <= (1 - jitter) / 2 never clips. -->
+  <nodegraph name="NG_cellular_jitter">
+    <texcoord name="uv" type="vector2" />
+    <multiply name="uv_c" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="10" /></multiply>
+    <worleynoise2d name="w_j0" type="vector2"><input name="texcoord" type="vector2" nodename="uv_c" /><input name="jitter" type="float" value="0" /></worleynoise2d>
+    <worleynoise2d name="w_j50" type="vector2"><input name="texcoord" type="vector2" nodename="uv_c" /><input name="jitter" type="float" value="0.5" /></worleynoise2d>
+    <worleynoise2d name="w_j75" type="vector2"><input name="texcoord" type="vector2" nodename="uv_c" /><input name="jitter" type="float" value="0.75" /></worleynoise2d>
+    <worleynoise2d name="w_j100" type="vector2"><input name="texcoord" type="vector2" nodename="uv_c" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+    <separate2 name="uv_s" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <ifgreater name="q_right" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="q_top" type="float"><input name="value1" type="float" nodename="uv_s" output="outy" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <mix name="w_top" type="vector2"><input name="bg" type="vector2" nodename="w_j0" /><input name="fg" type="vector2" nodename="w_j50" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="w_bot" type="vector2"><input name="bg" type="vector2" nodename="w_j75" /><input name="fg" type="vector2" nodename="w_j100" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="w" type="vector2"><input name="bg" type="vector2" nodename="w_bot" /><input name="fg" type="vector2" nodename="w_top" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <separate2 name="f" type="multioutput"><input name="in" type="vector2" nodename="w" /></separate2>
+    <dotproduct name="f2_f1" type="float"><input name="in1" type="vector2" nodename="w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+
+    <convert name="grey" type="color3"><input name="in" type="float" nodename="f" output="outx" /></convert>
+    <ifgreater name="pit" type="float"><input name="value1" type="float" value="0.25" /><input name="value2" type="float" nodename="f" output="outx" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="clip" type="float"><input name="value1" type="float" value="0.25" /><input name="value2" type="float" nodename="f" output="outy" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="border" type="float"><input name="value1" type="float" value="0.03" /><input name="value2" type="float" nodename="f2_f1" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="dot" type="float"><input name="value1" type="float" value="0.04" /><input name="value2" type="float" nodename="f" output="outx" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <mix name="c1" type="color3"><input name="bg" type="color3" nodename="grey" /><input name="fg" type="color3" value="0.1, 0.3, 1" /><input name="mix" type="float" nodename="pit" /></mix>
+    <mix name="c2" type="color3"><input name="bg" type="color3" nodename="c1" /><input name="fg" type="color3" value="1, 0, 0" /><input name="mix" type="float" nodename="clip" /></mix>
+    <mix name="c3" type="color3"><input name="bg" type="color3" nodename="c2" /><input name="fg" type="color3" value="1, 1, 1" /><input name="mix" type="float" nodename="border" /></mix>
+    <mix name="emit" type="color3"><input name="bg" type="color3" nodename="c3" /><input name="fg" type="color3" value="0, 0, 0" /><input name="mix" type="float" nodename="dot" /></mix>
+    <output name="emit_out" type="color3" nodename="emit" />
+  </nodegraph>
+  <standard_surface name="SR_cellular_jitter" type="surfaceshader">
+    <input name="base" type="float" value="0" />
+    <input name="specular" type="float" value="0" />
+    <input name="emission" type="float" value="1" />
+    <input name="emission_color" type="color3" nodegraph="NG_cellular_jitter" output="emit_out" />
+  </standard_surface>
+  <surfacematerial name="M_cellular_jitter" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_cellular_jitter" /></surfacematerial>
+</materialx>

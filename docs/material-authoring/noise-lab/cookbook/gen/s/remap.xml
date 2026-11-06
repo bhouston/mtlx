@@ -1,0 +1,5 @@
+<!-- in: uv_n. out: n01 (noise2d 0..1, ~5% clipped), fbm (signed fractal, std 0.37), fbm01 (0..1, ~2% outside) -->
+<noise2d name="n01" type="float"><input name="texcoord" type="vector2" nodename="uv_n" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+<fractal2d name="fbm" type="float"><input name="texcoord" type="vector2" nodename="uv_n" /><input name="octaves" type="integer" value="4" /></fractal2d>
+<multiply name="fbm_s" type="float"><input name="in1" type="float" nodename="fbm" /><input name="in2" type="float" value="0.6" /></multiply>
+<add name="fbm01" type="float"><input name="in1" type="float" nodename="fbm_s" /><input name="in2" type="float" value="0.5" /></add>

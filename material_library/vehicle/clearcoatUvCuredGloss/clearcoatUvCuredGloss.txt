@@ -1,0 +1,5 @@
+clearcoatUvCuredGloss
+
+Colorless UV-cured clear resin; hard smooth high-gloss dielectric surface with clear transmission.
+
+Use for rendering a transparent finish over a supplied paint, resin, wood, or decorative substrate.

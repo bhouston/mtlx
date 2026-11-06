@@ -1,0 +1,25 @@
+<!-- in: uv_g (uv*8). out: h_grid (m), g_mask, g_dv (vector from the feature centre, for ellipses/orientation). Manual jittered grid, 0.4 jitter -->
+<floor name="g_cell" type="vector2"><input name="in" type="vector2" nodename="uv_g" /></floor>
+<cellnoise2d name="g_rnd" type="vector3"><input name="texcoord" type="vector2" nodename="uv_g" /></cellnoise2d>
+<extract name="g_jx" type="float"><input name="in" type="vector3" nodename="g_rnd" /><input name="index" type="integer" value="0" /></extract>
+<extract name="g_jy" type="float"><input name="in" type="vector3" nodename="g_rnd" /><input name="index" type="integer" value="1" /></extract>
+<extract name="g_pres" type="float"><input name="in" type="vector3" nodename="g_rnd" /><input name="index" type="integer" value="2" /></extract>
+<combine2 name="g_j" type="vector2"><input name="in1" type="float" nodename="g_jx" /><input name="in2" type="float" nodename="g_jy" /></combine2>
+<subtract name="g_j0" type="vector2"><input name="in1" type="vector2" nodename="g_j" /><input name="in2" type="vector2" value="0.5, 0.5" /></subtract>
+<multiply name="g_j1" type="vector2"><input name="in1" type="vector2" nodename="g_j0" /><input name="in2" type="float" value="0.4" /></multiply>
+<add name="g_j2" type="vector2"><input name="in1" type="vector2" nodename="g_j1" /><input name="in2" type="vector2" value="0.5, 0.5" /></add>
+<add name="g_ctr" type="vector2"><input name="in1" type="vector2" nodename="g_cell" /><input name="in2" type="vector2" nodename="g_j2" /></add>
+<subtract name="g_dv" type="vector2"><input name="in1" type="vector2" nodename="uv_g" /><input name="in2" type="vector2" nodename="g_ctr" /></subtract>
+<magnitude name="g_d" type="float"><input name="in" type="vector2" nodename="g_dv" /></magnitude>
+<multiply name="g_rk" type="float"><input name="in1" type="float" nodename="g_pres" /><input name="in2" type="float" value="7.3" /></multiply>
+<modulo name="g_rm" type="float"><input name="in1" type="float" nodename="g_rk" /><input name="in2" type="float" value="1" /></modulo>
+<multiply name="g_r0" type="float"><input name="in1" type="float" nodename="g_rm" /><input name="in2" type="float" value="0.18" /></multiply>
+<add name="g_r1" type="float"><input name="in1" type="float" nodename="g_r0" /><input name="in2" type="float" value="0.1" /></add>
+<ifgreater name="g_r" type="float"><input name="value1" type="float" nodename="g_pres" /><input name="value2" type="float" value="0.55" /><input name="in1" type="float" nodename="g_r1" /><input name="in2" type="float" value="0.0001" /></ifgreater>
+<divide name="g_t" type="float"><input name="in1" type="float" nodename="g_d" /><input name="in2" type="float" nodename="g_r" /></divide>
+<multiply name="g_t2" type="float"><input name="in1" type="float" nodename="g_t" /><input name="in2" type="float" nodename="g_t" /></multiply>
+<subtract name="g_b0" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="g_t2" /></subtract>
+<max name="g_dome" type="float"><input name="in1" type="float" nodename="g_b0" /><input name="in2" type="float" value="0" /></max>
+<multiply name="g_hs" type="float"><input name="in1" type="float" nodename="g_r" /><input name="in2" type="float" value="0.02" /></multiply>
+<multiply name="h_grid" type="float"><input name="in1" type="float" nodename="g_dome" /><input name="in2" type="float" nodename="g_hs" /></multiply>
+<smoothstep name="g_mask" type="float"><input name="in" type="float" nodename="g_dome" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.05" /></smoothstep>

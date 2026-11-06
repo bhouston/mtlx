@@ -1,0 +1,29 @@
+<!-- in: uv. out: gt_dome (0..1, for height), gt_m (0..1 flat-topped colour mask), gt_tone (signed per-grain tone), h_grit (m). Sparse coarse grains, the layer that makes paste read as stone at closeup: 300/m (3.3 mm cells), jitter 0.55, 55% of cells hold a grain r 0.12..0.22 cell (0.8..1.5 mm across; r <= (1 - jitter)/2, so none clip), on a grain-scale warp (1700/m, 0.1 mm, s = 0.17) so outlines are irregular. Dome smoothstep(r - F1, 0, r), 0.04 mm (~8 deg max) -->
+<multiply name="gt_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1700.0" /></multiply>
+<add name="gt_2" type="vector2"><input name="in1" type="vector2" nodename="gt_1" /><input name="in2" type="vector2" value="5.3, 71.9" /></add>
+<noise2d name="gt_3" type="vector3"><input name="texcoord" type="vector2" nodename="gt_2" /><input name="amplitude" type="vector3" value="0.0001, 0.0001, 0.0" /></noise2d>
+<convert name="gt_4" type="vector2"><input name="in" type="vector3" nodename="gt_3" /></convert>
+<add name="gt_5" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" nodename="gt_4" /></add>
+<multiply name="gt_6" type="vector2"><input name="in1" type="vector2" nodename="gt_5" /><input name="in2" type="float" value="300.0" /></multiply>
+<add name="gt_p" type="vector2"><input name="in1" type="vector2" nodename="gt_6" /><input name="in2" type="vector2" value="8.8, 40.3" /></add>
+<worleynoise2d name="gt_f1" type="float"><input name="texcoord" type="vector2" nodename="gt_p" /><input name="jitter" type="float" value="0.55" /></worleynoise2d>
+<worleynoise2d name="gt_id" type="float"><input name="texcoord" type="vector2" nodename="gt_p" /><input name="jitter" type="float" value="0.55" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<multiply name="gt_10" type="float"><input name="in1" type="float" nodename="gt_id" /><input name="in2" type="float" value="5.17" /></multiply>
+<add name="gt_11" type="float"><input name="in1" type="float" nodename="gt_10" /><input name="in2" type="float" value="0.3" /></add>
+<fract name="gt_12" type="float"><input name="in" type="float" nodename="gt_11" /></fract>
+<multiply name="gt_13" type="float"><input name="in1" type="float" nodename="gt_12" /><input name="in2" type="float" value="0.1" /></multiply>
+<add name="gt_14" type="float"><input name="in1" type="float" nodename="gt_13" /><input name="in2" type="float" value="0.12" /></add>
+<ifgreater name="gt_15" type="float"><input name="value1" type="float" nodename="gt_id" /><input name="value2" type="float" value="0.45" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<multiply name="gt_r" type="float"><input name="in1" type="float" nodename="gt_14" /><input name="in2" type="float" nodename="gt_15" /></multiply>
+<subtract name="gt_d" type="float"><input name="in1" type="float" nodename="gt_r" /><input name="in2" type="float" nodename="gt_f1" /></subtract>
+<max name="gt_18" type="float"><input name="in1" type="float" nodename="gt_r" /><input name="in2" type="float" value="0.01" /></max>
+<smoothstep name="gt_dome" type="float"><input name="in" type="float" nodename="gt_d" /><input name="low" type="float" value="0.0" /><input name="high" type="float" nodename="gt_18" /></smoothstep>
+<multiply name="gt_20" type="float"><input name="in1" type="float" nodename="gt_r" /><input name="in2" type="float" value="0.35" /></multiply>
+<max name="gt_21" type="float"><input name="in1" type="float" nodename="gt_20" /><input name="in2" type="float" value="0.004" /></max>
+<smoothstep name="gt_m" type="float"><input name="in" type="float" nodename="gt_d" /><input name="low" type="float" value="0.0" /><input name="high" type="float" nodename="gt_21" /></smoothstep>
+<multiply name="gt_23" type="float"><input name="in1" type="float" nodename="gt_id" /><input name="in2" type="float" value="11.9" /></multiply>
+<add name="gt_24" type="float"><input name="in1" type="float" nodename="gt_23" /><input name="in2" type="float" value="0.3" /></add>
+<fract name="gt_25" type="float"><input name="in" type="float" nodename="gt_24" /></fract>
+<subtract name="gt_26" type="float"><input name="in1" type="float" nodename="gt_25" /><input name="in2" type="float" value="0.6" /></subtract>
+<multiply name="gt_tone" type="float"><input name="in1" type="float" nodename="gt_m" /><input name="in2" type="float" nodename="gt_26" /></multiply>
+<multiply name="h_grit" type="float"><input name="in1" type="float" nodename="gt_dome" /><input name="in2" type="float" value="0.00004" /></multiply>

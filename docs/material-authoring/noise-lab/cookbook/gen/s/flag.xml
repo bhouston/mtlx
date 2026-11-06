@@ -1,0 +1,9 @@
+<!-- in: uv_w (warped uv, m). out: h_flag (m, 4..6 mm tops), f_top (1 on stone, 0 in joint), f_id. 5 stones/m, joint F2-F1 < 0.05 (~1.3 cm), arris to 0.11 -->
+<multiply name="uv_fl" type="vector2"><input name="in1" type="vector2" nodename="uv_w" /><input name="in2" type="float" value="5" /></multiply>
+<worleynoise2d name="f_w12" type="vector2"><input name="texcoord" type="vector2" nodename="uv_fl" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<worleynoise2d name="f_id" type="float"><input name="texcoord" type="vector2" nodename="uv_fl" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<dotproduct name="f_e" type="float"><input name="in1" type="vector2" nodename="f_w12" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<smoothstep name="f_top" type="float"><input name="in" type="float" nodename="f_e" /><input name="low" type="float" value="0.05" /><input name="high" type="float" value="0.11" /></smoothstep>
+<multiply name="f_hs0" type="float"><input name="in1" type="float" nodename="f_id" /><input name="in2" type="float" value="0.002" /></multiply>
+<add name="f_hs" type="float"><input name="in1" type="float" nodename="f_hs0" /><input name="in2" type="float" value="0.004" /></add>
+<multiply name="h_flag" type="float"><input name="in1" type="float" nodename="f_top" /><input name="in2" type="float" nodename="f_hs" /></multiply>

@@ -17,3 +17,5 @@ packages/website/src/generated/api-docs
 REVIEW-2026-09-11.md
 submodules
 experiments
+__pycache__/
+packages/cli/opencli.json

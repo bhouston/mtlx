@@ -5,29 +5,64 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-    types: [opened, synchronize, reopened, edited, ready_for_review]
   workflow_call:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v5
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - name: Build documentation and interactive static pages
+        run: pnpm docs:build
+      - uses: actions/upload-artifact@v6
+        with:
+          name: documentation-site
+          path: packages/docs/build
+          retention-days: 7
       - run: pnpm tsc
       - run: pnpm lint
-      - run: pnpm test
+      - name: Check formatting
+        run: pnpm exec oxfmt --check .
+      - name: Test release recovery safeguards
+        run: node --test scripts/resume-release.test.mjs
+      - run: pnpm test --coverage
+      # --- repository-specific steps (package-content check, size budget, e2e, docs, ...) go here ---
+      - name: Verify published packages include dist
+        run: |
+          for pkg in packages/core packages/viewer packages/cli; do
+            (cd "$pkg" && pnpm pack --dry-run) | grep -qx 'dist/index.js' || {
+              echo "::error::dist/index.js missing from the packed tarball for $pkg; the publish step would ship a broken package."
+              exit 1
+            }
+          done
       - name: Verify generated CLI documentation
         run: pnpm docs:cli --check
+      - name: Generate OpenCLI document
+        run: node packages/cli/bin/cli.js docgen --output packages/cli/opencli.json
+      - name: Validate OpenCLI document
+        uses: bhouston/clidoc-action@v1
+        with:
+          files: packages/cli/opencli.json
+          specification: bcdxn
+          format: json
+      - name: Package VS Code extension
+        run: pnpm --filter mtlx-vscode-extension exec vsce package --no-dependencies
       - name: Audit dependencies
         id: audit
         continue-on-error: true
@@ -35,28 +70,29 @@ jobs:
       - name: Flag audit findings
         if: steps.audit.outcome == 'failure'
         run: echo '::warning::Dependency audit found vulnerabilities or could not reach the registry. Review the audit step.'
+      - uses: codecov/codecov-action@v5
+        if: ${{ !cancelled() && hashFiles('coverage/lcov.info') != '' }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          fail_ci_if_error: false
 
-  contribution:
-    if: github.event_name == 'pull_request'
+  node-compat:
+    name: node-compat (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24, 26]
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-      - uses: pnpm/action-setup@v5
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
-          node-version-file: '.nvmrc'
+          node-version: ${{ matrix.node }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Validate linked issue
-        run: node scripts/check-pr.mjs
-      - name: Lint PR title
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-        run: printf '%s\n' "$PR_TITLE" | pnpm exec commitlint
-      - name: Lint feature commits
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: pnpm exec commitlint --from "$BASE_SHA" --to "$HEAD_SHA"
+      - run: pnpm build
+      - run: pnpm test

@@ -1,0 +1,5 @@
+stainlessSteelSatin
+
+Clean stainless steel with uniform satin abrasion and subdued metallic reflections.
+
+Use for rendering clean exposed metal trim, housings, brackets, hardware, and technical components with the named finish.

@@ -22,8 +22,8 @@ async function readBytes(uri: vscode.Uri, signal: AbortSignal): Promise<{ bytes:
   signal.throwIfAborted();
   if (uri.scheme === 'http' || uri.scheme === 'https') {
     const response = await fetch(uri.toString(), { signal: AbortSignal.any([signal, AbortSignal.timeout(30_000)]) });
-    if (!response.ok) throw new Error(`HTTP ${response.status}: ${uri}`);
-    if (!response.body) throw new Error(`Empty response: ${uri}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}: ${uri.toString()}`);
+    if (!response.body) throw new Error(`Empty response: ${uri.toString()}`);
     const reader = response.body.getReader();
     let size = 0;
     const chunks: Uint8Array[] = [];

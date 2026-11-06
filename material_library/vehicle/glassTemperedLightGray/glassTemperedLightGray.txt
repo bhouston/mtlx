@@ -1,0 +1,5 @@
+glassTemperedLightGray
+
+light gray tempered safety glass; glossy dielectric reflections, clear refraction, and absorption tint without artificial opacity.
+
+Use for rendering tempered side, rear, roof, cab, and equipment glazing with the named tint.

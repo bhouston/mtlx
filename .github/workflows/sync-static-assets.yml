@@ -1,0 +1,37 @@
+name: Sync static assets
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - packages/static-assets/public/**
+  workflow_dispatch:
+
+concurrency:
+  group: sync-static-assets
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync to mtlx-static.ben3d.ca
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # --checksums-only: fresh checkouts reset mtimes, so compare by hash to skip unchanged files.
+      # No --delete-unmatched-destination-objects: assets are immutable and may still be referenced.
+      - name: Sync
+        run: |
+          gcloud storage rsync packages/static-assets/public gs://mtlx-static.ben3d.ca \
+            --recursive --checksums-only \
+            --cache-control="public, max-age=31536000, immutable"

@@ -1,0 +1,50 @@
+<!-- in: po_rel (vector2, m from the centre), po_seed (per-centre random, e.g. id*613). out: po_th (angle, rad), po_r (m), po_ray (0..1 radial rays, r/40 apart), po_check (0..1 radial checks). 48 angular sectors; ~38% hold a check 8..30 mm long, <= 0.7 mm wide, tapered to both ends. Width is the perpendicular distance r*(theta - theta_c); the wobble goes on the signed offset BEFORE absval, and the gate smoothstep(w, 2e-5, 6e-5) removes the hairline where the width is at its floor -->
+<separate2 name="po_s" type="multioutput"><input name="in" type="vector2" nodename="po_rel" /></separate2>
+<atan2 name="po_th" type="float"><input name="iny" type="float" nodename="po_s" output="outy" /><input name="inx" type="float" nodename="po_s" output="outx" /></atan2>
+<magnitude name="po_r" type="float"><input name="in" type="vector2" nodename="po_rel" /></magnitude>
+<multiply name="po_4" type="float"><input name="in1" type="float" nodename="po_th" /><input name="in2" type="float" value="40.0" /></multiply>
+<multiply name="po_5" type="float"><input name="in1" type="float" nodename="po_r" /><input name="in2" type="float" value="45.0" /></multiply>
+<add name="po_6" type="float"><input name="in1" type="float" nodename="po_5" /><input name="in2" type="float" nodename="po_seed" /></add>
+<combine2 name="po_7" type="vector2"><input name="in1" type="float" nodename="po_4" /><input name="in2" type="float" nodename="po_6" /></combine2>
+<fractal2d name="po_rn" type="float"><input name="texcoord" type="vector2" nodename="po_7" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<smoothstep name="po_ray" type="float"><input name="in" type="float" nodename="po_rn" /><input name="low" type="float" value="0.3" /><input name="high" type="float" value="0.55" /></smoothstep>
+<multiply name="po_10" type="float"><input name="in1" type="float" nodename="po_th" /><input name="in2" type="float" value="7.639438" /></multiply>
+<floor name="po_sec" type="float"><input name="in" type="float" nodename="po_10" /></floor>
+<combine2 name="po_cs" type="vector2"><input name="in1" type="float" nodename="po_sec" /><input name="in2" type="float" nodename="po_seed" /></combine2>
+<cellnoise2d name="po_c1" type="float"><input name="texcoord" type="vector2" nodename="po_cs" /></cellnoise2d>
+<add name="po_14" type="vector2"><input name="in1" type="vector2" nodename="po_cs" /><input name="in2" type="vector2" value="31.0, 17.0" /></add>
+<cellnoise2d name="po_c2" type="float"><input name="texcoord" type="vector2" nodename="po_14" /></cellnoise2d>
+<add name="po_16" type="vector2"><input name="in1" type="vector2" nodename="po_cs" /><input name="in2" type="vector2" value="71.0, 5.0" /></add>
+<cellnoise2d name="po_c3" type="float"><input name="texcoord" type="vector2" nodename="po_16" /></cellnoise2d>
+<multiply name="po_18" type="float"><input name="in1" type="float" nodename="po_c1" /><input name="in2" type="float" value="0.6" /></multiply>
+<add name="po_19" type="float"><input name="in1" type="float" nodename="po_18" /><input name="in2" type="float" value="0.2" /></add>
+<add name="po_20" type="float"><input name="in1" type="float" nodename="po_sec" /><input name="in2" type="float" nodename="po_19" /></add>
+<multiply name="po_thc" type="float"><input name="in1" type="float" nodename="po_20" /><input name="in2" type="float" value="0.1309" /></multiply>
+<multiply name="po_22" type="float"><input name="in1" type="float" nodename="po_r" /><input name="in2" type="float" value="350.0" /></multiply>
+<multiply name="po_23" type="float"><input name="in1" type="float" nodename="po_c1" /><input name="in2" type="float" value="37.0" /></multiply>
+<combine2 name="po_24" type="vector2"><input name="in1" type="float" nodename="po_22" /><input name="in2" type="float" nodename="po_23" /></combine2>
+<fractal2d name="po_wob" type="float"><input name="texcoord" type="vector2" nodename="po_24" /><input name="amplitude" type="float" value="0.00015" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<subtract name="po_26" type="float"><input name="in1" type="float" nodename="po_th" /><input name="in2" type="float" nodename="po_thc" /></subtract>
+<multiply name="po_27" type="float"><input name="in1" type="float" nodename="po_r" /><input name="in2" type="float" nodename="po_26" /></multiply>
+<add name="po_28" type="float"><input name="in1" type="float" nodename="po_27" /><input name="in2" type="float" nodename="po_wob" /></add>
+<absval name="po_dp" type="float"><input name="in" type="float" nodename="po_28" /></absval>
+<multiply name="po_30" type="float"><input name="in1" type="float" nodename="po_c2" /><input name="in2" type="float" value="0.022" /></multiply>
+<add name="po_len" type="float"><input name="in1" type="float" nodename="po_30" /><input name="in2" type="float" value="0.008" /></add>
+<multiply name="po_32" type="float"><input name="in1" type="float" nodename="po_len" /><input name="in2" type="float" value="0.5" /></multiply>
+<add name="po_33" type="float"><input name="in1" type="float" nodename="po_32" /><input name="in2" type="float" value="0.004" /></add>
+<multiply name="po_34" type="float"><input name="in1" type="float" nodename="po_c1" /><input name="in2" type="float" value="0.05" /></multiply>
+<add name="po_cen" type="float"><input name="in1" type="float" nodename="po_33" /><input name="in2" type="float" nodename="po_34" /></add>
+<subtract name="po_36" type="float"><input name="in1" type="float" nodename="po_r" /><input name="in2" type="float" nodename="po_cen" /></subtract>
+<multiply name="po_37" type="float"><input name="in1" type="float" nodename="po_len" /><input name="in2" type="float" value="0.5" /></multiply>
+<divide name="po_cx" type="float"><input name="in1" type="float" nodename="po_36" /><input name="in2" type="float" nodename="po_37" /></divide>
+<multiply name="po_39" type="float"><input name="in1" type="float" nodename="po_cx" /><input name="in2" type="float" nodename="po_cx" /></multiply>
+<subtract name="po_40" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="po_39" /></subtract>
+<max name="po_prof" type="float"><input name="in1" type="float" nodename="po_40" /><input name="in2" type="float" value="0.0" /></max>
+<ifgreater name="po_42" type="float"><input name="value1" type="float" nodename="po_c3" /><input name="value2" type="float" value="0.62" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<multiply name="po_43" type="float"><input name="in1" type="float" nodename="po_prof" /><input name="in2" type="float" nodename="po_42" /></multiply>
+<multiply name="po_44" type="float"><input name="in1" type="float" nodename="po_43" /><input name="in2" type="float" value="0.00035" /></multiply>
+<max name="po_w" type="float"><input name="in1" type="float" nodename="po_44" /><input name="in2" type="float" value="0.00001" /></max>
+<smoothstep name="po_46" type="float"><input name="in" type="float" nodename="po_dp" /><input name="low" type="float" value="0.0" /><input name="high" type="float" nodename="po_w" /></smoothstep>
+<subtract name="po_47" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="po_46" /></subtract>
+<smoothstep name="po_48" type="float"><input name="in" type="float" nodename="po_w" /><input name="low" type="float" value="0.00002" /><input name="high" type="float" value="0.00006" /></smoothstep>
+<multiply name="po_check" type="float"><input name="in1" type="float" nodename="po_47" /><input name="in2" type="float" nodename="po_48" /></multiply>

@@ -1,0 +1,6 @@
+<!-- in: uv. out: uv_w = uv displaced in 2D, in metres. f = 6/m, A = 0.03 m, s = A*f = 0.18 (limit 0.2) -->
+<multiply name="w_p0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="6" /></multiply>
+<add name="w_p" type="vector2"><input name="in1" type="vector2" nodename="w_p0" /><input name="in2" type="vector2" value="3.1, 7.9" /></add>
+<noise2d name="w_n3" type="vector3"><input name="texcoord" type="vector2" nodename="w_p" /><input name="amplitude" type="vector3" value="0.03, 0.03, 0" /></noise2d>
+<convert name="w_d" type="vector2"><input name="in" type="vector3" nodename="w_n3" /></convert>
+<add name="uv_w" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" nodename="w_d" /></add>

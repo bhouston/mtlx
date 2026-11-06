@@ -1,0 +1,5 @@
+eppFoamGray
+
+New gray expanded-polypropylene foam; visible fused beads and low-gloss polymer response.
+
+Use for rendering molded foam inserts, packaging-like supports, and visible energy-absorber forms in cutaways.

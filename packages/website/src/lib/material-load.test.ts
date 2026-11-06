@@ -58,9 +58,9 @@ it('rejects oversized and unsupported local files before reading bytes', async (
   const arrayBuffer = vi.fn();
   const file = { name: 'huge.mtlx', size: 17 * 1024 * 1024, arrayBuffer } as unknown as File;
   await expect(loadMaterial(file, new AbortController().signal)).rejects.toThrow('file byte limit');
-  await expect(loadMaterial({ ...file, name: 'wrong.txt' } as File, new AbortController().signal)).rejects.toThrow(
-    'Unsupported file type',
-  );
+  await expect(
+    loadMaterial({ name: 'wrong.txt', size: file.size, arrayBuffer } as unknown as File, new AbortController().signal),
+  ).rejects.toThrow('Unsupported file type');
   expect(arrayBuffer).not.toHaveBeenCalled();
 });
 

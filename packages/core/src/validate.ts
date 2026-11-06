@@ -5,7 +5,14 @@ import { materialXNodeRegistry } from './registry.js';
 import type { MaterialXDocument, MaterialXElement, MaterialXNodeSpec, MaterialXValidationIssue } from './types.js';
 import { parseMaterialX } from './xml.js';
 
-export const MATERIALX_VALIDATION_RULES = ['basic', 'structure', 'types', 'resources', 'renderer-support'] as const;
+export const MATERIALX_VALIDATION_RULES = [
+  'basic',
+  'structure',
+  'types',
+  'resources',
+  'renderer-support',
+  'unused',
+] as const;
 export type MaterialXValidationRule = (typeof MATERIALX_VALIDATION_RULES)[number];
 export interface MaterialXValidationOptions {
   registry?: MaterialXNodeSpec[];
@@ -84,7 +91,7 @@ export const validateDocument = (
   }
   const containersByGraph = new Map<string, { scope: string; nodeId: string }[]>();
   const walkScope = (elements: MaterialXElement[], location: string, scope = '', graphScope = true) => {
-    if (graphScope && (rules.has('structure') || rules.has('types')))
+    if (graphScope && (rules.has('structure') || rules.has('types') || rules.has('unused')))
       issues.push(
         ...validateGraphScope(
           elements,

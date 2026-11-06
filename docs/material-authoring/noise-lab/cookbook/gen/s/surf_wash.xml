@@ -1,0 +1,19 @@
+<!-- in: pn_col, pn_lw, pn_rid, kf_saw, kf_groove, uv. out: wa_cov (0.03..0.95 wash coverage), wa_col. Translucent whitewash (0.78, 0.775, 0.75) mixed over the wood by a coverage built from the same layers as the relief: per board 0.36..0.82, brushy 30 x 10 cm patches +-0.45, latewood sheds it (-0.55 x lw), saw valleys and kerf grooves hold it. The wood shows through where it is thin, so it reads as a stain, not paint -->
+<multiply name="wa_1" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="71.33" /></multiply>
+<add name="wa_2" type="float"><input name="in1" type="float" nodename="wa_1" /><input name="in2" type="float" value="0.9" /></add>
+<fract name="wa_3" type="float"><input name="in" type="float" nodename="wa_2" /></fract>
+<multiply name="wa_4" type="float"><input name="in1" type="float" nodename="wa_3" /><input name="in2" type="float" value="0.46" /></multiply>
+<add name="wa_cb" type="float"><input name="in1" type="float" nodename="wa_4" /><input name="in2" type="float" value="0.36" /></add>
+<multiply name="wa_6" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="2.5, 7.0" /></multiply>
+<add name="wa_7" type="vector2"><input name="in1" type="vector2" nodename="wa_6" /><input name="in2" type="vector2" value="3.1, 9.7" /></add>
+<fractal2d name="wa_patch" type="float"><input name="texcoord" type="vector2" nodename="wa_7" /><input name="amplitude" type="float" value="0.45" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="wa_9" type="float"><input name="in1" type="float" nodename="pn_lw" /><input name="in2" type="float" value="-0.55" /></multiply>
+<add name="wa_grain" type="float"><input name="in1" type="float" nodename="wa_9" /><input name="in2" type="float" value="0.1" /></add>
+<multiply name="wa_11" type="float"><input name="in1" type="float" nodename="kf_saw" /><input name="in2" type="float" value="-0.12" /></multiply>
+<multiply name="wa_12" type="float"><input name="in1" type="float" nodename="kf_groove" /><input name="in2" type="float" value="0.05" /></multiply>
+<add name="wa_saw" type="float"><input name="in1" type="float" nodename="wa_11" /><input name="in2" type="float" nodename="wa_12" /></add>
+<add name="wa_14" type="float"><input name="in1" type="float" nodename="wa_cb" /><input name="in2" type="float" nodename="wa_patch" /></add>
+<add name="wa_15" type="float"><input name="in1" type="float" nodename="wa_grain" /><input name="in2" type="float" nodename="wa_saw" /></add>
+<add name="wa_16" type="float"><input name="in1" type="float" nodename="wa_14" /><input name="in2" type="float" nodename="wa_15" /></add>
+<clamp name="wa_cov" type="float"><input name="in" type="float" nodename="wa_16" /><input name="low" type="float" value="0.03" /><input name="high" type="float" value="0.95" /></clamp>
+<mix name="wa_col" type="color3"><input name="bg" type="color3" nodename="pn_col" /><input name="fg" type="color3" value="0.78, 0.775, 0.75" /><input name="mix" type="float" nodename="wa_cov" /></mix>

@@ -1,0 +1,70 @@
+<!-- in: fl_xc, fl_pid, h_flute, fl_dh, uv_sep. out: fz_t (ring phase), fz_f (ring lines/m on the face), fz_fig (earlywood faded to 0.35 where rings alias). One plain-sawn flitch per panel, grain along V (cone model). The cut depth h enters the pith depth, D + h, so the figure shifts where the cutter went deeper, and the relief slope enters the ring frequency: dR/dx = (yo + (D + h)*dh/dx)/R0, so flute walls fade first. Pith +-15 cm, 6..20 cm deep, taper +-5% (spires ~lambda/taper = 6..30 cm apart), rings 3..6 mm; fade FMAX/2..FMAX = 85..170/m (render.sh) -->
+<combine2 name="fz_1" type="vector2"><input name="in1" type="float" nodename="fl_pid" /><input name="in2" type="float" value="0.0" /></combine2>
+<add name="fz_2" type="vector2"><input name="in1" type="vector2" nodename="fz_1" /><input name="in2" type="vector2" value="200.37, 300.61" /></add>
+<cellnoise2d name="fz_id" type="float"><input name="texcoord" type="vector2" nodename="fz_2" /></cellnoise2d>
+<multiply name="fz_4" type="float"><input name="in1" type="float" nodename="fz_id" /><input name="in2" type="float" value="18.81" /></multiply>
+<add name="fz_5" type="float"><input name="in1" type="float" nodename="fz_4" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="fz_6" type="float"><input name="in" type="float" nodename="fz_5" /></fract>
+<multiply name="fz_7" type="float"><input name="in1" type="float" nodename="fz_id" /><input name="in2" type="float" value="39.963" /></multiply>
+<add name="fz_8" type="float"><input name="in1" type="float" nodename="fz_7" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="fz_9" type="float"><input name="in" type="float" nodename="fz_8" /></fract>
+<multiply name="fz_10" type="float"><input name="in1" type="float" nodename="fz_id" /><input name="in2" type="float" value="65.637" /></multiply>
+<add name="fz_11" type="float"><input name="in1" type="float" nodename="fz_10" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="fz_12" type="float"><input name="in" type="float" nodename="fz_11" /></fract>
+<multiply name="fz_13" type="float"><input name="in1" type="float" nodename="fz_id" /><input name="in2" type="float" value="97.722" /></multiply>
+<add name="fz_14" type="float"><input name="in1" type="float" nodename="fz_13" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="fz_15" type="float"><input name="in" type="float" nodename="fz_14" /></fract>
+<multiply name="fz_16" type="float"><input name="in1" type="float" nodename="fz_id" /><input name="in2" type="float" value="22.105" /></multiply>
+<add name="fz_17" type="float"><input name="in1" type="float" nodename="fz_16" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="fz_18" type="float"><input name="in" type="float" nodename="fz_17" /></fract>
+<multiply name="fz_19" type="float"><input name="in1" type="float" nodename="fz_id" /><input name="in2" type="float" value="46.964" /></multiply>
+<add name="fz_20" type="float"><input name="in1" type="float" nodename="fz_19" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="fz_21" type="float"><input name="in" type="float" nodename="fz_20" /></fract>
+<multiply name="fz_22" type="float"><input name="in1" type="float" nodename="fz_id" /><input name="in2" type="float" value="77.135" /></multiply>
+<add name="fz_23" type="float"><input name="in1" type="float" nodename="fz_22" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="fz_24" type="float"><input name="in" type="float" nodename="fz_23" /></fract>
+<subtract name="fz_25" type="float"><input name="in1" type="float" nodename="fz_6" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="fz_26" type="float"><input name="in1" type="float" nodename="fz_25" /><input name="in2" type="float" value="0.3" /></multiply>
+<add name="fz_yo" type="float"><input name="in1" type="float" nodename="fl_xc" /><input name="in2" type="float" nodename="fz_26" /></add>
+<multiply name="fz_28" type="float"><input name="in1" type="float" nodename="fz_9" /><input name="in2" type="float" value="0.14" /></multiply>
+<add name="fz_29" type="float"><input name="in1" type="float" nodename="fz_28" /><input name="in2" type="float" value="0.06" /></add>
+<add name="fz_D" type="float"><input name="in1" type="float" nodename="fz_29" /><input name="in2" type="float" nodename="h_flute" /></add>
+<combine2 name="fz_31" type="vector2"><input name="in1" type="float" nodename="fz_yo" /><input name="in2" type="float" nodename="fz_D" /></combine2>
+<magnitude name="fz_R0" type="float"><input name="in" type="vector2" nodename="fz_31" /></magnitude>
+<subtract name="fz_33" type="float"><input name="in1" type="float" nodename="fz_12" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="fz_tap" type="float"><input name="in1" type="float" nodename="fz_33" /><input name="in2" type="float" value="0.1" /></multiply>
+<combine2 name="fz_35" type="vector2"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" nodename="fl_xc" /></combine2>
+<combine2 name="fz_36" type="vector2"><input name="in1" type="float" nodename="fz_21" /><input name="in2" type="float" nodename="fz_24" /></combine2>
+<multiply name="fz_37" type="vector2"><input name="in1" type="vector2" nodename="fz_36" /><input name="in2" type="vector2" value="97.3, 61.7" /></multiply>
+<add name="fz_lp" type="vector2"><input name="in1" type="vector2" nodename="fz_35" /><input name="in2" type="vector2" nodename="fz_37" /></add>
+<multiply name="fz_39" type="float"><input name="in1" type="float" nodename="fz_tap" /><input name="in2" type="float" nodename="uv_sep" output="outy" /></multiply>
+<add name="fz_40" type="float"><input name="in1" type="float" nodename="fz_R0" /><input name="in2" type="float" nodename="fz_39" /></add>
+<multiply name="fz_41" type="vector2"><input name="in1" type="vector2" nodename="fz_lp" /><input name="in2" type="vector2" value="1.5, 6.0" /></multiply>
+<add name="fz_42" type="vector2"><input name="in1" type="vector2" nodename="fz_41" /><input name="in2" type="vector2" value="4.1, 9.3" /></add>
+<fractal2d name="fz_43" type="float"><input name="texcoord" type="vector2" nodename="fz_42" /><input name="amplitude" type="float" value="0.006" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<add name="fz_R" type="float"><input name="in1" type="float" nodename="fz_40" /><input name="in2" type="float" nodename="fz_43" /></add>
+<multiply name="fz_45" type="float"><input name="in1" type="float" nodename="fz_15" /><input name="in2" type="float" value="0.003" /></multiply>
+<add name="fz_lam" type="float"><input name="in1" type="float" nodename="fz_45" /><input name="in2" type="float" value="0.003" /></add>
+<multiply name="fz_47" type="float"><input name="in1" type="float" nodename="fz_R" /><input name="in2" type="float" value="35.0" /></multiply>
+<multiply name="fz_48" type="float"><input name="in1" type="float" nodename="fz_18" /><input name="in2" type="float" value="71.0" /></multiply>
+<combine2 name="fz_49" type="vector2"><input name="in1" type="float" nodename="fz_47" /><input name="in2" type="float" nodename="fz_48" /></combine2>
+<fractal2d name="fz_yr" type="float"><input name="texcoord" type="vector2" nodename="fz_49" /><input name="amplitude" type="float" value="1.2" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<divide name="fz_51" type="float"><input name="in1" type="float" nodename="fz_R" /><input name="in2" type="float" nodename="fz_lam" /></divide>
+<add name="fz_52" type="float"><input name="in1" type="float" nodename="fz_51" /><input name="in2" type="float" nodename="fz_yr" /></add>
+<multiply name="fz_53" type="float"><input name="in1" type="float" nodename="fz_18" /><input name="in2" type="float" value="13.0" /></multiply>
+<add name="fz_54" type="float"><input name="in1" type="float" nodename="fz_52" /><input name="in2" type="float" nodename="fz_53" /></add>
+<fract name="fz_t" type="float"><input name="in" type="float" nodename="fz_54" /></fract>
+<multiply name="fz_56" type="float"><input name="in1" type="float" nodename="fz_D" /><input name="in2" type="float" nodename="fl_dh" /></multiply>
+<add name="fz_57" type="float"><input name="in1" type="float" nodename="fz_yo" /><input name="in2" type="float" nodename="fz_56" /></add>
+<divide name="fz_gx" type="float"><input name="in1" type="float" nodename="fz_57" /><input name="in2" type="float" nodename="fz_R0" /></divide>
+<combine2 name="fz_59" type="vector2"><input name="in1" type="float" nodename="fz_gx" /><input name="in2" type="float" nodename="fz_tap" /></combine2>
+<magnitude name="fz_60" type="float"><input name="in" type="vector2" nodename="fz_59" /></magnitude>
+<multiply name="fz_61" type="float"><input name="in1" type="float" nodename="fz_60" /><input name="in2" type="float" value="1.3" /></multiply>
+<divide name="fz_f" type="float"><input name="in1" type="float" nodename="fz_61" /><input name="in2" type="float" nodename="fz_lam" /></divide>
+<smoothstep name="fz_63" type="float"><input name="in" type="float" nodename="fz_t" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.1" /></smoothstep>
+<smoothstep name="fz_64" type="float"><input name="in" type="float" nodename="fz_t" /><input name="low" type="float" value="0.25" /><input name="high" type="float" value="0.55" /></smoothstep>
+<subtract name="fz_65" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="fz_64" /></subtract>
+<multiply name="fz_ew" type="float"><input name="in1" type="float" nodename="fz_63" /><input name="in2" type="float" nodename="fz_65" /></multiply>
+<smoothstep name="fz_67" type="float"><input name="in" type="float" nodename="fz_f" /><input name="low" type="float" value="85.0" /><input name="high" type="float" value="170.0" /></smoothstep>
+<subtract name="fz_68" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="fz_67" /></subtract>
+<mix name="fz_fig" type="float"><input name="bg" type="float" value="0.35" /><input name="fg" type="float" nodename="fz_ew" /><input name="mix" type="float" nodename="fz_68" /></mix>

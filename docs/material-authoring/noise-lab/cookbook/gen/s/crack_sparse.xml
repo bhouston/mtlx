@@ -1,0 +1,64 @@
+<!-- in: uv. out: sk_d (m to the crack centreline), sk_hw (half width, m), sk_crack (0..1), sk_halo (0..1 dirt halo), h_sk (m). A few long, meandering structural cracks instead of a crazing network: Voronoi borders at ~1 cell/m (1.1 x 1.87 /m: stretched 1.7x after a 28 deg turn, which breaks the 120 deg Y-junctions and runs cracks long), kept where a presence noise at 0.55/m (half the cell frequency) passes a wide ramp 0.4..0.55: ~40% of the borders, each tapering to points over ~20 cm. Warp 1.3/m 12 cm (s 0.16), 5/m 3 cm, then 30/m 2.5 mm 3-oct (s 0.08) for jagged kinks. True distance = (F2 - F1)/|grad|, with the finite-difference step (5 mm) taken in metres before the turn and stretch, so sk_d is in metres whatever the stretch. Half width 1..2.6 mm, depth 0.38 x half width -->
+<multiply name="sk_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1.3" /></multiply>
+<add name="sk_2" type="vector2"><input name="in1" type="vector2" nodename="sk_1" /><input name="in2" type="vector2" value="3.1, 7.9" /></add>
+<noise2d name="sk_3" type="vector3"><input name="texcoord" type="vector2" nodename="sk_2" /><input name="amplitude" type="vector3" value="0.12, 0.12, 0.0" /></noise2d>
+<convert name="sk_4" type="vector2"><input name="in" type="vector3" nodename="sk_3" /></convert>
+<add name="sk_uv1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" nodename="sk_4" /></add>
+<multiply name="sk_6" type="vector2"><input name="in1" type="vector2" nodename="sk_uv1" /><input name="in2" type="float" value="5.0" /></multiply>
+<add name="sk_7" type="vector2"><input name="in1" type="vector2" nodename="sk_6" /><input name="in2" type="vector2" value="8.3, 1.7" /></add>
+<fractal2d name="sk_8" type="vector3"><input name="texcoord" type="vector2" nodename="sk_7" /><input name="amplitude" type="vector3" value="0.03, 0.03, 0.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<convert name="sk_9" type="vector2"><input name="in" type="vector3" nodename="sk_8" /></convert>
+<add name="sk_uv2" type="vector2"><input name="in1" type="vector2" nodename="sk_uv1" /><input name="in2" type="vector2" nodename="sk_9" /></add>
+<multiply name="sk_11" type="vector2"><input name="in1" type="vector2" nodename="sk_uv2" /><input name="in2" type="float" value="30.0" /></multiply>
+<add name="sk_12" type="vector2"><input name="in1" type="vector2" nodename="sk_11" /><input name="in2" type="vector2" value="21.9, 4.2" /></add>
+<fractal2d name="sk_13" type="vector3"><input name="texcoord" type="vector2" nodename="sk_12" /><input name="amplitude" type="vector3" value="0.0025, 0.0025, 0.0" /><input name="octaves" type="integer" value="3" /></fractal2d>
+<convert name="sk_14" type="vector2"><input name="in" type="vector3" nodename="sk_13" /></convert>
+<add name="sk_uvw" type="vector2"><input name="in1" type="vector2" nodename="sk_uv2" /><input name="in2" type="vector2" nodename="sk_14" /></add>
+<rotate2d name="sk_16" type="vector2"><input name="in" type="vector2" nodename="sk_uvw" /><input name="amount" type="float" value="28.0" /></rotate2d>
+<multiply name="sk_17" type="vector2"><input name="in1" type="vector2" nodename="sk_16" /><input name="in2" type="vector2" value="1.1, 1.87" /></multiply>
+<add name="sk_18" type="vector2"><input name="in1" type="vector2" nodename="sk_17" /><input name="in2" type="vector2" value="0.37, 0.71" /></add>
+<worleynoise2d name="sk_19" type="vector2"><input name="texcoord" type="vector2" nodename="sk_18" /><input name="jitter" type="float" value="1.0" /></worleynoise2d>
+<dotproduct name="sk_e0" type="float"><input name="in1" type="vector2" nodename="sk_19" /><input name="in2" type="vector2" value="-1.0, 1.0" /></dotproduct>
+<add name="sk_21" type="vector2"><input name="in1" type="vector2" nodename="sk_uvw" /><input name="in2" type="vector2" value="0.005, 0.0" /></add>
+<rotate2d name="sk_22" type="vector2"><input name="in" type="vector2" nodename="sk_21" /><input name="amount" type="float" value="28.0" /></rotate2d>
+<multiply name="sk_23" type="vector2"><input name="in1" type="vector2" nodename="sk_22" /><input name="in2" type="vector2" value="1.1, 1.87" /></multiply>
+<add name="sk_24" type="vector2"><input name="in1" type="vector2" nodename="sk_23" /><input name="in2" type="vector2" value="0.37, 0.71" /></add>
+<worleynoise2d name="sk_25" type="vector2"><input name="texcoord" type="vector2" nodename="sk_24" /><input name="jitter" type="float" value="1.0" /></worleynoise2d>
+<dotproduct name="sk_26" type="float"><input name="in1" type="vector2" nodename="sk_25" /><input name="in2" type="vector2" value="-1.0, 1.0" /></dotproduct>
+<subtract name="sk_27" type="float"><input name="in1" type="float" nodename="sk_26" /><input name="in2" type="float" nodename="sk_e0" /></subtract>
+<add name="sk_28" type="vector2"><input name="in1" type="vector2" nodename="sk_uvw" /><input name="in2" type="vector2" value="0.0, 0.005" /></add>
+<rotate2d name="sk_29" type="vector2"><input name="in" type="vector2" nodename="sk_28" /><input name="amount" type="float" value="28.0" /></rotate2d>
+<multiply name="sk_30" type="vector2"><input name="in1" type="vector2" nodename="sk_29" /><input name="in2" type="vector2" value="1.1, 1.87" /></multiply>
+<add name="sk_31" type="vector2"><input name="in1" type="vector2" nodename="sk_30" /><input name="in2" type="vector2" value="0.37, 0.71" /></add>
+<worleynoise2d name="sk_32" type="vector2"><input name="texcoord" type="vector2" nodename="sk_31" /><input name="jitter" type="float" value="1.0" /></worleynoise2d>
+<dotproduct name="sk_33" type="float"><input name="in1" type="vector2" nodename="sk_32" /><input name="in2" type="vector2" value="-1.0, 1.0" /></dotproduct>
+<subtract name="sk_34" type="float"><input name="in1" type="float" nodename="sk_33" /><input name="in2" type="float" nodename="sk_e0" /></subtract>
+<combine2 name="sk_g" type="vector2"><input name="in1" type="float" nodename="sk_27" /><input name="in2" type="float" nodename="sk_34" /></combine2>
+<magnitude name="sk_36" type="float"><input name="in" type="vector2" nodename="sk_g" /></magnitude>
+<divide name="sk_37" type="float"><input name="in1" type="float" nodename="sk_36" /><input name="in2" type="float" value="0.005" /></divide>
+<max name="sk_gm" type="float"><input name="in1" type="float" nodename="sk_37" /><input name="in2" type="float" value="0.4" /></max>
+<divide name="sk_d" type="float"><input name="in1" type="float" nodename="sk_e0" /><input name="in2" type="float" nodename="sk_gm" /></divide>
+<multiply name="sk_40" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="0.55" /></multiply>
+<add name="sk_41" type="vector2"><input name="in1" type="vector2" nodename="sk_40" /><input name="in2" type="vector2" value="41.3, 12.9" /></add>
+<noise2d name="sk_42" type="float"><input name="texcoord" type="vector2" nodename="sk_41" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+<smoothstep name="sk_pres" type="float"><input name="in" type="float" nodename="sk_42" /><input name="low" type="float" value="0.4" /><input name="high" type="float" value="0.55" /></smoothstep>
+<multiply name="sk_44" type="vector2"><input name="in1" type="vector2" nodename="sk_uvw" /><input name="in2" type="float" value="9.0" /></multiply>
+<add name="sk_45" type="vector2"><input name="in1" type="vector2" nodename="sk_44" /><input name="in2" type="vector2" value="5.7, 33.1" /></add>
+<fractal2d name="sk_46" type="float"><input name="texcoord" type="vector2" nodename="sk_45" /><input name="amplitude" type="float" value="0.8" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<add name="sk_47" type="float"><input name="in1" type="float" nodename="sk_46" /><input name="in2" type="float" value="0.5" /></add>
+<clamp name="sk_wn" type="float"><input name="in" type="float" nodename="sk_47" /></clamp>
+<multiply name="sk_49" type="float"><input name="in1" type="float" nodename="sk_wn" /><input name="in2" type="float" value="0.0016" /></multiply>
+<add name="sk_50" type="float"><input name="in1" type="float" nodename="sk_49" /><input name="in2" type="float" value="0.001" /></add>
+<multiply name="sk_hw0" type="float"><input name="in1" type="float" nodename="sk_pres" /><input name="in2" type="float" nodename="sk_50" /></multiply>
+<max name="sk_hw" type="float"><input name="in1" type="float" nodename="sk_hw0" /><input name="in2" type="float" value="0.00002" /></max>
+<smoothstep name="sk_gate" type="float"><input name="in" type="float" nodename="sk_hw0" /><input name="low" type="float" value="0.00015" /><input name="high" type="float" value="0.0005" /></smoothstep>
+<smoothstep name="sk_54" type="float"><input name="in" type="float" nodename="sk_d" /><input name="low" type="float" value="0.0" /><input name="high" type="float" nodename="sk_hw" /></smoothstep>
+<subtract name="sk_55" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="sk_54" /></subtract>
+<multiply name="sk_crack" type="float"><input name="in1" type="float" nodename="sk_55" /><input name="in2" type="float" nodename="sk_gate" /></multiply>
+<multiply name="sk_57" type="float"><input name="in1" type="float" nodename="sk_hw" /><input name="in2" type="float" value="3.0" /></multiply>
+<add name="sk_58" type="float"><input name="in1" type="float" nodename="sk_57" /><input name="in2" type="float" value="0.005" /></add>
+<smoothstep name="sk_59" type="float"><input name="in" type="float" nodename="sk_d" /><input name="low" type="float" nodename="sk_hw" /><input name="high" type="float" nodename="sk_58" /></smoothstep>
+<subtract name="sk_60" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="sk_59" /></subtract>
+<multiply name="sk_halo" type="float"><input name="in1" type="float" nodename="sk_60" /><input name="in2" type="float" nodename="sk_gate" /></multiply>
+<multiply name="sk_62" type="float"><input name="in1" type="float" nodename="sk_hw" /><input name="in2" type="float" value="-0.38" /></multiply>
+<multiply name="h_sk" type="float"><input name="in1" type="float" nodename="sk_crack" /><input name="in2" type="float" nodename="sk_62" /></multiply>

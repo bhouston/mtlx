@@ -70,13 +70,13 @@ it('materializes inherited file prefixes and roundtrips an absolute texture-libr
       '<materialx fileprefix="textures/"><image name="a"><input name="file" type="filename" value="a.png"/></image><image name="b" fileprefix="other/"><input name="file" type="filename" value="a.png"/></image></materialx>',
     );
     const pkg = await loadMaterialXPackage(input);
-    expect(pkg.resources.map((r) => r.data[0]).toSorted()).toEqual([1, 2]);
+    expect(pkg.resources.map((r) => r.data[0] ?? 0).toSorted((a, b) => a - b)).toEqual([1, 2]);
     expect(pkg.document.attributes.fileprefix).toBeUndefined();
     const output = path.join(dir, 'output', 'm.mtlx');
     await writeMaterialXPackage(pkg, output, { textureLibrary: path.join(dir, 'shared') });
     expect(await readFile(output, 'utf8')).toContain('../shared/');
     const reloaded = await loadMaterialXPackage(output);
-    expect(reloaded.resources.map((r) => r.data[0]).toSorted()).toEqual([1, 2]);
+    expect(reloaded.resources.map((r) => r.data[0] ?? 0).toSorted((a, b) => a - b)).toEqual([1, 2]);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

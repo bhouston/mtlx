@@ -2,10 +2,10 @@ import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { publish as publishExtension, setVersion as setExtensionVersion } from './scripts/release-vscode-extension.mjs';
 
-// Packages published to npm, in dependency order (core first; cli and
-// viewer depend on it via workspace:*, which pnpm publish rewrites to a
+// Packages published to npm, in dependency order (core and SDK first; cli and
+// viewer depend on them via workspace:*, which pnpm publish rewrites to a
 // resolved semver range natively).
-const packages = ['packages/core', 'packages/viewer', 'packages/cli'];
+const packages = ['packages/core', 'packages/viewer', 'packages/sdk', 'packages/cli'];
 
 export default {
   branches: ['main'],
@@ -14,10 +14,9 @@ export default {
   plugins: [
     ['@semantic-release/commit-analyzer', { preset: 'conventionalcommits' }],
     ['@semantic-release/release-notes-generator', { preset: 'conventionalcommits' }],
-    ['@semantic-release/changelog', { changelogFile: 'CHANGELOG.md' }],
     // pkgRoot only (no tarballDir): @anolilab/semantic-release-pnpm's tarballDir option
     // shells out to `pnpm pack <pkgRoot>`, which pnpm packs from the cwd instead — pack
-    // explicitly below, once all three packages have their final bumped version.
+    // explicitly below, once all packages have their final bumped version.
     ...packages.map((path) => ['@anolilab/semantic-release-pnpm', { pkgRoot: path }]),
     {
       prepare: (_pluginConfig, { nextRelease }) => {
@@ -44,7 +43,7 @@ export default {
     [
       '@semantic-release/github',
       {
-        assets: ['CHANGELOG.md', 'release-artifacts/*.tgz'],
+        assets: ['release-artifacts/*.tgz'],
         successComment: false,
         failComment: false,
         releasedLabels: false,

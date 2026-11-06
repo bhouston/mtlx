@@ -1,0 +1,32 @@
+<!-- in: pn_loc (m: along, across), pn_rid, uv_sep. out: ck_check (0..1), h_check (m). Along-grain checks from per-band slits: the across coordinate is cut into bands 9 mm apart, each band line wobbles gently (+-3 mm at 3 x 8 /m), and a check is a slit on the band centre line whose half-width 0..0.1 band (up to 1.8 mm wide) follows a per-band noise along U (3/m) above a per-band threshold, so checks run straight, taper to points and are 5..30 cm long. Contours of 2-D noise zigzag across lattice rows instead -->
+<separate2 name="ck_ls" type="multioutput"><input name="in" type="vector2" nodename="pn_loc" /></separate2>
+<multiply name="ck_2" type="vector2"><input name="in1" type="vector2" nodename="pn_loc" /><input name="in2" type="vector2" value="3.0, 8.0" /></multiply>
+<add name="ck_3" type="vector2"><input name="in1" type="vector2" nodename="ck_2" /><input name="in2" type="vector2" value="7.7, 1.3" /></add>
+<fractal2d name="ck_4" type="float"><input name="texcoord" type="vector2" nodename="ck_3" /><input name="amplitude" type="float" value="0.0031499999999999996" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<add name="ck_5" type="float"><input name="in1" type="float" nodename="ck_ls" output="outy" /><input name="in2" type="float" nodename="ck_4" /></add>
+<divide name="ck_6" type="float"><input name="in1" type="float" nodename="ck_5" /><input name="in2" type="float" value="0.009" /></divide>
+<add name="ck_y" type="float"><input name="in1" type="float" nodename="ck_6" /><input name="in2" type="float" value="0.5" /></add>
+<floor name="ck_bi" type="float"><input name="in" type="float" nodename="ck_y" /></floor>
+<subtract name="ck_9" type="float"><input name="in1" type="float" nodename="ck_y" /><input name="in2" type="float" nodename="ck_bi" /></subtract>
+<subtract name="ck_10" type="float"><input name="in1" type="float" nodename="ck_9" /><input name="in2" type="float" value="0.5" /></subtract>
+<absval name="ck_fy" type="float"><input name="in" type="float" nodename="ck_10" /></absval>
+<multiply name="ck_12" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="97.0" /></multiply>
+<combine2 name="ck_13" type="vector2"><input name="in1" type="float" nodename="ck_bi" /><input name="in2" type="float" nodename="ck_12" /></combine2>
+<add name="ck_14" type="vector2"><input name="in1" type="vector2" nodename="ck_13" /><input name="in2" type="vector2" value="7.7, 1.3" /></add>
+<cellnoise2d name="ck_br" type="float"><input name="texcoord" type="vector2" nodename="ck_14" /></cellnoise2d>
+<combine2 name="ck_16" type="vector2"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" nodename="ck_br" /></combine2>
+<multiply name="ck_17" type="vector2"><input name="in1" type="vector2" nodename="ck_16" /><input name="in2" type="vector2" value="3.0, 53.0" /></multiply>
+<add name="ck_18" type="vector2"><input name="in1" type="vector2" nodename="ck_17" /><input name="in2" type="vector2" value="7.7, 1.3" /></add>
+<fractal2d name="ck_19" type="float"><input name="texcoord" type="vector2" nodename="ck_18" /><input name="amplitude" type="float" value="0.8" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<add name="ck_20" type="float"><input name="in1" type="float" nodename="ck_19" /><input name="in2" type="float" value="0.5" /></add>
+<clamp name="ck_pn" type="float"><input name="in" type="float" nodename="ck_20" /></clamp>
+<multiply name="ck_22" type="float"><input name="in1" type="float" nodename="ck_br" /><input name="in2" type="float" value="0.3" /></multiply>
+<add name="ck_23" type="float"><input name="in1" type="float" nodename="ck_22" /><input name="in2" type="float" value="0.55" /></add>
+<smoothstep name="ck_pres" type="float"><input name="in" type="float" nodename="ck_pn" /><input name="low" type="float" nodename="ck_23" /><input name="high" type="float" value="1.0" /></smoothstep>
+<multiply name="ck_25" type="float"><input name="in1" type="float" nodename="ck_pres" /><input name="in2" type="float" value="0.1" /></multiply>
+<max name="ck_tw" type="float"><input name="in1" type="float" nodename="ck_25" /><input name="in2" type="float" value="0.0001" /></max>
+<smoothstep name="ck_27" type="float"><input name="in" type="float" nodename="ck_fy" /><input name="low" type="float" value="0.0" /><input name="high" type="float" nodename="ck_tw" /></smoothstep>
+<subtract name="ck_28" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="ck_27" /></subtract>
+<smoothstep name="ck_29" type="float"><input name="in" type="float" nodename="ck_tw" /><input name="low" type="float" value="0.01" /><input name="high" type="float" value="0.03" /></smoothstep>
+<multiply name="ck_check" type="float"><input name="in1" type="float" nodename="ck_28" /><input name="in2" type="float" nodename="ck_29" /></multiply>
+<multiply name="h_check" type="float"><input name="in1" type="float" nodename="ck_check" /><input name="in2" type="float" value="-0.0012" /></multiply>

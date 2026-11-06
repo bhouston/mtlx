@@ -2,128 +2,60 @@
 
 <img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
 
+[![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/)
+[![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
+[![npm downloads](https://img.shields.io/npm/dm/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
 [![npm version](https://img.shields.io/npm/v/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
-[![ci](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bhouston/mtlx/blob/main/LICENSE)
-[![Live demo](https://img.shields.io/badge/viewer-mtlx.ben3d.ca-blue)](https://mtlx.ben3d.ca)
+[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
+[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
 
-_A TypeScript/JavaScript [MaterialX](https://materialx.org) toolkit for inspecting,
-packaging, transforming, and previewing materials._
+TypeScript and JavaScript tools for viewing, editing, validating, and delivering [MaterialX](https://materialx.org) materials. Work with loose `.mtlx` files or portable `.mtlx.zip` archives in the browser, terminal, or VS Code.
 
-The [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca) includes libraries, a CLI, a web viewer, and a VS Code extension.
+[Try the viewer](https://mtlx.ben3d.ca/viewer/) · [Open the editor](https://mtlx.ben3d.ca/editor/) · [Get started](https://mtlx.ben3d.ca/docs/quick-start/)
 
-mtlx works with loose `.mtlx` documents and `.mtlx.zip` archives. Try the
-[web viewer](https://mtlx.ben3d.ca), automate material preparation with the CLI, or embed the
-library in your application. The root `mtlx-core` API is browser-safe and has no filesystem or
-native imports. Node texture transforms use [sharp](https://sharp.pixelplumbing.com/) for SDR
-formats (webp/png/jpg/avif) and [hdrify](https://www.npmjs.com/package/hdrify) for HDR formats
-(EXR/Radiance HDR), both installed with the package.
+<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/viewer-inspection.png" alt="MaterialX preview and inspection controls" width="720">
 
-Preview rendering uses three.js's MaterialX support. Validation checks selected document rules;
-neither a successful check nor a preview guarantees full MaterialX conformance or identical
-rendering in another application. Node tools target Node.js 22 or later.
+## Embed a material
 
-[Open the copper sample](https://mtlx.ben3d.ca/viewer?materialUrl=https%3A%2F%2Fraw.githubusercontent.com%2Fbhouston%2Fmaterial-samples%2Fmain%2Fmaterials%2Fshowcase%2Fstandard_surface%2Fcopper%2Fcopper.mtlx)
-to try the inspector immediately.
+Add `<material-viewer>` to any HTML page. No React or build step is required.
 
-<img src="assets/viewer-inspection.png" alt="Copper material in the website inspector with preview controls, separate document and resource checks, material details and diagnostic export" width="720">
-
-## Support
-
-| Host              | Input and resources                                                               | Validation and preview                                                                             |
-| ----------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Browser inspector | Local XML/ZIP and HTTP(S) URLs; archives or remote URLs provide dependency access | All core rule groups; three.js preview with WebGPU or WebGL2 fallback                              |
-| Desktop VS Code   | Saved XML/ZIP; dependencies through the workspace URI provider                    | All core rule groups; automatic saved-source/resource refresh; same three.js scene                 |
-| Node CLI          | XML/ZIP and filesystem dependencies; Node.js 22+                                  | Selectable validation rule groups, packaging, Sharp texture optimization and local browser preview |
-| Browser library   | Caller-supplied bytes and resource reader                                         | Browser-safe parsing, packaging and validation; GPU rendering via `mtlx-viewer`                    |
-
-The viewers check node/port names, structure, types, dependencies and renderer categories.
-Local loose files in the browser cannot provide sibling resources. Shader compilation runs in
-the preview and may fail independently. Automated rendering coverage uses Chromium's WebGL2
-fallback, including the extension's bundled webview; real editor/GPU combinations vary.
-
-## Packages
-
-| Package                                                                                         | Description                                                                                                                                                   |
-| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`mtlx-core`](https://github.com/bhouston/mtlx/tree/main/packages/core)                         | Parse, validate, package, and transform MaterialX. Pure and browser-safe; Node helpers under `mtlx-core/node`, texture processing under `mtlx-core/textures`. |
-| [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command: `check`, `info`, `view`, and `transform`/`x` (convert, pack, unpack, combine, resize textures).                                           |
-| [`website`](https://github.com/bhouston/mtlx/tree/main/packages/website)                        | Drag-and-drop viewer and validator at [mtlx.ben3d.ca](https://mtlx.ben3d.ca), plus these docs.                                                                |
-| [`mtlx-vscode-extension`](https://github.com/bhouston/mtlx/tree/main/packages/vscode-extension) | "Mtlx Viewer": preview, inspect, and convert MaterialX files inside VS Code.                                                                                  |
-| [`mtlx-viewer`](https://github.com/bhouston/mtlx/tree/main/packages/viewer)                     | Shared three.js preview scenes and environment assets for applications.                                                                                       |
-
-The prototype at `/editor` combines a reusable node library and React Flow graph with the
-Three.js preview. See [mtlx-editor](packages/editor/README.md) for the component API and architecture.
-
-## Scripting
-
-```sh
-npm install mtlx-core
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/mtlx-viewer/dist/material-viewer.js"></script>
+<material-viewer
+  src="https://mtlx.ben3d.ca/materials/copper/copper.mtlx"
+  alt="Copper material under neutral studio lighting"
+  settings-panel="closed"
+  style="display:block;width:100%;height:440px"
+></material-viewer>
 ```
 
-```ts
-import { transform } from 'mtlx-core';
-import { loadMaterialXPackage, writeMaterialXPackage } from 'mtlx-core/node';
-import { resizeTextures } from 'mtlx-core/textures';
+[Element guide and live demo](https://mtlx.ben3d.ca/docs/material-viewer/)
 
-// Load a .mtlx (with its textures) or .mtlx.zip into memory.
-const pkg = await loadMaterialXPackage('material.mtlx');
-
-// Apply transforms in order. Each source converts to the target sharing its dynamic range:
-// SDR sources (png/jpg/...) use the first SDR target, HDR sources (exr/hdr) use the first HDR
-// target. An HDR source with no HDR target requested is linearly clipped to SDR, no tone mapping.
-await transform(
-  pkg,
-  resizeTextures({ maxImageSize: 2048, targets: [{ format: 'webp' }, { format: 'exr', compression: 'piz' }] }),
-);
-
-// Write back out as either format.
-await writeMaterialXPackage(pkg, 'material.mtlx.zip');
-```
-
-In the browser, the root entry works on bytes and text with no filesystem:
-
-```ts
-import { checkMaterialXZipArchive, parseMaterialX, validateDocument } from 'mtlx-core';
-
-const issues = validateDocument(parseMaterialX(xmlText));
-const archiveIssues = checkMaterialXZipArchive(new Uint8Array(await file.arrayBuffer()));
-```
-
-See the [mtlx-core README](https://www.npmjs.com/package/mtlx-core) for the full API.
-
-## Command line
+## Use the CLI
 
 ```sh
 npm install --global mtlx-cli
+mtlx check material.mtlx
+mtlx view material.mtlx
+mtlx transform material.mtlx -o material.mtlx.zip --profile web
 ```
 
-```sh
-mtlx check "materials/*.mtlx"                                   # validate one file or a glob
-mtlx view material.mtlx                                        # local browser preview
-mtlx info material.mtlx.zip --format json
-mtlx x material.mtlx -o material.mtlx.zip                         # pack
-mtlx x material.mtlx.zip -o out/material.mtlx                     # unpack
-mtlx x material.mtlx -o material.mtlx.zip --max-image-size 2048 --image-format webp
-mtlx x material.mtlx -o material.mtlx.zip --image-format webp,exr:piz  # SDR->webp, HDR->EXR normalized to PIZ
-mtlx x material.mtlx -o material.mtlx.zip --profile web           # resize; normalizes EXR compression to PIZ
-mtlx x "{metal,wood,glass}.mtlx" -o combined.mtlx.zip             # combine
-mtlx x "materials/*.mtlx" -o out/                                 # batch: one output file per input
-```
+## Choose a library
 
-See the [mtlx-cli README](https://www.npmjs.com/package/mtlx-cli) for the full reference.
+| Package                                                                                                     | Use it for                                                             | Documentation                                         |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------- |
+| [mtlx-core](https://www.npmjs.com/package/mtlx-core)                                                        | Parsing, validation, packaging, transforms, and headless graph editing | [Core guide](https://mtlx.ben3d.ca/docs/core/)        |
+| [mtlx-viewer](https://www.npmjs.com/package/mtlx-viewer)                                                    | Web component, React wrapper, and Three.js preview APIs                | [Viewer guide](https://mtlx.ben3d.ca/docs/viewer/)    |
+| [mtlx-cli](https://www.npmjs.com/package/mtlx-cli)                                                          | Local workflows and MTLX.ai commands                                   | [CLI guide](https://mtlx.ben3d.ca/docs/cli/)          |
+| [mtlx-sdk](https://www.npmjs.com/package/mtlx-sdk)                                                          | Typed MTLX.ai service client                                           | [SDK guide](https://mtlx.ben3d.ca/docs/sdk/)          |
+| [mtlx-editor](packages/editor)                                                                              | Reusable React node editor (source workspace package)                  | [Editor guide](https://mtlx.ben3d.ca/docs/editor/)    |
+| [VS Code extension](https://marketplace.visualstudio.com/items?itemName=benhouston3d.mtlx-vscode-extension) | Previews, node graphs, and packaging inside your editor                | [Extension guide](https://mtlx.ben3d.ca/docs/vscode/) |
 
-## Contributing
+Node tools require Node.js 22+. Browser rendering needs GPU-backed WebGPU or WebGL2. Validation covers selected document rules; preview support follows Three.js's MaterialX loader.
 
-See [CONTRIBUTING.md](https://github.com/bhouston/mtlx/blob/main/CONTRIBUTING.md) for setup,
-testing, and release steps, and [CHANGELOG.md](https://github.com/bhouston/mtlx/blob/main/CHANGELOG.md)
-for what has changed.
+## Contribute
 
-## Credits
-
-Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
-
-The library design inspired by Don McCurdy's [glTF Transform](https://gltf-transform.dev).
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup and the issue → branch → PR workflow. Full guides and API references live on the [documentation website](https://mtlx.ben3d.ca/docs/); release instructions are in [RELEASING.md](RELEASING.md).
 
 ## License
 

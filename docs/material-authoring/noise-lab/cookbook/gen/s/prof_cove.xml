@@ -1,0 +1,18 @@
+<!-- in: uv_sep. out: fl_pid (panel index), fl_xc (m from the panel centre, across U), h_flute (m), fl_dh (dh/dx, for the ring-frequency fade). Fluted panel: 506 mm panels (23 flutes, so the panel edge falls on a land), circular cove flutes 20 mm wide x 4 mm deep on a 22 mm pitch (2 mm lands): cove radius RC = (A^2 + S^2)/2S = 14.5 mm, h = (RC - S) - sqrt(RC^2 - min(x^2, A^2)). The wall at the arris is asin(A/RC) = 43.6 deg; it renders cleanly with a ~6 px ramp at closeup -->
+<divide name="fl_1" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.506" /></divide>
+<floor name="fl_pid" type="float"><input name="in" type="float" nodename="fl_1" /></floor>
+<add name="fl_3" type="float"><input name="in1" type="float" nodename="fl_pid" /><input name="in2" type="float" value="0.5" /></add>
+<multiply name="fl_4" type="float"><input name="in1" type="float" nodename="fl_3" /><input name="in2" type="float" value="0.506" /></multiply>
+<subtract name="fl_xc" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" nodename="fl_4" /></subtract>
+<divide name="fl_6" type="float"><input name="in1" type="float" nodename="fl_xc" /><input name="in2" type="float" value="0.022" /></divide>
+<add name="fl_7" type="float"><input name="in1" type="float" nodename="fl_6" /><input name="in2" type="float" value="0.5" /></add>
+<fract name="fl_8" type="float"><input name="in" type="float" nodename="fl_7" /></fract>
+<subtract name="fl_9" type="float"><input name="in1" type="float" nodename="fl_8" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="fl_x" type="float"><input name="in1" type="float" nodename="fl_9" /><input name="in2" type="float" value="0.022" /></multiply>
+<multiply name="fl_x2" type="float"><input name="in1" type="float" nodename="fl_x" /><input name="in2" type="float" nodename="fl_x" /></multiply>
+<min name="fl_12" type="float"><input name="in1" type="float" nodename="fl_x2" /><input name="in2" type="float" value="0.0001" /></min>
+<subtract name="fl_13" type="float"><input name="in1" type="float" value="0.00021025" /><input name="in2" type="float" nodename="fl_12" /></subtract>
+<sqrt name="fl_root" type="float"><input name="in" type="float" nodename="fl_13" /></sqrt>
+<subtract name="h_flute" type="float"><input name="in1" type="float" value="0.0105" /><input name="in2" type="float" nodename="fl_root" /></subtract>
+<divide name="fl_16" type="float"><input name="in1" type="float" nodename="fl_x" /><input name="in2" type="float" nodename="fl_root" /></divide>
+<ifgreater name="fl_dh" type="float"><input name="value1" type="float" value="0.0001" /><input name="value2" type="float" nodename="fl_x2" /><input name="in1" type="float" nodename="fl_16" /><input name="in2" type="float" value="0.0" /></ifgreater>

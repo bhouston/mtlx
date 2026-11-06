@@ -1,0 +1,5 @@
+polyesterLabelStockSilver
+
+New silver metallized polyester label film; smooth metallic response beneath a thin clear polymer surface.
+
+Use for rendering polyester identification and warning-label substrates beneath separately modeled print.

@@ -1,0 +1,2 @@
+<!-- in: uv. out: u_fbm01 = 0.5 + 0.5*fractal at 8/m, never clamped to black -->
+<unifiednoise2d name="u_fbm01" type="float"><input name="texcoord" type="vector2" nodename="uv" /><input name="freq" type="vector2" value="8, 8" /><input name="offset" type="vector2" value="37.1, 91.7" /><input name="type" type="integer" value="3" /><input name="outmin" type="float" value="0.5" /><input name="outmax" type="float" value="1" /><input name="clampoutput" type="boolean" value="false" /></unifiednoise2d>

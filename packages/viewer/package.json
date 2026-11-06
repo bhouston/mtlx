@@ -1,7 +1,7 @@
 {
   "name": "mtlx-viewer",
   "version": "0.6.0",
-  "description": "Shared three.js MaterialX preview scenes, IBL environment assets, and React/Tailwind viewer UI for the MaterialX website and VS Code viewers.",
+  "description": "Embed MaterialX previews with the framework-independent <material-viewer> web component, React wrapper, and Three.js viewer APIs.",
   "homepage": "https://mtlx.ben3d.ca",
   "license": "MIT",
   "repository": {
@@ -11,13 +11,16 @@
   },
   "files": [
     "dist",
+    "!dist/**/*.test.*",
     "!dist/**/*.tsbuildinfo",
-    "assets",
-    "styles"
+    "styles",
+    "LICENSE.model-viewer"
   ],
   "type": "module",
   "sideEffects": [
     "./dist/element.js",
+    "./dist/index.js",
+    "./dist/viewer.js",
     "./dist/material-viewer.js"
   ],
   "main": "./dist/index.js",
@@ -31,7 +34,6 @@
       "types": "./dist/element.d.ts",
       "default": "./dist/element.js"
     },
-    "./assets/*": "./assets/*",
     "./capabilities": {
       "types": "./dist/capabilities.d.ts",
       "default": "./dist/capabilities.js"
@@ -51,8 +53,7 @@
     "./styles/*": "./styles/*"
   },
   "scripts": {
-    "build": "tsc -p . && node scripts/build-element.mjs",
-    "bake:studio-environment": "node scripts/bake-studio-environment.mjs"
+    "build": "tsc -p . && node scripts/build-element.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -65,19 +66,20 @@
     "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
+    "@types/node": "^22.20.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "@types/three": "^0.180.0",
+    "@types/three": "^0.187.0",
     "esbuild": "^0.27.3",
     "playwright": "^1.63.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "three": "^0.186.0"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "three": "^0.187.0"
   },
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "three": "^0.186.0"
+    "three": "^0.187.0"
   },
   "peerDependenciesMeta": {
     "react": {

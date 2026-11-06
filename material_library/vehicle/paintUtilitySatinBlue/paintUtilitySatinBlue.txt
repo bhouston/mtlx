@@ -1,0 +1,5 @@
+paintUtilitySatinBlue
+
+Factory-new blue industrial machinery coating; semi-gloss dielectric surface with slightly stronger application texture than passenger-car paint.
+
+Use for rendering painted chassis parts, brackets, machinery panels, and commercial-vehicle equipment with a restrained satin finish.

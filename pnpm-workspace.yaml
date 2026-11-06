@@ -1,6 +1,7 @@
 packages:
   - packages/*
 allowBuilds:
+  core-js: false
   '@parcel/watcher': false
   '@sentry/cli': true
   '@vscode/vsce-sign': true
@@ -8,3 +9,18 @@ allowBuilds:
   keytar: true
 minimumReleaseAgeExclude:
   - hdrify
+  - tanstack-router-ga4
+  - '@clidoc/core'
+  - '@clidoc/yargs'
+  - humanize-units
+  - vitest-command-line
+  - yargs-file-commands
+  - '@vitest/coverage-v8'
+  - '@vitest/mocker'
+  - '@vitest/spy'
+  - vitest
+# One vite for the whole workspace: when the website's plugins resolved a newer vite than its
+# `vite` binary, TanStack Start's dev SSR handler never registered and every route returned 404.
+overrides:
+  vite: 8.3.5
+  '@azure/msal-node': ^7.1.0

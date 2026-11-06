@@ -1,0 +1,5 @@
+electrocoatPrimerBrown
+
+Clean brown electrophoretic corrosion-protection primer; smooth low-sheen opaque coating without topcoat depth.
+
+Use for rendering electrocoated body-shell surfaces and parts exposed in assembly views or cutaways.

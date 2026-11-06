@@ -1,0 +1,59 @@
+<!-- in: sl_p (slab coords, m). out: mv_vein (0..1: mix the vein colour by it), mv_core. Warp 4/m A 25 mm (s 0.1) then fBm 15/m A 6 mm (s 0.09). Main veins: |fBm| contours at (3, 10)/m, 5 oct; soft core t 0.008..0.032 (edge wobble at 90/m) swelling and fading over ~35 cm, pigment varying along the vein, halo offset to one side and broken by clouds. Hairline network: finer contours, t 0.005, in its own patches -->
+<multiply name="mv_w1p0" type="vector2"><input name="in1" type="vector2" nodename="sl_p" /><input name="in2" type="float" value="4" /></multiply>
+<add name="mv_w1p" type="vector2"><input name="in1" type="vector2" nodename="mv_w1p0" /><input name="in2" type="vector2" value="3.1, 7.9" /></add>
+<noise2d name="mv_w1" type="vector3"><input name="texcoord" type="vector2" nodename="mv_w1p" /><input name="amplitude" type="vector3" value="0.025, 0.025, 0" /></noise2d>
+<convert name="mv_w1v" type="vector2"><input name="in" type="vector3" nodename="mv_w1" /></convert>
+<add name="mv_m1" type="vector2"><input name="in1" type="vector2" nodename="sl_p" /><input name="in2" type="vector2" nodename="mv_w1v" /></add>
+<multiply name="mv_w2p0" type="vector2"><input name="in1" type="vector2" nodename="mv_m1" /><input name="in2" type="float" value="15" /></multiply>
+<add name="mv_w2p" type="vector2"><input name="in1" type="vector2" nodename="mv_w2p0" /><input name="in2" type="vector2" value="11.3, 4.7" /></add>
+<fractal2d name="mv_w2" type="vector3"><input name="texcoord" type="vector2" nodename="mv_w2p" /><input name="octaves" type="integer" value="3" /><input name="amplitude" type="vector3" value="0.006, 0.006, 0" /></fractal2d>
+<convert name="mv_w2v" type="vector2"><input name="in" type="vector3" nodename="mv_w2" /></convert>
+<add name="mv_m" type="vector2"><input name="in1" type="vector2" nodename="mv_m1" /><input name="in2" type="vector2" nodename="mv_w2v" /></add>
+<multiply name="mv_vp0" type="vector2"><input name="in1" type="vector2" nodename="mv_m" /><input name="in2" type="vector2" value="3, 10" /></multiply>
+<add name="mv_vp" type="vector2"><input name="in1" type="vector2" nodename="mv_vp0" /><input name="in2" type="vector2" value="17.3, 5.8" /></add>
+<fractal2d name="mv_v" type="float"><input name="texcoord" type="vector2" nodename="mv_vp" /><input name="octaves" type="integer" value="5" /></fractal2d>
+<absval name="mv_va" type="float"><input name="in" type="float" nodename="mv_v" /></absval>
+<multiply name="mv_tpp0" type="vector2"><input name="in1" type="vector2" nodename="sl_p" /><input name="in2" type="float" value="2" /></multiply>
+<add name="mv_tpp" type="vector2"><input name="in1" type="vector2" nodename="mv_tpp0" /><input name="in2" type="vector2" value="29.6, 15.2" /></add>
+<noise2d name="mv_tp" type="float"><input name="texcoord" type="vector2" nodename="mv_tpp" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+<smoothstep name="mv_tap" type="float"><input name="in" type="float" nodename="mv_tp" /><input name="low" type="float" value="0.15" /><input name="high" type="float" value="0.85" /></smoothstep>
+<multiply name="mv_ep0" type="vector2"><input name="in1" type="vector2" nodename="mv_m" /><input name="in2" type="float" value="90" /></multiply>
+<add name="mv_ep" type="vector2"><input name="in1" type="vector2" nodename="mv_ep0" /><input name="in2" type="vector2" value="41.3, 9.1" /></add>
+<noise2d name="mv_en" type="float"><input name="texcoord" type="vector2" nodename="mv_ep" /><input name="amplitude" type="float" value="0.012" /><input name="pivot" type="float" value="0.02" /></noise2d>
+<multiply name="mv_tc0" type="float"><input name="in1" type="float" nodename="mv_tap" /><input name="in2" type="float" nodename="mv_en" /></multiply>
+<max name="mv_tc" type="float"><input name="in1" type="float" nodename="mv_tc0" /><input name="in2" type="float" value="0.0001" /></max>
+<multiply name="mv_tl" type="float"><input name="in1" type="float" nodename="mv_tc" /><input name="in2" type="float" value="0.4" /></multiply>
+<smoothstep name="mv_cs" type="float"><input name="in" type="float" nodename="mv_va" /><input name="low" type="float" nodename="mv_tl" /><input name="high" type="float" nodename="mv_tc" /></smoothstep>
+<subtract name="mv_c0" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="mv_cs" /></subtract>
+<multiply name="mv_dp0" type="vector2"><input name="in1" type="vector2" nodename="mv_m" /><input name="in2" type="float" value="60" /></multiply>
+<add name="mv_dp" type="vector2"><input name="in1" type="vector2" nodename="mv_dp0" /><input name="in2" type="vector2" value="7.7, 2.3" /></add>
+<noise2d name="mv_dn" type="float"><input name="texcoord" type="vector2" nodename="mv_dp" /><input name="amplitude" type="float" value="0.3" /><input name="pivot" type="float" value="0.75" /></noise2d>
+<multiply name="mv_core" type="float"><input name="in1" type="float" nodename="mv_c0" /><input name="in2" type="float" nodename="mv_dn" /></multiply>
+<subtract name="mv_vh" type="float"><input name="in1" type="float" nodename="mv_v" /><input name="in2" type="float" value="0.04" /></subtract>
+<absval name="mv_vha" type="float"><input name="in" type="float" nodename="mv_vh" /></absval>
+<multiply name="mv_th0" type="float"><input name="in1" type="float" nodename="mv_tap" /><input name="in2" type="float" value="0.1" /></multiply>
+<max name="mv_th" type="float"><input name="in1" type="float" nodename="mv_th0" /><input name="in2" type="float" value="0.0001" /></max>
+<smoothstep name="mv_hs" type="float"><input name="in" type="float" nodename="mv_vha" /><input name="low" type="float" value="0" /><input name="high" type="float" nodename="mv_th" /></smoothstep>
+<multiply name="mv_cp0" type="vector2"><input name="in1" type="vector2" nodename="mv_m" /><input name="in2" type="float" value="20" /></multiply>
+<add name="mv_cp" type="vector2"><input name="in1" type="vector2" nodename="mv_cp0" /><input name="in2" type="vector2" value="3.3, 61.7" /></add>
+<fractal2d name="mv_cl" type="float"><input name="texcoord" type="vector2" nodename="mv_cp" /><input name="octaves" type="integer" value="3" /><input name="amplitude" type="float" value="0.4" /></fractal2d>
+<add name="mv_cl1" type="float"><input name="in1" type="float" nodename="mv_cl" /><input name="in2" type="float" value="0.3" /></add>
+<clamp name="mv_cld" type="float"><input name="in" type="float" nodename="mv_cl1" /></clamp>
+<subtract name="mv_h0" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="mv_hs" /></subtract>
+<multiply name="mv_halo" type="float"><input name="in1" type="float" nodename="mv_h0" /><input name="in2" type="float" nodename="mv_cld" /></multiply>
+<multiply name="mv_up0" type="vector2"><input name="in1" type="vector2" nodename="mv_m" /><input name="in2" type="vector2" value="6, 13" /></multiply>
+<add name="mv_up" type="vector2"><input name="in1" type="vector2" nodename="mv_up0" /><input name="in2" type="vector2" value="71.9, 23.3" /></add>
+<fractal2d name="mv_u" type="float"><input name="texcoord" type="vector2" nodename="mv_up" /><input name="octaves" type="integer" value="4" /></fractal2d>
+<absval name="mv_ua" type="float"><input name="in" type="float" nodename="mv_u" /></absval>
+<multiply name="mv_upp0" type="vector2"><input name="in1" type="vector2" nodename="sl_p" /><input name="in2" type="float" value="3" /></multiply>
+<add name="mv_upp" type="vector2"><input name="in1" type="vector2" nodename="mv_upp0" /><input name="in2" type="vector2" value="5.5, 88.1" /></add>
+<noise2d name="mv_upn" type="float"><input name="texcoord" type="vector2" nodename="mv_upp" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+<smoothstep name="mv_utap" type="float"><input name="in" type="float" nodename="mv_upn" /><input name="low" type="float" value="0.3" /><input name="high" type="float" value="0.7" /></smoothstep>
+<multiply name="mv_ut0" type="float"><input name="in1" type="float" nodename="mv_utap" /><input name="in2" type="float" value="0.005" /></multiply>
+<max name="mv_ut" type="float"><input name="in1" type="float" nodename="mv_ut0" /><input name="in2" type="float" value="0.0001" /></max>
+<smoothstep name="mv_us" type="float"><input name="in" type="float" nodename="mv_ua" /><input name="low" type="float" value="0" /><input name="high" type="float" nodename="mv_ut" /></smoothstep>
+<subtract name="mv_u1" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="mv_us" /></subtract>
+<multiply name="mv_hair" type="float"><input name="in1" type="float" nodename="mv_u1" /><input name="in2" type="float" value="0.55" /></multiply>
+<multiply name="mv_hw" type="float"><input name="in1" type="float" nodename="mv_halo" /><input name="in2" type="float" value="0.3" /></multiply>
+<max name="mv_v2" type="float"><input name="in1" type="float" nodename="mv_core" /><input name="in2" type="float" nodename="mv_hw" /></max>
+<max name="mv_vein" type="float"><input name="in1" type="float" nodename="mv_v2" /><input name="in2" type="float" nodename="mv_hair" /></max>

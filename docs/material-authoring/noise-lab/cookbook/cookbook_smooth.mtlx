@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- NOISE_COOKBOOK.md test material. UV 1 = 1 m. Quadrants: TL ridged, TR billow, BL terraces, BR macro/meso/micro layers -->
+  <nodegraph name="NG_cookbook_smooth">
+    <!-- TL ridged, TR billow, BL terraces, BR macro/meso/micro layers -->
+    <texcoord name="uv" type="vector2" />
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <ifgreater name="q_right" type="float"><input name="value1" type="float" nodename="uv_sep" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="q_top" type="float"><input name="value1" type="float" nodename="uv_sep" output="outy" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+
+    <!-- snippet: decorrelate -->
+    <!-- in: uv. out: uv_n = 8/m coords with a private offset (no shared zeros at uv = 0) -->
+    <multiply name="uv_n0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8" /></multiply>
+    <add name="uv_n" type="vector2"><input name="in1" type="vector2" nodename="uv_n0" /><input name="in2" type="vector2" value="17.31, 5.77" /></add>
+
+    <!-- snippet: remap -->
+    <!-- in: uv_n. out: n01 (noise2d 0..1, ~5% clipped), fbm (signed fractal, std 0.37), fbm01 (0..1, ~2% outside) -->
+    <noise2d name="n01" type="float"><input name="texcoord" type="vector2" nodename="uv_n" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <fractal2d name="fbm" type="float"><input name="texcoord" type="vector2" nodename="uv_n" /><input name="octaves" type="integer" value="4" /></fractal2d>
+    <multiply name="fbm_s" type="float"><input name="in1" type="float" nodename="fbm" /><input name="in2" type="float" value="0.6" /></multiply>
+    <add name="fbm01" type="float"><input name="in1" type="float" nodename="fbm_s" /><input name="in2" type="float" value="0.5" /></add>
+
+    <!-- snippet: unified -->
+    <!-- in: uv. out: u_fbm01 = 0.5 + 0.5*fractal at 8/m, never clamped to black -->
+    <unifiednoise2d name="u_fbm01" type="float"><input name="texcoord" type="vector2" nodename="uv" /><input name="freq" type="vector2" value="8, 8" /><input name="offset" type="vector2" value="37.1, 91.7" /><input name="type" type="integer" value="3" /><input name="outmin" type="float" value="0.5" /><input name="outmax" type="float" value="1" /><input name="clampoutput" type="boolean" value="false" /></unifiednoise2d>
+
+    <!-- snippet: ridged -->
+    <!-- in: fbm (signed). out: ridged = 0.5 - |fbm| (crests on the zero contours), billow = |fbm| (puffs, V-creases) -->
+    <absval name="billow" type="float"><input name="in" type="float" nodename="fbm" /></absval>
+    <subtract name="ridged" type="float"><input name="in1" type="float" value="0.5" /><input name="in2" type="float" nodename="billow" /></subtract>
+
+    <!-- snippet: terraces -->
+    <!-- in: fbm (signed). out: terraced = k steps per unit of fbm (k = 3), riser over the top half of each step (a narrower riser renders as hairlines on the 1 m view) -->
+    <multiply name="tr_k" type="float"><input name="in1" type="float" nodename="fbm" /><input name="in2" type="float" value="3" /></multiply>
+    <floor name="tr_fl" type="float"><input name="in" type="float" nodename="tr_k" /></floor>
+    <subtract name="tr_fr" type="float"><input name="in1" type="float" nodename="tr_k" /><input name="in2" type="float" nodename="tr_fl" /></subtract>
+    <smoothstep name="tr_ss" type="float"><input name="in" type="float" nodename="tr_fr" /><input name="low" type="float" value="0.5" /><input name="high" type="float" value="1" /></smoothstep>
+    <add name="terraced" type="float"><input name="in1" type="float" nodename="tr_fl" /><input name="in2" type="float" nodename="tr_ss" /></add>
+
+    <!-- snippet: layers -->
+    <!-- in: uv. out: h_layers (m). Slope budget: macro ~1.5 deg, meso ~5 deg, micro ~4 deg -->
+    <multiply name="l_p1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="3" /></multiply>
+    <noise2d name="l_macro" type="float"><input name="texcoord" type="vector2" nodename="l_p1" /><input name="amplitude" type="float" value="0.0067" /></noise2d>
+    <multiply name="l_p2" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="40" /></multiply>
+    <add name="l_p2o" type="vector2"><input name="in1" type="vector2" nodename="l_p2" /><input name="in2" type="vector2" value="11.3, 4.7" /></add>
+    <fractal2d name="l_meso" type="float"><input name="texcoord" type="vector2" nodename="l_p2o" /><input name="octaves" type="integer" value="3" /><input name="amplitude" type="float" value="0.001" /></fractal2d>
+    <multiply name="l_p3" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1500" /></multiply>
+    <add name="l_p3o" type="vector2"><input name="in1" type="vector2" nodename="l_p3" /><input name="in2" type="vector2" value="71.9, 23.3" /></add>
+    <noise2d name="l_micro" type="float"><input name="texcoord" type="vector2" nodename="l_p3o" /><input name="amplitude" type="float" value="0.000036" /></noise2d>
+    <add name="l_mm" type="float"><input name="in1" type="float" nodename="l_macro" /><input name="in2" type="float" nodename="l_meso" /></add>
+    <add name="h_layers" type="float"><input name="in1" type="float" nodename="l_mm" /><input name="in2" type="float" nodename="l_micro" /></add>
+
+    <!-- test glue -->
+    <multiply name="h_ridge" type="float"><input name="in1" type="float" nodename="ridged" /><input name="in2" type="float" value="0.004" /></multiply>
+    <multiply name="h_billow" type="float"><input name="in1" type="float" nodename="billow" /><input name="in2" type="float" value="0.004" /></multiply>
+    <multiply name="h_terr" type="float"><input name="in1" type="float" nodename="terraced" /><input name="in2" type="float" value="0.0006" /></multiply>
+    <mix name="col_n" type="color3"><input name="bg" type="color3" value="0.28, 0.27, 0.25" /><input name="fg" type="color3" value="0.46, 0.45, 0.43" /><input name="mix" type="float" nodename="n01" /></mix>
+    <mix name="col_f" type="color3"><input name="bg" type="color3" value="0.28, 0.27, 0.25" /><input name="fg" type="color3" value="0.46, 0.45, 0.43" /><input name="mix" type="float" nodename="fbm01" /></mix>
+    <mix name="col_u" type="color3"><input name="bg" type="color3" value="0.28, 0.27, 0.25" /><input name="fg" type="color3" value="0.46, 0.45, 0.43" /><input name="mix" type="float" nodename="u_fbm01" /></mix>
+    <mix name="height_t" type="float"><input name="bg" type="float" nodename="h_ridge" /><input name="fg" type="float" nodename="h_billow" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="height_b" type="float"><input name="bg" type="float" nodename="h_terr" /><input name="fg" type="float" nodename="h_layers" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="height" type="float"><input name="bg" type="float" nodename="height_b" /><input name="fg" type="float" nodename="height_t" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <mix name="base_color_t" type="color3"><input name="bg" type="color3" nodename="col_n" /><input name="fg" type="color3" nodename="col_n" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="base_color_b" type="color3"><input name="bg" type="color3" nodename="col_f" /><input name="fg" type="color3" nodename="col_u" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" nodename="base_color_b" /><input name="fg" type="color3" nodename="base_color_t" /><input name="mix" type="float" nodename="q_top" /></mix>
+    <add name="roughness" type="float"><input name="in1" type="float" value="0.8" /><input name="in2" type="float" value="0" /></add>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+
+    <!-- snippet: normal -->
+    <!-- in: uv, height (m). out: n_world -> standard_surface.normal. Millimetre workaround for the heighttonormal threshold bug -->
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+  </nodegraph>
+  <standard_surface name="SR_cookbook_smooth" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="base_color" type="color3" nodegraph="NG_cookbook_smooth" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_cookbook_smooth" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_cookbook_smooth" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_cookbook_smooth" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_cookbook_smooth" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_cookbook_smooth" /></surfacematerial>
+</materialx>

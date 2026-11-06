@@ -1,0 +1,5 @@
+batteryElectrodeGraphiteBlack
+
+New black graphite electrode coating; fine granular matte surface, no emission or wet contamination.
+
+Use for rendering graphite-coated electrode sheets in battery-cell cutaways.

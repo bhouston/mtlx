@@ -17,6 +17,6 @@ it('matches the renderer category inventory', () => {
         ...Object.keys(MaterialXSurfaceMappings),
         'surfacematerial',
       ]),
-    ].toSorted(),
+    ].toSorted((a, b) => (a < b ? -1 : a > b ? 1 : 0)),
   );
 });

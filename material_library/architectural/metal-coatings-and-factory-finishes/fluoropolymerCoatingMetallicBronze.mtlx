@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Catalog: Bronze metallic-flake fluoropolymer coating with fine brown-gold reflective flecks suspended in a satin dielectric binder. -->
+  <!-- Art-directed linear Rec.709; 1 UV = 1 m; height in m. Sparse metallic flakes share a dielectric binder through a spatial conductor mask; subpixel sparkle and flake orientations require renderer support. -->
+  <!-- Recipe flake: feature frequencies 850, 850 per m; relief amplitude 6e-06 m; macro drift about 0.25 m. Subpixel detail requires filtering at distance. -->
+  <nodegraph name="NG_fluoropolymerCoatingMetallicBronze">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="multiply_2" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="3.1, 4.3" />
+    </multiply>
+    <add name="add_3" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_2" />
+      <input name="in2" type="vector2" value="11.37, 29.17" />
+    </add>
+    <fractal2d name="fractal2d_4" type="float">
+      <input name="texcoord" type="vector2" nodename="add_3" />
+      <input name="octaves" type="integer" value="3" />
+    </fractal2d>
+    <multiply name="multiply_5" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="850, 850" />
+    </multiply>
+    <add name="add_6" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_5" />
+      <input name="in2" type="vector2" value="3.71, 9.17" />
+    </add>
+    <fractal2d name="fractal2d_7" type="float">
+      <input name="texcoord" type="vector2" nodename="add_6" />
+      <input name="octaves" type="integer" value="1" />
+    </fractal2d>
+    <multiply name="multiply_11" type="float">
+      <input name="in1" type="float" nodename="fractal2d_7" />
+      <input name="in2" type="float" value="6e-06" />
+    </multiply>
+    <multiply name="multiply_12" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="850, 850" />
+    </multiply>
+    <add name="add_13" type="vector2">
+      <input name="in1" type="vector2" nodename="multiply_12" />
+      <input name="in2" type="vector2" value="5.81, 17.37" />
+    </add>
+    <worleynoise2d name="worleynoise2d_14" type="float">
+      <input name="texcoord" type="vector2" nodename="add_13" />
+      <input name="jitter" type="float" value="0.85" />
+      <input name="style" type="integer" value="1" />
+    </worleynoise2d>
+    <smoothstep name="smoothstep_15" type="float">
+      <input name="in" type="float" nodename="worleynoise2d_14" />
+      <input name="low" type="float" value="0.88" />
+      <input name="high" type="float" value="0.95" />
+    </smoothstep>
+    <multiply name="multiply_16" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="0.0336" />
+    </multiply>
+    <add name="add_17" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="multiply_16" />
+    </add>
+    <mix name="mix_18" type="color3">
+      <input name="bg" type="color3" value="0.3168, 0.1936, 0.0748" />
+      <input name="fg" type="color3" value="0.4032, 0.2464, 0.0952" />
+      <input name="mix" type="float" nodename="smoothstep_15" />
+    </mix>
+    <multiply name="base_color" type="color3">
+      <input name="in1" type="color3" nodename="mix_18" />
+      <input name="in2" type="float" nodename="add_17" />
+    </multiply>
+    <subtract name="subtract_20" type="float">
+      <input name="in1" type="float" nodename="smoothstep_15" />
+      <input name="in2" type="float" value="0.5" />
+    </subtract>
+    <multiply name="multiply_21" type="float">
+      <input name="in1" type="float" nodename="subtract_20" />
+      <input name="in2" type="float" value="-0.0532" />
+    </multiply>
+    <add name="add_22" type="float">
+      <input name="in1" type="float" value="0.38" />
+      <input name="in2" type="float" nodename="multiply_21" />
+    </add>
+    <clamp name="roughness" type="float">
+      <input name="in" type="float" nodename="add_22" />
+      <input name="low" type="float" value="0.005" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <multiply name="flake_metalness" type="float">
+      <input name="in1" type="float" nodename="smoothstep_15" />
+      <input name="in2" type="float" value="0.85" />
+    </multiply>
+    <multiply name="multiply_26" type="float">
+      <input name="in1" type="float" nodename="fractal2d_4" />
+      <input name="in2" type="float" value="1.5e-06" />
+    </multiply>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="multiply_11" />
+      <input name="in2" type="float" nodename="multiply_26" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="flake_metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_fluoropolymerCoatingMetallicBronze" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_fluoropolymerCoatingMetallicBronze" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_fluoropolymerCoatingMetallicBronze" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_fluoropolymerCoatingMetallicBronze" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_fluoropolymerCoatingMetallicBronze" output="out_normal" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="coat" type="float" value="1" />
+    <input name="coat_roughness" type="float" value="0.32" />
+    <input name="coat_normal" type="vector3" nodegraph="NG_fluoropolymerCoatingMetallicBronze" output="out_normal" />
+  </standard_surface>
+  <surfacematerial name="fluoropolymerCoatingMetallicBronze" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_fluoropolymerCoatingMetallicBronze" />
+  </surfacematerial>
+</materialx>

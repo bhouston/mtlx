@@ -1,0 +1,5 @@
+hydrophobicGlassCoatingClear
+
+Colorless hydrophobic glass treatment; optically thin clear dielectric layer with minimal visible color or roughness change in clean dry condition.
+
+Use for rendering an optically thin surface treatment over supplied glazing.

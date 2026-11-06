@@ -1,13 +1,5 @@
-/**
- * IBL (image-based lighting) environment parsing for the MaterialX preview viewers. Two shared
- * environments ship as static assets under ../assets so every host gets the same look:
- *
- * - "studio": a neutral gray studio room, baked once from three.js's procedural RoomEnvironment
- *   (see scripts/bake-studio-environment.mjs) into an sRGB equirectangular PNG.
- * - "bridge": the real HDR photo environment (san_giuseppe_bridge_2k.hdr) from the three.js examples.
- *
- * Parsers take raw bytes rather than a URL — callers fetch/read the asset however fits their host
- * (Vite import, `vscode.workspace.fs.readFile`, etc.) and hand the bytes here.
+/** Environment file parsing and ownership shared by the MaterialX viewers.
+ * The default studio is generated in HDR at runtime; bridge is an optional HDR photo.
  */
 import { readExr, readHdr } from 'hdrify';
 import {
@@ -21,6 +13,9 @@ import {
 } from 'three';
 
 const EXR_MAGIC = [0x76, 0x2f, 0x31, 0x01];
+// PMREM's filtered environment targets use half-floats, even when the source is a FloatType texture.
+// Out-of-range HDR highlights become infinities there and can poison entire irradiance channels.
+const HALF_FLOAT_MAX = 65_504;
 const isExrMagic = (bytes: Uint8Array): boolean => EXR_MAGIC.every((byte, i) => bytes[i] === byte);
 
 /** Parse an equirectangular IBL from its file extension (.hdr, .exr, .png, .jpg). */
@@ -33,6 +28,10 @@ export async function parseEnvironmentFile(data: ArrayBuffer, source: string): P
     // round-tripping through an EXR re-encode just to hand it back to a three.js decoder.
     const bytes = new Uint8Array(data);
     const image = isExrMagic(bytes) ? readExr(bytes) : readHdr(bytes);
+    for (let i = 0; i < image.data.length; i++) {
+      const value = image.data[i]!;
+      image.data[i] = Number.isNaN(value) ? 0 : Math.max(-HALF_FLOAT_MAX, Math.min(HALF_FLOAT_MAX, value));
+    }
     texture = new DataTexture(image.data, image.width, image.height, RGBAFormat, FloatType);
     texture.colorSpace = LinearSRGBColorSpace;
     // DataTexture defaults flipY to false (unlike Texture, which defaults true and is what the
@@ -54,9 +53,9 @@ export async function parseEnvironmentFile(data: ArrayBuffer, source: string): P
 }
 
 /** Owns the active filtered environment and discards superseded asynchronous loads. */
-export function createEnvironmentSwitcher(
-  load: (kind: string) => Promise<Texture>,
-  prepare: (texture: Texture) => { texture: Texture; dispose(): void },
+export function createEnvironmentSwitcher<Source extends { dispose(): void } = Texture>(
+  load: (kind: string) => Promise<Source>,
+  prepare: (texture: Source) => { texture: Texture; dispose(): void },
   apply: (texture: Texture) => void,
 ) {
   let generation = 0;
@@ -65,7 +64,7 @@ export function createEnvironmentSwitcher(
   return {
     async set(kind: string): Promise<boolean> {
       const request = ++generation;
-      let source: Texture;
+      let source: Source;
       try {
         source = await load(kind);
       } catch (error) {

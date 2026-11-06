@@ -22,20 +22,50 @@ const TAG_MARKUP = `<material-viewer
   style="width: 100%; height: 100%">
 </material-viewer>`;
 
-const EMBED_EXAMPLE = `<script type="module" src="https://unpkg.com/mtlx-viewer/dist/material-viewer.js"></script>
+const EMBED_SCRIPT_SRC = 'https://cdn.jsdelivr.net/npm/mtlx-viewer/dist/material-viewer.js';
+
+const EMBED_EXAMPLE = `<script type="module" src="${EMBED_SCRIPT_SRC}"></script>
 
 ${TAG_MARKUP}`;
 
+// Production dogfoods the published bundle exactly as the snippet does; dev uses the workspace build
+// so local viewer changes show up. Vite replaces import.meta.env.PROD statically, so the unused
+// branch (and the local element chunk) drops out of the production build.
+function registerElement(): Promise<unknown> {
+  if (!import.meta.env.PROD) return import('mtlx-viewer/element');
+  if (customElements.get('material-viewer')) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = EMBED_SCRIPT_SRC;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Failed to load ${EMBED_SCRIPT_SRC}`));
+    document.head.append(script);
+  });
+}
+
 const ATTRIBUTES: Array<[string, string]> = [
+  ['alt', 'Accessible description of the material; updates the focusable canvas without reloading.'],
   ['src', 'Required. The .mtlx or .mtlx.zip file to preview.'],
   ['model', 'A custom glTF/GLB URL to preview the material on, instead of the built-in shaderball.'],
-  ['ibl', '"bridge" (default), "studio", or a URL to a custom .hdr/.exr/.png/.jpg environment.'],
+  ['ibl', '"studio" (default), "bridge", or a URL to a custom .hdr/.exr/.png/.jpg environment.'],
   ['geometry', '"totem" | "sphere" | "cube" | "plane" | "custom" (the last selects model, if given).'],
+  [
+    'camera-orbit',
+    'Azimuth, polar angle and distance, e.g. 30deg 65deg 2m (normalized scene meters). Omit for automatic framing.',
+  ],
+  ['camera-target', 'Aim point, e.g. 0m 0m 0m, in normalized scene meters.'],
+  ['field-of-view', 'Vertical field of view in degrees (1..120), e.g. 35deg.'],
   ['material', 'Initial material name; defaults to the document’s last material.'],
   ['rotate / bloom / ao', '"false" to disable; all default on.'],
-  ['background', '"environment" (default) shows the IBL behind the model; "none" leaves it transparent.'],
+  ['background', '"white" (default); "environment" shows the IBL; "none" leaves it transparent.'],
   ['tone-mapping', 'neutral (default), aces, agx, reinhard, cineon, linear, none.'],
+  [
+    'environment-rotation',
+    'Environment yaw in degrees (default 0). Negative values and full turns wrap into 0..360. Rotates lighting and the environment backdrop together.',
+  ],
   ['exposure / intensity', 'Numbers in -2..2 / 0..2.'],
+  ['errors', '"silent" hides the error overlay; omitted shows errors. Error events always fire.'],
   ['settings-panel', '"open" | "closed" | "hidden" (default) — a built-in overlay for the above.'],
 ];
 
@@ -54,7 +84,7 @@ function LiveDemo() {
     const host = hostRef.current;
     if (!host) return;
     let cancelled = false;
-    void import('mtlx-viewer/element').then(() => {
+    void registerElement().then(() => {
       if (cancelled) return;
       host.innerHTML = TAG_MARKUP;
     });
@@ -106,6 +136,44 @@ function MaterialViewerTagPage() {
       </div>
 
       <section className="flex min-w-0 flex-col gap-4">
+        <h2 className="text-xl font-semibold">Loading progress</h2>
+        <p className="text-sm text-muted-foreground">
+          A top progress bar appears automatically during downloading, renderer setup, material and texture loading,
+          lighting, geometry, and the first render. It also appears when changing materials, environments, or geometry.
+          Progress events expose <code>detail.totalProgress</code> from 0 to 1.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Customize <code>--progress-bar-color</code>, <code>--progress-bar-height</code>, or
+          <code> material-viewer::part(default-progress-bar)</code>. To disable it, add an empty
+          <code> {'<span slot="progress-bar"></span>'}</code> child. The React component accepts the same child and
+          provides an <code>onProgress</code> callback. A custom progress-bar slot replaces the default bar; use
+          progress events to update your replacement.
+        </p>
+      </section>
+
+      <section className="flex min-w-0 flex-col gap-4">
+        <h2 className="text-xl font-semibold">Screenshot export</h2>
+        <p className="text-sm text-muted-foreground">
+          Call <code>toBlob()</code> to capture a completed preview without controls. It waits for loading, renders the
+          full lighting and effects pipeline, and preserves the on-screen camera and size. Set exact pixel dimensions
+          and choose a white, environment, or transparent backdrop.
+        </p>
+        <CodeBlock
+          code={`const preview = document.querySelector('material-viewer');
+const blob = await preview.toBlob({
+  width: 1600, height: 1200,
+  mimeType: 'image/png', background: 'white'
+});`}
+        />
+        <p className="text-sm text-muted-foreground">
+          PNG is the default. JPEG and WebP accept a <code>quality</code> from 0 to 1; JPEG uses white behind
+          transparent pixels. If only one dimension is supplied, the current aspect ratio is preserved. The promise
+          rejects if the source or settings change or the viewer is disposed during capture. React consumers can call
+          the same API through a typed component ref.
+        </p>
+      </section>
+
+      <section className="flex min-w-0 flex-col gap-4">
         <h2 className="text-xl font-semibold">Attributes</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -134,7 +202,8 @@ function MaterialViewerTagPage() {
         </div>
         <p className="text-sm text-muted-foreground">
           Every attribute except <code>src</code> and <code>model</code> applies live — change it and the viewer updates
-          without a reload. The element also fires <code>load</code> and <code>error</code> events.
+          without a reload. The element also fires <code>load</code>, <code>progress</code>, and <code>error</code>{' '}
+          events.
         </p>
       </section>
     </main>

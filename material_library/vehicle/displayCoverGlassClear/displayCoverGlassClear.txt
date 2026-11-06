@@ -1,0 +1,5 @@
+displayCoverGlassClear
+
+Clear hard display cover glass; smooth glossy dielectric reflections, low haze, and no inherent emission.
+
+Use for rendering the outer transparent cover of instrument, infotainment, and equipment displays.

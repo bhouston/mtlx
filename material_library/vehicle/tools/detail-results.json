@@ -1,0 +1,128 @@
+{
+  "gpu": {
+    "webgl": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3, Unspecified Version)",
+    "webgpu": {
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": "",
+      "isFallbackAdapter": false
+    }
+  },
+  "results": [
+    {
+      "name": "paintMetallicGlossSilver",
+      "ibl": "strips",
+      "views": ["sphere"],
+      "ok": true,
+      "output": "paintMetallicGlossSilver/strips.avif",
+      "log": "Wrote material_library/vehicle/paintMetallicGlossSilver/strips.avif in 7.7s (first view 2.1s)\n"
+    },
+    {
+      "name": "aluminumBrushed",
+      "ibl": "strips",
+      "views": ["sphere"],
+      "ok": true,
+      "output": "aluminumBrushed/strips.avif",
+      "log": "Wrote material_library/vehicle/aluminumBrushed/strips.avif in 2.5s (first view 0.8s)\n"
+    },
+    {
+      "name": "woodBurlWalnutGloss",
+      "ibl": "strips",
+      "views": ["sphere"],
+      "ok": true,
+      "output": "woodBurlWalnutGloss/strips.avif",
+      "log": "Wrote material_library/vehicle/woodBurlWalnutGloss/strips.avif in 3.7s (first view 1.6s)\n"
+    },
+    {
+      "name": "leatherPigmentedPebbledTan",
+      "ibl": "bridge",
+      "views": ["closeup", "detail", "sphere"],
+      "ok": true,
+      "output": "leatherPigmentedPebbledTan/bridge.avif",
+      "log": "Wrote material_library/vehicle/leatherPigmentedPebbledTan/bridge.avif in 18.0s (first view 2.3s)\n"
+    },
+    {
+      "name": "powderCoatWrinkleBlack",
+      "ibl": "bridge",
+      "views": ["closeup", "detail", "sphere"],
+      "ok": true,
+      "output": "powderCoatWrinkleBlack/bridge.avif",
+      "log": "Wrote material_library/vehicle/powderCoatWrinkleBlack/bridge.avif in 39.2s (first view 1.8s)\n"
+    },
+    {
+      "name": "polyurethaneFoamOpenCellCream",
+      "ibl": "bridge",
+      "views": ["closeup", "detail", "sphere"],
+      "ok": true,
+      "output": "polyurethaneFoamOpenCellCream/bridge.avif",
+      "log": "Wrote material_library/vehicle/polyurethaneFoamOpenCellCream/bridge.avif in 6.0s (first view 0.9s)\n"
+    },
+    {
+      "name": "decorativeBoucleIvory",
+      "ibl": "bridge",
+      "views": ["closeup", "detail", "sphere"],
+      "ok": true,
+      "output": "decorativeBoucleIvory/bridge.avif",
+      "log": "Wrote material_library/vehicle/decorativeBoucleIvory/bridge.avif in 5.6s (first view 1.6s)\n"
+    },
+    {
+      "name": "upholsteryTechnicalKnitBlue",
+      "ibl": "sun",
+      "views": ["detail", "sphere"],
+      "ok": true,
+      "output": "upholsteryTechnicalKnitBlue/sun.avif",
+      "log": "Wrote material_library/vehicle/upholsteryTechnicalKnitBlue/sun.avif in 3.8s (first view 0.7s)\n"
+    },
+    {
+      "name": "paintSolidGlossBrightRed",
+      "ibl": "neutral",
+      "views": ["detail"],
+      "channel": "height",
+      "range": [-0.00002, 0.00002],
+      "ok": true,
+      "output": "paintSolidGlossBrightRed/height.avif",
+      "log": "Wrote material_library/vehicle/paintSolidGlossBrightRed/height.avif in 2.7s (first view 0.7s)\nheight:\nvalue: min -0.00000902 (uv 0.5018,0.4960)  p5 -0.000004784  mean 7.884e-8  p95 0.000004941  max 0.000008863 (uv 0.5048,0.5199)\n"
+    },
+    {
+      "name": "powderCoatWrinkleBlack",
+      "ibl": "neutral",
+      "views": ["detail"],
+      "channel": "height",
+      "range": [-0.0003, 0.0003],
+      "ok": true,
+      "output": "powderCoatWrinkleBlack/height.avif",
+      "log": "Wrote material_library/vehicle/powderCoatWrinkleBlack/height.avif in 2.8s (first view 0.9s)\nheight:\nvalue: min -0.0001329 (uv 0.4853,0.5116)  p5 -0.00006941  mean 9.824e-7  p95 0.00007176  max 0.0001259 (uv 0.4770,0.5096)\n"
+    },
+    {
+      "name": "leatherPigmentedPebbledTan",
+      "ibl": "neutral",
+      "views": ["detail"],
+      "channel": "height",
+      "range": [-0.0002, 0.0002],
+      "ok": true,
+      "output": "leatherPigmentedPebbledTan/height.avif",
+      "log": "Wrote material_library/vehicle/leatherPigmentedPebbledTan/height.avif in 2.9s (first view 0.8s)\nheight:\nvalue: min -0.00004941 (uv 0.4766,0.5250)  p5 -0.00004941  mean 0.00002249  p95 0.00004941  max 0.00004941 (uv 0.4750,0.5250)\n"
+    },
+    {
+      "name": "woodWalnutOpenPore",
+      "ibl": "neutral",
+      "views": ["detail"],
+      "channel": "height",
+      "range": [-0.0002, 0.0002],
+      "ok": true,
+      "output": "woodWalnutOpenPore/height.avif",
+      "log": "Wrote material_library/vehicle/woodWalnutOpenPore/height.avif in 4.9s (first view 0.8s)\nheight:\nvalue: min -0.00002902 (uv 0.4865,0.4825)  p5 -0.00001804  mean -4.108e-7  p95 0.00001647  max 0.00002275 (uv 0.4792,0.5250)\n"
+    },
+    {
+      "name": "decorativeBoucleIvory",
+      "ibl": "neutral",
+      "views": ["detail"],
+      "channel": "height",
+      "range": [-0.00015, 0.00015],
+      "ok": true,
+      "output": "decorativeBoucleIvory/height.avif",
+      "log": "Wrote material_library/vehicle/decorativeBoucleIvory/height.avif in 3.1s (first view 0.9s)\nheight:\nvalue: min 5.882e-7 (uv 0.4773,0.5062)  p5 0.000005294  mean 0.00004225  p95 0.00009706  max 0.0001018 (uv 0.5205,0.5250)\n"
+    }
+  ]
+}

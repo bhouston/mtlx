@@ -1,0 +1,5 @@
+pvcFlexibleReinforcedClear
+
+Clear reinforced PVC material; transparent glossy polymer with a visible fine white embedded fiber pattern represented as a material texture.
+
+Use for rendering clear reinforced flexible hose walls with visible embedded fiber texture.

@@ -1,0 +1,18 @@
+<!-- in: uv_sep. out: h_chan (m), ch_face (1 on the slat face), ch_floor (1 on the channel floor), ch_ao (albedo factor 0.4 at the walls .. 1 mid-channel). Slats 27 mm on a 40 mm pitch, 13 mm channels: the real channel is deeper than it is wide, which the slope budget cannot model, so the height is a 4 mm smoothstep ramp from 5.5 mm into the gap to 0.8 mm onto the face (max ~43 deg; 3 px at plane at -s 512, 5 px at the default 800 px, 16 px at closeup) and the depth goes into albedo: the floor darkens toward the walls (baked AO) -->
+<divide name="ch_s" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.04" /></divide>
+<floor name="ch_2" type="float"><input name="in" type="float" nodename="ch_s" /></floor>
+<subtract name="ch_3" type="float"><input name="in1" type="float" nodename="ch_s" /><input name="in2" type="float" nodename="ch_2" /></subtract>
+<subtract name="ch_4" type="float"><input name="in1" type="float" nodename="ch_3" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="ch_y" type="float"><input name="in1" type="float" nodename="ch_4" /><input name="in2" type="float" value="0.04" /></multiply>
+<absval name="ch_6" type="float"><input name="in" type="float" nodename="ch_y" /></absval>
+<subtract name="ch_d" type="float"><input name="in1" type="float" value="0.0135" /><input name="in2" type="float" nodename="ch_6" /></subtract>
+<smoothstep name="ch_8" type="float"><input name="in" type="float" nodename="ch_d" /><input name="low" type="float" value="-0.0055" /><input name="high" type="float" value="0.0008" /></smoothstep>
+<multiply name="h_chan" type="float"><input name="in1" type="float" nodename="ch_8" /><input name="in2" type="float" value="0.004" /></multiply>
+<smoothstep name="ch_face" type="float"><input name="in" type="float" nodename="ch_d" /><input name="low" type="float" value="-0.0007" /><input name="high" type="float" value="0.0002" /></smoothstep>
+<smoothstep name="ch_11" type="float"><input name="in" type="float" nodename="ch_d" /><input name="low" type="float" value="-0.0038" /><input name="high" type="float" value="-0.0018" /></smoothstep>
+<subtract name="ch_floor" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="ch_11" /></subtract>
+<multiply name="ch_13" type="float"><input name="in1" type="float" nodename="ch_d" /><input name="in2" type="float" value="-1.0" /></multiply>
+<max name="ch_14" type="float"><input name="in1" type="float" nodename="ch_13" /><input name="in2" type="float" value="0.0" /></max>
+<smoothstep name="ch_15" type="float"><input name="in" type="float" nodename="ch_14" /><input name="low" type="float" value="0.0015" /><input name="high" type="float" value="0.0065" /></smoothstep>
+<multiply name="ch_16" type="float"><input name="in1" type="float" nodename="ch_15" /><input name="in2" type="float" value="0.6" /></multiply>
+<add name="ch_ao" type="float"><input name="in1" type="float" nodename="ch_16" /><input name="in2" type="float" value="0.4" /></add>

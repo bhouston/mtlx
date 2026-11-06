@@ -1,0 +1,35 @@
+<!-- in: pn_loc (m: along, across), pn_rid, uv. out: kf_saw (signed, ~+-0.5), kf_groove (0..1), h_kerf (m). Rough-sawn band-saw marks: noise stretched along the kerf line (texcoord x*200..300, y*5 in a frame turned +-4 deg per board) gives straight, irregular lines 3..5 mm apart; the kerf grooves are its zero crossings, 1 - smoothstep(|n|, 0, 0.22), about 1 mm wide. Relief 0.14 mm x n minus 0.06 mm grooves, in patches (35..100%) -->
+<multiply name="kf_1" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="131.27" /></multiply>
+<add name="kf_2" type="float"><input name="in1" type="float" nodename="kf_1" /><input name="in2" type="float" value="0.2" /></add>
+<fract name="kf_3" type="float"><input name="in" type="float" nodename="kf_2" /></fract>
+<subtract name="kf_4" type="float"><input name="in1" type="float" nodename="kf_3" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="kf_5" type="float"><input name="in1" type="float" nodename="kf_4" /><input name="in2" type="float" value="8.0" /></multiply>
+<rotate2d name="kf_sl" type="vector2"><input name="in" type="vector2" nodename="pn_loc" /><input name="amount" type="float" nodename="kf_5" /></rotate2d>
+<separate2 name="kf_ss" type="multioutput"><input name="in" type="vector2" nodename="kf_sl" /></separate2>
+<multiply name="kf_8" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="173.89" /></multiply>
+<add name="kf_9" type="float"><input name="in1" type="float" nodename="kf_8" /><input name="in2" type="float" value="0.4" /></add>
+<fract name="kf_10" type="float"><input name="in" type="float" nodename="kf_9" /></fract>
+<multiply name="kf_11" type="float"><input name="in1" type="float" nodename="kf_10" /><input name="in2" type="float" value="100.0" /></multiply>
+<add name="kf_f" type="float"><input name="in1" type="float" nodename="kf_11" /><input name="in2" type="float" value="200.0" /></add>
+<multiply name="kf_13" type="float"><input name="in1" type="float" nodename="kf_ss" output="outx" /><input name="in2" type="float" nodename="kf_f" /></multiply>
+<multiply name="kf_14" type="float"><input name="in1" type="float" nodename="pn_rid" /><input name="in2" type="float" value="11.0" /></multiply>
+<add name="kf_15" type="float"><input name="in1" type="float" nodename="kf_ss" output="outy" /><input name="in2" type="float" nodename="kf_14" /></add>
+<multiply name="kf_16" type="float"><input name="in1" type="float" nodename="kf_15" /><input name="in2" type="float" value="5.0" /></multiply>
+<combine2 name="kf_17" type="vector2"><input name="in1" type="float" nodename="kf_13" /><input name="in2" type="float" nodename="kf_16" /></combine2>
+<add name="kf_18" type="vector2"><input name="in1" type="vector2" nodename="kf_17" /><input name="in2" type="vector2" value="3.3, 0.4" /></add>
+<fractal2d name="kf_n" type="float"><input name="texcoord" type="vector2" nodename="kf_18" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="kf_20" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="2.5, 9.0" /></multiply>
+<add name="kf_21" type="vector2"><input name="in1" type="vector2" nodename="kf_20" /><input name="in2" type="vector2" value="1.3, 77.1" /></add>
+<fractal2d name="kf_22" type="float"><input name="texcoord" type="vector2" nodename="kf_21" /><input name="amplitude" type="float" value="0.8" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<add name="kf_23" type="float"><input name="in1" type="float" nodename="kf_22" /><input name="in2" type="float" value="0.5" /></add>
+<clamp name="kf_24" type="float"><input name="in" type="float" nodename="kf_23" /></clamp>
+<multiply name="kf_25" type="float"><input name="in1" type="float" nodename="kf_24" /><input name="in2" type="float" value="0.65" /></multiply>
+<add name="kf_pres" type="float"><input name="in1" type="float" nodename="kf_25" /><input name="in2" type="float" value="0.35" /></add>
+<multiply name="kf_saw" type="float"><input name="in1" type="float" nodename="kf_n" /><input name="in2" type="float" nodename="kf_pres" /></multiply>
+<absval name="kf_28" type="float"><input name="in" type="float" nodename="kf_n" /></absval>
+<smoothstep name="kf_29" type="float"><input name="in" type="float" nodename="kf_28" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.22" /></smoothstep>
+<subtract name="kf_30" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="kf_29" /></subtract>
+<multiply name="kf_groove" type="float"><input name="in1" type="float" nodename="kf_30" /><input name="in2" type="float" nodename="kf_pres" /></multiply>
+<multiply name="kf_32" type="float"><input name="in1" type="float" nodename="kf_saw" /><input name="in2" type="float" value="0.00014" /></multiply>
+<multiply name="kf_33" type="float"><input name="in1" type="float" nodename="kf_groove" /><input name="in2" type="float" value="0.00006" /></multiply>
+<subtract name="h_kerf" type="float"><input name="in1" type="float" nodename="kf_32" /><input name="in2" type="float" nodename="kf_33" /></subtract>

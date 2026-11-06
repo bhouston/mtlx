@@ -1,0 +1,5 @@
+radarTransparentPolymerGray
+
+Opaque gray low-loss polymer finish; smooth satin dielectric surface and no visible transmission.
+
+Use for rendering opaque sensor covers and radar-facing fascia surfaces, without implying measured electromagnetic performance.

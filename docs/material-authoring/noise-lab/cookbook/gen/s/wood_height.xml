@@ -1,0 +1,12 @@
+<!-- in: wr_lp, wr_fig, wp_pore, wf_fleck, wk_core. out: h_wood (m). Wire-brushed: soft earlywood eroded 0.07 mm (faded with the figure), pores -0.02 mm, flecks +5 um, knot core -0.06 mm, brush scratches along the grain 12 um at 1800 /m across (~2 deg). For a plain sanded face scale the earlywood term to ~0.01 mm -->
+<multiply name="wh_1" type="vector2"><input name="in1" type="vector2" nodename="wr_lp" /><input name="in2" type="vector2" value="12.0, 1800.0" /></multiply>
+<add name="wh_2" type="vector2"><input name="in1" type="vector2" nodename="wh_1" /><input name="in2" type="vector2" value="29.6, 15.2" /></add>
+<fractal2d name="wh_brush" type="float"><input name="texcoord" type="vector2" nodename="wh_2" /><input name="amplitude" type="float" value="0.000012" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="wh_4" type="float"><input name="in1" type="float" nodename="wr_fig" /><input name="in2" type="float" value="-0.00007" /></multiply>
+<multiply name="wh_5" type="float"><input name="in1" type="float" nodename="wp_pore" /><input name="in2" type="float" value="-0.00002" /></multiply>
+<add name="wh_a" type="float"><input name="in1" type="float" nodename="wh_4" /><input name="in2" type="float" nodename="wh_5" /></add>
+<multiply name="wh_7" type="float"><input name="in1" type="float" nodename="wf_fleck" /><input name="in2" type="float" value="0.000005" /></multiply>
+<multiply name="wh_8" type="float"><input name="in1" type="float" nodename="wk_core" /><input name="in2" type="float" value="-0.00006" /></multiply>
+<add name="wh_b" type="float"><input name="in1" type="float" nodename="wh_7" /><input name="in2" type="float" nodename="wh_8" /></add>
+<add name="wh_10" type="float"><input name="in1" type="float" nodename="wh_a" /><input name="in2" type="float" nodename="wh_b" /></add>
+<add name="h_wood" type="float"><input name="in1" type="float" nodename="wh_10" /><input name="in2" type="float" nodename="wh_brush" /></add>

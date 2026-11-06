@@ -1,0 +1,12 @@
+<!-- in: uv. out: fd_slope = |grad h| (tan of slope) of h = 0.004*noise2d(uv*8), by finite differences, e = 1e-4 m -->
+<multiply name="fd_p" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8" /></multiply>
+<add name="fd_px" type="vector2"><input name="in1" type="vector2" nodename="fd_p" /><input name="in2" type="vector2" value="0.0008, 0" /></add>
+<add name="fd_py" type="vector2"><input name="in1" type="vector2" nodename="fd_p" /><input name="in2" type="vector2" value="0, 0.0008" /></add>
+<noise2d name="fd_h0" type="float"><input name="texcoord" type="vector2" nodename="fd_p" /></noise2d>
+<noise2d name="fd_hx" type="float"><input name="texcoord" type="vector2" nodename="fd_px" /></noise2d>
+<noise2d name="fd_hy" type="float"><input name="texcoord" type="vector2" nodename="fd_py" /></noise2d>
+<subtract name="fd_dx" type="float"><input name="in1" type="float" nodename="fd_hx" /><input name="in2" type="float" nodename="fd_h0" /></subtract>
+<subtract name="fd_dy" type="float"><input name="in1" type="float" nodename="fd_hy" /><input name="in2" type="float" nodename="fd_h0" /></subtract>
+<combine2 name="fd_g" type="vector2"><input name="in1" type="float" nodename="fd_dx" /><input name="in2" type="float" nodename="fd_dy" /></combine2>
+<magnitude name="fd_gm" type="float"><input name="in" type="vector2" nodename="fd_g" /></magnitude>
+<multiply name="fd_slope" type="float"><input name="in1" type="float" nodename="fd_gm" /><input name="in2" type="float" value="40" /></multiply>

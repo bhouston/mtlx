@@ -1,0 +1,5 @@
+galvanizedSteelLargeSpangle
+
+Clean new galvanized steel with larger zinc crystal domains and varying metallic reflection direction; no white corrosion.
+
+Use for rendering new coated sheet-metal panels, brackets, cargo equipment, and commercial-vehicle hardware.

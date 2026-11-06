@@ -1,0 +1,5 @@
+mineralWoolInsulationGrayBrown
+
+New gray-brown mineral-fiber insulation; irregular fine fibers, matte diffuse response, no soot.
+
+Use for rendering exposed fibrous insulation blankets and equipment-compartment insulation cutaways.

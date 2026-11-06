@@ -1,0 +1,27 @@
+<!-- in: uv_sep. out: bw_x (m across the board, 0 at its joint), bw_id, h_bow (m). Per-board unevenness that is 0 at both joints: bow a1*sin(pi*x/P) (a1 = +-0.15 mm per board plus 0.15 mm noise along V at 1.3/m) and twist a2*sin(2*pi*x/P) (+-0.06 mm), boards 90 mm across U. Neighbours never step at the joint, whatever their randoms -->
+<divide name="bw_u" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.09" /></divide>
+<floor name="bw_m" type="float"><input name="in" type="float" nodename="bw_u" /></floor>
+<subtract name="bw_3" type="float"><input name="in1" type="float" nodename="bw_u" /><input name="in2" type="float" nodename="bw_m" /></subtract>
+<multiply name="bw_x" type="float"><input name="in1" type="float" nodename="bw_3" /><input name="in2" type="float" value="0.09" /></multiply>
+<combine2 name="bw_5" type="vector2"><input name="in1" type="float" nodename="bw_m" /><input name="in2" type="float" value="7.0" /></combine2>
+<add name="bw_6" type="vector2"><input name="in1" type="vector2" nodename="bw_5" /><input name="in2" type="vector2" value="200.37, 300.61" /></add>
+<cellnoise2d name="bw_id" type="float"><input name="texcoord" type="vector2" nodename="bw_6" /></cellnoise2d>
+<multiply name="bw_8" type="float"><input name="in1" type="float" nodename="bw_x" /><input name="in2" type="float" value="34.906585" /></multiply>
+<sin name="bw_bow" type="float"><input name="in" type="float" nodename="bw_8" /></sin>
+<multiply name="bw_10" type="float"><input name="in1" type="float" nodename="bw_x" /><input name="in2" type="float" value="69.81317" /></multiply>
+<sin name="bw_tw" type="float"><input name="in" type="float" nodename="bw_10" /></sin>
+<subtract name="bw_12" type="float"><input name="in1" type="float" nodename="bw_id" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="bw_13" type="float"><input name="in1" type="float" nodename="bw_12" /><input name="in2" type="float" value="0.0003" /></multiply>
+<combine2 name="bw_14" type="vector2"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" nodename="bw_m" /></combine2>
+<multiply name="bw_15" type="vector2"><input name="in1" type="vector2" nodename="bw_14" /><input name="in2" type="vector2" value="1.3, 7.7" /></multiply>
+<add name="bw_16" type="vector2"><input name="in1" type="vector2" nodename="bw_15" /><input name="in2" type="vector2" value="3.1, 0.4" /></add>
+<fractal2d name="bw_17" type="float"><input name="texcoord" type="vector2" nodename="bw_16" /><input name="amplitude" type="float" value="0.00015" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<add name="bw_a1" type="float"><input name="in1" type="float" nodename="bw_13" /><input name="in2" type="float" nodename="bw_17" /></add>
+<multiply name="bw_19" type="float"><input name="in1" type="float" nodename="bw_id" /><input name="in2" type="float" value="29.17" /></multiply>
+<add name="bw_20" type="float"><input name="in1" type="float" nodename="bw_19" /><input name="in2" type="float" value="0.3" /></add>
+<fract name="bw_21" type="float"><input name="in" type="float" nodename="bw_20" /></fract>
+<subtract name="bw_22" type="float"><input name="in1" type="float" nodename="bw_21" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="bw_a2" type="float"><input name="in1" type="float" nodename="bw_22" /><input name="in2" type="float" value="0.00012" /></multiply>
+<multiply name="bw_24" type="float"><input name="in1" type="float" nodename="bw_a1" /><input name="in2" type="float" nodename="bw_bow" /></multiply>
+<multiply name="bw_25" type="float"><input name="in1" type="float" nodename="bw_a2" /><input name="in2" type="float" nodename="bw_tw" /></multiply>
+<add name="h_bow" type="float"><input name="in1" type="float" nodename="bw_24" /><input name="in2" type="float" nodename="bw_25" /></add>

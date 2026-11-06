@@ -1,0 +1,5 @@
+gasolinePaleStraw
+
+Clean pale-straw gasoline appearance; transparent dielectric liquid and smooth reflections, no contamination.
+
+Use for rendering fresh fuel volumes in gasoline tank and fuel-system cutaways.

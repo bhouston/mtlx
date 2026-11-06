@@ -1,0 +1,5 @@
+siliconNitrideCeramicDarkGray
+
+New dark-gray silicon-nitride ceramic appearance; dense fine-grained surface and subdued dielectric sheen.
+
+Use for rendering dense dark ceramic bearing elements and technical parts in machinery cutaways.

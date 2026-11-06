@@ -1,0 +1,30 @@
+<!-- in: uv. out: av_m (0..1 void mask), av_ao (albedo factor 0.2..1), h_void (m). Air voids and bug holes with a flat floor, 1 - smoothstep(t, 0.6, 1), t = F1/r (a rim at 0.45..0.68 of r; higher is crisper), on a warped texcoord (250/m, 0.5 mm, s = 0.125) for ragged outlines, plus strong baked AO: walls x0.5, core x0.4. 12 cells/m, jitter 0.7, 30% of cells, r = 0.02 + 0.055*rand^2 cell (1.7..6 mm, mostly small), depth 0.25 r (~43 deg wall). A (1 - t^2) bowl reads as a soft dimple or a lunar crater -->
+<multiply name="av_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="250.0" /></multiply>
+<add name="av_2" type="vector2"><input name="in1" type="vector2" nodename="av_1" /><input name="in2" type="vector2" value="5.1, 9.7" /></add>
+<noise2d name="av_3" type="vector3"><input name="texcoord" type="vector2" nodename="av_2" /><input name="amplitude" type="vector3" value="0.0005, 0.0005, 0.0" /></noise2d>
+<convert name="av_4" type="vector2"><input name="in" type="vector3" nodename="av_3" /></convert>
+<add name="av_5" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" nodename="av_4" /></add>
+<multiply name="av_6" type="vector2"><input name="in1" type="vector2" nodename="av_5" /><input name="in2" type="float" value="12.0" /></multiply>
+<add name="av_p" type="vector2"><input name="in1" type="vector2" nodename="av_6" /><input name="in2" type="vector2" value="3.7, 1.9" /></add>
+<worleynoise2d name="av_f1" type="float"><input name="texcoord" type="vector2" nodename="av_p" /><input name="jitter" type="float" value="0.7" /></worleynoise2d>
+<worleynoise2d name="av_id" type="float"><input name="texcoord" type="vector2" nodename="av_p" /><input name="jitter" type="float" value="0.7" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<ifgreater name="av_on" type="float"><input name="value1" type="float" nodename="av_id" /><input name="value2" type="float" value="0.7" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<multiply name="av_11" type="float"><input name="in1" type="float" nodename="av_id" /><input name="in2" type="float" value="7.31" /></multiply>
+<add name="av_12" type="float"><input name="in1" type="float" nodename="av_11" /><input name="in2" type="float" value="0.0" /></add>
+<fract name="av_13" type="float"><input name="in" type="float" nodename="av_12" /></fract>
+<multiply name="av_14" type="float"><input name="in1" type="float" nodename="av_13" /><input name="in2" type="float" nodename="av_13" /></multiply>
+<multiply name="av_15" type="float"><input name="in1" type="float" nodename="av_14" /><input name="in2" type="float" value="0.055" /></multiply>
+<multiply name="av_16" type="float"><input name="in1" type="float" nodename="av_15" /><input name="in2" type="float" nodename="av_on" /></multiply>
+<add name="av_r" type="float"><input name="in1" type="float" nodename="av_16" /><input name="in2" type="float" value="0.02" /></add>
+<divide name="av_t" type="float"><input name="in1" type="float" nodename="av_f1" /><input name="in2" type="float" nodename="av_r" /></divide>
+<smoothstep name="av_19" type="float"><input name="in" type="float" nodename="av_t" /><input name="low" type="float" value="0.6" /><input name="high" type="float" value="1.0" /></smoothstep>
+<subtract name="av_20" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="av_19" /></subtract>
+<multiply name="av_m" type="float"><input name="in1" type="float" nodename="av_20" /><input name="in2" type="float" nodename="av_on" /></multiply>
+<smoothstep name="av_22" type="float"><input name="in" type="float" nodename="av_t" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.8" /></smoothstep>
+<subtract name="av_23" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="av_22" /></subtract>
+<multiply name="av_core" type="float"><input name="in1" type="float" nodename="av_23" /><input name="in2" type="float" nodename="av_on" /></multiply>
+<mix name="av_25" type="float"><input name="bg" type="float" value="1.0" /><input name="fg" type="float" value="0.5" /><input name="mix" type="float" nodename="av_m" /></mix>
+<mix name="av_26" type="float"><input name="bg" type="float" value="1.0" /><input name="fg" type="float" value="0.4" /><input name="mix" type="float" nodename="av_core" /></mix>
+<multiply name="av_ao" type="float"><input name="in1" type="float" nodename="av_25" /><input name="in2" type="float" nodename="av_26" /></multiply>
+<multiply name="av_28" type="float"><input name="in1" type="float" nodename="av_r" /><input name="in2" type="float" value="-0.0208" /></multiply>
+<multiply name="h_void" type="float"><input name="in1" type="float" nodename="av_m" /><input name="in2" type="float" nodename="av_28" /></multiply>

@@ -1,0 +1,16 @@
+<!-- in: uv. out: h_sparse (m), v_mask. 8 cells/m, jitter 0.4 so r <= 0.3 cell never clips; 45% of cells empty, r 0.1..0.28 cell -->
+<multiply name="uv_g" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="8" /></multiply>
+<worleynoise2d name="v_f1" type="float"><input name="texcoord" type="vector2" nodename="uv_g" /><input name="jitter" type="float" value="0.4" /></worleynoise2d>
+<worleynoise2d name="v_id" type="float"><input name="texcoord" type="vector2" nodename="uv_g" /><input name="jitter" type="float" value="0.4" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<multiply name="v_rk" type="float"><input name="in1" type="float" nodename="v_id" /><input name="in2" type="float" value="7.3" /></multiply>
+<modulo name="v_rm" type="float"><input name="in1" type="float" nodename="v_rk" /><input name="in2" type="float" value="1" /></modulo>
+<multiply name="v_r0" type="float"><input name="in1" type="float" nodename="v_rm" /><input name="in2" type="float" value="0.18" /></multiply>
+<add name="v_r1" type="float"><input name="in1" type="float" nodename="v_r0" /><input name="in2" type="float" value="0.1" /></add>
+<ifgreater name="v_r" type="float"><input name="value1" type="float" nodename="v_id" /><input name="value2" type="float" value="0.55" /><input name="in1" type="float" nodename="v_r1" /><input name="in2" type="float" value="0.0001" /></ifgreater>
+<divide name="v_t" type="float"><input name="in1" type="float" nodename="v_f1" /><input name="in2" type="float" nodename="v_r" /></divide>
+<multiply name="v_t2" type="float"><input name="in1" type="float" nodename="v_t" /><input name="in2" type="float" nodename="v_t" /></multiply>
+<subtract name="v_b0" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="v_t2" /></subtract>
+<max name="v_dome" type="float"><input name="in1" type="float" nodename="v_b0" /><input name="in2" type="float" value="0" /></max>
+<multiply name="v_hs" type="float"><input name="in1" type="float" nodename="v_r" /><input name="in2" type="float" value="0.02" /></multiply>
+<multiply name="h_sparse" type="float"><input name="in1" type="float" nodename="v_dome" /><input name="in2" type="float" nodename="v_hs" /></multiply>
+<smoothstep name="v_mask" type="float"><input name="in" type="float" nodename="v_dome" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.05" /></smoothstep>

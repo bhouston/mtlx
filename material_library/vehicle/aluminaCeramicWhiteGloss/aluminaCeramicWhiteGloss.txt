@@ -1,0 +1,5 @@
+aluminaCeramicWhiteGloss
+
+New white alumina ceramic with a smooth glossy dielectric surface and slight diffuse subsurface softness.
+
+Use for rendering glossy alumina insulators and exposed ceramic electrical components.

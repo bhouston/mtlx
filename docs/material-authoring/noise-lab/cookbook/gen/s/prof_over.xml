@@ -1,0 +1,9 @@
+<!-- in: bt_m, bt_xb. out: h_bat (m). A raised element over a varying base: h = H*m + h_base*(1 - m). The base here is a board cup 0.8 mm deep (0 at the seams, -0.8 mm mid-board). Adding H*m on top of the cup instead creases where the cup slope changes sign under the batten side -->
+<divide name="ov_xq" type="float"><input name="in1" type="float" nodename="bt_xb" /><input name="in2" type="float" value="0.125" /></divide>
+<multiply name="ov_2" type="float"><input name="in1" type="float" nodename="ov_xq" /><input name="in2" type="float" nodename="ov_xq" /></multiply>
+<subtract name="ov_3" type="float"><input name="in1" type="float" nodename="ov_2" /><input name="in2" type="float" value="1.0" /></subtract>
+<multiply name="ov_base" type="float"><input name="in1" type="float" nodename="ov_3" /><input name="in2" type="float" value="0.0008" /></multiply>
+<multiply name="ov_5" type="float"><input name="in1" type="float" nodename="bt_m" /><input name="in2" type="float" value="0.019" /></multiply>
+<subtract name="ov_6" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="bt_m" /></subtract>
+<multiply name="ov_7" type="float"><input name="in1" type="float" nodename="ov_base" /><input name="in2" type="float" nodename="ov_6" /></multiply>
+<add name="h_bat" type="float"><input name="in1" type="float" nodename="ov_5" /><input name="in2" type="float" nodename="ov_7" /></add>

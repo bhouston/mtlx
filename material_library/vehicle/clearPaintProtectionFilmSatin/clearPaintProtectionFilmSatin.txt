@@ -1,0 +1,5 @@
+clearPaintProtectionFilmSatin
+
+Colorless transparent protection film with satin outer surface; broadens underlying paint reflections while retaining its color.
+
+Use for rendering a protective film layer over separately modeled painted bodywork, with the named reflection finish.

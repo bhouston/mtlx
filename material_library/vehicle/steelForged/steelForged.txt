@@ -1,0 +1,5 @@
+steelForged
+
+New forged steel finish; fine subdued process texture and dark gray metallic reflectance, without corrosion.
+
+Use for rendering new forged metal brackets, structural components, and drivetrain hardware.

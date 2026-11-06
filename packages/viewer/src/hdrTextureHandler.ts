@@ -44,7 +44,7 @@ async function decodeToImageBitmap(manager: THREE.LoadingManager, url: string): 
 export function registerHdrTextureHandler(manager: THREE.LoadingManager): void {
   const handler: Pick<THREE.Loader, 'load'> = {
     load(url, onLoad, _onProgress, onError) {
-      decodeToImageBitmap(manager, url).then(onLoad as (data: unknown) => void, onError);
+      void decodeToImageBitmap(manager, url).then(onLoad as (data: unknown) => void, onError);
     },
   };
   manager.addHandler(/\.(exr|hdr)(\?|#|$)/i, handler as THREE.Loader);

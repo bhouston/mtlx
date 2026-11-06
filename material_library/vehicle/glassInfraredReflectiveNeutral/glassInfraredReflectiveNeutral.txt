@@ -1,0 +1,5 @@
+glassInfraredReflectiveNeutral
+
+neutral heat-reflective coated glazing; clear-to-tinted transmission and a restrained colored reflection from the optical coating.
+
+Use for rendering solar-control glazing with an infrared-reflective coating appearance, without implying measured thermal performance.

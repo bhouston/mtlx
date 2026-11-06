@@ -1,0 +1,85 @@
+<!-- in: pk_loc, pk_id, uv_sep. out: wk_loc, wk_bump, wk_core, wk_rim (the knot recipe's outputs, so it drops in for it), kc_swirl (0..1 swirl zone), kc_ring (0..1 swirl-ring profile). Knots along long boards: 400 mm cells along U, keyed on (board id, cell), 40% hold a knot r 5..11 mm, +-8 cm along the cell and +-4 cm across (a knot a butt joint cuts is simply cut, as in real boards). The deflection and bump are windowed by 1 - smoothstep(|x_cell|, 0.33, 0.5), so they are 0 at the cell ends and the grain stays continuous. Swirl: explicit rings 4 mm apart from 0.9r out to ~2.6r, wobbled +-1.2 mm by 2-oct noise (perfect rings read as a bullseye; deflection plus a core alone reads as a stain). Mix it into the figure: fig = mix(wr_fig, kc_ring, kc_swirl). Squared radii use dotproduct, so wk_loc stays small: the ring recipe reads it ~8 times (bug 7) -->
+<divide name="kc_x" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="0.4" /></divide>
+<fract name="kc_2" type="float"><input name="in" type="float" nodename="kc_x" /></fract>
+<subtract name="kc_f" type="float"><input name="in1" type="float" nodename="kc_2" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="kc_4" type="float"><input name="in1" type="float" nodename="pk_id" /><input name="in2" type="float" value="97.0" /></multiply>
+<floor name="kc_5" type="float"><input name="in" type="float" nodename="kc_x" /></floor>
+<combine2 name="kc_6" type="vector2"><input name="in1" type="float" nodename="kc_4" /><input name="in2" type="float" nodename="kc_5" /></combine2>
+<add name="kc_7" type="vector2"><input name="in1" type="vector2" nodename="kc_6" /><input name="in2" type="vector2" value="5.3, 71.9" /></add>
+<cellnoise2d name="kc_id" type="float"><input name="texcoord" type="vector2" nodename="kc_7" /></cellnoise2d>
+<multiply name="kc_9" type="float"><input name="in1" type="float" nodename="kc_id" /><input name="in2" type="float" value="18.81" /></multiply>
+<add name="kc_10" type="float"><input name="in1" type="float" nodename="kc_9" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="kc_11" type="float"><input name="in" type="float" nodename="kc_10" /></fract>
+<ifgreater name="kc_on" type="float"><input name="value1" type="float" nodename="kc_11" /><input name="value2" type="float" value="0.6" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<absval name="kc_13" type="float"><input name="in" type="float" nodename="kc_f" /></absval>
+<smoothstep name="kc_14" type="float"><input name="in" type="float" nodename="kc_13" /><input name="low" type="float" value="0.33" /><input name="high" type="float" value="0.5" /></smoothstep>
+<subtract name="kc_15" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="kc_14" /></subtract>
+<multiply name="kc_onw" type="float"><input name="in1" type="float" nodename="kc_on" /><input name="in2" type="float" nodename="kc_15" /></multiply>
+<multiply name="kc_17" type="float"><input name="in1" type="float" nodename="kc_id" /><input name="in2" type="float" value="39.963" /></multiply>
+<add name="kc_18" type="float"><input name="in1" type="float" nodename="kc_17" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="kc_19" type="float"><input name="in" type="float" nodename="kc_18" /></fract>
+<multiply name="kc_20" type="float"><input name="in1" type="float" nodename="kc_19" /><input name="in2" type="float" value="0.006" /></multiply>
+<add name="kc_r" type="float"><input name="in1" type="float" nodename="kc_20" /><input name="in2" type="float" value="0.005" /></add>
+<multiply name="kc_r2" type="float"><input name="in1" type="float" nodename="kc_r" /><input name="in2" type="float" nodename="kc_r" /></multiply>
+<separate2 name="kc_ls" type="multioutput"><input name="in" type="vector2" nodename="pk_loc" /></separate2>
+<multiply name="kc_24" type="float"><input name="in1" type="float" nodename="kc_id" /><input name="in2" type="float" value="65.637" /></multiply>
+<add name="kc_25" type="float"><input name="in1" type="float" nodename="kc_24" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="kc_26" type="float"><input name="in" type="float" nodename="kc_25" /></fract>
+<subtract name="kc_27" type="float"><input name="in1" type="float" nodename="kc_26" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="kc_28" type="float"><input name="in1" type="float" nodename="kc_27" /><input name="in2" type="float" value="0.4" /></multiply>
+<subtract name="kc_29" type="float"><input name="in1" type="float" nodename="kc_f" /><input name="in2" type="float" nodename="kc_28" /></subtract>
+<multiply name="kc_30" type="float"><input name="in1" type="float" nodename="kc_29" /><input name="in2" type="float" value="0.4" /></multiply>
+<multiply name="kc_31" type="float"><input name="in1" type="float" nodename="kc_id" /><input name="in2" type="float" value="97.722" /></multiply>
+<add name="kc_32" type="float"><input name="in1" type="float" nodename="kc_31" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="kc_33" type="float"><input name="in" type="float" nodename="kc_32" /></fract>
+<subtract name="kc_34" type="float"><input name="in1" type="float" nodename="kc_33" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="kc_35" type="float"><input name="in1" type="float" nodename="kc_34" /><input name="in2" type="float" value="0.08" /></multiply>
+<subtract name="kc_qy" type="float"><input name="in1" type="float" nodename="kc_ls" output="outy" /><input name="in2" type="float" nodename="kc_35" /></subtract>
+<combine2 name="kc_q" type="vector2"><input name="in1" type="float" nodename="kc_30" /><input name="in2" type="float" nodename="kc_qy" /></combine2>
+<multiply name="kc_qa" type="vector2"><input name="in1" type="vector2" nodename="kc_q" /><input name="in2" type="vector2" value="0.7, 1.0" /></multiply>
+<dotproduct name="kc_39" type="float"><input name="in1" type="vector2" nodename="kc_qa" /><input name="in2" type="vector2" nodename="kc_qa" /></dotproduct>
+<add name="kc_40" type="float"><input name="in1" type="float" nodename="kc_39" /><input name="in2" type="float" nodename="kc_r2" /></add>
+<divide name="kc_41" type="float"><input name="in1" type="float" nodename="kc_r2" /><input name="in2" type="float" nodename="kc_40" /></divide>
+<multiply name="kc_42" type="float"><input name="in1" type="float" nodename="kc_onw" /><input name="in2" type="float" value="0.004" /></multiply>
+<multiply name="wk_bump" type="float"><input name="in1" type="float" nodename="kc_41" /><input name="in2" type="float" nodename="kc_42" /></multiply>
+<multiply name="kc_qe" type="vector2"><input name="in1" type="vector2" nodename="kc_q" /><input name="in2" type="vector2" value="0.4, 1.0" /></multiply>
+<multiply name="kc_45" type="float"><input name="in1" type="float" nodename="kc_r2" /><input name="in2" type="float" value="1.6" /></multiply>
+<dotproduct name="kc_46" type="float"><input name="in1" type="vector2" nodename="kc_qe" /><input name="in2" type="vector2" nodename="kc_qe" /></dotproduct>
+<add name="kc_47" type="float"><input name="in1" type="float" nodename="kc_46" /><input name="in2" type="float" nodename="kc_r2" /></add>
+<divide name="kc_48" type="float"><input name="in1" type="float" nodename="kc_45" /><input name="in2" type="float" nodename="kc_47" /></divide>
+<multiply name="kc_def" type="float"><input name="in1" type="float" nodename="kc_48" /><input name="in2" type="float" nodename="kc_onw" /></multiply>
+<multiply name="kc_50" type="float"><input name="in1" type="float" nodename="kc_qy" /><input name="in2" type="float" nodename="kc_def" /></multiply>
+<combine2 name="kc_51" type="vector2"><input name="in1" type="float" value="0.0" /><input name="in2" type="float" nodename="kc_50" /></combine2>
+<subtract name="wk_loc" type="vector2"><input name="in1" type="vector2" nodename="pk_loc" /><input name="in2" type="vector2" nodename="kc_51" /></subtract>
+<magnitude name="kc_rho" type="float"><input name="in" type="vector2" nodename="kc_qa" /></magnitude>
+<multiply name="kc_54" type="float"><input name="in1" type="float" nodename="kc_r" /><input name="in2" type="float" value="0.85" /></multiply>
+<smoothstep name="kc_55" type="float"><input name="in" type="float" nodename="kc_rho" /><input name="low" type="float" nodename="kc_54" /><input name="high" type="float" nodename="kc_r" /></smoothstep>
+<subtract name="kc_56" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="kc_55" /></subtract>
+<multiply name="wk_core" type="float"><input name="in1" type="float" nodename="kc_56" /><input name="in2" type="float" nodename="kc_on" /></multiply>
+<multiply name="kc_58" type="float"><input name="in1" type="float" nodename="kc_r" /><input name="in2" type="float" value="0.8" /></multiply>
+<multiply name="kc_59" type="float"><input name="in1" type="float" nodename="kc_r" /><input name="in2" type="float" value="0.95" /></multiply>
+<smoothstep name="kc_60" type="float"><input name="in" type="float" nodename="kc_rho" /><input name="low" type="float" nodename="kc_58" /><input name="high" type="float" nodename="kc_59" /></smoothstep>
+<multiply name="kc_61" type="float"><input name="in1" type="float" nodename="kc_r" /><input name="in2" type="float" value="1.2" /></multiply>
+<smoothstep name="kc_62" type="float"><input name="in" type="float" nodename="kc_rho" /><input name="low" type="float" nodename="kc_r" /><input name="high" type="float" nodename="kc_61" /></smoothstep>
+<subtract name="kc_63" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="kc_62" /></subtract>
+<multiply name="kc_64" type="float"><input name="in1" type="float" nodename="kc_60" /><input name="in2" type="float" nodename="kc_63" /></multiply>
+<multiply name="wk_rim" type="float"><input name="in1" type="float" nodename="kc_64" /><input name="in2" type="float" nodename="kc_on" /></multiply>
+<multiply name="kc_66" type="vector2"><input name="in1" type="vector2" nodename="pk_loc" /><input name="in2" type="vector2" value="90.0, 140.0" /></multiply>
+<add name="kc_67" type="vector2"><input name="in1" type="vector2" nodename="kc_66" /><input name="in2" type="vector2" value="8.8, 3.1" /></add>
+<fractal2d name="kc_wob" type="float"><input name="texcoord" type="vector2" nodename="kc_67" /><input name="amplitude" type="float" value="0.0012" /><input name="octaves" type="integer" value="2" /></fractal2d>
+<add name="kc_69" type="float"><input name="in1" type="float" nodename="kc_rho" /><input name="in2" type="float" nodename="kc_wob" /></add>
+<divide name="kc_70" type="float"><input name="in1" type="float" nodename="kc_69" /><input name="in2" type="float" value="0.004" /></divide>
+<fract name="kc_71" type="float"><input name="in" type="float" nodename="kc_70" /></fract>
+<subtract name="kc_72" type="float"><input name="in1" type="float" nodename="kc_71" /><input name="in2" type="float" value="0.5" /></subtract>
+<absval name="kc_73" type="float"><input name="in" type="float" nodename="kc_72" /></absval>
+<smoothstep name="kc_74" type="float"><input name="in" type="float" nodename="kc_73" /><input name="low" type="float" value="0.22" /><input name="high" type="float" value="0.42" /></smoothstep>
+<subtract name="kc_ring" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="kc_74" /></subtract>
+<multiply name="kc_76" type="float"><input name="in1" type="float" nodename="kc_r" /><input name="in2" type="float" value="0.9" /></multiply>
+<multiply name="kc_77" type="float"><input name="in1" type="float" nodename="kc_r" /><input name="in2" type="float" value="1.1" /></multiply>
+<smoothstep name="kc_78" type="float"><input name="in" type="float" nodename="kc_rho" /><input name="low" type="float" nodename="kc_76" /><input name="high" type="float" nodename="kc_77" /></smoothstep>
+<multiply name="kc_79" type="float"><input name="in1" type="float" nodename="kc_r" /><input name="in2" type="float" value="1.4" /></multiply>
+<multiply name="kc_80" type="float"><input name="in1" type="float" nodename="kc_r" /><input name="in2" type="float" value="2.6" /></multiply>
+<smoothstep name="kc_81" type="float"><input name="in" type="float" nodename="kc_rho" /><input name="low" type="float" nodename="kc_79" /><input name="high" type="float" nodename="kc_80" /></smoothstep>
+<subtract name="kc_82" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="kc_81" /></subtract>
+<multiply name="kc_83" type="float"><input name="in1" type="float" nodename="kc_78" /><input name="in2" type="float" nodename="kc_82" /></multiply>
+<multiply name="kc_swirl" type="float"><input name="in1" type="float" nodename="kc_83" /><input name="in2" type="float" nodename="kc_onw" /></multiply>

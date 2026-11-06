@@ -1,0 +1,41 @@
+<!-- in: uv, uv_sep. out: rn_streak (0..1; colour and roughness only). Rain streaks down the wall (-V): zero contours |n| < w*presence of noise stretched along V, on a texcoord whose u wavers slowly (6 mm at 2 x 5 /m, s 0.03). Thin family 22 x 0.8 /m: lines ~5 cm apart, 8..12 mm wide, 30..80 cm long; broad washes 6.5 x 0.55 /m, 3..5 cm wide; intensity varies along each streak. Soft stains fade their intensity with the presence as well as the threshold: a threshold-only taper (right for cracks) ends every streak in a sharp grass-blade point -->
+<multiply name="rn_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="2.0, 5.0" /></multiply>
+<add name="rn_2" type="vector2"><input name="in1" type="vector2" nodename="rn_1" /><input name="in2" type="vector2" value="3.1, 7.7" /></add>
+<noise2d name="rn_3" type="float"><input name="texcoord" type="vector2" nodename="rn_2" /><input name="amplitude" type="float" value="0.006" /></noise2d>
+<add name="rn_4" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" nodename="rn_3" /></add>
+<combine2 name="rn_uvs" type="vector2"><input name="in1" type="float" nodename="rn_4" /><input name="in2" type="float" nodename="uv_sep" output="outy" /></combine2>
+<multiply name="rn_6" type="vector2"><input name="in1" type="vector2" nodename="rn_uvs" /><input name="in2" type="vector2" value="22.0, 0.8" /></multiply>
+<add name="rn_7" type="vector2"><input name="in1" type="vector2" nodename="rn_6" /><input name="in2" type="vector2" value="5.3, 1.9" /></add>
+<fractal2d name="rn_8" type="float"><input name="texcoord" type="vector2" nodename="rn_7" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<absval name="rn_9" type="float"><input name="in" type="float" nodename="rn_8" /></absval>
+<multiply name="rn_10" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="5.0, 1.0" /></multiply>
+<add name="rn_11" type="vector2"><input name="in1" type="vector2" nodename="rn_10" /><input name="in2" type="vector2" value="8.7, 3.4" /></add>
+<noise2d name="rn_12" type="float"><input name="texcoord" type="vector2" nodename="rn_11" /></noise2d>
+<smoothstep name="rn_presa" type="float"><input name="in" type="float" nodename="rn_12" /><input name="low" type="float" value="-0.05" /><input name="high" type="float" value="0.35" /></smoothstep>
+<multiply name="rn_14" type="float"><input name="in1" type="float" nodename="rn_presa" /><input name="in2" type="float" value="0.15" /></multiply>
+<subtract name="rn_15" type="float"><input name="in1" type="float" nodename="rn_14" /><input name="in2" type="float" nodename="rn_9" /></subtract>
+<smoothstep name="rn_16" type="float"><input name="in" type="float" nodename="rn_15" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.135" /></smoothstep>
+<smoothstep name="rn_17" type="float"><input name="in" type="float" nodename="rn_presa" /><input name="low" type="float" value="0.05" /><input name="high" type="float" value="0.6" /></smoothstep>
+<multiply name="rn_sa" type="float"><input name="in1" type="float" nodename="rn_16" /><input name="in2" type="float" nodename="rn_17" /></multiply>
+<multiply name="rn_19" type="vector2"><input name="in1" type="vector2" nodename="rn_uvs" /><input name="in2" type="vector2" value="6.5, 0.55" /></multiply>
+<add name="rn_20" type="vector2"><input name="in1" type="vector2" nodename="rn_19" /><input name="in2" type="vector2" value="41.3, 12.8" /></add>
+<fractal2d name="rn_21" type="float"><input name="texcoord" type="vector2" nodename="rn_20" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<absval name="rn_22" type="float"><input name="in" type="float" nodename="rn_21" /></absval>
+<multiply name="rn_23" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="3.0, 0.8" /></multiply>
+<add name="rn_24" type="vector2"><input name="in1" type="vector2" nodename="rn_23" /><input name="in2" type="vector2" value="6.2, 29.1" /></add>
+<noise2d name="rn_25" type="float"><input name="texcoord" type="vector2" nodename="rn_24" /></noise2d>
+<smoothstep name="rn_presb" type="float"><input name="in" type="float" nodename="rn_25" /><input name="low" type="float" value="-0.05" /><input name="high" type="float" value="0.35" /></smoothstep>
+<multiply name="rn_27" type="float"><input name="in1" type="float" nodename="rn_presb" /><input name="in2" type="float" value="0.22" /></multiply>
+<subtract name="rn_28" type="float"><input name="in1" type="float" nodename="rn_27" /><input name="in2" type="float" nodename="rn_22" /></subtract>
+<smoothstep name="rn_29" type="float"><input name="in" type="float" nodename="rn_28" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.198" /></smoothstep>
+<smoothstep name="rn_30" type="float"><input name="in" type="float" nodename="rn_presb" /><input name="low" type="float" value="0.05" /><input name="high" type="float" value="0.6" /></smoothstep>
+<multiply name="rn_sb" type="float"><input name="in1" type="float" nodename="rn_29" /><input name="in2" type="float" nodename="rn_30" /></multiply>
+<multiply name="rn_32" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="9.0, 3.5" /></multiply>
+<add name="rn_33" type="vector2"><input name="in1" type="vector2" nodename="rn_32" /><input name="in2" type="vector2" value="8.8, 2.2" /></add>
+<noise2d name="rn_int" type="float"><input name="texcoord" type="vector2" nodename="rn_33" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.55" /></noise2d>
+<clamp name="rn_35" type="float"><input name="in" type="float" nodename="rn_int" /></clamp>
+<multiply name="rn_36" type="float"><input name="in1" type="float" nodename="rn_sa" /><input name="in2" type="float" nodename="rn_35" /></multiply>
+<multiply name="rn_37" type="float"><input name="in1" type="float" nodename="rn_36" /><input name="in2" type="float" value="0.7" /></multiply>
+<multiply name="rn_38" type="float"><input name="in1" type="float" nodename="rn_sb" /><input name="in2" type="float" value="0.45" /></multiply>
+<add name="rn_39" type="float"><input name="in1" type="float" nodename="rn_37" /><input name="in2" type="float" nodename="rn_38" /></add>
+<clamp name="rn_streak" type="float"><input name="in" type="float" nodename="rn_39" /></clamp>

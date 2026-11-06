@@ -1,0 +1,11 @@
+<!-- in: pn_ph, pn_sp, pn_fade. out: er_fig (1 soft earlywood trough .. 0 latewood ridge, faded to 0.5), h_erode (m). Weathered, eroded earlywood (barnwood): er_t = fract(phase + 0.24) is 0 at the pine latewood centre, and the profile 1 - smoothstep(|er_t - 0.5|, 0.15, 0.4) leaves a narrow rounded ridge and a wide trough. Depth 0.15 x ring pitch (~1..1.6 mm); the ring phase is read once -->
+<add name="er_1" type="float"><input name="in1" type="float" nodename="pn_ph" /><input name="in2" type="float" value="0.24" /></add>
+<fract name="er_2" type="float"><input name="in" type="float" nodename="er_1" /></fract>
+<subtract name="er_3" type="float"><input name="in1" type="float" nodename="er_2" /><input name="in2" type="float" value="0.5" /></subtract>
+<absval name="er_tw" type="float"><input name="in" type="float" nodename="er_3" /></absval>
+<smoothstep name="er_5" type="float"><input name="in" type="float" nodename="er_tw" /><input name="low" type="float" value="0.15" /><input name="high" type="float" value="0.4" /></smoothstep>
+<subtract name="er_6" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="er_5" /></subtract>
+<mix name="er_fig" type="float"><input name="bg" type="float" value="0.5" /><input name="fg" type="float" nodename="er_6" /><input name="mix" type="float" nodename="pn_fade" /></mix>
+<subtract name="er_8" type="float"><input name="in1" type="float" nodename="er_fig" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="er_9" type="float"><input name="in1" type="float" nodename="pn_sp" /><input name="in2" type="float" value="-0.15" /></multiply>
+<multiply name="h_erode" type="float"><input name="in1" type="float" nodename="er_8" /><input name="in2" type="float" nodename="er_9" /></multiply>

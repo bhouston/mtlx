@@ -1,0 +1,27 @@
+<!-- in: uv, uv_w (warped uv, m). out: tc_e (true distance to the Voronoi border, cells), tc_id (parent cell id), tc_crack (0..1). 5 cells/m; F2-F1 divided by its finite-difference gradient (step 0.01 cell), so width = 2*t/f m everywhere: here up to 1 mm, tapered by presence -->
+<multiply name="tc_p" type="vector2"><input name="in1" type="vector2" nodename="uv_w" /><input name="in2" type="float" value="5" /></multiply>
+<add name="tc_px" type="vector2"><input name="in1" type="vector2" nodename="tc_p" /><input name="in2" type="vector2" value="0.01, 0" /></add>
+<add name="tc_py" type="vector2"><input name="in1" type="vector2" nodename="tc_p" /><input name="in2" type="vector2" value="0, 0.01" /></add>
+<worleynoise2d name="tc_w" type="vector2"><input name="texcoord" type="vector2" nodename="tc_p" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<worleynoise2d name="tc_wx" type="vector2"><input name="texcoord" type="vector2" nodename="tc_px" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<worleynoise2d name="tc_wy" type="vector2"><input name="texcoord" type="vector2" nodename="tc_py" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<worleynoise2d name="tc_id" type="float"><input name="texcoord" type="vector2" nodename="tc_p" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<dotproduct name="tc_e0" type="float"><input name="in1" type="vector2" nodename="tc_w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<dotproduct name="tc_ex" type="float"><input name="in1" type="vector2" nodename="tc_wx" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<dotproduct name="tc_ey" type="float"><input name="in1" type="vector2" nodename="tc_wy" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<subtract name="tc_gx" type="float"><input name="in1" type="float" nodename="tc_ex" /><input name="in2" type="float" nodename="tc_e0" /></subtract>
+<subtract name="tc_gy" type="float"><input name="in1" type="float" nodename="tc_ey" /><input name="in2" type="float" nodename="tc_e0" /></subtract>
+<combine2 name="tc_g" type="vector2"><input name="in1" type="float" nodename="tc_gx" /><input name="in2" type="float" nodename="tc_gy" /></combine2>
+<magnitude name="tc_gm0" type="float"><input name="in" type="vector2" nodename="tc_g" /></magnitude>
+<multiply name="tc_gm1" type="float"><input name="in1" type="float" nodename="tc_gm0" /><input name="in2" type="float" value="100" /></multiply>
+<max name="tc_gm" type="float"><input name="in1" type="float" nodename="tc_gm1" /><input name="in2" type="float" value="0.3" /></max>
+<divide name="tc_e" type="float"><input name="in1" type="float" nodename="tc_e0" /><input name="in2" type="float" nodename="tc_gm" /></divide>
+<multiply name="tc_mp" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="2.5" /></multiply>
+<noise2d name="tc_m0" type="float"><input name="texcoord" type="vector2" nodename="tc_mp" /><input name="amplitude" type="float" value="0.5" /><input name="pivot" type="float" value="0.5" /></noise2d>
+<smoothstep name="tc_m" type="float"><input name="in" type="float" nodename="tc_m0" /><input name="low" type="float" value="0.3" /><input name="high" type="float" value="0.55" /></smoothstep>
+<multiply name="tc_t0" type="float"><input name="in1" type="float" nodename="tc_m" /><input name="in2" type="float" value="0.0025" /></multiply>
+<max name="tc_t" type="float"><input name="in1" type="float" nodename="tc_t0" /><input name="in2" type="float" value="0.0001" /></max>
+<smoothstep name="tc_s" type="float"><input name="in" type="float" nodename="tc_e" /><input name="low" type="float" value="0" /><input name="high" type="float" nodename="tc_t" /></smoothstep>
+<subtract name="tc_line" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="tc_s" /></subtract>
+<smoothstep name="tc_gate" type="float"><input name="in" type="float" nodename="tc_t0" /><input name="low" type="float" value="0.0002" /><input name="high" type="float" value="0.0006" /></smoothstep>
+<multiply name="tc_crack" type="float"><input name="in1" type="float" nodename="tc_line" /><input name="in2" type="float" nodename="tc_gate" /></multiply>

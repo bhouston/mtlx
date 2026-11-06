@@ -149,8 +149,8 @@ export const cloneMaterialXDocument = (document: ReadonlyMaterialXDocument): Mat
  * *Parses MaterialX XML text into a {@link MaterialXDocument}.*
  *
  * Preserves ordered elements, explicit attributes, text and comments semantically.
- * Source whitespace, quote style and XML declarations are not preserved byte-for-byte. Throws with line and column on malformed XML
- * or a missing `<materialx>` root.
+ * Source whitespace, quote style and XML declarations are not preserved byte-for-byte. Throws with line and column on malformed XML,
+ * a missing `<materialx>` root, or comments outside that root.
  *
  * Example:
  *
@@ -172,7 +172,12 @@ export const parseMaterialX = (xml: string, limits?: Partial<MaterialXReadLimits
     throw new Error(`Invalid MaterialX XML at line ${line}, column ${col}: ${msg}`);
   }
 
-  const roots = parseOrdered(parser.parse(xml) as XmlRecord[]).filter((entry) => !entry.name.startsWith('#'));
+  const topLevel = parseOrdered(parser.parse(xml) as XmlRecord[]);
+  // MaterialXView renders documents with comments outside the root black.
+  if (topLevel.some((entry) => entry.name === '#comment')) {
+    throw new Error('Invalid MaterialX XML: comments must be inside the <materialx> root');
+  }
+  const roots = topLevel.filter((entry) => !entry.name.startsWith('#'));
   const root = roots[0];
   if (roots.length !== 1 || root?.name !== 'materialx') {
     throw new Error('Invalid MaterialX XML: missing <materialx> root');

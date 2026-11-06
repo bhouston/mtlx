@@ -9,8 +9,6 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
 
-    "typeRoots": ["${configDir}/node_modules/@types"],
-
     "forceConsistentCasingInFileNames": true,
 
     "strictFunctionTypes": true,

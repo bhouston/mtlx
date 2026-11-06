@@ -149,12 +149,12 @@ function HomePage() {
                 VS Code Extension
               </Link>
             </CardTitle>
-            <CardDescription>Preview, inspect, and convert MaterialX files right in the editor.</CardDescription>
+            <CardDescription>Live 3D previews, node graphs, and validation, right inside VS Code.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-1 flex-col gap-3">
             <img
-              src="/extension.webp"
-              alt="Mtlx Viewer extension screenshot"
+              src="/extension.gif"
+              alt="Mtlx Viewer switching between the 3D preview and the node graph"
               className="aspect-video rounded-md border border-border bg-muted object-contain"
             />
             <PackageLinks github="https://github.com/bhouston/mtlx/blob/main/packages/vscode-extension/README.md" />

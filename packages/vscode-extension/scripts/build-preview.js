@@ -26,20 +26,20 @@ await esbuild.build({
   target: 'es2020',
   minify: true,
   sourcemap: false,
-  // Inline the shared studio IBL PNG (from mtlx-viewer) as a data URL, same as three.js itself
-  // is bundled into this file — no separate asset file for the webview to fetch under CSP.
+  // Inline small image resources so they require no separate webview fetch under CSP.
   loader: { '.png': 'dataurl' },
   define: {
     'process.env.NODE_ENV': '"production"',
   },
 });
 
-// The shaderball ("totem" geometry, ~1.4MB) is too big to inline as a data URL like the studio
-// PNG — copied alongside preview.js instead, read as bytes by the extension host (same as the
-// document itself) and sent over postMessage, no separate webview fetch/CSP needed.
-const websiteAssets = join(root, '..', 'website', 'public', 'viewer-assets');
-copyFileSync(join(websiteAssets, 'shaderball.glb'), join(outDir, 'shaderball.glb'));
+// The shaderball ("totem" geometry, ~1.4MB) is read by the extension host and sent
+// over postMessage alongside the document, requiring no separate webview fetch.
+const staticAssets = join(root, '..', 'static-assets', 'public', 'viewer');
+copyFileSync(join(staticAssets, 'shaderball.glb'), join(outDir, 'shaderball.glb'));
 
 console.log('Built preview.js');
 
-copyFileSync(join(websiteAssets, 'default-environment.hdr'), join(outDir, 'default-environment.hdr'));
+copyFileSync(join(staticAssets, 'default-environment.hdr'), join(outDir, 'default-environment.hdr'));
+
+copyFileSync(join(root, '..', 'viewer', 'LICENSE.model-viewer'), join(outDir, 'LICENSE.model-viewer'));

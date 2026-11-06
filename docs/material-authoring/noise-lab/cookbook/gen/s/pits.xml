@@ -1,0 +1,15 @@
+<!-- in: uv. out: h_pits (m), p_bowl (0..1 pit mask). 30 cells/m, jitter 0.7, r = 0.05..0.15 cell, 35% of cells empty, depth r/4 (~27 deg rim) -->
+<multiply name="uv_p" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="30" /></multiply>
+<worleynoise2d name="p_f1" type="float"><input name="texcoord" type="vector2" nodename="uv_p" /><input name="jitter" type="float" value="0.7" /></worleynoise2d>
+<worleynoise2d name="p_id" type="float"><input name="texcoord" type="vector2" nodename="uv_p" /><input name="jitter" type="float" value="0.7" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<ifgreater name="p_on" type="float"><input name="value1" type="float" nodename="p_id" /><input name="value2" type="float" value="0.35" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+<multiply name="p_r0" type="float"><input name="in1" type="float" nodename="p_id" /><input name="in2" type="float" value="0.154" /></multiply>
+<subtract name="p_r1" type="float"><input name="in1" type="float" nodename="p_r0" /><input name="in2" type="float" value="0.004" /></subtract>
+<multiply name="p_r2" type="float"><input name="in1" type="float" nodename="p_r1" /><input name="in2" type="float" nodename="p_on" /></multiply>
+<add name="p_r" type="float"><input name="in1" type="float" nodename="p_r2" /><input name="in2" type="float" value="0.0001" /></add>
+<divide name="p_t" type="float"><input name="in1" type="float" nodename="p_f1" /><input name="in2" type="float" nodename="p_r" /></divide>
+<multiply name="p_t2" type="float"><input name="in1" type="float" nodename="p_t" /><input name="in2" type="float" nodename="p_t" /></multiply>
+<subtract name="p_b0" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="p_t2" /></subtract>
+<max name="p_bowl" type="float"><input name="in1" type="float" nodename="p_b0" /><input name="in2" type="float" value="0" /></max>
+<multiply name="p_depth" type="float"><input name="in1" type="float" nodename="p_r" /><input name="in2" type="float" value="-0.0083" /></multiply>
+<multiply name="h_pits" type="float"><input name="in1" type="float" nodename="p_bowl" /><input name="in2" type="float" nodename="p_depth" /></multiply>

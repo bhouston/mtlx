@@ -24,11 +24,11 @@ export function getPreviewHtml(
   <meta http-equiv="Content-Security-Policy" content="${csp}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mtlx Viewer</title>
-  <link rel="stylesheet" href="${styleUri}">
+  <link rel="stylesheet" href="${styleUri.toString()}">
 </head>
-<body data-hdr-url="${environmentUri}">
+<body data-hdr-url="${environmentUri.toString()}">
   <div id="root"></div>
-  <script src="${scriptUri}"></script>
+  <script src="${scriptUri.toString()}"></script>
 </body>
 </html>`;
 }

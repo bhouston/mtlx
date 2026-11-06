@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materialx version="1.39" colorspace="lin_rec709" doc="Beige with warm flecks; opaque mineral-resin composite with fine granular texture and low sheen. Recipe: grains. glaze ripple 8 mm, &lt;1 micrometre height; enamel orange peel 5.6 mm/6 micrometres; resin flecks 0.95 mm. Subsurface scattering is an effective homogeneous approximation; renderer support varies. All colors are art-directed scene-linear Rec.709, not calibrated manufacturer measurements. UV 0–1 = 1 metre; height in metres. Relief is filtered surface appearance, not silhouette geometry.">
+  <nodegraph name="NG_graniteResinCompositeBeige">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="grains_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="400, 400" />
+    </multiply>
+    <rotate2d name="grains_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="grains_scale" />
+      <input name="amount" type="float" value="17" />
+    </rotate2d>
+    <add name="grains_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="grains_rotate" />
+      <input name="in2" type="vector2" value="21.3, 7.9" />
+    </add>
+    <worleynoise2d name="grains_distance" type="float">
+      <input name="texcoord" type="vector2" nodename="grains_offset" />
+      <input name="jitter" type="float" value="0.6" />
+    </worleynoise2d>
+    <smoothstep name="grains_edge" type="float">
+      <input name="in" type="float" nodename="grains_distance" />
+      <input name="low" type="float" value="0.025" />
+      <input name="high" type="float" value="0.19" />
+    </smoothstep>
+    <subtract name="grains" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="grains_edge" />
+    </subtract>
+    <multiply name="grain_height" type="float">
+      <input name="in1" type="float" nodename="grains" />
+      <input name="in2" type="float" value="1.5e-05" />
+    </multiply>
+    <multiply name="fine_grains_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="572, 572" />
+    </multiply>
+    <rotate2d name="fine_grains_rotate" type="vector2">
+      <input name="in" type="vector2" nodename="fine_grains_scale" />
+      <input name="amount" type="float" value="17" />
+    </rotate2d>
+    <add name="fine_grains_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="fine_grains_rotate" />
+      <input name="in2" type="vector2" value="21.3, 7.9" />
+    </add>
+    <worleynoise2d name="fine_grains_distance" type="float">
+      <input name="texcoord" type="vector2" nodename="fine_grains_offset" />
+      <input name="jitter" type="float" value="0.6" />
+    </worleynoise2d>
+    <smoothstep name="fine_grains_edge" type="float">
+      <input name="in" type="float" nodename="fine_grains_distance" />
+      <input name="low" type="float" value="0.025" />
+      <input name="high" type="float" value="0.18" />
+    </smoothstep>
+    <subtract name="fine_grains" type="float">
+      <input name="in1" type="float" value="1" />
+      <input name="in2" type="float" nodename="fine_grains_edge" />
+    </subtract>
+    <multiply name="fine_height" type="float">
+      <input name="in1" type="float" nodename="fine_grains" />
+      <input name="in2" type="float" value="4.5e-06" />
+    </multiply>
+    <add name="granular_height" type="float">
+      <input name="in1" type="float" nodename="grain_height" />
+      <input name="in2" type="float" nodename="fine_height" />
+    </add>
+    <max name="grain_mask" type="float">
+      <input name="in1" type="float" nodename="grains" />
+      <input name="in2" type="float" nodename="fine_grains" />
+    </max>
+    <mix name="base_color" type="color3">
+      <input name="bg" type="color3" value="0.57, 0.46, 0.3" />
+      <input name="fg" type="color3" value="0.13, 0.14, 0.14" />
+      <input name="mix" type="float" nodename="grain_mask" />
+    </mix>
+    <mix name="roughness" type="float">
+      <input name="bg" type="float" value="0.53" />
+      <input name="fg" type="float" value="0.59" />
+      <input name="mix" type="float" nodename="grain_mask" />
+    </mix>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="granular_height" />
+      <input name="in2" type="float" value="0" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="base" type="float">
+      <input name="value" type="float" value="1" />
+    </constant>
+    <constant name="specular" type="float">
+      <input name="value" type="float" value="0.5" />
+    </constant>
+    <constant name="specular_IOR" type="float">
+      <input name="value" type="float" value="1.5" />
+    </constant>
+    <constant name="diffuse_roughness" type="float">
+      <input name="value" type="float" value="0.25" />
+    </constant>
+    <constant name="subsurface" type="float">
+      <input name="value" type="float" value="0.035" />
+    </constant>
+    <constant name="subsurface_scale" type="float">
+      <input name="value" type="float" value="0.0005" />
+    </constant>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+    <output name="out_base" type="float" nodename="base" />
+    <output name="out_specular" type="float" nodename="specular" />
+    <output name="out_specular_IOR" type="float" nodename="specular_IOR" />
+    <output name="out_diffuse_roughness" type="float" nodename="diffuse_roughness" />
+    <output name="out_subsurface" type="float" nodename="subsurface" />
+    <output name="out_subsurface_scale" type="float" nodename="subsurface_scale" />
+  </nodegraph>
+  <standard_surface name="SR_graniteResinCompositeBeige" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_graniteResinCompositeBeige" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_graniteResinCompositeBeige" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_graniteResinCompositeBeige" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_graniteResinCompositeBeige" output="out_normal" />
+    <input name="base" type="float" nodegraph="NG_graniteResinCompositeBeige" output="out_base" />
+    <input name="specular" type="float" nodegraph="NG_graniteResinCompositeBeige" output="out_specular" />
+    <input name="specular_IOR" type="float" nodegraph="NG_graniteResinCompositeBeige" output="out_specular_IOR" />
+    <input name="diffuse_roughness" type="float" nodegraph="NG_graniteResinCompositeBeige" output="out_diffuse_roughness" />
+    <input name="subsurface" type="float" nodegraph="NG_graniteResinCompositeBeige" output="out_subsurface" />
+    <input name="subsurface_scale" type="float" nodegraph="NG_graniteResinCompositeBeige" output="out_subsurface_scale" />
+  </standard_surface>
+  <surfacematerial name="M_graniteResinCompositeBeige" type="material" doc="Beige with warm flecks; opaque mineral-resin composite with fine granular texture and low sheen.">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_graniteResinCompositeBeige" />
+  </surfacematerial>
+</materialx>

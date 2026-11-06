@@ -1,0 +1,5 @@
+glassSwitchablePrivacyClear
+
+Switchable privacy glazing in its clear state; transparent laminate with slight residual haze and glossy glass reflections.
+
+Use for rendering switchable privacy partitions and glazing in the named clear or frosted visual state.

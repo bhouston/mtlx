@@ -1,0 +1,21 @@
+<!-- in: uv (x across the grain, y along; feed board-local coords for per-board patches). out: ws_late (0..1 latewood lines), ws_pore (0..1), ws_str (signed streaks). Straight or rift grain: fractal lines stretched ~380:1 (380 x 1 /m, lines ~1..3 mm apart), grouped by a slower 110 x 0.8 /m field, plus 60 x 1.5 /m streaks and oak pore dashes (cells 0.38 x 5.6 mm). Noise lines only speckle when sub-pixel; they never moire, so no fade is needed. The analytic ring fade does not work here: a quarter-sawn ring frequency is constant, so it fades everywhere or nowhere -->
+<multiply name="ws_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="60.0, 1.5" /></multiply>
+<add name="ws_2" type="vector2"><input name="in1" type="vector2" nodename="ws_1" /><input name="in2" type="vector2" value="3.1, 7.9" /></add>
+<fractal2d name="ws_str" type="float"><input name="texcoord" type="vector2" nodename="ws_2" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="2" /></fractal2d>
+<multiply name="ws_4" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="380.0, 1.0" /></multiply>
+<add name="ws_5" type="vector2"><input name="in1" type="vector2" nodename="ws_4" /><input name="in2" type="vector2" value="29.6, 15.2" /></add>
+<fractal2d name="ws_bnd" type="float"><input name="texcoord" type="vector2" nodename="ws_5" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="ws_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="110.0, 0.8" /></multiply>
+<add name="ws_8" type="vector2"><input name="in1" type="vector2" nodename="ws_7" /><input name="in2" type="vector2" value="5.2, 19.4" /></add>
+<fractal2d name="ws_grp" type="float"><input name="texcoord" type="vector2" nodename="ws_8" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<smoothstep name="ws_10" type="float"><input name="in" type="float" nodename="ws_bnd" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.22" /></smoothstep>
+<smoothstep name="ws_11" type="float"><input name="in" type="float" nodename="ws_grp" /><input name="low" type="float" value="-0.5" /><input name="high" type="float" value="0.1" /></smoothstep>
+<multiply name="ws_late" type="float"><input name="in1" type="float" nodename="ws_10" /><input name="in2" type="float" nodename="ws_11" /></multiply>
+<multiply name="ws_13" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="2600.0, 180.0" /></multiply>
+<add name="ws_14" type="vector2"><input name="in1" type="vector2" nodename="ws_13" /><input name="in2" type="vector2" value="0.37, 0.61" /></add>
+<worleynoise2d name="ws_f1" type="float"><input name="texcoord" type="vector2" nodename="ws_14" /><input name="jitter" type="float" value="1.0" /></worleynoise2d>
+<smoothstep name="ws_16" type="float"><input name="in" type="float" nodename="ws_f1" /><input name="low" type="float" value="0.1" /><input name="high" type="float" value="0.22" /></smoothstep>
+<subtract name="ws_17" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="ws_16" /></subtract>
+<multiply name="ws_18" type="float"><input name="in1" type="float" nodename="ws_late" /><input name="in2" type="float" value="0.8" /></multiply>
+<subtract name="ws_19" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="ws_18" /></subtract>
+<multiply name="ws_pore" type="float"><input name="in1" type="float" nodename="ws_17" /><input name="in2" type="float" nodename="ws_19" /></multiply>

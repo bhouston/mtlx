@@ -1,0 +1,46 @@
+<!-- in: uv. out: sw_swirl (0..1; roughness only, add ~0.07). Grinder swirls on polished concrete: partial arcs of fine scratches round jittered centres, one grid of 38 cm cells turned 17 deg (repeat the block on 1-2 more grids, e.g. 29 cm at -38 deg and 33 cm at 71 deg, and take the max); full rings read as a bullseye. Arcs ~2.5 mm apart radially between 0.12 and 0.4 cell; an angular gate (noise of the angle, per cell) keeps ~1/3 of each circle, 1 - smoothstep(|theta|, 2.7, 3.1) hides the atan2 seam at +-pi, and 75% of cells hold a swirl. Noise on polar coordinates is fractal2d octaves=1 (bug 6) -->
+<rotate2d name="sw_1" type="vector2"><input name="in" type="vector2" nodename="uv" /><input name="amount" type="float" value="17.0" /></rotate2d>
+<multiply name="sw_2" type="vector2"><input name="in1" type="vector2" nodename="sw_1" /><input name="in2" type="float" value="2.6316" /></multiply>
+<add name="sw_3" type="vector2"><input name="in1" type="vector2" nodename="sw_2" /><input name="in2" type="vector2" value="0.3, 0.7" /></add>
+<floor name="sw_fl0" type="vector2"><input name="in" type="vector2" nodename="sw_3" /></floor>
+<add name="sw_5" type="vector2"><input name="in1" type="vector2" nodename="sw_fl0" /><input name="in2" type="vector2" value="23.0, 11.0" /></add>
+<cellnoise2d name="sw_jx0" type="float"><input name="texcoord" type="vector2" nodename="sw_5" /></cellnoise2d>
+<add name="sw_7" type="vector2"><input name="in1" type="vector2" nodename="sw_fl0" /><input name="in2" type="vector2" value="5.0, 23.0" /></add>
+<cellnoise2d name="sw_8" type="float"><input name="texcoord" type="vector2" nodename="sw_7" /></cellnoise2d>
+<subtract name="sw_9" type="vector2"><input name="in1" type="vector2" nodename="sw_3" /><input name="in2" type="vector2" nodename="sw_fl0" /></subtract>
+<combine2 name="sw_10" type="vector2"><input name="in1" type="float" nodename="sw_jx0" /><input name="in2" type="float" nodename="sw_8" /></combine2>
+<subtract name="sw_11" type="vector2"><input name="in1" type="vector2" nodename="sw_10" /><input name="in2" type="vector2" value="0.5, 0.5" /></subtract>
+<multiply name="sw_12" type="vector2"><input name="in1" type="vector2" nodename="sw_11" /><input name="in2" type="float" value="0.2" /></multiply>
+<add name="sw_13" type="vector2"><input name="in1" type="vector2" nodename="sw_12" /><input name="in2" type="vector2" value="0.5, 0.5" /></add>
+<subtract name="sw_loc0" type="vector2"><input name="in1" type="vector2" nodename="sw_9" /><input name="in2" type="vector2" nodename="sw_13" /></subtract>
+<magnitude name="sw_r0" type="float"><input name="in" type="vector2" nodename="sw_loc0" /></magnitude>
+<separate2 name="sw_ls0" type="multioutput"><input name="in" type="vector2" nodename="sw_loc0" /></separate2>
+<atan2 name="sw_th0" type="float"><input name="iny" type="float" nodename="sw_ls0" output="outy" /><input name="inx" type="float" nodename="sw_ls0" output="outx" /></atan2>
+<multiply name="sw_18" type="float"><input name="in1" type="float" nodename="sw_r0" /><input name="in2" type="float" value="152.0" /></multiply>
+<multiply name="sw_19" type="float"><input name="in1" type="float" nodename="sw_th0" /><input name="in2" type="float" value="2.2" /></multiply>
+<combine2 name="sw_20" type="vector2"><input name="in1" type="float" nodename="sw_18" /><input name="in2" type="float" nodename="sw_19" /></combine2>
+<multiply name="sw_21" type="vector2"><input name="in1" type="vector2" nodename="sw_20" /><input name="in2" type="float" value="1.0" /></multiply>
+<add name="sw_22" type="vector2"><input name="in1" type="vector2" nodename="sw_21" /><input name="in2" type="vector2" value="23.0, 3.3" /></add>
+<fractal2d name="sw_23" type="float"><input name="texcoord" type="vector2" nodename="sw_22" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<smoothstep name="sw_24" type="float"><input name="in" type="float" nodename="sw_23" /><input name="low" type="float" value="0.1" /><input name="high" type="float" value="0.5" /></smoothstep>
+<smoothstep name="sw_25" type="float"><input name="in" type="float" nodename="sw_r0" /><input name="low" type="float" value="0.12" /><input name="high" type="float" value="0.22" /></smoothstep>
+<smoothstep name="sw_26" type="float"><input name="in" type="float" nodename="sw_r0" /><input name="low" type="float" value="0.3" /><input name="high" type="float" value="0.4" /></smoothstep>
+<subtract name="sw_27" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="sw_26" /></subtract>
+<multiply name="sw_28" type="float"><input name="in1" type="float" nodename="sw_25" /><input name="in2" type="float" nodename="sw_27" /></multiply>
+<multiply name="sw_29" type="float"><input name="in1" type="float" nodename="sw_th0" /><input name="in2" type="float" value="1.1" /></multiply>
+<multiply name="sw_30" type="float"><input name="in1" type="float" nodename="sw_jx0" /><input name="in2" type="float" value="50.0" /></multiply>
+<combine2 name="sw_31" type="vector2"><input name="in1" type="float" nodename="sw_29" /><input name="in2" type="float" nodename="sw_30" /></combine2>
+<multiply name="sw_32" type="vector2"><input name="in1" type="vector2" nodename="sw_31" /><input name="in2" type="float" value="1.0" /></multiply>
+<add name="sw_33" type="vector2"><input name="in1" type="vector2" nodename="sw_32" /><input name="in2" type="vector2" value="0.0, 0.0" /></add>
+<fractal2d name="sw_34" type="float"><input name="texcoord" type="vector2" nodename="sw_33" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<smoothstep name="sw_35" type="float"><input name="in" type="float" nodename="sw_34" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.25" /></smoothstep>
+<absval name="sw_36" type="float"><input name="in" type="float" nodename="sw_th0" /></absval>
+<smoothstep name="sw_37" type="float"><input name="in" type="float" nodename="sw_36" /><input name="low" type="float" value="2.7" /><input name="high" type="float" value="3.1" /></smoothstep>
+<subtract name="sw_38" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="sw_37" /></subtract>
+<add name="sw_39" type="vector2"><input name="in1" type="vector2" nodename="sw_fl0" /><input name="in2" type="vector2" value="23.0, 23.0" /></add>
+<cellnoise2d name="sw_40" type="float"><input name="texcoord" type="vector2" nodename="sw_39" /></cellnoise2d>
+<smoothstep name="sw_41" type="float"><input name="in" type="float" nodename="sw_40" /><input name="low" type="float" value="0.25" /><input name="high" type="float" value="0.4" /></smoothstep>
+<multiply name="sw_42" type="float"><input name="in1" type="float" nodename="sw_28" /><input name="in2" type="float" nodename="sw_35" /></multiply>
+<multiply name="sw_43" type="float"><input name="in1" type="float" nodename="sw_24" /><input name="in2" type="float" nodename="sw_42" /></multiply>
+<multiply name="sw_44" type="float"><input name="in1" type="float" nodename="sw_38" /><input name="in2" type="float" nodename="sw_41" /></multiply>
+<multiply name="sw_swirl" type="float"><input name="in1" type="float" nodename="sw_43" /><input name="in2" type="float" nodename="sw_44" /></multiply>

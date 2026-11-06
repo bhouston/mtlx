@@ -1,0 +1,3 @@
+<!-- in: fbm (signed). out: ridged = 0.5 - |fbm| (crests on the zero contours), billow = |fbm| (puffs, V-creases) -->
+<absval name="billow" type="float"><input name="in" type="float" nodename="fbm" /></absval>
+<subtract name="ridged" type="float"><input name="in1" type="float" value="0.5" /><input name="in2" type="float" nodename="billow" /></subtract>

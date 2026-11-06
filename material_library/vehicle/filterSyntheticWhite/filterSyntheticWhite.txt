@@ -1,0 +1,5 @@
+filterSyntheticWhite
+
+New white synthetic filter textile; fine random fibers and matte diffuse scattering.
+
+Use for rendering exposed synthetic filter media in cabin, equipment, or fluid-filter cutaways.

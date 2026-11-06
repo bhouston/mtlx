@@ -1,0 +1,5 @@
+hotMeltAdhesiveWhite
+
+New white hot-melt adhesive; opaque-to-milky waxy polymer with soft satin highlights.
+
+Use for rendering visible cured adhesive beads in trim, textile, and equipment assembly views.

@@ -1,0 +1,5 @@
+carpetLoopPileBlack
+
+black loop-pile carpet; small repeated yarn-loop texture, diffuse color, and low directional fiber sheen.
+
+Use for rendering loop-pile cabin carpets, floor mats, and luggage-area coverings.

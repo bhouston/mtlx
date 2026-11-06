@@ -1,0 +1,5 @@
+displayLcdActiveSurface
+
+Active LCD image-producing material; texture-driven color and backlit emission with a finite black level and angle-dependent contrast; specify luminance separately from the image.
+
+Use for rendering the powered image surface of an LCD instrument or infotainment display with an assigned image signal.

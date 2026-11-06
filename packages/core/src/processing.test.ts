@@ -67,7 +67,7 @@ describe('staged material processing', () => {
     await writeFile(input, '<materialx>');
     const result = await processMaterialX(input, path.join(dir, 'out.mtlx'));
     expect(result.success).toBe(false);
-    expect(result.errors[0].stage).toBe('parse');
+    expect(result.errors[0]!.stage).toBe('parse');
     expect(result.stages.slice(1).every((stage) => stage.status === 'skipped')).toBe(true);
     expect(await readdir(dir)).toEqual(['input.mtlx']);
   });
@@ -79,7 +79,7 @@ describe('staged material processing', () => {
       '<materialx version="1.39"><image name="image" type="color3"><input name="file" type="filename" value="missing.png"/></image></materialx>',
     );
     const result = await processMaterialX(input, path.join(dir, 'out.mtlx'));
-    expect(result.errors[0].stage).toBe('resolve');
+    expect(result.errors[0]!.stage).toBe('resolve');
     expect(await readdir(dir)).toEqual(['input.mtlx']);
   });
 
@@ -98,7 +98,7 @@ describe('staged material processing', () => {
       ],
     });
     expect(result.success).toBe(false);
-    expect(result.errors[0].stage).toBe('validate-output');
+    expect(result.errors[0]!.stage).toBe('validate-output');
     expect(result.changes).toEqual([]);
     expect(await readdir(dir)).toEqual(['input.mtlx']);
   });

@@ -1,0 +1,28 @@
+<!-- in: rg_loc, rg_cell (a grid layout). out: hm_d (m to a hand-cut, out-of-square outline, + inside), hm_c00..hm_c11 (one random per tile corner). Each corner is inset 0..1.2 mm on top of the grid grout; each edge interpolates its two corners, so edges tilt independently -->
+<multiply name="hm_k" type="vector2"><input name="in1" type="vector2" nodename="rg_cell" /><input name="in2" type="float" value="2" /></multiply>
+<add name="hm_s00" type="vector2"><input name="in1" type="vector2" nodename="hm_k" /><input name="in2" type="vector2" value="60.37, 20.61" /></add>
+<cellnoise2d name="hm_c00" type="float"><input name="texcoord" type="vector2" nodename="hm_s00" /></cellnoise2d>
+<add name="hm_s10" type="vector2"><input name="in1" type="vector2" nodename="hm_k" /><input name="in2" type="vector2" value="61.37, 20.61" /></add>
+<cellnoise2d name="hm_c10" type="float"><input name="texcoord" type="vector2" nodename="hm_s10" /></cellnoise2d>
+<add name="hm_s01" type="vector2"><input name="in1" type="vector2" nodename="hm_k" /><input name="in2" type="vector2" value="60.37, 21.61" /></add>
+<cellnoise2d name="hm_c01" type="float"><input name="texcoord" type="vector2" nodename="hm_s01" /></cellnoise2d>
+<add name="hm_s11" type="vector2"><input name="in1" type="vector2" nodename="hm_k" /><input name="in2" type="vector2" value="61.37, 21.61" /></add>
+<cellnoise2d name="hm_c11" type="float"><input name="texcoord" type="vector2" nodename="hm_s11" /></cellnoise2d>
+<divide name="hm_st0" type="vector2"><input name="in1" type="vector2" nodename="rg_loc" /><input name="in2" type="vector2" value="0.153, 0.078" /></divide>
+<add name="hm_st" type="vector2"><input name="in1" type="vector2" nodename="hm_st0" /><input name="in2" type="vector2" value="0.5, 0.5" /></add>
+<separate2 name="hm_sts" type="multioutput"><input name="in" type="vector2" nodename="hm_st" /></separate2>
+<mix name="hm_il" type="float"><input name="bg" type="float" nodename="hm_c00" /><input name="fg" type="float" nodename="hm_c01" /><input name="mix" type="float" nodename="hm_sts" output="outy" /></mix>
+<mix name="hm_ir" type="float"><input name="bg" type="float" nodename="hm_c10" /><input name="fg" type="float" nodename="hm_c11" /><input name="mix" type="float" nodename="hm_sts" output="outy" /></mix>
+<mix name="hm_ib" type="float"><input name="bg" type="float" nodename="hm_c00" /><input name="fg" type="float" nodename="hm_c10" /><input name="mix" type="float" nodename="hm_sts" output="outx" /></mix>
+<mix name="hm_it" type="float"><input name="bg" type="float" nodename="hm_c01" /><input name="fg" type="float" nodename="hm_c11" /><input name="mix" type="float" nodename="hm_sts" output="outx" /></mix>
+<combine2 name="hm_ilb" type="vector2"><input name="in1" type="float" nodename="hm_il" /><input name="in2" type="float" nodename="hm_ib" /></combine2>
+<combine2 name="hm_irt" type="vector2"><input name="in1" type="float" nodename="hm_ir" /><input name="in2" type="float" nodename="hm_it" /></combine2>
+<multiply name="hm_lo0" type="vector2"><input name="in1" type="vector2" nodename="hm_ilb" /><input name="in2" type="float" value="0.0012" /></multiply>
+<multiply name="hm_hi0" type="vector2"><input name="in1" type="vector2" nodename="hm_irt" /><input name="in2" type="float" value="0.0012" /></multiply>
+<add name="hm_lo1" type="vector2"><input name="in1" type="vector2" nodename="rg_loc" /><input name="in2" type="vector2" value="0.075, 0.0375" /></add>
+<subtract name="hm_lo" type="vector2"><input name="in1" type="vector2" nodename="hm_lo1" /><input name="in2" type="vector2" nodename="hm_lo0" /></subtract>
+<subtract name="hm_hi1" type="vector2"><input name="in1" type="vector2" value="0.075, 0.0375" /><input name="in2" type="vector2" nodename="rg_loc" /></subtract>
+<subtract name="hm_hi" type="vector2"><input name="in1" type="vector2" nodename="hm_hi1" /><input name="in2" type="vector2" nodename="hm_hi0" /></subtract>
+<min name="hm_m" type="vector2"><input name="in1" type="vector2" nodename="hm_lo" /><input name="in2" type="vector2" nodename="hm_hi" /></min>
+<separate2 name="hm_ms" type="multioutput"><input name="in" type="vector2" nodename="hm_m" /></separate2>
+<min name="hm_d" type="float"><input name="in1" type="float" nodename="hm_ms" output="outx" /><input name="in2" type="float" nodename="hm_ms" output="outy" /></min>

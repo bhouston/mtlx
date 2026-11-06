@@ -4,7 +4,7 @@
  * extension's build-preview.js (three.js WebGPURenderer, MaterialXLoader, GLTFLoader,
  * OrbitControls, all in one iife).
  */
-import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
+import { copyFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as esbuild from 'esbuild';
@@ -30,8 +30,7 @@ await esbuild.build({
   target: 'es2020',
   minify: true,
   sourcemap: false,
-  // Inline the shared studio IBL PNG (from mtlx-viewer) as a data URL — no separate asset route
-  // for the local server to serve.
+  // Inline small image resources. The studio lighting is generated at runtime.
   loader: { '.png': 'dataurl' },
   define: {
     'process.env.NODE_ENV': '"production"',
@@ -40,9 +39,20 @@ await esbuild.build({
 
 // The shaderball ("totem" geometry, ~1.4MB) is too big to inline as a data URL — copied into
 // media/ instead and served at /__mtlx_view__/shaderball.glb (see ../src/view/server.ts).
+copyFileSync(join(root, '..', 'static-assets', 'public', 'viewer', 'shaderball.glb'), join(mediaDir, 'shaderball.glb'));
+// Lighting for `mtlx render --ibl <name>` (the studio room is inlined in viewer.js). The HDRs are
+// Poly Haven CC0 1k maps from the three.js examples: sun (quarry_01), overcast (blouberg_sunrise_2),
+// neutral (monochrome_studio_02), dusk (venice_sunset), night (moonless_golf); bridge is the
+// optional bridge environment (san_giuseppe_bridge).
+const environmentsDir = join(root, '..', 'static-assets', 'public', 'viewer', 'environments');
+for (const file of readdirSync(environmentsDir)) {
+  copyFileSync(join(environmentsDir, file), join(mediaDir, file.replace(/\.hdr$/, '-environment.hdr')));
+}
 copyFileSync(
-  join(root, '..', 'website', 'public', 'viewer-assets', 'shaderball.glb'),
-  join(mediaDir, 'shaderball.glb'),
+  join(root, '..', 'static-assets', 'public', 'viewer', 'default-environment.hdr'),
+  join(mediaDir, 'bridge-environment.hdr'),
 );
 
 console.log('Built viewer.js');
+
+copyFileSync(join(root, '..', 'viewer', 'LICENSE.model-viewer'), join(mediaDir, 'LICENSE.model-viewer'));

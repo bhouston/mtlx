@@ -1,0 +1,10 @@
+<!-- in: uv, uv_sep (separate2 of uv). out: band (integer id), band_rand, band_rand2 (0..1 per band). 6 bands/m, wavy borders -->
+<multiply name="bd_p" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="2.5" /></multiply>
+<noise2d name="bd_wob" type="float"><input name="texcoord" type="vector2" nodename="bd_p" /><input name="amplitude" type="float" value="0.06" /></noise2d>
+<add name="bd_v" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" nodename="bd_wob" /></add>
+<multiply name="bd_v6" type="float"><input name="in1" type="float" nodename="bd_v" /><input name="in2" type="float" value="6" /></multiply>
+<floor name="band" type="float"><input name="in" type="float" nodename="bd_v6" /></floor>
+<combine2 name="bd_s1" type="vector2"><input name="in1" type="float" nodename="band" /><input name="in2" type="float" value="7.5" /></combine2>
+<cellnoise2d name="band_rand" type="float"><input name="texcoord" type="vector2" nodename="bd_s1" /></cellnoise2d>
+<combine2 name="bd_s2" type="vector2"><input name="in1" type="float" nodename="band" /><input name="in2" type="float" value="31.5" /></combine2>
+<cellnoise2d name="band_rand2" type="float"><input name="texcoord" type="vector2" nodename="bd_s2" /></cellnoise2d>

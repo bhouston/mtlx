@@ -62,6 +62,7 @@ export class MtlxPreviewProvider implements vscode.CustomReadonlyEditorProvider<
             'ao',
             'toneMapping',
             'background',
+            'environmentRotation',
           ].map((key) => [key, config.get(key)]),
         ),
       );

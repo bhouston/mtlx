@@ -1,0 +1,11 @@
+<!-- in: uv, rg_loc, rg_id, rg_cell. out: rs_n (fBm 40/m reseeded per tile: uv*f + id*97), sl_p (slab coords, m: tile-local frame turned by a random angle and shifted 0..7 m into one shared field, so veins or grain break at every joint) -->
+<multiply name="rs_p0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="40" /></multiply>
+<multiply name="rs_o" type="float"><input name="in1" type="float" nodename="rg_id" /><input name="in2" type="float" value="97" /></multiply>
+<add name="rs_p" type="vector2"><input name="in1" type="vector2" nodename="rs_p0" /><input name="in2" type="float" nodename="rs_o" /></add>
+<fractal2d name="rs_n" type="float"><input name="texcoord" type="vector2" nodename="rs_p" /><input name="octaves" type="integer" value="3" /></fractal2d>
+<add name="sl_s" type="vector2"><input name="in1" type="vector2" nodename="rg_cell" /><input name="in2" type="vector2" value="410.37, 90.61" /></add>
+<cellnoise2d name="sl_r" type="float"><input name="texcoord" type="vector2" nodename="sl_s" /></cellnoise2d>
+<multiply name="sl_ang" type="float"><input name="in1" type="float" nodename="sl_r" /><input name="in2" type="float" value="360" /></multiply>
+<rotate2d name="sl_rot" type="vector2"><input name="in" type="vector2" nodename="rg_loc" /><input name="amount" type="float" nodename="sl_ang" /></rotate2d>
+<multiply name="sl_off" type="vector2"><input name="in1" type="vector2" value="7.3, 5.9" /><input name="in2" type="float" nodename="rg_id" /></multiply>
+<add name="sl_p" type="vector2"><input name="in1" type="vector2" nodename="sl_rot" /><input name="in2" type="vector2" nodename="sl_off" /></add>

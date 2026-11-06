@@ -1,0 +1,5 @@
+displayMicroLedActiveSurface
+
+Active micro-LED image-producing material; texture-driven emission with very dark inactive regions and controlled luminance.
+
+Use for rendering the powered image surface of a micro-LED display with an assigned emissive image signal.

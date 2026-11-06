@@ -1,0 +1,5 @@
+ptfeCream
+
+cream PTFE-based polymer; soft matte dielectric response with very fine texture; black represents a filled formulation.
+
+Use for rendering polymer liners, washers, bushings, and technical surfaces shown in cutaway or assembly views.

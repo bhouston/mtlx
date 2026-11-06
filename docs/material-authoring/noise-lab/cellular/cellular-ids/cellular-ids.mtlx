@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Diagnostic (emission, unlit). Which per-cell random matches the jittered Voronoi cells?
+       10 cells per meter, jitter 1. White lines = Voronoi borders (F2-F1 < 0.03), black dots = feature points (F1 < 0.05).
+       TL: worleynoise2d float style=1        -> one grey per Voronoi cell (hash of the feature point's integer cell)
+       TR: worleynoise2d vector3 style=1      -> one colour per Voronoi cell (independent hashes, .xy = feature point offset)
+       BL: cellnoise2d vector3 on the same UV -> square cells, do NOT follow the Voronoi borders
+       BR: worleynoise2d vector2 style=0 .x   -> F1 distance, for reference -->
+  <nodegraph name="NG_cellular_ids">
+    <texcoord name="uv" type="vector2" />
+    <multiply name="uv_c" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="10" /></multiply>
+
+    <worleynoise2d name="id_f" type="float"><input name="texcoord" type="vector2" nodename="uv_c" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <worleynoise2d name="id_v" type="vector3"><input name="texcoord" type="vector2" nodename="uv_c" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <cellnoise2d name="cell_v" type="vector3"><input name="texcoord" type="vector2" nodename="uv_c" /></cellnoise2d>
+    <worleynoise2d name="f12" type="vector2"><input name="texcoord" type="vector2" nodename="uv_c" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+    <extract name="f1" type="float"><input name="in" type="vector2" nodename="f12" /><input name="index" type="integer" value="0" /></extract>
+    <dotproduct name="f2_f1" type="float"><input name="in1" type="vector2" nodename="f12" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+
+    <convert name="c_tl" type="color3"><input name="in" type="float" nodename="id_f" /></convert>
+    <convert name="c_tr" type="color3"><input name="in" type="vector3" nodename="id_v" /></convert>
+    <convert name="c_bl" type="color3"><input name="in" type="vector3" nodename="cell_v" /></convert>
+    <convert name="c_br" type="color3"><input name="in" type="float" nodename="f1" /></convert>
+
+    <!-- Quadrant select: u > 0.5 is right, v > 0.5 is top. -->
+    <separate2 name="uv_s" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <ifgreater name="q_right" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="q_top" type="float"><input name="value1" type="float" nodename="uv_s" output="outy" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <mix name="c_top" type="color3"><input name="bg" type="color3" nodename="c_tl" /><input name="fg" type="color3" nodename="c_tr" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="c_bot" type="color3"><input name="bg" type="color3" nodename="c_bl" /><input name="fg" type="color3" nodename="c_br" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="c_quad" type="color3"><input name="bg" type="color3" nodename="c_bot" /><input name="fg" type="color3" nodename="c_top" /><input name="mix" type="float" nodename="q_top" /></mix>
+
+    <!-- Overlays. -->
+    <ifgreater name="border" type="float"><input name="value1" type="float" value="0.03" /><input name="value2" type="float" nodename="f2_f1" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <ifgreater name="dot" type="float"><input name="value1" type="float" value="0.05" /><input name="value2" type="float" nodename="f1" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+    <mix name="c_border" type="color3"><input name="bg" type="color3" nodename="c_quad" /><input name="fg" type="color3" value="1, 1, 1" /><input name="mix" type="float" nodename="border" /></mix>
+    <mix name="emit" type="color3"><input name="bg" type="color3" nodename="c_border" /><input name="fg" type="color3" value="0, 0, 0" /><input name="mix" type="float" nodename="dot" /></mix>
+
+    <output name="emit_out" type="color3" nodename="emit" />
+  </nodegraph>
+  <standard_surface name="SR_cellular_ids" type="surfaceshader">
+    <input name="base" type="float" value="0" />
+    <input name="specular" type="float" value="0" />
+    <input name="emission" type="float" value="1" />
+    <input name="emission_color" type="color3" nodegraph="NG_cellular_ids" output="emit_out" />
+  </standard_surface>
+  <surfacematerial name="M_cellular_ids" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_cellular_ids" /></surfacematerial>
+</materialx>

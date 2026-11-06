@@ -1,0 +1,29 @@
+<!-- in: uv. out: h_peb (m, 2.5..4 mm), b_id, b_col, b_mask (pebble vs matrix). 25 cells/m, jitter 0.85, gap 0.06, R 0.55, k 0.3 -->
+<multiply name="uv_b" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="25" /></multiply>
+<worleynoise2d name="b_w" type="vector2"><input name="texcoord" type="vector2" nodename="uv_b" /><input name="jitter" type="float" value="0.85" /></worleynoise2d>
+<worleynoise2d name="b_id" type="float"><input name="texcoord" type="vector2" nodename="uv_b" /><input name="jitter" type="float" value="0.85" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<extract name="b_f1" type="float"><input name="in" type="vector2" nodename="b_w" /><input name="index" type="integer" value="0" /></extract>
+<dotproduct name="b_e" type="float"><input name="in1" type="vector2" nodename="b_w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<subtract name="b_a0" type="float"><input name="in1" type="float" nodename="b_e" /><input name="in2" type="float" value="0.06" /></subtract>
+<multiply name="b_a" type="float"><input name="in1" type="float" nodename="b_a0" /><input name="in2" type="float" value="0.5" /></multiply>
+<subtract name="b_b" type="float"><input name="in1" type="float" value="0.55" /><input name="in2" type="float" nodename="b_f1" /></subtract>
+<subtract name="b_ab" type="float"><input name="in1" type="float" nodename="b_a" /><input name="in2" type="float" nodename="b_b" /></subtract>
+<absval name="b_abs" type="float"><input name="in" type="float" nodename="b_ab" /></absval>
+<subtract name="b_h0" type="float"><input name="in1" type="float" value="0.3" /><input name="in2" type="float" nodename="b_abs" /></subtract>
+<max name="b_h1" type="float"><input name="in1" type="float" nodename="b_h0" /><input name="in2" type="float" value="0" /></max>
+<divide name="b_h" type="float"><input name="in1" type="float" nodename="b_h1" /><input name="in2" type="float" value="0.3" /></divide>
+<multiply name="b_hh" type="float"><input name="in1" type="float" nodename="b_h" /><input name="in2" type="float" nodename="b_h" /></multiply>
+<multiply name="b_corr" type="float"><input name="in1" type="float" nodename="b_hh" /><input name="in2" type="float" value="0.075" /></multiply>
+<min name="b_min" type="float"><input name="in1" type="float" nodename="b_a" /><input name="in2" type="float" nodename="b_b" /></min>
+<subtract name="b_s" type="float"><input name="in1" type="float" nodename="b_min" /><input name="in2" type="float" nodename="b_corr" /></subtract>
+<smoothstep name="b_prof" type="float"><input name="in" type="float" nodename="b_s" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.18" /></smoothstep>
+<divide name="b_q" type="float"><input name="in1" type="float" nodename="b_f1" /><input name="in2" type="float" value="0.7" /></divide>
+<multiply name="b_q2" type="float"><input name="in1" type="float" nodename="b_q" /><input name="in2" type="float" nodename="b_q" /></multiply>
+<multiply name="b_q3" type="float"><input name="in1" type="float" nodename="b_q2" /><input name="in2" type="float" value="0.6" /></multiply>
+<subtract name="b_crown" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="b_q3" /></subtract>
+<multiply name="b_dome" type="float"><input name="in1" type="float" nodename="b_prof" /><input name="in2" type="float" nodename="b_crown" /></multiply>
+<multiply name="b_hs0" type="float"><input name="in1" type="float" nodename="b_id" /><input name="in2" type="float" value="0.0015" /></multiply>
+<add name="b_hs" type="float"><input name="in1" type="float" nodename="b_hs0" /><input name="in2" type="float" value="0.0025" /></add>
+<multiply name="h_peb" type="float"><input name="in1" type="float" nodename="b_dome" /><input name="in2" type="float" nodename="b_hs" /></multiply>
+<mix name="b_col" type="color3"><input name="bg" type="color3" value="0.42, 0.36, 0.28" /><input name="fg" type="color3" value="0.2, 0.2, 0.21" /><input name="mix" type="float" nodename="b_id" /></mix>
+<smoothstep name="b_mask" type="float"><input name="in" type="float" nodename="b_s" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.03" /></smoothstep>

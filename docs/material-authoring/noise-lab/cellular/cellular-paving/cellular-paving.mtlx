@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Cellular recipes on one 1 m tile (UV 1 = 1 m). Left: tapering cracks in a slab. Right: flagstones / crazy paving with a per-stone palette. -->
+  <nodegraph name="NG_cellular_paving">
+    <texcoord name="uv" type="vector2" />
+
+    <!-- Quadrant masks: q_right = u > 0.5, q_top = v > 0.5 (V increases upward in the plane render). -->
+    <separate2 name="uv_s" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <ifgreater name="q_right" type="float"><input name="value1" type="float" nodename="uv_s" output="outx" /><input name="value2" type="float" value="0.5" /><input name="in1" type="float" value="1" /><input name="in2" type="float" value="0" /></ifgreater>
+
+    <!-- LEFT  CRACKS in a concrete slab. 4 cells/m (25 cm). The texcoord is warped with noise2d type=vector3
+      (NOT vector2: noise2d/fractal2d vector2 return the same value in x and y, so they only warp along the diagonal).
+      Crack = 1 - smoothstep(F2-F1, 0, t). Full width is about 1.3 t / freq, so t 0.03 -> about 10 mm unwarped; the warp steepens F2-F1, so it renders about 2-4 mm.
+      t is multiplied by a low-frequency mask so only some borders crack and the tips taper to nothing. -->
+    <multiply name="uv_c" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="4" /></multiply>
+    <multiply name="uv_cw" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="7" /></multiply>
+    <noise2d name="c_wn" type="vector3"><input name="texcoord" type="vector2" nodename="uv_cw" /><input name="amplitude" type="float" value="0.18" /></noise2d>
+    <extract name="c_wx" type="float"><input name="in" type="vector3" nodename="c_wn" /><input name="index" type="integer" value="0" /></extract>
+    <extract name="c_wy" type="float"><input name="in" type="vector3" nodename="c_wn" /><input name="index" type="integer" value="1" /></extract>
+    <combine2 name="c_w" type="vector2"><input name="in1" type="float" nodename="c_wx" /><input name="in2" type="float" nodename="c_wy" /></combine2>
+    <add name="uv_cwarp" type="vector2"><input name="in1" type="vector2" nodename="uv_c" /><input name="in2" type="vector2" nodename="c_w" /></add>
+
+    <!-- A second, finer warp (30/m, 0.012 cell) makes the crack edge ragged. -->
+    <multiply name="uv_cf" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="30" /></multiply>
+    <noise2d name="c_fn" type="vector3"><input name="texcoord" type="vector2" nodename="uv_cf" /><input name="amplitude" type="float" value="0.012" /></noise2d>
+    <extract name="c_fx" type="float"><input name="in" type="vector3" nodename="c_fn" /><input name="index" type="integer" value="0" /></extract>
+    <extract name="c_fy" type="float"><input name="in" type="vector3" nodename="c_fn" /><input name="index" type="integer" value="1" /></extract>
+    <combine2 name="c_f" type="vector2"><input name="in1" type="float" nodename="c_fx" /><input name="in2" type="float" nodename="c_fy" /></combine2>
+    <add name="uv_cw2" type="vector2"><input name="in1" type="vector2" nodename="uv_cwarp" /><input name="in2" type="vector2" nodename="c_f" /></add>
+    <worleynoise2d name="c_w12" type="vector2"><input name="texcoord" type="vector2" nodename="uv_cw2" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+    <dotproduct name="c_e" type="float"><input name="in1" type="vector2" nodename="c_w12" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <multiply name="uv_cm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="2.5" /></multiply>
+    <noise2d name="c_m0" type="float"><input name="texcoord" type="vector2" nodename="uv_cm" /><input name="amplitude" type="float" value="0.5" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <smoothstep name="c_mask" type="float"><input name="in" type="float" nodename="c_m0" /><input name="low" type="float" value="0.3" /><input name="high" type="float" value="0.55" /></smoothstep>
+    <multiply name="c_t0" type="float"><input name="in1" type="float" nodename="c_mask" /><input name="in2" type="float" value="0.03" /></multiply>
+    <max name="c_t" type="float"><input name="in1" type="float" nodename="c_t0" /><input name="in2" type="float" value="0.0001" /></max>
+    <smoothstep name="c_s" type="float"><input name="in" type="float" nodename="c_e" /><input name="low" type="float" value="0" /><input name="high" type="float" nodename="c_t" /></smoothstep>
+    <subtract name="crack" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="c_s" /></subtract>
+    <multiply name="h_crack" type="float"><input name="in1" type="float" nodename="crack" /><input name="in2" type="float" value="-0.003" /></multiply>
+    <multiply name="uv_sl" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="60" /></multiply>
+    <fractal2d name="sl_n" type="float"><input name="texcoord" type="vector2" nodename="uv_sl" /><input name="octaves" type="integer" value="3" /><input name="amplitude" type="float" value="0.0001" /></fractal2d>
+    <add name="h_left" type="float"><input name="in1" type="float" nodename="h_crack" /><input name="in2" type="float" nodename="sl_n" /></add>
+    <multiply name="uv_mo" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="5" /></multiply>
+    <noise2d name="mo" type="float"><input name="texcoord" type="vector2" nodename="uv_mo" /><input name="amplitude" type="float" value="0.5" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <mix name="c_slab" type="color3"><input name="bg" type="color3" value="0.4, 0.39, 0.37" /><input name="fg" type="color3" value="0.33, 0.325, 0.31" /><input name="mix" type="float" nodename="mo" /></mix>
+    <mix name="c_left" type="color3"><input name="bg" type="color3" nodename="c_slab" /><input name="fg" type="color3" value="0.08, 0.08, 0.075" /><input name="mix" type="float" nodename="crack" /></mix>
+
+    <!-- RIGHT  FLAGSTONES / CRAZY PAVING. 5 cells/m (20 cm stones), jitter 1, warped 0.08 cell at 12/m so edges are not ruler-straight.
+       Joint where F2-F1 < 0.05 (about 1.3 cm). Stone top = smoothstep(F2-F1, 0.05, 0.11): rounded arris, 4 mm proud.
+       style=1 on the SAME warped texcoord gives the per-stone id: extra 0..2 mm height and a palette colour. -->
+    <multiply name="uv_f" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="5" /></multiply>
+    <multiply name="uv_fw" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="12" /></multiply>
+    <noise2d name="f_wn" type="vector3"><input name="texcoord" type="vector2" nodename="uv_fw" /><input name="amplitude" type="float" value="0.08" /></noise2d>
+    <extract name="f_wx" type="float"><input name="in" type="vector3" nodename="f_wn" /><input name="index" type="integer" value="0" /></extract>
+    <extract name="f_wy" type="float"><input name="in" type="vector3" nodename="f_wn" /><input name="index" type="integer" value="1" /></extract>
+    <combine2 name="f_w" type="vector2"><input name="in1" type="float" nodename="f_wx" /><input name="in2" type="float" nodename="f_wy" /></combine2>
+    <add name="uv_fwarp" type="vector2"><input name="in1" type="vector2" nodename="uv_f" /><input name="in2" type="vector2" nodename="f_w" /></add>
+    <worleynoise2d name="f_w12" type="vector2"><input name="texcoord" type="vector2" nodename="uv_fwarp" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+    <worleynoise2d name="f_id" type="float"><input name="texcoord" type="vector2" nodename="uv_fwarp" /><input name="jitter" type="float" value="1" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <dotproduct name="f_e" type="float"><input name="in1" type="vector2" nodename="f_w12" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <smoothstep name="f_top" type="float"><input name="in" type="float" nodename="f_e" /><input name="low" type="float" value="0.05" /><input name="high" type="float" value="0.11" /></smoothstep>
+    <multiply name="f_hs0" type="float"><input name="in1" type="float" nodename="f_id" /><input name="in2" type="float" value="0.002" /></multiply>
+    <add name="f_hs" type="float"><input name="in1" type="float" nodename="f_hs0" /><input name="in2" type="float" value="0.004" /></add>
+    <multiply name="f_h0" type="float"><input name="in1" type="float" nodename="f_top" /><input name="in2" type="float" nodename="f_hs" /></multiply>
+    <multiply name="uv_ft" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="25" /></multiply>
+    <fractal2d name="f_tex" type="float"><input name="texcoord" type="vector2" nodename="uv_ft" /><input name="octaves" type="integer" value="4" /><input name="amplitude" type="float" value="0.0004" /></fractal2d>
+    <multiply name="f_tex2" type="float"><input name="in1" type="float" nodename="f_tex" /><input name="in2" type="float" nodename="f_top" /></multiply>
+    <add name="h_right" type="float"><input name="in1" type="float" nodename="f_h0" /><input name="in2" type="float" nodename="f_tex2" /></add>
+    <multiply name="f_pal_k0" type="float"><input name="in1" type="float" nodename="f_id" /><input name="in2" type="float" value="13.7" /></multiply>
+    <modulo name="f_pal_k" type="float"><input name="in1" type="float" nodename="f_pal_k0" /><input name="in2" type="float" value="1" /></modulo>
+    <ifgreater name="f_pal_c1" type="color3"><input name="value1" type="float" nodename="f_pal_k" /><input name="value2" type="float" value="0.2" /><input name="in1" type="color3" value="0.45, 0.4, 0.32" /><input name="in2" type="color3" value="0.3, 0.3, 0.3" /></ifgreater>
+    <ifgreater name="f_pal_c2" type="color3"><input name="value1" type="float" nodename="f_pal_k" /><input name="value2" type="float" value="0.4" /><input name="in1" type="color3" value="0.36, 0.24, 0.18" /><input name="in2" type="color3" nodename="f_pal_c1" /></ifgreater>
+    <ifgreater name="f_pal_c3" type="color3"><input name="value1" type="float" nodename="f_pal_k" /><input name="value2" type="float" value="0.6" /><input name="in1" type="color3" value="0.2, 0.21, 0.22" /><input name="in2" type="color3" nodename="f_pal_c2" /></ifgreater>
+    <ifgreater name="f_pal_c4" type="color3"><input name="value1" type="float" nodename="f_pal_k" /><input name="value2" type="float" value="0.8" /><input name="in1" type="color3" value="0.5, 0.48, 0.44" /><input name="in2" type="color3" nodename="f_pal_c3" /></ifgreater>
+    <multiply name="f_br0" type="float"><input name="in1" type="float" nodename="f_id" /><input name="in2" type="float" value="0.3" /></multiply>
+    <add name="f_br" type="float"><input name="in1" type="float" nodename="f_br0" /><input name="in2" type="float" value="0.85" /></add>
+    <multiply name="f_col" type="color3"><input name="in1" type="color3" nodename="f_pal_c4" /><input name="in2" type="float" nodename="f_br" /></multiply>
+    <mix name="c_right" type="color3"><input name="bg" type="color3" value="0.22, 0.21, 0.2" /><input name="fg" type="color3" nodename="f_col" /><input name="mix" type="float" nodename="f_top" /></mix>
+    <mix name="height" type="float"><input name="bg" type="float" nodename="h_left" /><input name="fg" type="float" nodename="h_right" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" nodename="c_left" /><input name="fg" type="color3" nodename="c_right" /><input name="mix" type="float" nodename="q_right" /></mix>
+    <mix name="r_left" type="float"><input name="bg" type="float" value="0.85" /><input name="fg" type="float" value="0.95" /><input name="mix" type="float" nodename="crack" /></mix>
+    <mix name="r_right" type="float"><input name="bg" type="float" value="0.9" /><input name="fg" type="float" value="0.7" /><input name="mix" type="float" nodename="f_top" /></mix>
+    <mix name="roughness" type="float"><input name="bg" type="float" nodename="r_left" /><input name="fg" type="float" nodename="r_right" /><input name="mix" type="float" nodename="q_right" /></mix>
+
+    <!-- Normal: heighttonormal needs millimetres (see AUTHORING.md). scale 16 cancels the internal 1/16. -->
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+  </nodegraph>
+  <standard_surface name="SR_cellular_paving" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="base_color" type="color3" nodegraph="NG_cellular_paving" output="base_color_out" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_roughness" type="float" nodegraph="NG_cellular_paving" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_cellular_paving" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_cellular_paving" output="normal_out" />
+  </standard_surface>
+  <surfacematerial name="M_cellular_paving" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_cellular_paving" /></surfacematerial>
+</materialx>

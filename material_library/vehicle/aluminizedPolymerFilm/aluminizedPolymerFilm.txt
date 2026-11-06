@@ -1,0 +1,5 @@
+aluminizedPolymerFilm
+
+New metallized polymer film; bright silver conductor-like reflection beneath a thin transparent polymer layer.
+
+Use for rendering reflective polymer-film insulation facings and visible layered barriers.

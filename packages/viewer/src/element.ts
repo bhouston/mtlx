@@ -1,18 +1,31 @@
+import type { ScreenshotOptions } from './screenshot.js';
+export type { ScreenshotOptions } from './screenshot.js';
+import { readMaterialResponse, type MaterialProgress } from './progress.js';
+import { ProgressBar, PROGRESS_BAR_STYLES } from './progressBar.js';
+import type { LoadingProgress } from './loadingProgress.js';
+export type MaterialViewerProgress = MaterialProgress & LoadingProgress;
+export type { MaterialProgress } from './progress.js';
+import { ErrorOverlay } from './errorOverlay.js';
+import { ERROR_OVERLAY_STYLES } from './errorOverlayStyles.js';
 /**
  * `<material-viewer src="model.mtlx">` — a drop-in custom element in the spirit of Google's
- * `<model-viewer>`. Bundles the studio/bridge IBLs and shaderball geometry so a host page needs
+ * `<model-viewer>`. Generates neutral studio lighting and supplies bridge IBL and shaderball geometry so a host page needs
  * nothing but this script and a `src` pointing at a `.mtlx` or `.mtlx.zip` file.
  *
  * Attributes:
+ * - `errors`: `silent` hides the error overlay; omitted shows errors. Error events always fire.
+ * - `alt`: accessible material description; updates the focusable canvas without reloading.
  * - `src` (required): the `.mtlx` / `.mtlx.zip` file to preview.
  * - `model`: a custom glTF/GLB URL to preview the material on, in place of the built-in shaderball.
- * - `ibl`: `bridge` (default) or `studio`, or a URL to a custom `.hdr`/`.exr`/`.png`/`.jpg` environment.
+ * - `ibl`: `studio` (default) or `bridge`, or a URL to a custom `.hdr`/`.exr`/`.png`/`.jpg` environment.
  * - `geometry`: `totem` | `sphere` | `cube` | `plane` | `custom` (the last selects `model`, if given).
+ * - `camera-orbit`: azimuth/polar degrees and distance in scene meters, e.g. `30deg 65deg 2m`.
+ * - `camera-target`: aim point in scene meters, e.g. `0m 0m 0m`; `field-of-view`: vertical degrees (1..120).
  * - `material`: initial material name; defaults to the document's last material.
  * - `rotate`, `bloom`, `ao`: `"false"` to disable (all default on).
- * - `background`: `environment` (default) shows the IBL; `none` leaves the backdrop transparent.
+ * - `background`: `white` (default), `environment` to show the IBL, or `none` for transparency.
  * - `tone-mapping`: one of {@link TONE_MAPPING_OPTIONS}; defaults to `neutral`.
- * - `exposure` (-2..2), `intensity` (0..2).
+ * - `exposure` (-2..2), `intensity` (0..2), `environment-rotation` (yaw in degrees, default 0).
  * - `animation`: `play` (default) | `pause` | `false` — for documents with `<time>`/`<frame>` nodes,
  *   a play/pause button appears; `false` hides it and leaves the animation running.
  * - `settings-panel`: `open` | `closed` | `hidden` (default) — a built-in overlay for the above.
@@ -25,27 +38,29 @@ import { createViewer, type Viewer } from './viewer.js';
 import { parseEnvironmentFile } from './environment.js';
 import {
   DEFAULT_VIEWER_SETTINGS,
+  parseCameraSettings,
+  type CameraSettings,
   GEOMETRY_OPTIONS,
   IBL_OPTIONS,
+  BACKGROUND_OPTIONS,
+  normalizeEnvironmentRotation,
   TONE_MAPPING_OPTIONS,
   type SettingsOption,
   type ViewerSettings,
 } from './renderingSettings.js';
 
-// The large built-ins (shaderball 1.4 MB, bridge HDR 6 MB) are served by the mtlx website rather
+// The large built-ins (shaderball 1.4 MB, bridge HDR 6 MB) are served from mtlx-static.ben3d.ca rather
 // than shipped in this package, so a script-tag embed from any CDN fetches them from one place.
-const HOSTED_ASSETS = 'https://mtlx.ben3d.ca/viewer-assets/';
+const HOSTED_ASSETS = 'https://mtlx-static.ben3d.ca/viewer/';
 const SHADERBALL_URL = new URL('shaderball.glb', HOSTED_ASSETS);
 const BUILTIN_IBLS: Record<string, URL> = {
-  // Resolved from import.meta.url so bundlers (Vite, esbuild, webpack) rewrite it to a served path.
-  studio: new URL('../assets/studio-environment.png', import.meta.url),
   bridge: new URL('default-environment.hdr', HOSTED_ASSETS),
 };
 const RELOAD_ATTRIBUTES = new Set(['src', 'model']);
 const PANEL_STATES = new Set(['open', 'closed']);
 
-async function fetchBytes(url: string | URL): Promise<ArrayBuffer> {
-  const response = await fetch(url);
+async function fetchBytes(url: string | URL, signal?: AbortSignal): Promise<ArrayBuffer> {
+  const response = await fetch(url, { signal });
   if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`);
   return response.arrayBuffer();
 }
@@ -54,7 +69,7 @@ const optionsHtml = (options: readonly SettingsOption[]) =>
   options.map(({ value, label }) => `<option value="${value}">${label}</option>`).join('');
 
 const PANEL_STYLE = `
-  :host { position: relative; }
+  :host { display: block; position: relative; height: 440px; }
   .viewport { position: absolute; inset: 0; }
   .play { position: absolute; right: 8px; top: 8px; z-index: 1; }
   .toggle {
@@ -67,7 +82,13 @@ const PANEL_STYLE = `
     background: rgba(20, 20, 24, 0.85); color: #fff; border-radius: 8px; padding: 10px 12px;
     font: 12px system-ui, sans-serif; display: none; flex-direction: column; gap: 8px;
   }
-  .panel.open { display: flex; }
+  .panel {
+    box-sizing: border-box; width: 488px; max-width: calc(100% - 16px);
+    max-height: calc(100% - 56px); overflow-y: auto; padding-top: 30px;
+  }
+  .panel.open { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+  .panel .column { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .panel label, .panel select, .panel input { min-width: 0; }
   .panel label { display: flex; flex-direction: column; gap: 2px; }
   .panel label.row { flex-direction: row; align-items: center; justify-content: space-between; }
   .panel select, .panel input[type="range"] { width: 100%; }
@@ -80,25 +101,33 @@ const PANEL_STYLE = `
 
 const PANEL_HTML = `
   <button type="button" class="close" aria-label="Close viewer settings">✕</button>
-  <label>Geometry<select id="geometry"></select></label>
-  <label>Environment<select id="ibl"></select></label>
-  <label>Material<select id="material"></select></label>
-  <label>Tone mapping<select id="tone-mapping"></select></label>
-  <label class="row"><span>Rotate</span><input id="rotate" type="checkbox" /></label>
-  <label class="row"><span>Background</span><input id="background" type="checkbox" /></label>
-  <label class="row"><span>Bloom</span><input id="bloom" type="checkbox" /></label>
-  <label class="row"><span>Ambient occlusion</span><input id="ao" type="checkbox" /></label>
-  <label>Exposure<input id="exposure" type="range" min="-2" max="2" step="0.1" /></label>
-  <label>Intensity<input id="intensity" type="range" min="0" max="2" step="0.1" /></label>
+  <div class="column">
+    <label>Geometry<select id="geometry"></select></label>
+    <label>Environment<select id="ibl"></select></label>
+    <label>Material<select id="material"></select></label>
+    <label>Tone mapping<select id="tone-mapping"></select></label>
+  </div>
+  <div class="column">
+    <label class="row"><span>Rotate</span><input id="rotate" type="checkbox" /></label>
+    <label class="row"><span>Background</span><select id="background"></select></label>
+    <label class="row"><span>Bloom</span><input id="bloom" type="checkbox" /></label>
+    <label class="row"><span>Ambient occlusion</span><input id="ao" type="checkbox" /></label>
+    <label>Lighting rotation<input id="environment-rotation" type="range" min="0" max="360" step="1" /></label>
+    <label>Exposure<input id="exposure" type="range" min="-2" max="2" step="0.1" /></label>
+  </div>
 `;
 
 export class MaterialViewerElement extends HTMLElement {
   static get observedAttributes() {
     return [
       'src',
+      'alt',
       'model',
       'ibl',
       'geometry',
+      'camera-orbit',
+      'camera-target',
+      'field-of-view',
       'material',
       'rotate',
       'bloom',
@@ -107,13 +136,21 @@ export class MaterialViewerElement extends HTMLElement {
       'tone-mapping',
       'exposure',
       'intensity',
+      'environment-rotation',
       'animation',
       'settings-panel',
+      'errors',
     ];
   }
 
   #viewer: Viewer | null = null;
+  #loading: Promise<void> | undefined;
   #generation = 0;
+  #abort: AbortController | null = null;
+  readonly #errors: ErrorOverlay;
+  readonly #progress = new ProgressBar();
+  #overall = 0;
+  #download: MaterialProgress = { loaded: 0, total: null, progress: null };
   readonly #viewportEl: HTMLDivElement;
   readonly #toggleEl: HTMLButtonElement;
   readonly #playEl: HTMLButtonElement;
@@ -123,7 +160,8 @@ export class MaterialViewerElement extends HTMLElement {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
-    style.textContent = PANEL_STYLE;
+    style.textContent = PANEL_STYLE + ERROR_OVERLAY_STYLES + PROGRESS_BAR_STYLES;
+    this.#errors = new ErrorOverlay(this);
     this.#viewportEl = document.createElement('div');
     this.#viewportEl.className = 'viewport';
     this.#toggleEl = document.createElement('button');
@@ -143,9 +181,18 @@ export class MaterialViewerElement extends HTMLElement {
     this.#panelEl = document.createElement('div');
     this.#panelEl.className = 'panel';
     this.#panelEl.innerHTML = PANEL_HTML;
+    this.#panelEl.querySelector('#background')!.innerHTML = optionsHtml(BACKGROUND_OPTIONS);
     this.#panelEl.querySelector('#tone-mapping')!.innerHTML = optionsHtml(TONE_MAPPING_OPTIONS);
     this.#panelEl.querySelector('.close')!.addEventListener('click', () => this.#panelEl.classList.remove('open'));
-    shadow.append(style, this.#viewportEl, this.#playEl, this.#toggleEl, this.#panelEl);
+    shadow.append(
+      style,
+      this.#progress.root,
+      this.#viewportEl,
+      this.#playEl,
+      this.#toggleEl,
+      this.#panelEl,
+      this.#errors.root,
+    );
     this.#bindControls();
   }
 
@@ -156,7 +203,6 @@ export class MaterialViewerElement extends HTMLElement {
   };
 
   connectedCallback(): void {
-    if (!this.style.display) this.style.display = 'block';
     this.#syncPanelState();
     document.addEventListener('pointerdown', this.#closePanel);
     document.addEventListener('keydown', this.#closePanel);
@@ -164,9 +210,17 @@ export class MaterialViewerElement extends HTMLElement {
   }
 
   attributeChangedCallback(name: string): void {
+    if (name === 'errors') {
+      this.#errors.syncVisibility();
+      return;
+    }
     if (!this.isConnected) return;
     if (name === 'settings-panel') {
       this.#syncPanelState();
+      return;
+    }
+    if (name === 'alt') {
+      this.#viewer?.setAlt(this.getAttribute('alt') ?? undefined);
       return;
     }
     if (name === 'animation') {
@@ -178,7 +232,10 @@ export class MaterialViewerElement extends HTMLElement {
       void this.#load();
       return;
     }
-    void this.#viewer?.setSettings(this.#readSettings());
+    const generation = this.#generation;
+    void this.#viewer?.setSettings(this.#readSettings()).catch((error: unknown) => {
+      if (generation === this.#generation && this.isConnected) this.#error(error);
+    });
     this.#syncControls();
   }
 
@@ -186,6 +243,9 @@ export class MaterialViewerElement extends HTMLElement {
     document.removeEventListener('pointerdown', this.#closePanel);
     document.removeEventListener('keydown', this.#closePanel);
     this.#generation++;
+    this.#progress.clear();
+    this.removeAttribute('aria-busy');
+    this.#abort?.abort();
     this.#viewer?.dispose();
     this.#viewer = null;
   }
@@ -204,11 +264,11 @@ export class MaterialViewerElement extends HTMLElement {
     bind('material', 'material', (el) => el.value);
     bind('tone-mapping', 'tone-mapping', (el) => el.value);
     bind('rotate', 'rotate', (el) => (el.checked ? null : 'false'));
-    bind('background', 'background', (el) => (el.checked ? null : 'none'));
+    bind('background', 'background', (el) => el.value);
     bind('bloom', 'bloom', (el) => (el.checked ? null : 'false'));
     bind('ao', 'ao', (el) => (el.checked ? null : 'false'));
+    bind('environment-rotation', 'environment-rotation', (el) => el.value);
     bind('exposure', 'exposure', (el) => el.value);
-    bind('intensity', 'intensity', (el) => el.value);
   }
 
   #playing = () => this.getAttribute('animation') !== 'pause';
@@ -234,7 +294,9 @@ export class MaterialViewerElement extends HTMLElement {
     this.#panelEl.querySelector<HTMLSelectElement>('#geometry')!.innerHTML = optionsHtml(geometryOptions);
     const iblAttr = this.getAttribute('ibl');
     const iblOptions =
-      iblAttr && !BUILTIN_IBLS[iblAttr] ? [...IBL_OPTIONS, { value: iblAttr, label: 'Custom' }] : IBL_OPTIONS;
+      iblAttr && !IBL_OPTIONS.some(({ value }) => value === iblAttr)
+        ? [...IBL_OPTIONS, { value: iblAttr, label: 'Custom' }]
+        : IBL_OPTIONS;
     this.#panelEl.querySelector<HTMLSelectElement>('#ibl')!.innerHTML = optionsHtml(iblOptions);
     const materialSelect = this.#panelEl.querySelector<HTMLSelectElement>('#material')!;
     const names = this.#viewer?.scene.materialNames ?? [];
@@ -253,11 +315,11 @@ export class MaterialViewerElement extends HTMLElement {
     set('ibl', settings.ibl);
     set('tone-mapping', settings.toneMapping);
     set('rotate', settings.rotate);
-    set('background', settings.background !== 'none');
+    set('background', settings.background);
     set('bloom', settings.bloom);
     set('ao', settings.ao);
+    set('environment-rotation', String(settings.environmentRotation));
     set('exposure', String(settings.exposure));
-    set('intensity', String(settings.intensity));
   }
 
   #readSettings(): ViewerSettings {
@@ -272,59 +334,167 @@ export class MaterialViewerElement extends HTMLElement {
       DEFAULT_VIEWER_SETTINGS.toneMapping;
     return {
       ...DEFAULT_VIEWER_SETTINGS,
-      ibl: this.getAttribute('ibl') ?? 'bridge',
+      ...parseCameraSettings({
+        cameraOrbit: this.getAttribute('camera-orbit'),
+        cameraTarget: this.getAttribute('camera-target'),
+        fieldOfView: this.getAttribute('field-of-view'),
+      }),
+      ibl: this.getAttribute('ibl') ?? DEFAULT_VIEWER_SETTINGS.ibl,
       geometry: this.getAttribute('geometry') ?? (this.getAttribute('model') ? 'custom' : 'totem'),
       materialName: this.getAttribute('material') ?? '',
       rotate: bool('rotate', true),
-      background: this.getAttribute('background') === 'none' ? 'none' : 'environment',
+      background:
+        BACKGROUND_OPTIONS.find(({ value }) => value === this.getAttribute('background'))?.value ??
+        DEFAULT_VIEWER_SETTINGS.background,
       bloom: bool('bloom', DEFAULT_VIEWER_SETTINGS.bloom),
       ao: bool('ao', DEFAULT_VIEWER_SETTINGS.ao),
       toneMapping,
       exposure: number('exposure', DEFAULT_VIEWER_SETTINGS.exposure, -2, 2),
       intensity: number('intensity', DEFAULT_VIEWER_SETTINGS.intensity, 0, 2),
+      environmentRotation:
+        normalizeEnvironmentRotation(this.getAttribute('environment-rotation')) ??
+        DEFAULT_VIEWER_SETTINGS.environmentRotation,
     };
   }
 
-  async #load(): Promise<void> {
+  /** Current camera framing, or null before the viewer has loaded. */
+  getCameraSettings(): Required<CameraSettings> | null {
+    return this.#viewer?.getCameraSettings() ?? null;
+  }
+
+  /** Waits for the current source to load, then exports its completed preview frame. */
+  async toBlob(options: ScreenshotOptions = {}): Promise<Blob> {
+    const generation = this.#generation;
+    await this.#loading;
+    if (!this.isConnected || generation !== this.#generation)
+      throw new Error('The material source changed or the viewer disconnected during screenshot capture.');
+    if (!this.#viewer) throw new Error('The material viewer is not ready to capture.');
+    return this.#viewer.toBlob(options);
+  }
+
+  #load(): Promise<void> {
+    this.#loading = this.#loadCurrent();
+    return this.#loading;
+  }
+
+  async #loadCurrent(): Promise<void> {
     const src = this.getAttribute('src');
     const modelUrl = this.getAttribute('model');
+    this.#abort?.abort();
+    const abort = new AbortController();
+    this.#abort = abort;
     this.#viewer?.dispose();
     this.#viewer = null;
-    if (!src) return;
+    this.#errors.clear();
     const generation = ++this.#generation;
+    this.#progress.clear();
+    this.setAttribute('aria-busy', String(!!src));
+    if (!src) return;
+    this.#overall = 0;
+    this.#download = { loaded: 0, total: null, progress: null };
+    this.#publishProgress({ totalProgress: 0, reason: 'material-load' });
     try {
-      const [data, shaderBall] = await Promise.all([fetchBytes(src), fetchBytes(SHADERBALL_URL)]);
+      const material = async () => {
+        const response = await fetch(src, { signal: abort.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status} loading ${src}`);
+        return readMaterialResponse(response, abort.signal, (detail: MaterialProgress) => {
+          if (generation !== this.#generation || !this.isConnected || abort.signal.aborted) return;
+          this.#download = detail;
+          this.#publishProgress({
+            totalProgress: 0.3 * (detail.progress ?? 0) + 0.1 * geometryFraction,
+            reason: 'material-load',
+          });
+        });
+      };
+      let materialFraction = 0;
+      let geometryFraction = 0;
+      const assetsProgress = () =>
+        this.#publishProgress({
+          totalProgress: 0.3 * materialFraction + 0.1 * geometryFraction,
+          reason: 'material-load',
+        });
+      const [data, shaderBall] = await Promise.all([
+        material().then((bytes) => {
+          if (generation === this.#generation && !abort.signal.aborted) {
+            materialFraction = 1;
+            assetsProgress();
+          }
+          return bytes;
+        }),
+        fetchBytes(SHADERBALL_URL, abort.signal).then((bytes) => {
+          if (generation === this.#generation && !abort.signal.aborted) {
+            geometryFraction = 1;
+            assetsProgress();
+          }
+          return bytes;
+        }),
+      ]);
       if (generation !== this.#generation) return;
       const viewer = await createViewer({
+        signal: abort.signal,
         container: this.#viewportEl,
         data,
         fileName: src,
+        alt: this.getAttribute('alt') ?? undefined,
         shaderBall,
         settings: this.#readSettings(),
         playing: this.#playing(),
+        onProgress: (progress) => {
+          if (generation !== this.#generation || !this.isConnected || abort.signal.aborted) return;
+          this.#publishProgress({
+            ...progress,
+            totalProgress: this.#viewer ? progress.totalProgress : 0.4 + 0.6 * progress.totalProgress,
+          });
+        },
         loadEnvironment: async (kind) => {
           const asset = BUILTIN_IBLS[kind];
-          return parseEnvironmentFile(await fetchBytes(asset ?? kind), asset ? asset.pathname : kind);
+          return parseEnvironmentFile(await fetchBytes(asset ?? kind, abort.signal), asset ? asset.pathname : kind);
         },
         // Matches the geometry attribute's 'custom' fallback above; a later `model` change goes
         // through a full #load() instead (see RELOAD_ATTRIBUTES), so this closure need not react to it.
-        loadGeometry: modelUrl ? async () => ({ data: await fetchBytes(modelUrl) }) : undefined,
-        onError: (message) => this.dispatchEvent(new CustomEvent('error', { detail: message })),
+        loadGeometry: modelUrl ? async () => ({ data: await fetchBytes(modelUrl, abort.signal) }) : undefined,
+        onCameraChange: (settings) => {
+          if (generation === this.#generation && this.isConnected)
+            this.dispatchEvent(new CustomEvent('camera-change', { detail: settings }));
+        },
+        onError: (message) => {
+          if (generation === this.#generation && this.isConnected) this.#error(message);
+        },
       });
       if (generation !== this.#generation) {
         viewer.dispose();
         return;
       }
       this.#viewer = viewer;
+      // The description may have changed while renderer/resources were being initialized.
+      viewer.setAlt(this.getAttribute('alt') ?? undefined);
       this.#buildOptions();
       this.#syncControls();
       this.#syncPlayButton();
+      if (this.#overall < 1) this.#publishProgress({ totalProgress: 1, reason: 'material-load' });
       this.dispatchEvent(new Event('load'));
     } catch (error) {
       if (generation !== this.#generation) return;
-      const detail = error instanceof Error ? error.message : String(error);
-      this.dispatchEvent(new CustomEvent('error', { detail }));
+      this.#error(error, 'Unable to load material');
     }
+  }
+  #publishProgress(progress: LoadingProgress): void {
+    if (this.#overall === 1 && progress.totalProgress < 1) this.#overall = 0;
+    progress = { ...progress, totalProgress: Math.max(this.#overall, progress.totalProgress) };
+    this.#overall = progress.totalProgress;
+    this.#progress.update(progress.totalProgress);
+    this.setAttribute('aria-busy', String(progress.totalProgress < 1));
+    this.dispatchEvent(
+      new CustomEvent<MaterialViewerProgress>('progress', { detail: { ...this.#download, ...progress } }),
+    );
+  }
+  #error(error: unknown, title = 'Viewer error'): void {
+    this.#progress.clear();
+    this.setAttribute('aria-busy', 'false');
+    this.#abort?.abort();
+    this.#errors.show(title, error, this.getAttribute('src'));
+    const detail = error instanceof Error ? error.message : String(error);
+    this.dispatchEvent(new CustomEvent('error', { detail }));
   }
 }
 

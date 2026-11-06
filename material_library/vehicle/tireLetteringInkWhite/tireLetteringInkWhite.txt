@@ -1,0 +1,5 @@
+tireLetteringInkWhite
+
+White flexible tire-printing ink; opaque matte pigment film over rubber with a fine printed surface.
+
+Use for rendering printed tire lettering on separately modeled sidewalls.

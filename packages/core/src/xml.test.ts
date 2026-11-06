@@ -60,6 +60,13 @@ describe('parseMaterialX / serializeMaterialX', () => {
   it('throws with line/column info on malformed XML', () => {
     expect(() => parseMaterialX('<materialx><unclosed></materialx>')).toThrow(/line/i);
   });
+
+  it('rejects comments outside the <materialx> root', () => {
+    expect(() => parseMaterialX('<?xml version="1.0"?>\n<!-- before --><materialx version="1.39"/>')).toThrow(
+      /comments must be inside/,
+    );
+    expect(() => parseMaterialX('<materialx version="1.39"/><!-- after -->')).toThrow(/comments must be inside/);
+  });
 });
 
 describe('validateDocument', () => {

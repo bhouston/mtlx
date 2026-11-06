@@ -1,0 +1,5 @@
+clearPaintProtectionFilmGloss
+
+Colorless transparent polyurethane protection film; glossy dielectric surface, faint fine-scale film texture, negligible color shift at nominal thickness.
+
+Use for rendering a protective film layer over separately modeled painted bodywork, with the named reflection finish.

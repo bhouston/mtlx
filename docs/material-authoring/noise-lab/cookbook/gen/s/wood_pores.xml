@@ -1,0 +1,14 @@
+<!-- in: wr_lp, wr_t. out: wp_pore (0..1). Open pores as dashes along the grain: worley cells 5.6 x 0.38 mm (180 x 2600 /m), dash F1 < 0.1..0.22 (~2 x 0.15 mm); every cell in the earlywood band, ~20% of cells at half strength in the latewood (pores then draw the ring lines at closeup, where the figure is faded). Jitter 1: tiny features look best fully random (clips are invisible under ~4 px) -->
+<multiply name="wp_1" type="vector2"><input name="in1" type="vector2" nodename="wr_lp" /><input name="in2" type="vector2" value="180.0, 2600.0" /></multiply>
+<add name="wp_p" type="vector2"><input name="in1" type="vector2" nodename="wp_1" /><input name="in2" type="vector2" value="0.37, 0.61" /></add>
+<worleynoise2d name="wp_f1" type="float"><input name="texcoord" type="vector2" nodename="wp_p" /><input name="jitter" type="float" value="1.0" /></worleynoise2d>
+<worleynoise2d name="wp_id" type="float"><input name="texcoord" type="vector2" nodename="wp_p" /><input name="jitter" type="float" value="1.0" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<smoothstep name="wp_5" type="float"><input name="in" type="float" nodename="wr_t" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.04" /></smoothstep>
+<smoothstep name="wp_6" type="float"><input name="in" type="float" nodename="wr_t" /><input name="low" type="float" value="0.18" /><input name="high" type="float" value="0.3" /></smoothstep>
+<subtract name="wp_7" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="wp_6" /></subtract>
+<multiply name="wp_ew" type="float"><input name="in1" type="float" nodename="wp_5" /><input name="in2" type="float" nodename="wp_7" /></multiply>
+<ifgreater name="wp_9" type="float"><input name="value1" type="float" nodename="wp_id" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="0.5" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<max name="wp_on" type="float"><input name="in1" type="float" nodename="wp_ew" /><input name="in2" type="float" nodename="wp_9" /></max>
+<smoothstep name="wp_11" type="float"><input name="in" type="float" nodename="wp_f1" /><input name="low" type="float" value="0.1" /><input name="high" type="float" value="0.22" /></smoothstep>
+<subtract name="wp_12" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="wp_11" /></subtract>
+<multiply name="wp_pore" type="float"><input name="in1" type="float" nodename="wp_12" /><input name="in2" type="float" nodename="wp_on" /></multiply>

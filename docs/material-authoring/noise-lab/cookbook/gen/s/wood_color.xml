@@ -1,0 +1,48 @@
+<!-- in: uv, pk_id, wr_lp, wr_fig, wr_band, wp_pore, wf_fleck, wk_core, wk_rim. out: wd_col, wd_rough. White oak, matte oil (linear): honey..light tan per board, +-14% level; streaks along the grain (3 x 60 /m), mottle, fibre (60 x 1400 /m, speckle only), 70 cm drift, ring groups; earlywood darker and rougher, flecks lighter and smoother, pores dark, knot core and rim near black -->
+<multiply name="wc_1" type="float"><input name="in1" type="float" nodename="pk_id" /><input name="in2" type="float" value="169.338" /></multiply>
+<add name="wc_2" type="float"><input name="in1" type="float" nodename="wc_1" /><input name="in2" type="float" value="0.29" /></add>
+<fract name="wc_r1" type="float"><input name="in" type="float" nodename="wc_2" /></fract>
+<mix name="wc_bc" type="color3"><input name="bg" type="color3" value="0.5, 0.28, 0.11" /><input name="fg" type="color3" value="0.58, 0.36, 0.17" /><input name="mix" type="float" nodename="pk_id" /></mix>
+<multiply name="wc_5" type="vector2"><input name="in1" type="vector2" nodename="wr_lp" /><input name="in2" type="vector2" value="3.0, 60.0" /></multiply>
+<add name="wc_6" type="vector2"><input name="in1" type="vector2" nodename="wc_5" /><input name="in2" type="vector2" value="1.7, 8.3" /></add>
+<fractal2d name="wc_st" type="float"><input name="texcoord" type="vector2" nodename="wc_6" /><input name="amplitude" type="float" value="0.16" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="wc_8" type="vector2"><input name="in1" type="vector2" nodename="wr_lp" /><input name="in2" type="vector2" value="4.0, 12.0" /></multiply>
+<add name="wc_9" type="vector2"><input name="in1" type="vector2" nodename="wc_8" /><input name="in2" type="vector2" value="6.1, 2.9" /></add>
+<fractal2d name="wc_mo" type="float"><input name="texcoord" type="vector2" nodename="wc_9" /><input name="amplitude" type="float" value="0.1" /><input name="octaves" type="integer" value="3" /></fractal2d>
+<multiply name="wc_11" type="vector2"><input name="in1" type="vector2" nodename="wr_lp" /><input name="in2" type="vector2" value="60.0, 1400.0" /></multiply>
+<add name="wc_12" type="vector2"><input name="in1" type="vector2" nodename="wc_11" /><input name="in2" type="vector2" value="2.3, 4.1" /></add>
+<fractal2d name="wc_fib" type="float"><input name="texcoord" type="vector2" nodename="wc_12" /><input name="amplitude" type="float" value="0.1" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="wc_14" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1.5" /></multiply>
+<add name="wc_15" type="vector2"><input name="in1" type="vector2" nodename="wc_14" /><input name="in2" type="vector2" value="4.4, 7.7" /></add>
+<noise2d name="wc_dr" type="float"><input name="texcoord" type="vector2" nodename="wc_15" /><input name="amplitude" type="float" value="0.08" /></noise2d>
+<add name="wc_17" type="float"><input name="in1" type="float" nodename="wc_st" /><input name="in2" type="float" nodename="wc_mo" /></add>
+<add name="wc_18" type="float"><input name="in1" type="float" nodename="wc_fib" /><input name="in2" type="float" nodename="wc_dr" /></add>
+<add name="wc_19" type="float"><input name="in1" type="float" nodename="wc_17" /><input name="in2" type="float" nodename="wc_18" /></add>
+<subtract name="wc_20" type="float"><input name="in1" type="float" nodename="wc_r1" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="wc_21" type="float"><input name="in1" type="float" nodename="wc_20" /><input name="in2" type="float" value="0.28" /></multiply>
+<add name="wc_22" type="float"><input name="in1" type="float" nodename="wc_19" /><input name="in2" type="float" nodename="wc_21" /></add>
+<multiply name="wc_23" type="float"><input name="in1" type="float" nodename="wr_band" /><input name="in2" type="float" value="0.15" /></multiply>
+<add name="wc_24" type="float"><input name="in1" type="float" nodename="wc_23" /><input name="in2" type="float" value="1.0" /></add>
+<add name="wc_tone" type="float"><input name="in1" type="float" nodename="wc_22" /><input name="in2" type="float" nodename="wc_24" /></add>
+<multiply name="wc_c0" type="color3"><input name="in1" type="color3" nodename="wc_bc" /><input name="in2" type="float" nodename="wc_tone" /></multiply>
+<multiply name="wc_27" type="float"><input name="in1" type="float" nodename="wr_fig" /><input name="in2" type="float" value="0.75" /></multiply>
+<mix name="wc_28" type="color3"><input name="bg" type="color3" value="1.0, 1.0, 1.0" /><input name="fg" type="color3" value="0.74, 0.66, 0.58" /><input name="mix" type="float" nodename="wc_27" /></mix>
+<multiply name="wc_c1" type="color3"><input name="in1" type="color3" nodename="wc_c0" /><input name="in2" type="color3" nodename="wc_28" /></multiply>
+<multiply name="wc_30" type="float"><input name="in1" type="float" nodename="wf_fleck" /><input name="in2" type="float" value="0.7" /></multiply>
+<mix name="wc_31" type="color3"><input name="bg" type="color3" value="1.0, 1.0, 1.0" /><input name="fg" type="color3" value="1.18, 1.14, 1.08" /><input name="mix" type="float" nodename="wc_30" /></mix>
+<multiply name="wc_c2" type="color3"><input name="in1" type="color3" nodename="wc_c1" /><input name="in2" type="color3" nodename="wc_31" /></multiply>
+<multiply name="wc_33" type="float"><input name="in1" type="float" nodename="wp_pore" /><input name="in2" type="float" value="0.65" /></multiply>
+<mix name="wc_34" type="color3"><input name="bg" type="color3" value="1.0, 1.0, 1.0" /><input name="fg" type="color3" value="0.5, 0.44, 0.38" /><input name="mix" type="float" nodename="wc_33" /></mix>
+<multiply name="wc_c3" type="color3"><input name="in1" type="color3" nodename="wc_c2" /><input name="in2" type="color3" nodename="wc_34" /></multiply>
+<multiply name="wc_36" type="float"><input name="in1" type="float" nodename="wk_core" /><input name="in2" type="float" value="0.9" /></multiply>
+<mix name="wc_c4" type="color3"><input name="bg" type="color3" nodename="wc_c3" /><input name="fg" type="color3" value="0.17, 0.085, 0.038" /><input name="mix" type="float" nodename="wc_36" /></mix>
+<multiply name="wc_38" type="float"><input name="in1" type="float" nodename="wk_rim" /><input name="in2" type="float" value="0.8" /></multiply>
+<mix name="wd_col" type="color3"><input name="bg" type="color3" nodename="wc_c4" /><input name="fg" type="color3" value="0.06, 0.032, 0.015" /><input name="mix" type="float" nodename="wc_38" /></mix>
+<subtract name="wc_40" type="float"><input name="in1" type="float" nodename="wr_fig" /><input name="in2" type="float" value="0.35" /></subtract>
+<multiply name="wc_41" type="float"><input name="in1" type="float" nodename="wc_40" /><input name="in2" type="float" value="0.09" /></multiply>
+<add name="wc_42" type="float"><input name="in1" type="float" nodename="wc_41" /><input name="in2" type="float" value="0.6" /></add>
+<multiply name="wc_43" type="float"><input name="in1" type="float" nodename="wp_pore" /><input name="in2" type="float" value="0.07" /></multiply>
+<multiply name="wc_44" type="float"><input name="in1" type="float" nodename="wf_fleck" /><input name="in2" type="float" value="0.1" /></multiply>
+<subtract name="wc_45" type="float"><input name="in1" type="float" nodename="wc_43" /><input name="in2" type="float" nodename="wc_44" /></subtract>
+<add name="wc_rg" type="float"><input name="in1" type="float" nodename="wc_42" /><input name="in2" type="float" nodename="wc_45" /></add>
+<mix name="wd_rough" type="float"><input name="bg" type="float" nodename="wc_rg" /><input name="fg" type="float" value="0.56" /><input name="mix" type="float" nodename="wk_core" /></mix>

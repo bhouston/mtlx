@@ -1,0 +1,14 @@
+<!-- in: uv, uv_w (warped uv, m). out: crack (0..1), h_crack (m, -3 mm). 4 cells/m; presence mask scales the threshold, so cracks taper to points; the gate smoothstep(t0, 2e-4, 6e-4) removes the hairline left where t sits on its 1e-4 floor -->
+<multiply name="uv_c" type="vector2"><input name="in1" type="vector2" nodename="uv_w" /><input name="in2" type="float" value="4" /></multiply>
+<worleynoise2d name="c_w12" type="vector2"><input name="texcoord" type="vector2" nodename="uv_c" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<dotproduct name="c_e" type="float"><input name="in1" type="vector2" nodename="c_w12" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<multiply name="uv_cm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="2.5" /></multiply>
+<noise2d name="c_m0" type="float"><input name="texcoord" type="vector2" nodename="uv_cm" /><input name="amplitude" type="float" value="0.5" /><input name="pivot" type="float" value="0.5" /></noise2d>
+<smoothstep name="c_mask" type="float"><input name="in" type="float" nodename="c_m0" /><input name="low" type="float" value="0.3" /><input name="high" type="float" value="0.55" /></smoothstep>
+<multiply name="c_t0" type="float"><input name="in1" type="float" nodename="c_mask" /><input name="in2" type="float" value="0.03" /></multiply>
+<max name="c_t" type="float"><input name="in1" type="float" nodename="c_t0" /><input name="in2" type="float" value="0.0001" /></max>
+<smoothstep name="c_s" type="float"><input name="in" type="float" nodename="c_e" /><input name="low" type="float" value="0" /><input name="high" type="float" nodename="c_t" /></smoothstep>
+<subtract name="c_line" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="c_s" /></subtract>
+<smoothstep name="c_gate" type="float"><input name="in" type="float" nodename="c_t0" /><input name="low" type="float" value="0.0002" /><input name="high" type="float" value="0.0006" /></smoothstep>
+<multiply name="crack" type="float"><input name="in1" type="float" nodename="c_line" /><input name="in2" type="float" nodename="c_gate" /></multiply>
+<multiply name="h_crack" type="float"><input name="in1" type="float" nodename="crack" /><input name="in2" type="float" value="-0.003" /></multiply>

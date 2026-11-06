@@ -1,0 +1,5 @@
+antiReflectiveOpticalPolymerClear
+
+Colorless optical polymer with anti-reflective surface treatment; clear transmission and reduced front-surface glare, possibly faint residual angular tint.
+
+Use for rendering clear low-reflection optical covers, instrument windows, and sensor-facing plastic surfaces.

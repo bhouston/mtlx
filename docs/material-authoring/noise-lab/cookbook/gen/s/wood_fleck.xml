@@ -1,0 +1,19 @@
+<!-- in: wr_lp, wr_flank, pk_id. out: wf_fleck (0..1). Quarter-sawn ray fleck: thresholded stretched fBm (35 x 180 /m, 3 oct) gives ragged flakes ~1..4 cm x 2..5 mm along the grain, tilted +-10 deg per board. Thresholded noise makes worms, which is what flecks are. Only where rings stand perpendicular to the face (wr_flank > 0.85: quarter-sawn boards and rift edges); a slow presence field breaks them into patches -->
+<multiply name="wf_1" type="float"><input name="in1" type="float" nodename="pk_id" /><input name="in2" type="float" value="178.626" /></multiply>
+<add name="wf_2" type="float"><input name="in1" type="float" nodename="wf_1" /><input name="in2" type="float" value="0.83" /></add>
+<fract name="wf_3" type="float"><input name="in" type="float" nodename="wf_2" /></fract>
+<subtract name="wf_4" type="float"><input name="in1" type="float" nodename="wf_3" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="wf_ang" type="float"><input name="in1" type="float" nodename="wf_4" /><input name="in2" type="float" value="20.0" /></multiply>
+<rotate2d name="wf_6" type="vector2"><input name="in" type="vector2" nodename="wr_lp" /><input name="amount" type="float" nodename="wf_ang" /></rotate2d>
+<multiply name="wf_7" type="vector2"><input name="in1" type="vector2" nodename="wf_6" /><input name="in2" type="vector2" value="35.0, 180.0" /></multiply>
+<add name="wf_p" type="vector2"><input name="in1" type="vector2" nodename="wf_7" /><input name="in2" type="vector2" value="3.7, 1.3" /></add>
+<fractal2d name="wf_n" type="float"><input name="texcoord" type="vector2" nodename="wf_p" /><input name="octaves" type="integer" value="3" /></fractal2d>
+<multiply name="wf_10" type="vector2"><input name="in1" type="vector2" nodename="wr_lp" /><input name="in2" type="vector2" value="4.0, 10.0" /></multiply>
+<add name="wf_11" type="vector2"><input name="in1" type="vector2" nodename="wf_10" /><input name="in2" type="vector2" value="8.3, 2.1" /></add>
+<fractal2d name="wf_pres" type="float"><input name="texcoord" type="vector2" nodename="wf_11" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="wf_13" type="float"><input name="in1" type="float" nodename="wf_pres" /><input name="in2" type="float" value="0.3" /></multiply>
+<subtract name="wf_thr" type="float"><input name="in1" type="float" value="0.52" /><input name="in2" type="float" nodename="wf_13" /></subtract>
+<subtract name="wf_15" type="float"><input name="in1" type="float" nodename="wf_n" /><input name="in2" type="float" nodename="wf_thr" /></subtract>
+<smoothstep name="wf_shape" type="float"><input name="in" type="float" nodename="wf_15" /><input name="low" type="float" value="0.0" /><input name="high" type="float" value="0.12" /></smoothstep>
+<smoothstep name="wf_17" type="float"><input name="in" type="float" nodename="wr_flank" /><input name="low" type="float" value="0.85" /><input name="high" type="float" value="0.97" /></smoothstep>
+<multiply name="wf_fleck" type="float"><input name="in1" type="float" nodename="wf_shape" /><input name="in2" type="float" nodename="wf_17" /></multiply>

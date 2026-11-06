@@ -220,7 +220,7 @@ export const isStructural = (spec: MaterialXNodeSpec) =>
 export function addNode(
   document: MaterialXDocument,
   spec: MaterialXNodeSpec,
-  position: Point | undefined = undefined,
+  position?: Point,
   scope = '',
 ): MaterialXDocument {
   const structural = isStructural(spec);
@@ -266,12 +266,7 @@ export function setInterfacePort(
   });
 }
 /** Copy a node's values and incoming connections, leaving downstream connections unchanged. */
-export function cloneNode(
-  document: MaterialXDocument,
-  id: string,
-  position: Point | undefined = undefined,
-  scope = '',
-): MaterialXDocument {
+export function cloneNode(document: MaterialXDocument, id: string, position?: Point, scope = ''): MaterialXDocument {
   return edit(document, (copy) => {
     const siblings = children(copy, scope);
     const cloned = structuredClone(elementAt(copy, scope, id));

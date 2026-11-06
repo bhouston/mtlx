@@ -1,0 +1,54 @@
+<!-- in: pk_loc, pk_id, pk_lm. out: wk_loc (board-local m with the across-grain coordinate deflected round the knot), wk_bump (m added to the ring radius), wk_core, wk_rim (0..1). ~20% of boards, radius 4..9 mm, anywhere along the board up to 12.5 cm from its ends (offset scaled by the board length pk_lm), +-4 cm across. y' = y - qy*1.6*r^2/(rho_e^2 + r^2), rho_e = |q*(0.4, 1)| (stretched along the grain) -->
+<multiply name="wk_1" type="float"><input name="in1" type="float" nodename="pk_id" /><input name="in2" type="float" value="18.81" /></multiply>
+<add name="wk_2" type="float"><input name="in1" type="float" nodename="wk_1" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="wk_3" type="float"><input name="in" type="float" nodename="wk_2" /></fract>
+<multiply name="wk_4" type="float"><input name="in1" type="float" nodename="pk_id" /><input name="in2" type="float" value="39.963" /></multiply>
+<add name="wk_5" type="float"><input name="in1" type="float" nodename="wk_4" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="wk_6" type="float"><input name="in" type="float" nodename="wk_5" /></fract>
+<multiply name="wk_7" type="float"><input name="in1" type="float" nodename="pk_id" /><input name="in2" type="float" value="65.637" /></multiply>
+<add name="wk_8" type="float"><input name="in1" type="float" nodename="wk_7" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="wk_9" type="float"><input name="in" type="float" nodename="wk_8" /></fract>
+<multiply name="wk_10" type="float"><input name="in1" type="float" nodename="pk_id" /><input name="in2" type="float" value="97.722" /></multiply>
+<add name="wk_11" type="float"><input name="in1" type="float" nodename="wk_10" /><input name="in2" type="float" value="0.37" /></add>
+<fract name="wk_12" type="float"><input name="in" type="float" nodename="wk_11" /></fract>
+<ifgreater name="wk_on" type="float"><input name="value1" type="float" nodename="wk_3" /><input name="value2" type="float" value="0.8" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<multiply name="wk_14" type="float"><input name="in1" type="float" nodename="wk_6" /><input name="in2" type="float" value="0.005" /></multiply>
+<add name="wk_r" type="float"><input name="in1" type="float" nodename="wk_14" /><input name="in2" type="float" value="0.004" /></add>
+<subtract name="wk_16" type="float"><input name="in1" type="float" nodename="wk_9" /><input name="in2" type="float" value="0.5" /></subtract>
+<subtract name="wk_17" type="float"><input name="in1" type="float" nodename="pk_lm" /><input name="in2" type="float" value="0.25" /></subtract>
+<multiply name="wk_px" type="float"><input name="in1" type="float" nodename="wk_16" /><input name="in2" type="float" nodename="wk_17" /></multiply>
+<subtract name="wk_19" type="float"><input name="in1" type="float" nodename="wk_12" /><input name="in2" type="float" value="0.5" /></subtract>
+<multiply name="wk_20" type="float"><input name="in1" type="float" nodename="wk_19" /><input name="in2" type="float" value="0.08" /></multiply>
+<combine2 name="wk_p" type="vector2"><input name="in1" type="float" nodename="wk_px" /><input name="in2" type="float" nodename="wk_20" /></combine2>
+<subtract name="wk_q" type="vector2"><input name="in1" type="vector2" nodename="pk_loc" /><input name="in2" type="vector2" nodename="wk_p" /></subtract>
+<multiply name="wk_r2" type="float"><input name="in1" type="float" nodename="wk_r" /><input name="in2" type="float" nodename="wk_r" /></multiply>
+<multiply name="wk_24" type="vector2"><input name="in1" type="vector2" nodename="wk_q" /><input name="in2" type="vector2" value="0.7, 1.0" /></multiply>
+<magnitude name="wk_rho" type="float"><input name="in" type="vector2" nodename="wk_24" /></magnitude>
+<multiply name="wk_26" type="float"><input name="in1" type="float" nodename="wk_rho" /><input name="in2" type="float" nodename="wk_rho" /></multiply>
+<add name="wk_27" type="float"><input name="in1" type="float" nodename="wk_26" /><input name="in2" type="float" nodename="wk_r2" /></add>
+<divide name="wk_28" type="float"><input name="in1" type="float" nodename="wk_r2" /><input name="in2" type="float" nodename="wk_27" /></divide>
+<multiply name="wk_29" type="float"><input name="in1" type="float" nodename="wk_on" /><input name="in2" type="float" value="0.004" /></multiply>
+<multiply name="wk_bump" type="float"><input name="in1" type="float" nodename="wk_28" /><input name="in2" type="float" nodename="wk_29" /></multiply>
+<multiply name="wk_31" type="vector2"><input name="in1" type="vector2" nodename="wk_q" /><input name="in2" type="vector2" value="0.4, 1.0" /></multiply>
+<magnitude name="wk_rhoe" type="float"><input name="in" type="vector2" nodename="wk_31" /></magnitude>
+<multiply name="wk_33" type="float"><input name="in1" type="float" nodename="wk_r2" /><input name="in2" type="float" value="1.6" /></multiply>
+<multiply name="wk_34" type="float"><input name="in1" type="float" nodename="wk_rhoe" /><input name="in2" type="float" nodename="wk_rhoe" /></multiply>
+<add name="wk_35" type="float"><input name="in1" type="float" nodename="wk_34" /><input name="in2" type="float" nodename="wk_r2" /></add>
+<divide name="wk_36" type="float"><input name="in1" type="float" nodename="wk_33" /><input name="in2" type="float" nodename="wk_35" /></divide>
+<multiply name="wk_def" type="float"><input name="in1" type="float" nodename="wk_36" /><input name="in2" type="float" nodename="wk_on" /></multiply>
+<separate2 name="wk_qs" type="multioutput"><input name="in" type="vector2" nodename="wk_q" /></separate2>
+<multiply name="wk_39" type="float"><input name="in1" type="float" nodename="wk_qs" output="outy" /><input name="in2" type="float" nodename="wk_def" /></multiply>
+<combine2 name="wk_40" type="vector2"><input name="in1" type="float" value="0.0" /><input name="in2" type="float" nodename="wk_39" /></combine2>
+<subtract name="wk_loc" type="vector2"><input name="in1" type="vector2" nodename="pk_loc" /><input name="in2" type="vector2" nodename="wk_40" /></subtract>
+<multiply name="wk_42" type="float"><input name="in1" type="float" nodename="wk_r" /><input name="in2" type="float" value="0.85" /></multiply>
+<smoothstep name="wk_43" type="float"><input name="in" type="float" nodename="wk_rho" /><input name="low" type="float" nodename="wk_42" /><input name="high" type="float" nodename="wk_r" /></smoothstep>
+<subtract name="wk_44" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="wk_43" /></subtract>
+<multiply name="wk_core" type="float"><input name="in1" type="float" nodename="wk_44" /><input name="in2" type="float" nodename="wk_on" /></multiply>
+<multiply name="wk_46" type="float"><input name="in1" type="float" nodename="wk_r" /><input name="in2" type="float" value="0.8" /></multiply>
+<multiply name="wk_47" type="float"><input name="in1" type="float" nodename="wk_r" /><input name="in2" type="float" value="0.95" /></multiply>
+<smoothstep name="wk_48" type="float"><input name="in" type="float" nodename="wk_rho" /><input name="low" type="float" nodename="wk_46" /><input name="high" type="float" nodename="wk_47" /></smoothstep>
+<multiply name="wk_49" type="float"><input name="in1" type="float" nodename="wk_r" /><input name="in2" type="float" value="1.2" /></multiply>
+<smoothstep name="wk_50" type="float"><input name="in" type="float" nodename="wk_rho" /><input name="low" type="float" nodename="wk_r" /><input name="high" type="float" nodename="wk_49" /></smoothstep>
+<subtract name="wk_51" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="wk_50" /></subtract>
+<multiply name="wk_52" type="float"><input name="in1" type="float" nodename="wk_48" /><input name="in2" type="float" nodename="wk_51" /></multiply>
+<multiply name="wk_rim" type="float"><input name="in1" type="float" nodename="wk_52" /><input name="in2" type="float" nodename="wk_on" /></multiply>

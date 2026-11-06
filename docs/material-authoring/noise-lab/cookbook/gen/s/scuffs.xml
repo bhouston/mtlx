@@ -1,0 +1,23 @@
+<!-- in: uv. out: sc_mask (0..1 scuff/scratch mask for roughness and colour), h_scuff (m, -0.02 mm). Two stretched layers (20 deg and -50 deg, ~6 cm x 2 mm marks) thresholded high (n > 0.55), each in its own patchy presence field (4/m, ~25% of the area), so directions rarely cross -->
+<rotate2d name="sc_ra" type="vector2"><input name="in" type="vector2" nodename="uv" /><input name="amount" type="float" value="20" /></rotate2d>
+<multiply name="sc_pa0" type="vector2"><input name="in1" type="vector2" nodename="sc_ra" /><input name="in2" type="vector2" value="12, 350" /></multiply>
+<add name="sc_pa" type="vector2"><input name="in1" type="vector2" nodename="sc_pa0" /><input name="in2" type="vector2" value="3.37, 8.61" /></add>
+<noise2d name="sc_na" type="float"><input name="texcoord" type="vector2" nodename="sc_pa" /></noise2d>
+<smoothstep name="sc_la" type="float"><input name="in" type="float" nodename="sc_na" /><input name="low" type="float" value="0.55" /><input name="high" type="float" value="0.7" /></smoothstep>
+<multiply name="sc_qa0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="4" /></multiply>
+<add name="sc_qa" type="vector2"><input name="in1" type="vector2" nodename="sc_qa0" /><input name="in2" type="vector2" value="1.37, 6.61" /></add>
+<noise2d name="sc_ma0" type="float"><input name="texcoord" type="vector2" nodename="sc_qa" /></noise2d>
+<smoothstep name="sc_ma" type="float"><input name="in" type="float" nodename="sc_ma0" /><input name="low" type="float" value="0.25" /><input name="high" type="float" value="0.45" /></smoothstep>
+<multiply name="sc_a" type="float"><input name="in1" type="float" nodename="sc_la" /><input name="in2" type="float" nodename="sc_ma" /></multiply>
+<rotate2d name="sc_rb" type="vector2"><input name="in" type="vector2" nodename="uv" /><input name="amount" type="float" value="-50" /></rotate2d>
+<multiply name="sc_pb0" type="vector2"><input name="in1" type="vector2" nodename="sc_rb" /><input name="in2" type="vector2" value="12, 350" /></multiply>
+<add name="sc_pb" type="vector2"><input name="in1" type="vector2" nodename="sc_pb0" /><input name="in2" type="vector2" value="17.37, 2.61" /></add>
+<noise2d name="sc_nb" type="float"><input name="texcoord" type="vector2" nodename="sc_pb" /></noise2d>
+<smoothstep name="sc_lb" type="float"><input name="in" type="float" nodename="sc_nb" /><input name="low" type="float" value="0.55" /><input name="high" type="float" value="0.7" /></smoothstep>
+<multiply name="sc_qb0" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="4" /></multiply>
+<add name="sc_qb" type="vector2"><input name="in1" type="vector2" nodename="sc_qb0" /><input name="in2" type="vector2" value="9.37, 13.61" /></add>
+<noise2d name="sc_mb0" type="float"><input name="texcoord" type="vector2" nodename="sc_qb" /></noise2d>
+<smoothstep name="sc_mb" type="float"><input name="in" type="float" nodename="sc_mb0" /><input name="low" type="float" value="0.25" /><input name="high" type="float" value="0.45" /></smoothstep>
+<multiply name="sc_b" type="float"><input name="in1" type="float" nodename="sc_lb" /><input name="in2" type="float" nodename="sc_mb" /></multiply>
+<max name="sc_mask" type="float"><input name="in1" type="float" nodename="sc_a" /><input name="in2" type="float" nodename="sc_b" /></max>
+<multiply name="h_scuff" type="float"><input name="in1" type="float" nodename="sc_mask" /><input name="in2" type="float" value="-2e-05" /></multiply>

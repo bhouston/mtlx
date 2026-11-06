@@ -1,0 +1,17 @@
+<!-- in: uv. out: h_dent (m), dn_dent (0..1). Impact dents with a crisp rim and a flat floor: 1 - smoothstep(t, 0.45, 1), t = F1/r. 18 cells/m, jitter 0.7, 40% of cells, r 0.05..0.15 cell (3..8 mm, never clips), depth r*3.5 mm (0.2..0.5 mm, rim ~10 deg) -->
+<multiply name="dn_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="18.0" /></multiply>
+<add name="dn_p" type="vector2"><input name="in1" type="vector2" nodename="dn_1" /><input name="in2" type="vector2" value="3.7, 1.9" /></add>
+<worleynoise2d name="dn_f1" type="float"><input name="texcoord" type="vector2" nodename="dn_p" /><input name="jitter" type="float" value="0.7" /></worleynoise2d>
+<worleynoise2d name="dn_id" type="float"><input name="texcoord" type="vector2" nodename="dn_p" /><input name="jitter" type="float" value="0.7" /><input name="style" type="integer" value="1" /></worleynoise2d>
+<ifgreater name="dn_on" type="float"><input name="value1" type="float" nodename="dn_id" /><input name="value2" type="float" value="0.6" /><input name="in1" type="float" value="1.0" /><input name="in2" type="float" value="0.0" /></ifgreater>
+<multiply name="dn_6" type="float"><input name="in1" type="float" nodename="dn_id" /><input name="in2" type="float" value="7.3" /></multiply>
+<fract name="dn_7" type="float"><input name="in" type="float" nodename="dn_6" /></fract>
+<multiply name="dn_8" type="float"><input name="in1" type="float" nodename="dn_7" /><input name="in2" type="float" value="0.1" /></multiply>
+<multiply name="dn_9" type="float"><input name="in1" type="float" nodename="dn_8" /><input name="in2" type="float" nodename="dn_on" /></multiply>
+<add name="dn_r" type="float"><input name="in1" type="float" nodename="dn_9" /><input name="in2" type="float" value="0.05" /></add>
+<divide name="dn_t" type="float"><input name="in1" type="float" nodename="dn_f1" /><input name="in2" type="float" nodename="dn_r" /></divide>
+<smoothstep name="dn_12" type="float"><input name="in" type="float" nodename="dn_t" /><input name="low" type="float" value="0.45" /><input name="high" type="float" value="1.0" /></smoothstep>
+<subtract name="dn_13" type="float"><input name="in1" type="float" value="1.0" /><input name="in2" type="float" nodename="dn_12" /></subtract>
+<multiply name="dn_dent" type="float"><input name="in1" type="float" nodename="dn_13" /><input name="in2" type="float" nodename="dn_on" /></multiply>
+<multiply name="dn_15" type="float"><input name="in1" type="float" nodename="dn_r" /><input name="in2" type="float" value="-0.0035" /></multiply>
+<multiply name="h_dent" type="float"><input name="in1" type="float" nodename="dn_dent" /><input name="in2" type="float" nodename="dn_15" /></multiply>

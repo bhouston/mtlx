@@ -1,0 +1,15 @@
+<!-- in: uv_w, tc_id, tc_crack. out: hc_crack (parent + children, 0..1), h_hcrack (m, -0.2 mm: deeper on a 1 mm crack is > 30 deg and beads into dots). Children 2.4x finer (12 cells/m), 0.6 mm, only in parent cells with id > 0.35 (~65%): they stop at the parent border, so they end in T-junctions -->
+<multiply name="hc_p0" type="vector2"><input name="in1" type="vector2" nodename="uv_w" /><input name="in2" type="float" value="12" /></multiply>
+<add name="hc_p" type="vector2"><input name="in1" type="vector2" nodename="hc_p0" /><input name="in2" type="vector2" value="19.37, 44.13" /></add>
+<worleynoise2d name="hc_w" type="vector2"><input name="texcoord" type="vector2" nodename="hc_p" /><input name="jitter" type="float" value="1" /></worleynoise2d>
+<dotproduct name="hc_e" type="float"><input name="in1" type="vector2" nodename="hc_w" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+<smoothstep name="hc_on" type="float"><input name="in" type="float" nodename="tc_id" /><input name="low" type="float" value="0.3" /><input name="high" type="float" value="0.4" /></smoothstep>
+<multiply name="hc_t0" type="float"><input name="in1" type="float" nodename="hc_on" /><input name="in2" type="float" value="0.0055" /></multiply>
+<max name="hc_t" type="float"><input name="in1" type="float" nodename="hc_t0" /><input name="in2" type="float" value="0.0001" /></max>
+<smoothstep name="hc_s" type="float"><input name="in" type="float" nodename="hc_e" /><input name="low" type="float" value="0" /><input name="high" type="float" nodename="hc_t" /></smoothstep>
+<subtract name="hc_line" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="hc_s" /></subtract>
+<smoothstep name="hc_gate" type="float"><input name="in" type="float" nodename="hc_t0" /><input name="low" type="float" value="0.0002" /><input name="high" type="float" value="0.0006" /></smoothstep>
+<multiply name="hc_c" type="float"><input name="in1" type="float" nodename="hc_line" /><input name="in2" type="float" nodename="hc_gate" /></multiply>
+<multiply name="hc_c2" type="float"><input name="in1" type="float" nodename="hc_c" /><input name="in2" type="float" value="0.7" /></multiply>
+<max name="hc_crack" type="float"><input name="in1" type="float" nodename="tc_crack" /><input name="in2" type="float" nodename="hc_c2" /></max>
+<multiply name="h_hcrack" type="float"><input name="in1" type="float" nodename="hc_crack" /><input name="in2" type="float" value="-0.0002" /></multiply>

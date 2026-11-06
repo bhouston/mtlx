@@ -1,0 +1,31 @@
+<!-- in: bm_q, bm_a. out: lq_fig (signed fiddleback figure, ~+-0.5), lq_rb (ribbon, signed), lq_fib (fibre pseudo-height, m). Figured veneer on flitch coords: fiddleback cross-bands ~13 mm apart (75/m along the grain) slanted ~20 deg so they meet the seams as chevrons, curved by a 6 mm warp and in patches; ribbon stripes ~3 cm across (22/m). The fibre tilt becomes a pseudo-height: fiddleback 2.5 mm x figure (~+-12 deg), ribbon 3.5 mm x ribbon, whole-leaf tilt 0.035 m/m x a. All are functions of the flitch coords and the leaf tilt uses a itself (a triangle wave: continuous, its slope flips at the seam), so seams stay invisible; a per-leaf +-1 sign times a constant steps at every seam -->
+<separate2 name="lq_qs" type="multioutput"><input name="in" type="vector2" nodename="bm_q" /></separate2>
+<multiply name="lq_2" type="vector2"><input name="in1" type="vector2" nodename="bm_q" /><input name="in2" type="vector2" value="10.0, 2.0" /></multiply>
+<add name="lq_3" type="vector2"><input name="in1" type="vector2" nodename="lq_2" /><input name="in2" type="vector2" value="7.7, 1.9" /></add>
+<fractal2d name="lq_bw" type="float"><input name="texcoord" type="vector2" nodename="lq_3" /><input name="amplitude" type="float" value="0.006" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="lq_5" type="vector2"><input name="in1" type="vector2" nodename="bm_q" /><input name="in2" type="vector2" value="1.0, 0.8" /></multiply>
+<add name="lq_6" type="vector2"><input name="in1" type="vector2" nodename="lq_5" /><input name="in2" type="vector2" value="3.9, 12.7" /></add>
+<fractal2d name="lq_7" type="float"><input name="texcoord" type="vector2" nodename="lq_6" /><input name="amplitude" type="float" value="0.8" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<add name="lq_slant" type="float"><input name="in1" type="float" nodename="lq_7" /><input name="in2" type="float" value="0.35" /></add>
+<add name="lq_9" type="float"><input name="in1" type="float" nodename="lq_qs" output="outy" /><input name="in2" type="float" nodename="lq_bw" /></add>
+<multiply name="lq_10" type="float"><input name="in1" type="float" nodename="lq_qs" output="outx" /><input name="in2" type="float" nodename="lq_slant" /></multiply>
+<add name="lq_11" type="float"><input name="in1" type="float" nodename="lq_9" /><input name="in2" type="float" nodename="lq_10" /></add>
+<combine2 name="lq_fq" type="vector2"><input name="in1" type="float" nodename="lq_qs" output="outx" /><input name="in2" type="float" nodename="lq_11" /></combine2>
+<multiply name="lq_13" type="vector2"><input name="in1" type="vector2" nodename="lq_fq" /><input name="in2" type="vector2" value="4.0, 75.0" /></multiply>
+<add name="lq_14" type="vector2"><input name="in1" type="vector2" nodename="lq_13" /><input name="in2" type="vector2" value="13.3, 5.1" /></add>
+<fractal2d name="lq_fb" type="float"><input name="texcoord" type="vector2" nodename="lq_14" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="lq_16" type="vector2"><input name="in1" type="vector2" nodename="bm_q" /><input name="in2" type="vector2" value="5.0, 1.6" /></multiply>
+<add name="lq_17" type="vector2"><input name="in1" type="vector2" nodename="lq_16" /><input name="in2" type="vector2" value="21.7, 3.3" /></add>
+<fractal2d name="lq_18" type="float"><input name="texcoord" type="vector2" nodename="lq_17" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="lq_19" type="float"><input name="in1" type="float" nodename="lq_18" /><input name="in2" type="float" value="1.4" /></multiply>
+<add name="lq_20" type="float"><input name="in1" type="float" nodename="lq_19" /><input name="in2" type="float" value="0.55" /></add>
+<clamp name="lq_pres" type="float"><input name="in" type="float" nodename="lq_20" /></clamp>
+<multiply name="lq_fig" type="float"><input name="in1" type="float" nodename="lq_fb" /><input name="in2" type="float" nodename="lq_pres" /></multiply>
+<multiply name="lq_23" type="vector2"><input name="in1" type="vector2" nodename="bm_q" /><input name="in2" type="vector2" value="22.0, 0.8" /></multiply>
+<add name="lq_24" type="vector2"><input name="in1" type="vector2" nodename="lq_23" /><input name="in2" type="vector2" value="31.1, 17.9" /></add>
+<fractal2d name="lq_rb" type="float"><input name="texcoord" type="vector2" nodename="lq_24" /><input name="amplitude" type="float" value="1.0" /><input name="octaves" type="integer" value="1" /></fractal2d>
+<multiply name="lq_26" type="float"><input name="in1" type="float" nodename="lq_fig" /><input name="in2" type="float" value="0.0025" /></multiply>
+<multiply name="lq_27" type="float"><input name="in1" type="float" nodename="lq_rb" /><input name="in2" type="float" value="0.0035" /></multiply>
+<add name="lq_28" type="float"><input name="in1" type="float" nodename="lq_26" /><input name="in2" type="float" nodename="lq_27" /></add>
+<multiply name="lq_29" type="float"><input name="in1" type="float" nodename="bm_a" /><input name="in2" type="float" value="0.035" /></multiply>
+<add name="lq_fib" type="float"><input name="in1" type="float" nodename="lq_28" /><input name="in2" type="float" nodename="lq_29" /></add>

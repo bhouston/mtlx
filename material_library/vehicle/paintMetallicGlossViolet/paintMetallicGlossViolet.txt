@@ -1,0 +1,5 @@
+paintMetallicGlossViolet
+
+violet metallic automotive basecoat with fine reflective flakes beneath a smooth gloss clearcoat; directional flake response and view-dependent brightness, not a uniformly metallic outer surface.
+
+Use for rendering metallic-painted exterior body panels, wheels, mirror caps, and matching decorative trim.

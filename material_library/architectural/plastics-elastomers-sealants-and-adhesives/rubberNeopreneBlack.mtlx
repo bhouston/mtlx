@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materialx version="1.39" colorspace="lin_rec709" doc="Black neoprene rubber with a fine smooth skin and a low satin response. Recipe: smooth. molded skin 3.8 mm filtered texture, 1–25 micrometre height; sand adhesive 2.7 mm cells. All colors are art-directed scene-linear Rec.709, not calibrated manufacturer measurements. UV 0–1 = 1 metre; height in metres. Relief is filtered surface appearance, not silhouette geometry.">
+  <nodegraph name="NG_rubberNeopreneBlack">
+    <texcoord name="uv" type="vector2">
+      <input name="index" type="integer" value="0" />
+    </texcoord>
+    <multiply name="surface_skin_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="260, 260" />
+    </multiply>
+    <add name="surface_skin_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="surface_skin_scale" />
+      <input name="in2" type="vector2" value="3.71, 8.29" />
+    </add>
+    <fractal2d name="surface_skin" type="float">
+      <input name="texcoord" type="vector2" nodename="surface_skin_offset" />
+      <input name="amplitude" type="float" value="2e-05" />
+      <input name="octaves" type="integer" value="2" />
+    </fractal2d>
+    <multiply name="skin_tone_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="260, 260" />
+    </multiply>
+    <add name="skin_tone_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="skin_tone_scale" />
+      <input name="in2" type="vector2" value="3.71, 8.29" />
+    </add>
+    <fractal2d name="skin_tone" type="float">
+      <input name="texcoord" type="vector2" nodename="skin_tone_offset" />
+      <input name="amplitude" type="float" value="1" />
+      <input name="octaves" type="integer" value="2" />
+    </fractal2d>
+    <multiply name="skin_mask_gain" type="float">
+      <input name="in1" type="float" nodename="skin_tone" />
+      <input name="in2" type="float" value="0.6" />
+    </multiply>
+    <add name="skin_mask_bias" type="float">
+      <input name="in1" type="float" nodename="skin_mask_gain" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="skin_mask" type="float">
+      <input name="in" type="float" nodename="skin_mask_bias" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <multiply name="tone_drift_noise_scale" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="vector2" value="3.7, 4.9" />
+    </multiply>
+    <add name="tone_drift_noise_offset" type="vector2">
+      <input name="in1" type="vector2" nodename="tone_drift_noise_scale" />
+      <input name="in2" type="vector2" value="15.1, 9.7" />
+    </add>
+    <fractal2d name="tone_drift_noise" type="float">
+      <input name="texcoord" type="vector2" nodename="tone_drift_noise_offset" />
+      <input name="amplitude" type="float" value="1" />
+      <input name="octaves" type="integer" value="2" />
+    </fractal2d>
+    <multiply name="tone_drift_gain" type="float">
+      <input name="in1" type="float" nodename="tone_drift_noise" />
+      <input name="in2" type="float" value="0.6" />
+    </multiply>
+    <add name="tone_drift_bias" type="float">
+      <input name="in1" type="float" nodename="tone_drift_gain" />
+      <input name="in2" type="float" value="0.5" />
+    </add>
+    <clamp name="tone_drift" type="float">
+      <input name="in" type="float" nodename="tone_drift_bias" />
+      <input name="low" type="float" value="0" />
+      <input name="high" type="float" value="1" />
+    </clamp>
+    <mix name="pigment_variation" type="float">
+      <input name="bg" type="float" value="0.982" />
+      <input name="fg" type="float" value="1.018" />
+      <input name="mix" type="float" nodename="skin_mask" />
+    </mix>
+    <multiply name="micro_color" type="color3">
+      <input name="in1" type="color3" value="0.012, 0.014, 0.016" />
+      <input name="in2" type="float" nodename="pigment_variation" />
+    </multiply>
+    <mix name="macro_pigment" type="float">
+      <input name="bg" type="float" value="0.9946" />
+      <input name="fg" type="float" value="1.0054" />
+      <input name="mix" type="float" nodename="tone_drift" />
+    </mix>
+    <multiply name="base_color" type="color3">
+      <input name="in1" type="color3" nodename="micro_color" />
+      <input name="in2" type="float" nodename="macro_pigment" />
+    </multiply>
+    <mix name="roughness" type="float">
+      <input name="bg" type="float" value="0.57" />
+      <input name="fg" type="float" value="0.63" />
+      <input name="mix" type="float" nodename="skin_mask" />
+    </mix>
+    <constant name="metalness" type="float">
+      <input name="value" type="float" value="0" />
+    </constant>
+    <add name="height" type="float">
+      <input name="in1" type="float" nodename="surface_skin" />
+      <input name="in2" type="float" value="0" />
+    </add>
+    <multiply name="uv_mm" type="vector2">
+      <input name="in1" type="vector2" nodename="uv" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <multiply name="height_mm" type="float">
+      <input name="in1" type="float" nodename="height" />
+      <input name="in2" type="float" value="1000" />
+    </multiply>
+    <heighttonormal name="n_tangent" type="vector3">
+      <input name="in" type="float" nodename="height_mm" />
+      <input name="scale" type="float" value="16" />
+      <input name="texcoord" type="vector2" nodename="uv_mm" />
+    </heighttonormal>
+    <normalmap name="n_world" type="vector3">
+      <input name="in" type="vector3" nodename="n_tangent" />
+    </normalmap>
+    <constant name="base" type="float">
+      <input name="value" type="float" value="1" />
+    </constant>
+    <constant name="specular" type="float">
+      <input name="value" type="float" value="0.5" />
+    </constant>
+    <constant name="specular_IOR" type="float">
+      <input name="value" type="float" value="1.5" />
+    </constant>
+    <constant name="diffuse_roughness" type="float">
+      <input name="value" type="float" value="0.25" />
+    </constant>
+    <output name="out_base_color" type="color3" nodename="base_color" />
+    <output name="out_roughness" type="float" nodename="roughness" />
+    <output name="out_metalness" type="float" nodename="metalness" />
+    <output name="out_normal" type="vector3" nodename="n_world" />
+    <output name="out_base" type="float" nodename="base" />
+    <output name="out_specular" type="float" nodename="specular" />
+    <output name="out_specular_IOR" type="float" nodename="specular_IOR" />
+    <output name="out_diffuse_roughness" type="float" nodename="diffuse_roughness" />
+  </nodegraph>
+  <standard_surface name="SR_rubberNeopreneBlack" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_rubberNeopreneBlack" output="out_base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_rubberNeopreneBlack" output="out_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_rubberNeopreneBlack" output="out_metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_rubberNeopreneBlack" output="out_normal" />
+    <input name="base" type="float" nodegraph="NG_rubberNeopreneBlack" output="out_base" />
+    <input name="specular" type="float" nodegraph="NG_rubberNeopreneBlack" output="out_specular" />
+    <input name="specular_IOR" type="float" nodegraph="NG_rubberNeopreneBlack" output="out_specular_IOR" />
+    <input name="diffuse_roughness" type="float" nodegraph="NG_rubberNeopreneBlack" output="out_diffuse_roughness" />
+  </standard_surface>
+  <surfacematerial name="M_rubberNeopreneBlack" type="material" doc="Black neoprene rubber with a fine smooth skin and a low satin response.">
+    <input name="surfaceshader" type="surfaceshader" nodename="SR_rubberNeopreneBlack" />
+  </surfacematerial>
+</materialx>

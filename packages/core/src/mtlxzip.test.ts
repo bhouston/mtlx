@@ -35,7 +35,7 @@ describe('archive resource budgets', () => {
   ])('rejects %s without returning partial entries', (limit, value) => {
     const result = inspectMaterialXZipArchive(compressed(), { [limit]: value });
     expect(result.entries).toEqual([]);
-    expect(result.issues[0].message).toContain(limit);
+    expect(result.issues[0]!.message).toContain(limit);
   });
 
   it('allows deliberate higher budgets and preserves decompressed bytes', () => {
@@ -52,7 +52,7 @@ describe('archive resource budgets', () => {
     }
     const result = inspectMaterialXZipArchive(data);
     expect(result.entries).toEqual([]);
-    expect(result.issues[0].message).toContain('size differs');
+    expect(result.issues[0]!.message).toContain('size differs');
   });
 
   it('rejects a declared multi-gigabyte entry before allocating its output', () => {
@@ -66,11 +66,11 @@ describe('archive resource budgets', () => {
     }
     const result = inspectMaterialXZipArchive(data);
     expect(result.entries).toEqual([]);
-    expect(result.issues[0].message).toContain('maxEntryBytes');
+    expect(result.issues[0]!.message).toContain('maxEntryBytes');
   });
 
   it('rejects invalid short archives without entering the ZIP scanner', () => {
-    expect(inspectMaterialXZipArchive(new Uint8Array()).issues[0].message).toContain('Truncated');
+    expect(inspectMaterialXZipArchive(new Uint8Array()).issues[0]!.message).toContain('Truncated');
   });
 
   it('rejects duplicate archive paths on write', () => {
@@ -104,7 +104,7 @@ describe('archive resource budgets', () => {
       return data;
     };
     expect(inspectMaterialXZipArchive(buildStreaming(['test.mtlx'])).issues).toEqual([]);
-    expect(inspectMaterialXZipArchive(buildStreaming(['test.mtlx', 'test.mtlx'])).issues[0].message).toContain(
+    expect(inspectMaterialXZipArchive(buildStreaming(['test.mtlx', 'test.mtlx'])).issues[0]!.message).toContain(
       'Duplicate archive path',
     );
   });

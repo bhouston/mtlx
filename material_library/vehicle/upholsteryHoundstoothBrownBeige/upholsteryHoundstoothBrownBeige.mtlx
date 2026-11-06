@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- brown beige houndstooth woven textile; crisp multi-yarn color pattern at textile scale with low gloss and soft yarn relief. -->
+  <!-- Real-world scale: UV 0..1 = 1 meter; height is meters. Recipe: weave; feature frequency 1000 × 1000 per meter; relief span 2.5e-05 m. Coated fiber and wood substrate relief stays beneath the separate smooth dielectric coat. -->
+  <nodegraph name="NG_upholsteryHoundstoothBrownBeige">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="tone_drift_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="4, 4" /></multiply>
+    <fractal2d name="tone_drift" type="float"><input name="texcoord" type="vector2" nodename="tone_drift_uv" /><input name="octaves" type="integer" value="2" /></fractal2d>
+    <multiply name="weave_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1000, 1000" /></multiply>
+    <dotproduct name="warp_coord" type="float"><input name="in1" type="vector2" nodename="weave_uv" /><input name="in2" type="vector2" value="1, 0" /></dotproduct>
+    <dotproduct name="weft_coord" type="float"><input name="in1" type="vector2" nodename="weave_uv" /><input name="in2" type="vector2" value="0, 1" /></dotproduct>
+    <multiply name="warp_radians" type="float"><input name="in1" type="float" nodename="warp_coord" /><input name="in2" type="float" value="6.283185" /></multiply>
+    <sin name="warp_wave" type="float"><input name="in" type="float" nodename="warp_radians" /></sin>
+    <multiply name="weft_radians" type="float"><input name="in1" type="float" nodename="weft_coord" /><input name="in2" type="float" value="6.283185" /></multiply>
+    <sin name="weft_wave" type="float"><input name="in" type="float" nodename="weft_radians" /></sin>
+    <multiply name="woven_product" type="float"><input name="in1" type="float" nodename="warp_wave" /><input name="in2" type="float" nodename="weft_wave" /></multiply>
+    <multiply name="woven_scale" type="float"><input name="in1" type="float" nodename="woven_product" /><input name="in2" type="float" value="0.5" /></multiply>
+    <add name="woven_center" type="float"><input name="in1" type="float" nodename="woven_scale" /><input name="in2" type="float" value="0.5" /></add>
+    <multiply name="motif_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="80, 80" /></multiply>
+    <dotproduct name="motif_x" type="float"><input name="in1" type="vector2" nodename="motif_uv" /><input name="in2" type="vector2" value="1, 0" /></dotproduct>
+    <dotproduct name="motif_y" type="float"><input name="in1" type="vector2" nodename="motif_uv" /><input name="in2" type="vector2" value="0, 1" /></dotproduct>
+    <floor name="motif_ix" type="float"><input name="in" type="float" nodename="motif_x" /></floor>
+    <floor name="motif_iy" type="float"><input name="in" type="float" nodename="motif_y" /></floor>
+    <modulo name="tooth_warp_repeat" type="float"><input name="in1" type="float" nodename="motif_ix" /><input name="in2" type="float" value="8" /></modulo>
+    <smoothstep name="tooth_warp_color" type="float"><input name="in" type="float" nodename="tooth_warp_repeat" /><input name="low" type="float" value="3" /><input name="high" type="float" value="4" /></smoothstep>
+    <modulo name="tooth_weft_repeat" type="float"><input name="in1" type="float" nodename="motif_iy" /><input name="in2" type="float" value="8" /></modulo>
+    <smoothstep name="tooth_weft_color" type="float"><input name="in" type="float" nodename="tooth_weft_repeat" /><input name="low" type="float" value="3" /><input name="high" type="float" value="4" /></smoothstep>
+    <add name="tooth_sum" type="float"><input name="in1" type="float" nodename="motif_ix" /><input name="in2" type="float" nodename="motif_iy" /></add>
+    <modulo name="tooth_diagonal" type="float"><input name="in1" type="float" nodename="tooth_sum" /><input name="in2" type="float" value="4" /></modulo>
+    <smoothstep name="tooth_over" type="float"><input name="in" type="float" nodename="tooth_diagonal" /><input name="low" type="float" value="1" /><input name="high" type="float" value="2" /></smoothstep>
+    <mix name="houndstooth_yarns" type="float"><input name="bg" type="float" nodename="tooth_warp_color" /><input name="fg" type="float" nodename="tooth_weft_color" /><input name="mix" type="float" nodename="tooth_over" /></mix>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.13, 0.062, 0.028" /><input name="fg" type="color3" value="0.39, 0.3, 0.2" /><input name="mix" type="float" nodename="houndstooth_yarns" /></mix>
+    <multiply name="drift_amount" type="float"><input name="in1" type="float" nodename="tone_drift" /><input name="in2" type="float" value="0.025" /></multiply>
+    <add name="drift_gain" type="float"><input name="in1" type="float" nodename="drift_amount" /><input name="in2" type="float" value="1" /></add>
+    <multiply name="body_color" type="color3"><input name="in1" type="color3" nodename="base_color" /><input name="in2" type="float" nodename="drift_gain" /></multiply>
+    <subtract name="relief_center" type="float"><input name="in1" type="float" nodename="woven_center" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="height" type="float"><input name="in1" type="float" nodename="relief_center" /><input name="in2" type="float" value="2.5e-05" /></multiply>
+    <subtract name="roughness_center" type="float"><input name="in1" type="float" nodename="woven_center" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="roughness_variation" type="float"><input name="in1" type="float" nodename="roughness_center" /><input name="in2" type="float" value="-0.1" /></multiply>
+    <add name="roughness" type="float"><input name="in1" type="float" value="0.77" /><input name="in2" type="float" nodename="roughness_variation" /></add>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.2" /></constant>
+    <output name="base_color_out" type="color3" nodename="body_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_upholsteryHoundstoothBrownBeige" type="surfaceshader"><input name="base" type="float" value="1" /><input name="specular_IOR" type="float" value="1.5" /><input name="sheen" type="float" value="0.25" /><input name="sheen_roughness" type="float" value="0.7" /><input name="specular_anisotropy" type="float" value="0.25" /><input name="coat" type="float" value="0" /><input name="coat_roughness" type="float" value="0.15" /><input name="base_color" type="color3" nodegraph="NG_upholsteryHoundstoothBrownBeige" output="base_color_out" /><input name="specular_roughness" type="float" nodegraph="NG_upholsteryHoundstoothBrownBeige" output="roughness_out" /><input name="normal" type="vector3" nodegraph="NG_upholsteryHoundstoothBrownBeige" output="normal_out" /><input name="metalness" type="float" nodegraph="NG_upholsteryHoundstoothBrownBeige" output="metalness_out" /><input name="specular" type="float" nodegraph="NG_upholsteryHoundstoothBrownBeige" output="specular_out" /></standard_surface>
+  <surfacematerial name="M_upholsteryHoundstoothBrownBeige" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_upholsteryHoundstoothBrownBeige" /></surfacematerial>
+</materialx>

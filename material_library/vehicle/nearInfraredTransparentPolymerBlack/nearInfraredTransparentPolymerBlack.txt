@@ -1,0 +1,5 @@
+nearInfraredTransparentPolymerBlack
+
+Visibly black optical polymer with a smooth gloss surface; near-infrared transmission is a spectral property, while visible rendering remains dark and non-emissive.
+
+Use for rendering dark optical sensor windows and covers in vehicle visualization, without implying measured infrared performance.

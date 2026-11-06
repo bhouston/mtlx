@@ -169,6 +169,7 @@ it('replaces materials in place, keeping geometry, orientation and the selection
   expect(() => scene.replaceMaterials(new ArrayBuffer(0), 'empty.mtlx')).toThrow('No materials');
   expect(mesh.material).toBe(current);
   scene.dispose();
+  // oxlint-disable-next-line typescript/unbound-method
   expect((current as THREE.Material).dispose).toBeDefined();
 });
 

@@ -1,0 +1,5 @@
+vinylWrapGlossGray
+
+gray opaque automotive vinyl film; smooth glossy dielectric surface with slight film texture and no metal flakes.
+
+Use for rendering wrapped body panels, roof panels, mirror caps, and decorative trim with the named vinyl finish.

@@ -197,36 +197,34 @@ function Graph({
   };
   const projectedNodes = useMemo(
     () =>
-      projection.nodes.map(
-        (graph): FlowNode => ({
-          id: graph.id,
-          type: 'materialx',
-          position: graph.position,
-          data: {
-            graph,
-            errors: diagnostics.filter((issue) => issue.nodeIds.includes(graph.id)).map((issue) => issue.message),
-            portType,
-            mode: editable ? 'edit' : 'view',
-            showAll: showAll.has(graph.id),
-            onToggleInputs: () => toggleInputs(graph.id),
-            onPortContextMenu: (_, side, name) => {
-              pendingWire.current = { node: graph.id, side, name };
-            },
-            onExpand:
-              graph.compoundScope !== undefined && !path.includes(graph.compoundScope)
-                ? () => onNavigate([...path, graph.compoundScope!])
-                : undefined,
+      projection.nodes.map((graph): FlowNode => ({
+        id: graph.id,
+        type: 'materialx',
+        position: graph.position,
+        data: {
+          graph,
+          errors: diagnostics.filter((issue) => issue.nodeIds.includes(graph.id)).map((issue) => issue.message),
+          portType,
+          mode: editable ? 'edit' : 'view',
+          showAll: showAll.has(graph.id),
+          onToggleInputs: () => toggleInputs(graph.id),
+          onPortContextMenu: (_, side, name) => {
+            pendingWire.current = { node: graph.id, side, name };
           },
-          selected: selected.includes(graph.id),
-        }),
-      ),
+          onExpand:
+            graph.compoundScope !== undefined && !path.includes(graph.compoundScope)
+              ? () => onNavigate([...path, graph.compoundScope!])
+              : undefined,
+        },
+        selected: selected.includes(graph.id),
+      })),
     [projection, portType, diagnostics, editable, selected, showAll, toggleInputs, path, onNavigate],
   );
   // React Flow owns transient node state (drag positions, measurements); each new projection replaces it.
   const [nodes, setNodes, onNodesChange] = useNodesState(projectedNodes);
   useLayoutEffect(() => setNodes(projectedNodes), [projectedNodes, setNodes]);
   const commit = (operation: () => unknown) => {
-    if (editable) attempt(session, operation);
+    if (editable) void attempt(session, operation);
   };
   const add = (spec: NodeDefinition, position: Point) =>
     commit(() =>

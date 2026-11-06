@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- New white marble decorative finish with gray veining; fine mineral color pattern beneath a polished dielectric surface and subtle subsurface softness. -->
+  <!-- Factory-new appearance target; colors are linear Rec.709 artistic reflectances, not measured OEM data.  -->
+  <nodegraph name="NG_marbleWhiteGrayVeinPolished">
+    <!-- UV 0..1 is exactly one metre; all height values below are metres. vein: frequencies 6 × 6 cycles/metre; relief amplitude 3e-7 m. -->
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="feature_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="6, 6" /></multiply>
+    <noise2d name="micro" type="float"><input name="texcoord" type="vector2" nodename="feature_uv" /><input name="amplitude" type="float" value="0.45" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <!-- Natural mineral ribbons: 0.1–0.4 m warped flow, locally varying millimetre vein widths, faint independent subsidiary veins. Relief stays optically polished. -->
+    <multiply name="warp_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="3.1, 2.7" /></multiply>
+    <noise2d name="warp_x" type="float"><input name="texcoord" type="vector2" nodename="warp_uv" /><input name="amplitude" type="float" value="0.16" /></noise2d>
+    <add name="warp_uv_offset" type="vector2"><input name="in1" type="vector2" nodename="warp_uv" /><input name="in2" type="vector2" value="43.1, 17.7" /></add>
+    <noise2d name="warp_y" type="float"><input name="texcoord" type="vector2" nodename="warp_uv_offset" /><input name="amplitude" type="float" value="0.13" /></noise2d>
+    <combine2 name="warp_vector" type="vector2"><input name="in1" type="float" nodename="warp_x" /><input name="in2" type="float" nodename="warp_y" /></combine2>
+    <add name="warped_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" nodename="warp_vector" /></add>
+    <multiply name="flow_uv" type="vector2"><input name="in1" type="vector2" nodename="warped_uv" /><input name="in2" type="vector2" value="2.1, 13" /></multiply>
+    <fractal2d name="vein_fbm" type="float"><input name="texcoord" type="vector2" nodename="flow_uv" /><input name="octaves" type="integer" value="3" /></fractal2d>
+    <absval name="vein_distance" type="float"><input name="in" type="float" nodename="vein_fbm" /></absval>
+    <noise2d name="vein_width" type="float"><input name="texcoord" type="vector2" nodename="warp_uv" /><input name="amplitude" type="float" value="0.065" /><input name="pivot" type="float" value="0.065" /></noise2d>
+    <subtract name="irregular_distance" type="float"><input name="in1" type="float" nodename="vein_distance" /><input name="in2" type="float" nodename="vein_width" /></subtract>
+    <smoothstep name="main_vein_body" type="float"><input name="in" type="float" nodename="irregular_distance" /><input name="low" type="float" value="0" /><input name="high" type="float" value="0.065" /></smoothstep>
+    <subtract name="main_vein" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="main_vein_body" /></subtract>
+    <multiply name="fine_flow_uv" type="vector2"><input name="in1" type="vector2" nodename="warped_uv" /><input name="in2" type="vector2" value="7, 29" /></multiply>
+    <noise2d name="subsidiary_field" type="float"><input name="texcoord" type="vector2" nodename="fine_flow_uv" /></noise2d>
+    <absval name="subsidiary_distance" type="float"><input name="in" type="float" nodename="subsidiary_field" /></absval>
+    <smoothstep name="subsidiary_body" type="float"><input name="in" type="float" nodename="subsidiary_distance" /><input name="low" type="float" value="0.012" /><input name="high" type="float" value="0.075" /></smoothstep>
+    <subtract name="subsidiary_vein" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="subsidiary_body" /></subtract>
+    <multiply name="subsidiary_faint" type="float"><input name="in1" type="float" nodename="subsidiary_vein" /><input name="in2" type="float" value="0.13" /></multiply>
+    <max name="combined_vein" type="float"><input name="in1" type="float" nodename="main_vein" /><input name="in2" type="float" nodename="subsidiary_faint" /></max>
+    <subtract name="vein_body" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="combined_vein" /></subtract>
+    <multiply name="micro_relief" type="float"><input name="in1" type="float" nodename="micro" /><input name="in2" type="float" value="4.5e-8" /></multiply>
+    <multiply name="structure_relief" type="float"><input name="in1" type="float" nodename="vein_body" /><input name="in2" type="float" value="3e-7" /></multiply>
+    <add name="height" type="float"><input name="in1" type="float" nodename="structure_relief" /><input name="in2" type="float" nodename="micro_relief" /></add>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.23, 0.25, 0.26" /><input name="fg" type="color3" value="0.78, 0.77, 0.73" /><input name="mix" type="float" nodename="vein_body" /></mix>
+    <multiply name="roughness_detail" type="float"><input name="in1" type="float" nodename="vein_body" /><input name="in2" type="float" value="0.008" /></multiply>
+    <add name="roughness" type="float"><input name="in1" type="float" nodename="roughness_detail" /><input name="in2" type="float" value="0.08" /></add>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="normal_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="texcoord" type="vector2" nodename="uv_mm" /><input name="scale" type="float" value="16" /></heighttonormal>
+    <normalmap name="normal_world" type="vector3"><input name="in" type="vector3" nodename="normal_tangent" /></normalmap>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.5" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="specular_roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="normal_world" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_marbleWhiteGrayVeinPolished" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_marbleWhiteGrayVeinPolished" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_marbleWhiteGrayVeinPolished" output="specular_roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_marbleWhiteGrayVeinPolished" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_marbleWhiteGrayVeinPolished" output="normal_out" />
+    <input name="specular" type="float" nodegraph="NG_marbleWhiteGrayVeinPolished" output="specular_out" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="subsurface" type="float" value="0.1" />
+    <input name="subsurface_color" type="color3" value="0.78, 0.77, 0.73" />
+    <input name="subsurface_scale" type="float" value="0.0005" />
+  </standard_surface>
+  <surfacematerial name="M_marbleWhiteGrayVeinPolished" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_marbleWhiteGrayVeinPolished" /></surfacematerial>
+</materialx>

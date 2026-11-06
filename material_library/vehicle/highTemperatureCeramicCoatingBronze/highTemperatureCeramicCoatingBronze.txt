@@ -1,0 +1,5 @@
+highTemperatureCeramicCoatingBronze
+
+bronze factory-applied ceramic thermal coating; fine ceramic texture and matte-to-satin dielectric appearance; metallic-looking variants require a measured coated response.
+
+Use for rendering ceramic-coated exhaust components, heat shields, and technical metal parts as an appearance preset.

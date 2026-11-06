@@ -1,0 +1,5 @@
+<!-- in: uv. out: h_rock (m, ~9 deg), cavity, wear (0..1 masks from the same field), rock_col, rock_rough -->
+<mix name="cw_col0" type="color3"><input name="bg" type="color3" value="0.36, 0.35, 0.33" /><input name="fg" type="color3" value="0.16, 0.15, 0.14" /><input name="mix" type="float" nodename="cavity" /></mix>
+<mix name="rock_col" type="color3"><input name="bg" type="color3" nodename="cw_col0" /><input name="fg" type="color3" value="0.56, 0.55, 0.53" /><input name="mix" type="float" nodename="wear" /></mix>
+<mix name="cw_r0" type="float"><input name="bg" type="float" value="0.8" /><input name="fg" type="float" value="0.95" /><input name="mix" type="float" nodename="cavity" /></mix>
+<mix name="rock_rough" type="float"><input name="bg" type="float" nodename="cw_r0" /><input name="fg" type="float" value="0.45" /><input name="mix" type="float" nodename="wear" /></mix>
