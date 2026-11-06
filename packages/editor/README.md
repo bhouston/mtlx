@@ -26,4 +26,10 @@ function Editor() {
 
 [Try the online editor](https://mtlx.ben3d.ca/editor/) or read the [integration guide](https://mtlx.ben3d.ca/docs/editor/) for styling, keyboard shortcuts, architecture, and [API reference](https://mtlx.ben3d.ca/docs/api/editor/).
 
-MIT · Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
+## License
+
+MIT
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).

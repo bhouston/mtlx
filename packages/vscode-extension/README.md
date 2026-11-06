@@ -1,7 +1,11 @@
 # Mtlx Viewer for MaterialX
 
+<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+
 [![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/vscode/)
 [![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
+[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
 
 Preview, inspect, and package MaterialX without leaving VS Code. Open `.mtlx` or `.mtlx.zip` files for an interactive 3D preview, node graph, and validation report. Saving a material or its textures refreshes the preview.
 
@@ -17,4 +21,10 @@ Requires desktop VS Code 1.85+ with GPU acceleration. Preview support follows Th
 
 See the [extension guide](https://mtlx.ben3d.ca/docs/vscode/) for settings, custom lighting and models, conversion workflows, and troubleshooting.
 
-MIT · Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
+## License
+
+MIT
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).

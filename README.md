@@ -1,9 +1,13 @@
 # mtlx
 
+<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+
 [![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/)
 [![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
-
-<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+[![npm downloads](https://img.shields.io/npm/dm/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
+[![npm version](https://img.shields.io/npm/v/mtlx-core.svg)](https://www.npmjs.com/package/mtlx-core)
+[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
+[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
 
 TypeScript and JavaScript tools for viewing, editing, validating, and delivering [MaterialX](https://materialx.org) materials. Work with loose `.mtlx` files or portable `.mtlx.zip` archives in the browser, terminal, or VS Code.
 
@@ -53,4 +57,10 @@ Node tools require Node.js 22+. Browser rendering needs GPU-backed WebGPU or Web
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup and the issue → branch → PR workflow. Full guides and API references live on the [documentation website](https://mtlx.ben3d.ca/docs/); release instructions are in [RELEASING.md](RELEASING.md).
 
-MIT · Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
+## License
+
+MIT
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).

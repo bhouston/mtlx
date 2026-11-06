@@ -1,8 +1,13 @@
 # mtlx-viewer
 
+<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+
 [![npm](https://img.shields.io/npm/v/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
 [![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/material-viewer/)
 [![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
+[![npm downloads](https://img.shields.io/npm/dm/mtlx-viewer.svg)](https://www.npmjs.com/package/mtlx-viewer)
+[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
+[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
 
 Embed interactive MaterialX previews in any website with `<material-viewer>`. Works in plain HTML and any framework, with orbit controls, lighting, a settings panel, loading progress, and screenshot export. React is optional.
 
@@ -48,4 +53,10 @@ import { MaterialViewer } from 'mtlx-viewer/react';
 
 See the [element guide and live demo](https://mtlx.ben3d.ca/docs/material-viewer/) for attributes, events, camera controls, and screenshots, or the [viewer integration guide](https://mtlx.ben3d.ca/docs/viewer/) for React and lower-level Three.js APIs. Preview support follows Three.js's MaterialX loader.
 
-MIT · Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
+## License
+
+MIT
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).

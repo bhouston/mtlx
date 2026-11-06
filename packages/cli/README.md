@@ -1,8 +1,13 @@
 # mtlx-cli
 
+<img src="https://raw.githubusercontent.com/bhouston/mtlx/main/assets/logo.webp" alt="mtlx logo" width="96">
+
 [![npm](https://img.shields.io/npm/v/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
 [![Documentation](https://img.shields.io/badge/docs-website-blue)](https://mtlx.ben3d.ca/docs/cli/)
 [![CI](https://github.com/bhouston/mtlx/actions/workflows/ci.yml/badge.svg)](https://github.com/bhouston/mtlx/actions/workflows/ci.yml)
+[![npm downloads](https://img.shields.io/npm/dm/mtlx-cli.svg)](https://www.npmjs.com/package/mtlx-cli)
+[![Coverage](https://codecov.io/gh/bhouston/mtlx/branch/main/graph/badge.svg)](https://codecov.io/gh/bhouston/mtlx)
+[![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/wzQWaBBxup)
 
 Inspect, validate, preview, and package MaterialX from your terminal. Includes the `mtlx` and `mtlx-ai` commands for local files and the MTLX.ai service.
 
@@ -37,4 +42,10 @@ mtlx download alice/copper -o copper.mtlx.zip
 
 Read the [CLI guide](https://mtlx.ben3d.ca/docs/cli/) for conversion workflows and options, or the [agent guide](https://mtlx.ben3d.ca/docs/agents/) for MCP integration. Run `mtlx --help` or `mtlx <command> --help` for terminal help.
 
-MIT · Created by [Ben Houston](https://ben3d.ca), sponsored by [Land of Assets](https://landofassets.com).
+## License
+
+MIT
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).

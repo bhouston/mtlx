@@ -16,3 +16,11 @@ pnpm docs:dev
 Build the static site with `pnpm docs:build`; preview it with `pnpm --filter mtlx-docs serve`. Generated API references, CLI documentation, and application assets are rebuilt from source.
 
 See [contributing](https://mtlx.ben3d.ca/docs/contributing/) for local checks and [deployment](https://mtlx.ben3d.ca/docs/deployment/) for GitHub Pages and DNS setup.
+
+## License
+
+MIT
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).

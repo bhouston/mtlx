@@ -16,3 +16,11 @@ pnpm --filter website dev
 Open `http://localhost:3000/viewer`. For the full documentation site, run `pnpm docs:dev`.
 
 See the [application development guide](https://github.com/bhouston/mtlx/blob/main/docs/development/website.md) for implementation details and tests, and [deployment](https://mtlx.ben3d.ca/docs/deployment/) for the production site.
+
+## License
+
+MIT
+
+## Author
+
+[Ben Houston](https://ben3d.ca), Sponsored by [Land of Assets](https://landofassets.com).
