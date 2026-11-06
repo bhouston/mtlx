@@ -1,0 +1,5 @@
+mirrorElectrochromicDimmed
+
+Electrochromic mirror in its dimmed state; darkened slightly tinted reflections through an absorbing optical stack.
+
+Use for rendering rear-view or side mirrors in the named bright or dimmed electrochromic state.

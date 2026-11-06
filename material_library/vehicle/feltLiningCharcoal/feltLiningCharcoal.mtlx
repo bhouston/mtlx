@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- charcoal nonwoven felt; short randomized fibers and matte diffuse appearance with slight grazing sheen. -->
+  <!-- Real-world scale: UV 0..1 = 1 meter; height is meters. Recipe: fiber; feature frequency 850 × 120 per meter; relief span 1.8e-05 m. Coated fiber and wood substrate relief stays beneath the separate smooth dielectric coat. -->
+  <nodegraph name="NG_feltLiningCharcoal">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="micro_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="850, 120" /></multiply>
+    <fractal2d name="micro" type="float"><input name="texcoord" type="vector2" nodename="micro_uv" /><input name="octaves" type="integer" value="2" /></fractal2d>
+    <multiply name="tone_drift_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="4, 4" /></multiply>
+    <fractal2d name="tone_drift" type="float"><input name="texcoord" type="vector2" nodename="tone_drift_uv" /><input name="octaves" type="integer" value="2" /></fractal2d>
+    <multiply name="micro_scale" type="float"><input name="in1" type="float" nodename="micro" /><input name="in2" type="float" value="0.55" /></multiply>
+    <add name="micro_center" type="float"><input name="in1" type="float" nodename="micro_scale" /><input name="in2" type="float" value="0.5" /></add>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.0294, 0.03192, 0.03528" /><input name="fg" type="color3" value="0.0406, 0.04408, 0.04872" /><input name="mix" type="float" nodename="micro_center" /></mix>
+    <multiply name="drift_amount" type="float"><input name="in1" type="float" nodename="tone_drift" /><input name="in2" type="float" value="0.025" /></multiply>
+    <add name="drift_gain" type="float"><input name="in1" type="float" nodename="drift_amount" /><input name="in2" type="float" value="1" /></add>
+    <multiply name="body_color" type="color3"><input name="in1" type="color3" nodename="base_color" /><input name="in2" type="float" nodename="drift_gain" /></multiply>
+    <subtract name="relief_center" type="float"><input name="in1" type="float" nodename="micro_center" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="height" type="float"><input name="in1" type="float" nodename="relief_center" /><input name="in2" type="float" value="1.8e-05" /></multiply>
+    <subtract name="roughness_center" type="float"><input name="in1" type="float" nodename="micro_center" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="roughness_variation" type="float"><input name="in1" type="float" nodename="roughness_center" /><input name="in2" type="float" value="-0.1" /></multiply>
+    <add name="roughness" type="float"><input name="in1" type="float" value="0.93" /><input name="in2" type="float" nodename="roughness_variation" /></add>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.18" /></constant>
+    <output name="base_color_out" type="color3" nodename="body_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_feltLiningCharcoal" type="surfaceshader"><input name="base" type="float" value="1" /><input name="specular_IOR" type="float" value="1.5" /><input name="sheen" type="float" value="0.45" /><input name="sheen_roughness" type="float" value="0.7" /><input name="specular_anisotropy" type="float" value="0.3" /><input name="coat" type="float" value="0" /><input name="coat_roughness" type="float" value="0.15" /><input name="base_color" type="color3" nodegraph="NG_feltLiningCharcoal" output="base_color_out" /><input name="specular_roughness" type="float" nodegraph="NG_feltLiningCharcoal" output="roughness_out" /><input name="normal" type="vector3" nodegraph="NG_feltLiningCharcoal" output="normal_out" /><input name="metalness" type="float" nodegraph="NG_feltLiningCharcoal" output="metalness_out" /><input name="specular" type="float" nodegraph="NG_feltLiningCharcoal" output="specular_out" /></standard_surface>
+  <surfacematerial name="M_feltLiningCharcoal" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_feltLiningCharcoal" /></surfacematerial>
+</materialx>

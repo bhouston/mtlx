@@ -1,0 +1,5 @@
+glassHeatedTransparentCoating
+
+Clear glazing with a transparent conductive heating coating; subtle film tint and glossy reflections, without any discrete heater pattern.
+
+Use for rendering clear heated-glazing coatings in windscreen, rear-window, or equipment-window visualizations.

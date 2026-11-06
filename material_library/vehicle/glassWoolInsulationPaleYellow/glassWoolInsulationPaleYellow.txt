@@ -1,0 +1,5 @@
+glassWoolInsulationPaleYellow
+
+New pale yellow glass-wool insulation; fine randomized fibers and soft diffuse scattering, without exposed coarse glitter.
+
+Use for rendering exposed fibrous insulation blankets and equipment-compartment insulation cutaways.

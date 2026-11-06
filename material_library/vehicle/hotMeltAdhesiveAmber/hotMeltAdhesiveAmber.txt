@@ -1,0 +1,5 @@
+hotMeltAdhesiveAmber
+
+New amber hot-melt adhesive; translucent waxy resin with low-to-medium gloss and absorption tint.
+
+Use for rendering visible cured adhesive beads in trim, textile, and equipment assembly views.

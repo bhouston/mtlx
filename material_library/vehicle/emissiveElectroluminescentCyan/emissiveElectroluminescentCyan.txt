@@ -1,0 +1,5 @@
+emissiveElectroluminescentCyan
+
+Cyan electroluminescent material; uniform low-luminance diffuse emission with a fine matte surface.
+
+Use for rendering powered low-brightness electroluminescent panels and control backlighting.

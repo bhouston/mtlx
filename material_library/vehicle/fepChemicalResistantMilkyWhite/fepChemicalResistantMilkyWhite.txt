@@ -1,0 +1,5 @@
+fepChemicalResistantMilkyWhite
+
+milky white fluoropolymer material; smooth glossy-to-satin dielectric surface with transparent or diffusely translucent transmission as named.
+
+Use for rendering milky fluoropolymer tubing, covers, and exposed liners in equipment views.

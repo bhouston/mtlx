@@ -1,0 +1,5 @@
+transmissionFluidBlue
+
+Fresh blue transmission fluid; transparent absorption tint and smooth dielectric reflections.
+
+Use for rendering fresh liquid volumes in transmission-system cutaways.

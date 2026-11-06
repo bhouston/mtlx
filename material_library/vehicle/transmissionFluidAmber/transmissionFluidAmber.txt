@@ -1,0 +1,5 @@
+transmissionFluidAmber
+
+Fresh amber transmission fluid; transparent tinted liquid with smooth dielectric reflections.
+
+Use for rendering fresh liquid volumes in transmission-system cutaways.

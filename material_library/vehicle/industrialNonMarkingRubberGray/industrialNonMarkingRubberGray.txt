@@ -1,0 +1,5 @@
+industrialNonMarkingRubberGray
+
+New non-marking industrial rubber compound; opaque medium gray with fine matte-to-satin skin.
+
+Use for rendering pale industrial tire and roller surfaces where the named non-marking rubber appearance is desired.

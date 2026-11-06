@@ -1,0 +1,5 @@
+paintCandyGlossViolet
+
+Transparent violet tinted paint over a reflective metallic ground and under clear gloss; saturated depth and angle-dependent brightness.
+
+Use for rendering custom-painted bodywork, wheels, and decorative panels with a deep tinted clear finish over a reflective ground.

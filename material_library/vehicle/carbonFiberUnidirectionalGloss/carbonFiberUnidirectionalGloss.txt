@@ -1,0 +1,5 @@
+carbonFiberUnidirectionalGloss
+
+New unidirectional carbon composite; aligned black fiber texture with directional sheen beneath clear glossy resin.
+
+Use for rendering exposed unidirectional composite panels and visible reinforcement layers in cutaways.

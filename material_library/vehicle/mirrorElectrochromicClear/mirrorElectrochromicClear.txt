@@ -1,0 +1,5 @@
+mirrorElectrochromicClear
+
+Electrochromic mirror in its bright state; neutral sharp reflections through a clear electrochromic optical stack.
+
+Use for rendering rear-view or side mirrors in the named bright or dimmed electrochromic state.

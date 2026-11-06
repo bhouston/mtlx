@@ -1,0 +1,5 @@
+batteryPolymerTranslucentWhite
+
+New milky-white acid-resistant battery polymer; fine satin surface with diffuse thickness-dependent transmission.
+
+Use for rendering milky translucent battery-container walls and exposed enclosure surfaces.

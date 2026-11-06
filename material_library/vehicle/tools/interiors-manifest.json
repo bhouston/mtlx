@@ -1,0 +1,2966 @@
+[
+  {
+    "name": "leatherPigmentedSmoothBlack",
+    "section": 12,
+    "recipe": "leather",
+    "description": "black pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothCharcoal",
+    "section": 12,
+    "recipe": "leather",
+    "description": "charcoal pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothGray",
+    "section": 12,
+    "recipe": "leather",
+    "description": "gray pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothLightGray",
+    "section": 12,
+    "recipe": "leather",
+    "description": "light gray pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothWhite",
+    "section": 12,
+    "recipe": "leather",
+    "description": "white pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothIvory",
+    "section": 12,
+    "recipe": "leather",
+    "description": "ivory pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothCream",
+    "section": 12,
+    "recipe": "leather",
+    "description": "cream pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothBeige",
+    "section": 12,
+    "recipe": "leather",
+    "description": "beige pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothSand",
+    "section": 12,
+    "recipe": "leather",
+    "description": "sand pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothTan",
+    "section": 12,
+    "recipe": "leather",
+    "description": "tan pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothCamel",
+    "section": 12,
+    "recipe": "leather",
+    "description": "camel pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothCognac",
+    "section": 12,
+    "recipe": "leather",
+    "description": "cognac pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothSaddleBrown",
+    "section": 12,
+    "recipe": "leather",
+    "description": "saddle brown pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothDarkBrown",
+    "section": 12,
+    "recipe": "leather",
+    "description": "dark brown pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothBurgundy",
+    "section": 12,
+    "recipe": "leather",
+    "description": "burgundy pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothRed",
+    "section": 12,
+    "recipe": "leather",
+    "description": "red pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothOrange",
+    "section": 12,
+    "recipe": "leather",
+    "description": "orange pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothYellow",
+    "section": 12,
+    "recipe": "leather",
+    "description": "yellow pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothOliveGreen",
+    "section": 12,
+    "recipe": "leather",
+    "description": "olive green pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothForestGreen",
+    "section": 12,
+    "recipe": "leather",
+    "description": "forest green pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothNavyBlue",
+    "section": 12,
+    "recipe": "leather",
+    "description": "navy blue pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothBlue",
+    "section": 12,
+    "recipe": "leather",
+    "description": "blue pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedSmoothPurple",
+    "section": 12,
+    "recipe": "leather",
+    "description": "purple pigmented automotive leather; fine corrected grain, opaque protective finish, soft satin highlights, subtle pore normal texture, factory-new without creases from use."
+  },
+  {
+    "name": "leatherPigmentedPebbledBlack",
+    "section": 12,
+    "recipe": "leather",
+    "description": "black pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherPigmentedPebbledCharcoal",
+    "section": 12,
+    "recipe": "leather",
+    "description": "charcoal pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherPigmentedPebbledGray",
+    "section": 12,
+    "recipe": "leather",
+    "description": "gray pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherPigmentedPebbledBeige",
+    "section": 12,
+    "recipe": "leather",
+    "description": "beige pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherPigmentedPebbledTan",
+    "section": 12,
+    "recipe": "leather",
+    "description": "tan pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherPigmentedPebbledCognac",
+    "section": 12,
+    "recipe": "leather",
+    "description": "cognac pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherPigmentedPebbledBrown",
+    "section": 12,
+    "recipe": "leather",
+    "description": "brown pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherPigmentedPebbledBurgundy",
+    "section": 12,
+    "recipe": "leather",
+    "description": "burgundy pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherPigmentedPebbledRed",
+    "section": 12,
+    "recipe": "leather",
+    "description": "red pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherPigmentedPebbledNavyBlue",
+    "section": 12,
+    "recipe": "leather",
+    "description": "navy blue pigmented leather with pronounced pebbled grain; soft satin protective finish, fine pores, and low-contrast grain color variation."
+  },
+  {
+    "name": "leatherNappaBlack",
+    "section": 12,
+    "recipe": "leather",
+    "description": "black premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaCharcoal",
+    "section": 12,
+    "recipe": "leather",
+    "description": "charcoal premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaGray",
+    "section": 12,
+    "recipe": "leather",
+    "description": "gray premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaWhite",
+    "section": 12,
+    "recipe": "leather",
+    "description": "white premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaIvory",
+    "section": 12,
+    "recipe": "leather",
+    "description": "ivory premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaCream",
+    "section": 12,
+    "recipe": "leather",
+    "description": "cream premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaBeige",
+    "section": 12,
+    "recipe": "leather",
+    "description": "beige premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaTan",
+    "section": 12,
+    "recipe": "leather",
+    "description": "tan premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaCognac",
+    "section": 12,
+    "recipe": "leather",
+    "description": "cognac premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaBrown",
+    "section": 12,
+    "recipe": "leather",
+    "description": "brown premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaBurgundy",
+    "section": 12,
+    "recipe": "leather",
+    "description": "burgundy premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaRed",
+    "section": 12,
+    "recipe": "leather",
+    "description": "red premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaNavyBlue",
+    "section": 12,
+    "recipe": "leather",
+    "description": "navy blue premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherNappaGreen",
+    "section": 12,
+    "recipe": "leather",
+    "description": "green premium soft nappa leather; fine natural-looking grain, restrained satin sheen, subtle pore variation, uniform new dye finish."
+  },
+  {
+    "name": "leatherSemiAnilineBlack",
+    "section": 12,
+    "recipe": "leather",
+    "description": "black semi-aniline leather; translucent-looking dye depth beneath a light protective finish, fine natural grain, and soft low-gloss highlights."
+  },
+  {
+    "name": "leatherSemiAnilineIvory",
+    "section": 12,
+    "recipe": "leather",
+    "description": "ivory semi-aniline leather; translucent-looking dye depth beneath a light protective finish, fine natural grain, and soft low-gloss highlights."
+  },
+  {
+    "name": "leatherSemiAnilineTan",
+    "section": 12,
+    "recipe": "leather",
+    "description": "tan semi-aniline leather; translucent-looking dye depth beneath a light protective finish, fine natural grain, and soft low-gloss highlights."
+  },
+  {
+    "name": "leatherSemiAnilineCognac",
+    "section": 12,
+    "recipe": "leather",
+    "description": "cognac semi-aniline leather; translucent-looking dye depth beneath a light protective finish, fine natural grain, and soft low-gloss highlights."
+  },
+  {
+    "name": "leatherSemiAnilineSaddleBrown",
+    "section": 12,
+    "recipe": "leather",
+    "description": "saddle brown semi-aniline leather; translucent-looking dye depth beneath a light protective finish, fine natural grain, and soft low-gloss highlights."
+  },
+  {
+    "name": "leatherSemiAnilineDarkBrown",
+    "section": 12,
+    "recipe": "leather",
+    "description": "dark brown semi-aniline leather; translucent-looking dye depth beneath a light protective finish, fine natural grain, and soft low-gloss highlights."
+  },
+  {
+    "name": "leatherSemiAnilineBurgundy",
+    "section": 12,
+    "recipe": "leather",
+    "description": "burgundy semi-aniline leather; translucent-looking dye depth beneath a light protective finish, fine natural grain, and soft low-gloss highlights."
+  },
+  {
+    "name": "leatherSemiAnilineNavyBlue",
+    "section": 12,
+    "recipe": "leather",
+    "description": "navy blue semi-aniline leather; translucent-looking dye depth beneath a light protective finish, fine natural grain, and soft low-gloss highlights."
+  },
+  {
+    "name": "leatherAnilineTan",
+    "section": 12,
+    "recipe": "leather",
+    "description": "tan aniline-dyed leather; visible natural grain and subtle dye variation, restrained waxy sheen, no patina or use wear."
+  },
+  {
+    "name": "leatherAnilineCognac",
+    "section": 12,
+    "recipe": "leather",
+    "description": "cognac aniline-dyed leather; visible natural grain and subtle dye variation, restrained waxy sheen, no patina or use wear."
+  },
+  {
+    "name": "leatherAnilineSaddleBrown",
+    "section": 12,
+    "recipe": "leather",
+    "description": "saddle brown aniline-dyed leather; visible natural grain and subtle dye variation, restrained waxy sheen, no patina or use wear."
+  },
+  {
+    "name": "leatherAnilineDarkBrown",
+    "section": 12,
+    "recipe": "leather",
+    "description": "dark brown aniline-dyed leather; visible natural grain and subtle dye variation, restrained waxy sheen, no patina or use wear."
+  },
+  {
+    "name": "leatherAnilineBurgundy",
+    "section": 12,
+    "recipe": "leather",
+    "description": "burgundy aniline-dyed leather; visible natural grain and subtle dye variation, restrained waxy sheen, no patina or use wear."
+  },
+  {
+    "name": "leatherSuedeBlack",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "black natural suede; dense short nap, directional color shading, broad fiber sheen, and nearly matte frontal response."
+  },
+  {
+    "name": "leatherSuedeGray",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "gray natural suede; dense short nap, directional color shading, broad fiber sheen, and nearly matte frontal response."
+  },
+  {
+    "name": "leatherSuedeBeige",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "beige natural suede; dense short nap, directional color shading, broad fiber sheen, and nearly matte frontal response."
+  },
+  {
+    "name": "leatherSuedeTan",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "tan natural suede; dense short nap, directional color shading, broad fiber sheen, and nearly matte frontal response."
+  },
+  {
+    "name": "leatherSuedeBrown",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "brown natural suede; dense short nap, directional color shading, broad fiber sheen, and nearly matte frontal response."
+  },
+  {
+    "name": "leatherSuedeBurgundy",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "burgundy natural suede; dense short nap, directional color shading, broad fiber sheen, and nearly matte frontal response."
+  },
+  {
+    "name": "leatherSuedeRed",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "red natural suede; dense short nap, directional color shading, broad fiber sheen, and nearly matte frontal response."
+  },
+  {
+    "name": "leatherSuedeNavyBlue",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "navy blue natural suede; dense short nap, directional color shading, broad fiber sheen, and nearly matte frontal response."
+  },
+  {
+    "name": "leatherNubuckBlack",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "black nubuck leather; extremely fine sanded nap with soft directional shading and muted diffuse fiber sheen."
+  },
+  {
+    "name": "leatherNubuckGray",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "gray nubuck leather; extremely fine sanded nap with soft directional shading and muted diffuse fiber sheen."
+  },
+  {
+    "name": "leatherNubuckBeige",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "beige nubuck leather; extremely fine sanded nap with soft directional shading and muted diffuse fiber sheen."
+  },
+  {
+    "name": "leatherNubuckTan",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "tan nubuck leather; extremely fine sanded nap with soft directional shading and muted diffuse fiber sheen."
+  },
+  {
+    "name": "leatherNubuckBrown",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "brown nubuck leather; extremely fine sanded nap with soft directional shading and muted diffuse fiber sheen."
+  },
+  {
+    "name": "leatherNubuckBlue",
+    "section": 12,
+    "recipe": "fiber",
+    "description": "blue nubuck leather; extremely fine sanded nap with soft directional shading and muted diffuse fiber sheen."
+  },
+  {
+    "name": "leatherEmbossedTechnicalBlack",
+    "section": 12,
+    "recipe": "weave",
+    "description": "black automotive leather with a fine repeated technical emboss; opaque protective finish, soft satin reflection, and pattern expressed only as surface microtexture."
+  },
+  {
+    "name": "leatherEmbossedTechnicalGray",
+    "section": 12,
+    "recipe": "weave",
+    "description": "gray automotive leather with a fine repeated technical emboss; opaque protective finish, soft satin reflection, and pattern expressed only as surface microtexture."
+  },
+  {
+    "name": "leatherEmbossedTechnicalRed",
+    "section": 12,
+    "recipe": "weave",
+    "description": "red automotive leather with a fine repeated technical emboss; opaque protective finish, soft satin reflection, and pattern expressed only as surface microtexture."
+  },
+  {
+    "name": "leatherEmbossedTechnicalBlue",
+    "section": 12,
+    "recipe": "weave",
+    "description": "blue automotive leather with a fine repeated technical emboss; opaque protective finish, soft satin reflection, and pattern expressed only as surface microtexture."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainBlack",
+    "section": 13,
+    "recipe": "leather",
+    "description": "black PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainCharcoal",
+    "section": 13,
+    "recipe": "leather",
+    "description": "charcoal PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainGray",
+    "section": 13,
+    "recipe": "leather",
+    "description": "gray PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainLightGray",
+    "section": 13,
+    "recipe": "leather",
+    "description": "light gray PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainWhite",
+    "section": 13,
+    "recipe": "leather",
+    "description": "white PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainIvory",
+    "section": 13,
+    "recipe": "leather",
+    "description": "ivory PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainCream",
+    "section": 13,
+    "recipe": "leather",
+    "description": "cream PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainBeige",
+    "section": 13,
+    "recipe": "leather",
+    "description": "beige PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainTan",
+    "section": 13,
+    "recipe": "leather",
+    "description": "tan PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainBrown",
+    "section": 13,
+    "recipe": "leather",
+    "description": "brown PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainBurgundy",
+    "section": 13,
+    "recipe": "leather",
+    "description": "burgundy PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainRed",
+    "section": 13,
+    "recipe": "leather",
+    "description": "red PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainOrange",
+    "section": 13,
+    "recipe": "leather",
+    "description": "orange PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainGreen",
+    "section": 13,
+    "recipe": "leather",
+    "description": "green PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainBlue",
+    "section": 13,
+    "recipe": "leather",
+    "description": "blue PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteFineGrainNavyBlue",
+    "section": 13,
+    "recipe": "leather",
+    "description": "navy blue PVC-coated upholstery with fine embossed leather grain; opaque flexible skin, satin highlights, and more uniform texture than natural leather."
+  },
+  {
+    "name": "vinylLeatheretteCoarseGrainBlack",
+    "section": 13,
+    "recipe": "leather",
+    "description": "black heavy-duty PVC upholstery with coarse embossed grain; durable-looking opaque satin surface, clean new finish."
+  },
+  {
+    "name": "vinylLeatheretteCoarseGrainGray",
+    "section": 13,
+    "recipe": "leather",
+    "description": "gray heavy-duty PVC upholstery with coarse embossed grain; durable-looking opaque satin surface, clean new finish."
+  },
+  {
+    "name": "vinylLeatheretteCoarseGrainBeige",
+    "section": 13,
+    "recipe": "leather",
+    "description": "beige heavy-duty PVC upholstery with coarse embossed grain; durable-looking opaque satin surface, clean new finish."
+  },
+  {
+    "name": "vinylLeatheretteCoarseGrainTan",
+    "section": 13,
+    "recipe": "leather",
+    "description": "tan heavy-duty PVC upholstery with coarse embossed grain; durable-looking opaque satin surface, clean new finish."
+  },
+  {
+    "name": "vinylLeatheretteCoarseGrainBrown",
+    "section": 13,
+    "recipe": "leather",
+    "description": "brown heavy-duty PVC upholstery with coarse embossed grain; durable-looking opaque satin surface, clean new finish."
+  },
+  {
+    "name": "vinylLeatheretteCoarseGrainRed",
+    "section": 13,
+    "recipe": "leather",
+    "description": "red heavy-duty PVC upholstery with coarse embossed grain; durable-looking opaque satin surface, clean new finish."
+  },
+  {
+    "name": "vinylLeatheretteCoarseGrainBlue",
+    "section": 13,
+    "recipe": "leather",
+    "description": "blue heavy-duty PVC upholstery with coarse embossed grain; durable-looking opaque satin surface, clean new finish."
+  },
+  {
+    "name": "polyurethaneLeatheretteBlack",
+    "section": 13,
+    "recipe": "leather",
+    "description": "black PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteCharcoal",
+    "section": 13,
+    "recipe": "leather",
+    "description": "charcoal PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteGray",
+    "section": 13,
+    "recipe": "leather",
+    "description": "gray PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteWhite",
+    "section": 13,
+    "recipe": "leather",
+    "description": "white PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteIvory",
+    "section": 13,
+    "recipe": "leather",
+    "description": "ivory PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteBeige",
+    "section": 13,
+    "recipe": "leather",
+    "description": "beige PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteTan",
+    "section": 13,
+    "recipe": "leather",
+    "description": "tan PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteCognac",
+    "section": 13,
+    "recipe": "leather",
+    "description": "cognac PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteBrown",
+    "section": 13,
+    "recipe": "leather",
+    "description": "brown PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteRed",
+    "section": 13,
+    "recipe": "leather",
+    "description": "red PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteBlue",
+    "section": 13,
+    "recipe": "leather",
+    "description": "blue PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "polyurethaneLeatheretteGreen",
+    "section": 13,
+    "recipe": "leather",
+    "description": "green PU-coated synthetic leather; fine soft grain, low satin sheen, uniform color, and gentle microtexture."
+  },
+  {
+    "name": "microfiberSyntheticLeatherBlack",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "black microfiber-backed synthetic leather; fine leather-like surface grain and restrained soft satin sheen."
+  },
+  {
+    "name": "microfiberSyntheticLeatherGray",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "gray microfiber-backed synthetic leather; fine leather-like surface grain and restrained soft satin sheen."
+  },
+  {
+    "name": "microfiberSyntheticLeatherIvory",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "ivory microfiber-backed synthetic leather; fine leather-like surface grain and restrained soft satin sheen."
+  },
+  {
+    "name": "microfiberSyntheticLeatherBeige",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "beige microfiber-backed synthetic leather; fine leather-like surface grain and restrained soft satin sheen."
+  },
+  {
+    "name": "microfiberSyntheticLeatherTan",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "tan microfiber-backed synthetic leather; fine leather-like surface grain and restrained soft satin sheen."
+  },
+  {
+    "name": "microfiberSyntheticLeatherBrown",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "brown microfiber-backed synthetic leather; fine leather-like surface grain and restrained soft satin sheen."
+  },
+  {
+    "name": "microfiberSyntheticLeatherRed",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "red microfiber-backed synthetic leather; fine leather-like surface grain and restrained soft satin sheen."
+  },
+  {
+    "name": "microfiberSyntheticLeatherNavyBlue",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "navy blue microfiber-backed synthetic leather; fine leather-like surface grain and restrained soft satin sheen."
+  },
+  {
+    "name": "siliconeCoatedUpholsteryBlack",
+    "section": 13,
+    "recipe": "leather",
+    "description": "black silicone-coated upholstery; fine matte grain and soft broad dielectric highlights, clean uniform pigment."
+  },
+  {
+    "name": "siliconeCoatedUpholsteryGray",
+    "section": 13,
+    "recipe": "leather",
+    "description": "gray silicone-coated upholstery; fine matte grain and soft broad dielectric highlights, clean uniform pigment."
+  },
+  {
+    "name": "siliconeCoatedUpholsteryWhite",
+    "section": 13,
+    "recipe": "leather",
+    "description": "white silicone-coated upholstery; fine matte grain and soft broad dielectric highlights, clean uniform pigment."
+  },
+  {
+    "name": "siliconeCoatedUpholsteryBeige",
+    "section": 13,
+    "recipe": "leather",
+    "description": "beige silicone-coated upholstery; fine matte grain and soft broad dielectric highlights, clean uniform pigment."
+  },
+  {
+    "name": "siliconeCoatedUpholsteryTan",
+    "section": 13,
+    "recipe": "leather",
+    "description": "tan silicone-coated upholstery; fine matte grain and soft broad dielectric highlights, clean uniform pigment."
+  },
+  {
+    "name": "siliconeCoatedUpholsteryRed",
+    "section": 13,
+    "recipe": "leather",
+    "description": "red silicone-coated upholstery; fine matte grain and soft broad dielectric highlights, clean uniform pigment."
+  },
+  {
+    "name": "siliconeCoatedUpholsteryBlue",
+    "section": 13,
+    "recipe": "leather",
+    "description": "blue silicone-coated upholstery; fine matte grain and soft broad dielectric highlights, clean uniform pigment."
+  },
+  {
+    "name": "bioBasedLeatherAlternativeBlack",
+    "section": 13,
+    "recipe": "leather",
+    "description": "black bio-based coated upholstery; fine natural-looking grain and satin resin surface; appearance is specified independently of feedstock claims."
+  },
+  {
+    "name": "bioBasedLeatherAlternativeGray",
+    "section": 13,
+    "recipe": "leather",
+    "description": "gray bio-based coated upholstery; fine natural-looking grain and satin resin surface; appearance is specified independently of feedstock claims."
+  },
+  {
+    "name": "bioBasedLeatherAlternativeBeige",
+    "section": 13,
+    "recipe": "leather",
+    "description": "beige bio-based coated upholstery; fine natural-looking grain and satin resin surface; appearance is specified independently of feedstock claims."
+  },
+  {
+    "name": "bioBasedLeatherAlternativeTan",
+    "section": 13,
+    "recipe": "leather",
+    "description": "tan bio-based coated upholstery; fine natural-looking grain and satin resin surface; appearance is specified independently of feedstock claims."
+  },
+  {
+    "name": "bioBasedLeatherAlternativeBrown",
+    "section": 13,
+    "recipe": "leather",
+    "description": "brown bio-based coated upholstery; fine natural-looking grain and satin resin surface; appearance is specified independently of feedstock claims."
+  },
+  {
+    "name": "bioBasedLeatherAlternativeGreen",
+    "section": 13,
+    "recipe": "leather",
+    "description": "green bio-based coated upholstery; fine natural-looking grain and satin resin surface; appearance is specified independently of feedstock claims."
+  },
+  {
+    "name": "syntheticSuedeBlack",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "black microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeCharcoal",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "charcoal microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeGray",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "gray microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeLightGray",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "light gray microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeIvory",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "ivory microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeBeige",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "beige microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeTan",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "tan microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeBrown",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "brown microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeBurgundy",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "burgundy microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeRed",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "red microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeOrange",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "orange microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeYellow",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "yellow microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeGreen",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "green microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeNavyBlue",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "navy blue microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "syntheticSuedeBlue",
+    "section": 13,
+    "recipe": "fiber",
+    "description": "blue microfiber suede; fine short nap with directional shading and soft grazing-angle fiber sheen, low frontal gloss."
+  },
+  {
+    "name": "upholsteryPlainWeaveBlack",
+    "section": 14,
+    "recipe": "weave",
+    "description": "black plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveCharcoal",
+    "section": 14,
+    "recipe": "weave",
+    "description": "charcoal plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "gray plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveLightGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "light gray plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveBeige",
+    "section": 14,
+    "recipe": "weave",
+    "description": "beige plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveTan",
+    "section": 14,
+    "recipe": "weave",
+    "description": "tan plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveBrown",
+    "section": 14,
+    "recipe": "weave",
+    "description": "brown plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveRed",
+    "section": 14,
+    "recipe": "weave",
+    "description": "red plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveBlue",
+    "section": 14,
+    "recipe": "weave",
+    "description": "blue plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveNavyBlue",
+    "section": 14,
+    "recipe": "weave",
+    "description": "navy blue plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryPlainWeaveGreen",
+    "section": 14,
+    "recipe": "weave",
+    "description": "green plain-woven automotive cloth; fine alternating yarn texture, diffuse body color, low fiber sheen, and physically scaled weave."
+  },
+  {
+    "name": "upholsteryTwillBlack",
+    "section": 14,
+    "recipe": "weave",
+    "description": "black woven upholstery with fine diagonal twill texture; soft diffuse response and slight directional yarn sheen."
+  },
+  {
+    "name": "upholsteryTwillCharcoal",
+    "section": 14,
+    "recipe": "weave",
+    "description": "charcoal woven upholstery with fine diagonal twill texture; soft diffuse response and slight directional yarn sheen."
+  },
+  {
+    "name": "upholsteryTwillGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "gray woven upholstery with fine diagonal twill texture; soft diffuse response and slight directional yarn sheen."
+  },
+  {
+    "name": "upholsteryTwillBeige",
+    "section": 14,
+    "recipe": "weave",
+    "description": "beige woven upholstery with fine diagonal twill texture; soft diffuse response and slight directional yarn sheen."
+  },
+  {
+    "name": "upholsteryTwillBrown",
+    "section": 14,
+    "recipe": "weave",
+    "description": "brown woven upholstery with fine diagonal twill texture; soft diffuse response and slight directional yarn sheen."
+  },
+  {
+    "name": "upholsteryTwillRed",
+    "section": 14,
+    "recipe": "weave",
+    "description": "red woven upholstery with fine diagonal twill texture; soft diffuse response and slight directional yarn sheen."
+  },
+  {
+    "name": "upholsteryTwillBlue",
+    "section": 14,
+    "recipe": "weave",
+    "description": "blue woven upholstery with fine diagonal twill texture; soft diffuse response and slight directional yarn sheen."
+  },
+  {
+    "name": "upholsteryHeatherCharcoal",
+    "section": 14,
+    "recipe": "weave",
+    "description": "charcoal heathered upholstery textile; mixed-color fibers produce fine mottled albedo, soft low-gloss yarn response, and visible weave at close range."
+  },
+  {
+    "name": "upholsteryHeatherGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "gray heathered upholstery textile; mixed-color fibers produce fine mottled albedo, soft low-gloss yarn response, and visible weave at close range."
+  },
+  {
+    "name": "upholsteryHeatherLightGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "light gray heathered upholstery textile; mixed-color fibers produce fine mottled albedo, soft low-gloss yarn response, and visible weave at close range."
+  },
+  {
+    "name": "upholsteryHeatherBeige",
+    "section": 14,
+    "recipe": "weave",
+    "description": "beige heathered upholstery textile; mixed-color fibers produce fine mottled albedo, soft low-gloss yarn response, and visible weave at close range."
+  },
+  {
+    "name": "upholsteryHeatherBrown",
+    "section": 14,
+    "recipe": "weave",
+    "description": "brown heathered upholstery textile; mixed-color fibers produce fine mottled albedo, soft low-gloss yarn response, and visible weave at close range."
+  },
+  {
+    "name": "upholsteryHeatherBlue",
+    "section": 14,
+    "recipe": "weave",
+    "description": "blue heathered upholstery textile; mixed-color fibers produce fine mottled albedo, soft low-gloss yarn response, and visible weave at close range."
+  },
+  {
+    "name": "upholsteryJacquardBlackGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "black gray multi-yarn jacquard fabric; clean repeated woven color motif with fine yarn texture and soft directional sheen."
+  },
+  {
+    "name": "upholsteryJacquardGrayBlue",
+    "section": 14,
+    "recipe": "weave",
+    "description": "gray blue multi-yarn jacquard fabric; clean repeated woven color motif with fine yarn texture and soft directional sheen."
+  },
+  {
+    "name": "upholsteryJacquardGrayRed",
+    "section": 14,
+    "recipe": "weave",
+    "description": "gray red multi-yarn jacquard fabric; clean repeated woven color motif with fine yarn texture and soft directional sheen."
+  },
+  {
+    "name": "upholsteryJacquardBeigeBrown",
+    "section": 14,
+    "recipe": "weave",
+    "description": "beige brown multi-yarn jacquard fabric; clean repeated woven color motif with fine yarn texture and soft directional sheen."
+  },
+  {
+    "name": "upholsteryVelourBlack",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "black automotive velour; dense short pile, soft directional nap shading, and broad fiber sheen."
+  },
+  {
+    "name": "upholsteryVelourGray",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "gray automotive velour; dense short pile, soft directional nap shading, and broad fiber sheen."
+  },
+  {
+    "name": "upholsteryVelourBeige",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "beige automotive velour; dense short pile, soft directional nap shading, and broad fiber sheen."
+  },
+  {
+    "name": "upholsteryVelourBrown",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "brown automotive velour; dense short pile, soft directional nap shading, and broad fiber sheen."
+  },
+  {
+    "name": "upholsteryVelourBurgundy",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "burgundy automotive velour; dense short pile, soft directional nap shading, and broad fiber sheen."
+  },
+  {
+    "name": "upholsteryVelourNavyBlue",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "navy blue automotive velour; dense short pile, soft directional nap shading, and broad fiber sheen."
+  },
+  {
+    "name": "upholsteryTechnicalKnitBlack",
+    "section": 14,
+    "recipe": "knit",
+    "description": "black technical knitted upholstery; fine looped yarn texture with diffuse body color and restrained fiber sheen."
+  },
+  {
+    "name": "upholsteryTechnicalKnitGray",
+    "section": 14,
+    "recipe": "knit",
+    "description": "gray technical knitted upholstery; fine looped yarn texture with diffuse body color and restrained fiber sheen."
+  },
+  {
+    "name": "upholsteryTechnicalKnitWhite",
+    "section": 14,
+    "recipe": "knit",
+    "description": "white technical knitted upholstery; fine looped yarn texture with diffuse body color and restrained fiber sheen."
+  },
+  {
+    "name": "upholsteryTechnicalKnitRed",
+    "section": 14,
+    "recipe": "knit",
+    "description": "red technical knitted upholstery; fine looped yarn texture with diffuse body color and restrained fiber sheen."
+  },
+  {
+    "name": "upholsteryTechnicalKnitBlue",
+    "section": 14,
+    "recipe": "knit",
+    "description": "blue technical knitted upholstery; fine looped yarn texture with diffuse body color and restrained fiber sheen."
+  },
+  {
+    "name": "upholsteryTechnicalKnitGreen",
+    "section": 14,
+    "recipe": "knit",
+    "description": "green technical knitted upholstery; fine looped yarn texture with diffuse body color and restrained fiber sheen."
+  },
+  {
+    "name": "upholsterySpacerMeshBlack",
+    "section": 14,
+    "recipe": "weave",
+    "description": "black spacer-mesh textile appearance; layered yarn texture with dark inter-yarn opacity and soft fiber sheen; material definition only."
+  },
+  {
+    "name": "upholsterySpacerMeshGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "gray spacer-mesh textile appearance; layered yarn texture with dark inter-yarn opacity and soft fiber sheen; material definition only."
+  },
+  {
+    "name": "upholsterySpacerMeshRed",
+    "section": 14,
+    "recipe": "weave",
+    "description": "red spacer-mesh textile appearance; layered yarn texture with dark inter-yarn opacity and soft fiber sheen; material definition only."
+  },
+  {
+    "name": "upholsterySpacerMeshBlue",
+    "section": 14,
+    "recipe": "weave",
+    "description": "blue spacer-mesh textile appearance; layered yarn texture with dark inter-yarn opacity and soft fiber sheen; material definition only."
+  },
+  {
+    "name": "upholsteryWoolBlendCharcoal",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "charcoal wool-blend automotive textile; fine slightly fuzzy yarns, heathered color, and soft diffuse fiber response."
+  },
+  {
+    "name": "upholsteryWoolBlendGray",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "gray wool-blend automotive textile; fine slightly fuzzy yarns, heathered color, and soft diffuse fiber response."
+  },
+  {
+    "name": "upholsteryWoolBlendLightGray",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "light gray wool-blend automotive textile; fine slightly fuzzy yarns, heathered color, and soft diffuse fiber response."
+  },
+  {
+    "name": "upholsteryWoolBlendBeige",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "beige wool-blend automotive textile; fine slightly fuzzy yarns, heathered color, and soft diffuse fiber response."
+  },
+  {
+    "name": "upholsteryWoolBlendBrown",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "brown wool-blend automotive textile; fine slightly fuzzy yarns, heathered color, and soft diffuse fiber response."
+  },
+  {
+    "name": "upholsteryWoolBlendNavyBlue",
+    "section": 14,
+    "recipe": "fiber",
+    "description": "navy blue wool-blend automotive textile; fine slightly fuzzy yarns, heathered color, and soft diffuse fiber response."
+  },
+  {
+    "name": "upholsteryRecycledPolyesterBlack",
+    "section": 14,
+    "recipe": "weave",
+    "description": "black recycled-polyester upholstery; clean uniform fine weave and soft low-sheen fibers; no artificial dirt or wear."
+  },
+  {
+    "name": "upholsteryRecycledPolyesterGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "gray recycled-polyester upholstery; clean uniform fine weave and soft low-sheen fibers; no artificial dirt or wear."
+  },
+  {
+    "name": "upholsteryRecycledPolyesterBeige",
+    "section": 14,
+    "recipe": "weave",
+    "description": "beige recycled-polyester upholstery; clean uniform fine weave and soft low-sheen fibers; no artificial dirt or wear."
+  },
+  {
+    "name": "upholsteryRecycledPolyesterBlue",
+    "section": 14,
+    "recipe": "weave",
+    "description": "blue recycled-polyester upholstery; clean uniform fine weave and soft low-sheen fibers; no artificial dirt or wear."
+  },
+  {
+    "name": "upholsteryRecycledPolyesterGreen",
+    "section": 14,
+    "recipe": "weave",
+    "description": "green recycled-polyester upholstery; clean uniform fine weave and soft low-sheen fibers; no artificial dirt or wear."
+  },
+  {
+    "name": "upholsteryHerringboneBlackGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "black gray herringbone textile; alternating diagonal yarn pattern with fine woven microtexture and subdued directional sheen."
+  },
+  {
+    "name": "upholsteryHerringboneGrayWhite",
+    "section": 14,
+    "recipe": "weave",
+    "description": "gray white herringbone textile; alternating diagonal yarn pattern with fine woven microtexture and subdued directional sheen."
+  },
+  {
+    "name": "upholsteryHerringboneBeigeBrown",
+    "section": 14,
+    "recipe": "weave",
+    "description": "beige brown herringbone textile; alternating diagonal yarn pattern with fine woven microtexture and subdued directional sheen."
+  },
+  {
+    "name": "upholsteryHoundstoothBlackWhite",
+    "section": 14,
+    "recipe": "weave",
+    "description": "black white houndstooth woven textile; crisp multi-yarn color pattern at textile scale with low gloss and soft yarn relief."
+  },
+  {
+    "name": "upholsteryHoundstoothBlackGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "black gray houndstooth woven textile; crisp multi-yarn color pattern at textile scale with low gloss and soft yarn relief."
+  },
+  {
+    "name": "upholsteryHoundstoothBrownBeige",
+    "section": 14,
+    "recipe": "weave",
+    "description": "brown beige houndstooth woven textile; crisp multi-yarn color pattern at textile scale with low gloss and soft yarn relief."
+  },
+  {
+    "name": "upholsteryPlaidRedBlack",
+    "section": 14,
+    "recipe": "weave",
+    "description": "red black plaid upholstery fabric; woven intersecting color bands, fine yarn texture, and diffuse fiber reflectance."
+  },
+  {
+    "name": "upholsteryPlaidBlueGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "blue gray plaid upholstery fabric; woven intersecting color bands, fine yarn texture, and diffuse fiber reflectance."
+  },
+  {
+    "name": "upholsteryPlaidGreenBlack",
+    "section": 14,
+    "recipe": "weave",
+    "description": "green black plaid upholstery fabric; woven intersecting color bands, fine yarn texture, and diffuse fiber reflectance."
+  },
+  {
+    "name": "upholsteryPlaidBeigeBrown",
+    "section": 14,
+    "recipe": "weave",
+    "description": "beige brown plaid upholstery fabric; woven intersecting color bands, fine yarn texture, and diffuse fiber reflectance."
+  },
+  {
+    "name": "upholsteryCanvasBlack",
+    "section": 14,
+    "recipe": "weave",
+    "description": "black heavy woven canvas; coarse tightly woven yarn texture and matte fibrous appearance, clean factory-new finish."
+  },
+  {
+    "name": "upholsteryCanvasGray",
+    "section": 14,
+    "recipe": "weave",
+    "description": "gray heavy woven canvas; coarse tightly woven yarn texture and matte fibrous appearance, clean factory-new finish."
+  },
+  {
+    "name": "upholsteryCanvasTan",
+    "section": 14,
+    "recipe": "weave",
+    "description": "tan heavy woven canvas; coarse tightly woven yarn texture and matte fibrous appearance, clean factory-new finish."
+  },
+  {
+    "name": "upholsteryCanvasOliveGreen",
+    "section": 14,
+    "recipe": "weave",
+    "description": "olive green heavy woven canvas; coarse tightly woven yarn texture and matte fibrous appearance, clean factory-new finish."
+  },
+  {
+    "name": "upholsteryCanvasBlue",
+    "section": 14,
+    "recipe": "weave",
+    "description": "blue heavy woven canvas; coarse tightly woven yarn texture and matte fibrous appearance, clean factory-new finish."
+  },
+  {
+    "name": "carpetCutPileBlack",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "black dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetCutPileCharcoal",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "charcoal dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetCutPileGray",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "gray dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetCutPileLightGray",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "light gray dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetCutPileBeige",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "beige dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetCutPileTan",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "tan dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetCutPileBrown",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "brown dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetCutPileBurgundy",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "burgundy dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetCutPileRed",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "red dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetCutPileNavyBlue",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "navy blue dense cut-pile automotive carpet; short upright fiber appearance, deep diffuse body color, soft grazing-angle sheen, and fine pile variation."
+  },
+  {
+    "name": "carpetLoopPileBlack",
+    "section": 15,
+    "recipe": "knit",
+    "description": "black loop-pile carpet; small repeated yarn-loop texture, diffuse color, and low directional fiber sheen."
+  },
+  {
+    "name": "carpetLoopPileCharcoal",
+    "section": 15,
+    "recipe": "knit",
+    "description": "charcoal loop-pile carpet; small repeated yarn-loop texture, diffuse color, and low directional fiber sheen."
+  },
+  {
+    "name": "carpetLoopPileGray",
+    "section": 15,
+    "recipe": "knit",
+    "description": "gray loop-pile carpet; small repeated yarn-loop texture, diffuse color, and low directional fiber sheen."
+  },
+  {
+    "name": "carpetLoopPileBeige",
+    "section": 15,
+    "recipe": "knit",
+    "description": "beige loop-pile carpet; small repeated yarn-loop texture, diffuse color, and low directional fiber sheen."
+  },
+  {
+    "name": "carpetLoopPileBrown",
+    "section": 15,
+    "recipe": "knit",
+    "description": "brown loop-pile carpet; small repeated yarn-loop texture, diffuse color, and low directional fiber sheen."
+  },
+  {
+    "name": "carpetNeedlePunchBlack",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "black needle-punched carpet; dense randomly interlocked fibers, flatter low-gloss texture than cut pile, subtle fiber mottling."
+  },
+  {
+    "name": "carpetNeedlePunchCharcoal",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "charcoal needle-punched carpet; dense randomly interlocked fibers, flatter low-gloss texture than cut pile, subtle fiber mottling."
+  },
+  {
+    "name": "carpetNeedlePunchGray",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "gray needle-punched carpet; dense randomly interlocked fibers, flatter low-gloss texture than cut pile, subtle fiber mottling."
+  },
+  {
+    "name": "carpetNeedlePunchBeige",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "beige needle-punched carpet; dense randomly interlocked fibers, flatter low-gloss texture than cut pile, subtle fiber mottling."
+  },
+  {
+    "name": "carpetNeedlePunchBrown",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "brown needle-punched carpet; dense randomly interlocked fibers, flatter low-gloss texture than cut pile, subtle fiber mottling."
+  },
+  {
+    "name": "feltLiningBlack",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "black nonwoven felt; short randomized fibers and matte diffuse appearance with slight grazing sheen."
+  },
+  {
+    "name": "feltLiningCharcoal",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "charcoal nonwoven felt; short randomized fibers and matte diffuse appearance with slight grazing sheen."
+  },
+  {
+    "name": "feltLiningGray",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "gray nonwoven felt; short randomized fibers and matte diffuse appearance with slight grazing sheen."
+  },
+  {
+    "name": "feltLiningLightGray",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "light gray nonwoven felt; short randomized fibers and matte diffuse appearance with slight grazing sheen."
+  },
+  {
+    "name": "feltLiningBeige",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "beige nonwoven felt; short randomized fibers and matte diffuse appearance with slight grazing sheen."
+  },
+  {
+    "name": "feltLiningBrown",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "brown nonwoven felt; short randomized fibers and matte diffuse appearance with slight grazing sheen."
+  },
+  {
+    "name": "flockedFinishBlack",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "black fine adhesive-bound flock; short dense fibers with velvet-like directional shading and nearly matte frontal response."
+  },
+  {
+    "name": "flockedFinishGray",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "gray fine adhesive-bound flock; short dense fibers with velvet-like directional shading and nearly matte frontal response."
+  },
+  {
+    "name": "flockedFinishBeige",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "beige fine adhesive-bound flock; short dense fibers with velvet-like directional shading and nearly matte frontal response."
+  },
+  {
+    "name": "flockedFinishBrown",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "brown fine adhesive-bound flock; short dense fibers with velvet-like directional shading and nearly matte frontal response."
+  },
+  {
+    "name": "headliningKnitBlack",
+    "section": 15,
+    "recipe": "knit",
+    "description": "black fine knit headlining fabric; delicate uniform yarn texture, matte body response, and soft grazing sheen."
+  },
+  {
+    "name": "headliningKnitCharcoal",
+    "section": 15,
+    "recipe": "knit",
+    "description": "charcoal fine knit headlining fabric; delicate uniform yarn texture, matte body response, and soft grazing sheen."
+  },
+  {
+    "name": "headliningKnitGray",
+    "section": 15,
+    "recipe": "knit",
+    "description": "gray fine knit headlining fabric; delicate uniform yarn texture, matte body response, and soft grazing sheen."
+  },
+  {
+    "name": "headliningKnitLightGray",
+    "section": 15,
+    "recipe": "knit",
+    "description": "light gray fine knit headlining fabric; delicate uniform yarn texture, matte body response, and soft grazing sheen."
+  },
+  {
+    "name": "headliningKnitIvory",
+    "section": 15,
+    "recipe": "knit",
+    "description": "ivory fine knit headlining fabric; delicate uniform yarn texture, matte body response, and soft grazing sheen."
+  },
+  {
+    "name": "headliningKnitBeige",
+    "section": 15,
+    "recipe": "knit",
+    "description": "beige fine knit headlining fabric; delicate uniform yarn texture, matte body response, and soft grazing sheen."
+  },
+  {
+    "name": "headliningKnitTan",
+    "section": 15,
+    "recipe": "knit",
+    "description": "tan fine knit headlining fabric; delicate uniform yarn texture, matte body response, and soft grazing sheen."
+  },
+  {
+    "name": "headliningMicrofiberBlack",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "black microfiber lining; extremely fine suede-like nap and soft directional sheen."
+  },
+  {
+    "name": "headliningMicrofiberGray",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "gray microfiber lining; extremely fine suede-like nap and soft directional sheen."
+  },
+  {
+    "name": "headliningMicrofiberIvory",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "ivory microfiber lining; extremely fine suede-like nap and soft directional sheen."
+  },
+  {
+    "name": "headliningMicrofiberBeige",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "beige microfiber lining; extremely fine suede-like nap and soft directional sheen."
+  },
+  {
+    "name": "headliningMicrofiberBrown",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "brown microfiber lining; extremely fine suede-like nap and soft directional sheen."
+  },
+  {
+    "name": "sunshadeTextileBlack",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "black fine woven light-filtering textile; low gloss, subdued fiber sheen, and partial transmission through the yarn structure expressed by material opacity."
+  },
+  {
+    "name": "sunshadeTextileGray",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "gray fine woven light-filtering textile; low gloss, subdued fiber sheen, and partial transmission through the yarn structure expressed by material opacity."
+  },
+  {
+    "name": "sunshadeTextileBeige",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "beige fine woven light-filtering textile; low gloss, subdued fiber sheen, and partial transmission through the yarn structure expressed by material opacity."
+  },
+  {
+    "name": "sunshadeTextileIvory",
+    "section": 15,
+    "recipe": "fiber",
+    "description": "ivory fine woven light-filtering textile; low gloss, subdued fiber sheen, and partial transmission through the yarn structure expressed by material opacity."
+  },
+  {
+    "name": "speakerGrilleClothBlack",
+    "section": 15,
+    "recipe": "weave",
+    "description": "black acoustically open woven cloth; fine yarn albedo and normal texture with inter-yarn opacity, low gloss, and soft fiber sheen."
+  },
+  {
+    "name": "speakerGrilleClothCharcoal",
+    "section": 15,
+    "recipe": "weave",
+    "description": "charcoal acoustically open woven cloth; fine yarn albedo and normal texture with inter-yarn opacity, low gloss, and soft fiber sheen."
+  },
+  {
+    "name": "speakerGrilleClothGray",
+    "section": 15,
+    "recipe": "weave",
+    "description": "gray acoustically open woven cloth; fine yarn albedo and normal texture with inter-yarn opacity, low gloss, and soft fiber sheen."
+  },
+  {
+    "name": "speakerGrilleClothBeige",
+    "section": 15,
+    "recipe": "weave",
+    "description": "beige acoustically open woven cloth; fine yarn albedo and normal texture with inter-yarn opacity, low gloss, and soft fiber sheen."
+  },
+  {
+    "name": "speakerGrilleClothBrown",
+    "section": 15,
+    "recipe": "weave",
+    "description": "brown acoustically open woven cloth; fine yarn albedo and normal texture with inter-yarn opacity, low gloss, and soft fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingBlack",
+    "section": 16,
+    "recipe": "weave",
+    "description": "black tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingCharcoal",
+    "section": 16,
+    "recipe": "weave",
+    "description": "charcoal tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingGray",
+    "section": 16,
+    "recipe": "weave",
+    "description": "gray tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingLightGray",
+    "section": 16,
+    "recipe": "weave",
+    "description": "light gray tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingBeige",
+    "section": 16,
+    "recipe": "weave",
+    "description": "beige tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingTan",
+    "section": 16,
+    "recipe": "weave",
+    "description": "tan tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingBrown",
+    "section": 16,
+    "recipe": "weave",
+    "description": "brown tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingRed",
+    "section": 16,
+    "recipe": "weave",
+    "description": "red tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingOrange",
+    "section": 16,
+    "recipe": "weave",
+    "description": "orange tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingYellow",
+    "section": 16,
+    "recipe": "weave",
+    "description": "yellow tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingGreen",
+    "section": 16,
+    "recipe": "weave",
+    "description": "green tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingBlue",
+    "section": 16,
+    "recipe": "weave",
+    "description": "blue tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingNavyBlue",
+    "section": 16,
+    "recipe": "weave",
+    "description": "navy blue tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "seatbeltWebbingBurgundy",
+    "section": 16,
+    "recipe": "weave",
+    "description": "burgundy tightly woven polyester safety webbing; fine longitudinal rib texture, compact yarn structure, and directional satin fiber sheen."
+  },
+  {
+    "name": "utilityWebbingBlack",
+    "section": 16,
+    "recipe": "weave",
+    "description": "black heavy woven nylon or polyester webbing; visible yarn texture, matte body color, and restrained fiber sheen."
+  },
+  {
+    "name": "utilityWebbingGray",
+    "section": 16,
+    "recipe": "weave",
+    "description": "gray heavy woven nylon or polyester webbing; visible yarn texture, matte body color, and restrained fiber sheen."
+  },
+  {
+    "name": "utilityWebbingTan",
+    "section": 16,
+    "recipe": "weave",
+    "description": "tan heavy woven nylon or polyester webbing; visible yarn texture, matte body color, and restrained fiber sheen."
+  },
+  {
+    "name": "utilityWebbingOliveGreen",
+    "section": 16,
+    "recipe": "weave",
+    "description": "olive green heavy woven nylon or polyester webbing; visible yarn texture, matte body color, and restrained fiber sheen."
+  },
+  {
+    "name": "utilityWebbingRed",
+    "section": 16,
+    "recipe": "weave",
+    "description": "red heavy woven nylon or polyester webbing; visible yarn texture, matte body color, and restrained fiber sheen."
+  },
+  {
+    "name": "utilityWebbingOrange",
+    "section": 16,
+    "recipe": "weave",
+    "description": "orange heavy woven nylon or polyester webbing; visible yarn texture, matte body color, and restrained fiber sheen."
+  },
+  {
+    "name": "utilityWebbingBlue",
+    "section": 16,
+    "recipe": "weave",
+    "description": "blue heavy woven nylon or polyester webbing; visible yarn texture, matte body color, and restrained fiber sheen."
+  },
+  {
+    "name": "stitchingThreadBlack",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "black automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadCharcoal",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "charcoal automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadGray",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "gray automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadWhite",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "white automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadIvory",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "ivory automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadBeige",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "beige automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadTan",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "tan automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadBrown",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "brown automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadRed",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "red automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadOrange",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "orange automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadYellow",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "yellow automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadGreen",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "green automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadBlue",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "blue automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "stitchingThreadPurple",
+    "section": 16,
+    "recipe": "fiber",
+    "description": "purple automotive upholstery thread material; fine twisted-fiber texture and satin yarn reflection, without any stitch layout specification."
+  },
+  {
+    "name": "textileBindingBlack",
+    "section": 16,
+    "recipe": "weave",
+    "description": "black woven binding textile; fine dense yarn structure with soft directional fiber sheen."
+  },
+  {
+    "name": "textileBindingGray",
+    "section": 16,
+    "recipe": "weave",
+    "description": "gray woven binding textile; fine dense yarn structure with soft directional fiber sheen."
+  },
+  {
+    "name": "textileBindingBeige",
+    "section": 16,
+    "recipe": "weave",
+    "description": "beige woven binding textile; fine dense yarn structure with soft directional fiber sheen."
+  },
+  {
+    "name": "textileBindingTan",
+    "section": 16,
+    "recipe": "weave",
+    "description": "tan woven binding textile; fine dense yarn structure with soft directional fiber sheen."
+  },
+  {
+    "name": "textileBindingBrown",
+    "section": 16,
+    "recipe": "weave",
+    "description": "brown woven binding textile; fine dense yarn structure with soft directional fiber sheen."
+  },
+  {
+    "name": "textileBindingRed",
+    "section": 16,
+    "recipe": "weave",
+    "description": "red woven binding textile; fine dense yarn structure with soft directional fiber sheen."
+  },
+  {
+    "name": "textileBindingBlue",
+    "section": 16,
+    "recipe": "weave",
+    "description": "blue woven binding textile; fine dense yarn structure with soft directional fiber sheen."
+  },
+  {
+    "name": "clothElectricalTapeBlack",
+    "section": 16,
+    "recipe": "weave",
+    "description": "black adhesive fabric tape face; fine woven or fleece-like surface, matte reflectance, and clean new fibers."
+  },
+  {
+    "name": "clothElectricalTapeGray",
+    "section": 16,
+    "recipe": "weave",
+    "description": "gray adhesive fabric tape face; fine woven or fleece-like surface, matte reflectance, and clean new fibers."
+  },
+  {
+    "name": "clothElectricalTapeWhite",
+    "section": 16,
+    "recipe": "weave",
+    "description": "white adhesive fabric tape face; fine woven or fleece-like surface, matte reflectance, and clean new fibers."
+  },
+  {
+    "name": "vinylElectricalTapeBlack",
+    "section": 16,
+    "recipe": "grain",
+    "description": "black flexible PVC insulating tape; smooth satin dielectric surface with faint film texture."
+  },
+  {
+    "name": "vinylElectricalTapeWhite",
+    "section": 16,
+    "recipe": "grain",
+    "description": "white flexible PVC insulating tape; smooth satin dielectric surface with faint film texture."
+  },
+  {
+    "name": "vinylElectricalTapeRed",
+    "section": 16,
+    "recipe": "grain",
+    "description": "red flexible PVC insulating tape; smooth satin dielectric surface with faint film texture."
+  },
+  {
+    "name": "vinylElectricalTapeYellow",
+    "section": 16,
+    "recipe": "grain",
+    "description": "yellow flexible PVC insulating tape; smooth satin dielectric surface with faint film texture."
+  },
+  {
+    "name": "vinylElectricalTapeGreen",
+    "section": 16,
+    "recipe": "grain",
+    "description": "green flexible PVC insulating tape; smooth satin dielectric surface with faint film texture."
+  },
+  {
+    "name": "vinylElectricalTapeBlue",
+    "section": 16,
+    "recipe": "grain",
+    "description": "blue flexible PVC insulating tape; smooth satin dielectric surface with faint film texture."
+  },
+  {
+    "name": "vinylElectricalTapeOrange",
+    "section": 16,
+    "recipe": "grain",
+    "description": "orange flexible PVC insulating tape; smooth satin dielectric surface with faint film texture."
+  },
+  {
+    "name": "hookFastenerTextileBlack",
+    "section": 16,
+    "recipe": "weave",
+    "description": "Black nylon hook-fastener textile appearance; dense fine polymer-fiber surface, dark diffuse body response, and subtle satin fiber glints; material specification only."
+  },
+  {
+    "name": "loopFastenerTextileBlack",
+    "section": 16,
+    "recipe": "weave",
+    "description": "Black loop-fastener textile; soft fuzzy yarn surface with low gloss and gentle fiber sheen."
+  },
+  {
+    "name": "loopFastenerTextileGray",
+    "section": 16,
+    "recipe": "weave",
+    "description": "Gray loop-fastener textile; dense fuzzy fibers and matte-to-soft-sheen response."
+  },
+  {
+    "name": "aramidFabricNaturalYellow",
+    "section": 16,
+    "recipe": "weave",
+    "description": "Natural yellow aramid fabric; fine woven yarn texture, matte body color, and low directional fiber sheen."
+  },
+  {
+    "name": "glassFiberFabricWhite",
+    "section": 16,
+    "recipe": "weave",
+    "description": "White glass-fiber cloth; fine woven texture, pale diffuse response, and mild satin fiber reflections."
+  },
+  {
+    "name": "woodWalnutGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative walnut veneer; warm medium-to-dark brown with flowing dark grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodWalnutOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative walnut veneer; warm medium-to-dark brown with flowing dark grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodBurlWalnutGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative burlWalnut veneer; rich brown with swirling burl figure and small dark eyes, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodBurlWalnutOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative burlWalnut veneer; rich brown with swirling burl figure and small dark eyes, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodOakGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative oak veneer; warm light-to-medium brown with prominent open linear grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodOakOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative oak veneer; warm light-to-medium brown with prominent open linear grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodAshGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative ash veneer; pale cream-to-tan with pronounced long grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodAshOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative ash veneer; pale cream-to-tan with pronounced long grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodMapleGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative maple veneer; pale creamy tan with fine subtle grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodMapleOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative maple veneer; pale creamy tan with fine subtle grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodBirdseyeMapleGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative birdseyeMaple veneer; light honey tan with small birdseye figuring, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodBirdseyeMapleOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative birdseyeMaple veneer; light honey tan with small birdseye figuring, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodBirchGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative birch veneer; pale golden tan with fine grain and mild figuring, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodBirchOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative birch veneer; pale golden tan with fine grain and mild figuring, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodCherryGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative cherry veneer; warm reddish brown with smooth fine grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodCherryOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative cherry veneer; warm reddish brown with smooth fine grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodMahoganyGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative mahogany veneer; rich red-brown with fine ribbon-like grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodMahoganyOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative mahogany veneer; rich red-brown with fine ribbon-like grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodRosewoodGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative rosewood veneer; deep reddish brown with dark contrasting grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodRosewoodOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative rosewood veneer; deep reddish brown with dark contrasting grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodEbonyGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative ebony veneer; very dark brown to black with subtle darker linear grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodEbonyOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative ebony veneer; very dark brown to black with subtle darker linear grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodZebranoGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative zebrano veneer; warm tan with strong dark linear striping, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodZebranoOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative zebrano veneer; warm tan with strong dark linear striping, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodBambooGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative bamboo veneer; pale honey color with fine elongated fiber pattern, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodBambooOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative bamboo veneer; pale honey color with fine elongated fiber pattern, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodTeakGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative teak veneer; warm golden brown with long oily-looking grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodTeakOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative teak veneer; warm golden brown with long oily-looking grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodEucalyptusGloss",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative eucalyptus veneer; warm brown with fine ribbon-like figured grain, beneath a smooth transparent gloss lacquer; subtle grain depth and no age patina."
+  },
+  {
+    "name": "woodEucalyptusOpenPore",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New decorative eucalyptus veneer; warm brown with fine ribbon-like figured grain, thin matte-to-satin protective finish retaining visible pore texture."
+  },
+  {
+    "name": "woodDyedOpenPoreBlack",
+    "section": 17,
+    "recipe": "wood",
+    "description": "black dyed open-pore wood veneer; visible longitudinal grain and pore microtexture beneath a thin satin protective finish."
+  },
+  {
+    "name": "woodDyedOpenPoreCharcoal",
+    "section": 17,
+    "recipe": "wood",
+    "description": "charcoal dyed open-pore wood veneer; visible longitudinal grain and pore microtexture beneath a thin satin protective finish."
+  },
+  {
+    "name": "woodDyedOpenPoreGray",
+    "section": 17,
+    "recipe": "wood",
+    "description": "gray dyed open-pore wood veneer; visible longitudinal grain and pore microtexture beneath a thin satin protective finish."
+  },
+  {
+    "name": "woodDyedOpenPoreBlue",
+    "section": 17,
+    "recipe": "wood",
+    "description": "blue dyed open-pore wood veneer; visible longitudinal grain and pore microtexture beneath a thin satin protective finish."
+  },
+  {
+    "name": "woodDyedOpenPoreBrown",
+    "section": 17,
+    "recipe": "wood",
+    "description": "brown dyed open-pore wood veneer; visible longitudinal grain and pore microtexture beneath a thin satin protective finish."
+  },
+  {
+    "name": "woodDyedGlossBlack",
+    "section": 17,
+    "recipe": "wood",
+    "description": "black dyed wood veneer under glossy transparent lacquer; grain remains visible beneath the smooth dielectric top surface."
+  },
+  {
+    "name": "woodDyedGlossGray",
+    "section": 17,
+    "recipe": "wood",
+    "description": "gray dyed wood veneer under glossy transparent lacquer; grain remains visible beneath the smooth dielectric top surface."
+  },
+  {
+    "name": "woodDyedGlossRed",
+    "section": 17,
+    "recipe": "wood",
+    "description": "red dyed wood veneer under glossy transparent lacquer; grain remains visible beneath the smooth dielectric top surface."
+  },
+  {
+    "name": "woodDyedGlossBlue",
+    "section": 17,
+    "recipe": "wood",
+    "description": "blue dyed wood veneer under glossy transparent lacquer; grain remains visible beneath the smooth dielectric top surface."
+  },
+  {
+    "name": "woodReconstitutedStripedSatin",
+    "section": 17,
+    "recipe": "wood",
+    "description": "New reconstituted wood veneer with fine alternating tan and dark-brown grain bands; satin clear finish and visible fine wood texture."
+  },
+  {
+    "name": "woodPianoBlackLacquer",
+    "section": 17,
+    "recipe": "grain",
+    "description": "Opaque deep black multi-layer lacquer over wood; smooth high-gloss dielectric surface with no visible grain."
+  },
+  {
+    "name": "woodPianoWhiteLacquer",
+    "section": 17,
+    "recipe": "grain",
+    "description": "Opaque white lacquer over wood; smooth high-gloss dielectric surface with no visible grain."
+  },
+  {
+    "name": "woodPrintWalnutPolymer",
+    "section": 17,
+    "recipe": "wood",
+    "description": "Walnut-look printed polymer laminate; brown wood-grain albedo pattern beneath a glossy or low-satin polymer surface, with limited grain depth."
+  },
+  {
+    "name": "woodPrintOakPolymer",
+    "section": 17,
+    "recipe": "wood",
+    "description": "Oak-look printed polymer laminate; tan open-grain color pattern and fine satin embossed surface."
+  },
+  {
+    "name": "woodPrintBlackAshPolymer",
+    "section": 17,
+    "recipe": "wood",
+    "description": "Black-ash-look printed polymer laminate; dark linear grain color pattern and fine satin embossed surface."
+  },
+  {
+    "name": "corkCompositeNatural",
+    "section": 17,
+    "recipe": "bead",
+    "description": "New natural cork composite; warm tan cellular fleck pattern, matte diffuse response, and subtle cell microtexture."
+  },
+  {
+    "name": "corkCompositeDarkBrown",
+    "section": 17,
+    "recipe": "bead",
+    "description": "New dark-brown cork composite; fine cellular flecks and matte low-gloss surface."
+  },
+  {
+    "name": "carbonFiberPlainWeaveGloss",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New black carbon-fiber composite with fine alternating plain weave; smooth glossy transparent resin with optical depth, dark fiber bundles with directional sheen and physical-scale pattern."
+  },
+  {
+    "name": "carbonFiberPlainWeaveSatin",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New black carbon-fiber composite with fine alternating plain weave; satin clear resin with broad highlights, dark fiber bundles with directional sheen and physical-scale pattern."
+  },
+  {
+    "name": "carbonFiberPlainWeaveMatte",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New black carbon-fiber composite with fine alternating plain weave; matte clear resin with soft low-contrast highlights, dark fiber bundles with directional sheen and physical-scale pattern."
+  },
+  {
+    "name": "carbonFiberTwillGloss",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New black carbon-fiber composite with diagonal twill weave; smooth glossy transparent resin with optical depth, dark fiber bundles with directional sheen and physical-scale pattern."
+  },
+  {
+    "name": "carbonFiberTwillSatin",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New black carbon-fiber composite with diagonal twill weave; satin clear resin with broad highlights, dark fiber bundles with directional sheen and physical-scale pattern."
+  },
+  {
+    "name": "carbonFiberTwillMatte",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New black carbon-fiber composite with diagonal twill weave; matte clear resin with soft low-contrast highlights, dark fiber bundles with directional sheen and physical-scale pattern."
+  },
+  {
+    "name": "carbonFiberSpreadTowGloss",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New black carbon-fiber composite with wide flattened tow weave; smooth glossy transparent resin with optical depth, dark fiber bundles with directional sheen and physical-scale pattern."
+  },
+  {
+    "name": "carbonFiberSpreadTowSatin",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New black carbon-fiber composite with wide flattened tow weave; satin clear resin with broad highlights, dark fiber bundles with directional sheen and physical-scale pattern."
+  },
+  {
+    "name": "carbonFiberSpreadTowMatte",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New black carbon-fiber composite with wide flattened tow weave; matte clear resin with soft low-contrast highlights, dark fiber bundles with directional sheen and physical-scale pattern."
+  },
+  {
+    "name": "carbonFiberUnidirectionalGloss",
+    "section": 18,
+    "recipe": "fiber",
+    "description": "New unidirectional carbon composite; aligned black fiber texture with directional sheen beneath clear glossy resin."
+  },
+  {
+    "name": "carbonFiberUnidirectionalMatte",
+    "section": 18,
+    "recipe": "fiber",
+    "description": "New unidirectional carbon composite; aligned dark fibers under matte clear resin with muted anisotropic sheen."
+  },
+  {
+    "name": "carbonFiberForgedGloss",
+    "section": 18,
+    "recipe": "fragments",
+    "description": "New chopped-carbon composite; irregular dark fiber fragments with varied directional sheen beneath clear glossy resin."
+  },
+  {
+    "name": "carbonFiberForgedMatte",
+    "section": 18,
+    "recipe": "fragments",
+    "description": "New chopped-carbon composite; irregular black and charcoal fiber flecks beneath matte clear resin."
+  },
+  {
+    "name": "carbonFiberTintedGlossRed",
+    "section": 18,
+    "recipe": "weave",
+    "description": "Black woven carbon composite beneath transparent red tinted gloss resin; visible weave and directional fiber sheen, not opaque paint."
+  },
+  {
+    "name": "carbonFiberTintedGlossBlue",
+    "section": 18,
+    "recipe": "weave",
+    "description": "Black woven carbon composite beneath transparent blue tinted gloss resin; visible weave and directional fiber sheen, not opaque paint."
+  },
+  {
+    "name": "carbonFiberTintedGlossGreen",
+    "section": 18,
+    "recipe": "weave",
+    "description": "Black woven carbon composite beneath transparent green tinted gloss resin; visible weave and directional fiber sheen, not opaque paint."
+  },
+  {
+    "name": "carbonFiberTintedGlossGold",
+    "section": 18,
+    "recipe": "weave",
+    "description": "Black woven carbon composite beneath transparent gold tinted gloss resin; visible weave and directional fiber sheen, not opaque paint."
+  },
+  {
+    "name": "carbonFiberTintedGlossBronze",
+    "section": 18,
+    "recipe": "weave",
+    "description": "Black woven carbon composite beneath transparent bronze tinted gloss resin; visible weave and directional fiber sheen, not opaque paint."
+  },
+  {
+    "name": "carbonAramidWeaveGloss",
+    "section": 18,
+    "recipe": "weave",
+    "description": "Black carbon and natural yellow aramid hybrid weave beneath clear gloss resin; contrasting yarn colors with directional fiber sheen."
+  },
+  {
+    "name": "carbonAramidWeaveMatte",
+    "section": 18,
+    "recipe": "weave",
+    "description": "Black carbon and yellow aramid hybrid weave beneath matte resin; visible yarn contrast and subdued directional sheen."
+  },
+  {
+    "name": "aramidCompositeNatural",
+    "section": 18,
+    "recipe": "weave",
+    "description": "Natural yellow woven aramid composite; fine yarn texture beneath clear satin resin."
+  },
+  {
+    "name": "glassFiberCompositeNatural",
+    "section": 18,
+    "recipe": "fragments",
+    "description": "Natural glass-fiber-reinforced resin; pale cream to amber translucent mottling with faint fiber texture and satin resin sheen."
+  },
+  {
+    "name": "glassFiberCompositeWhite",
+    "section": 18,
+    "recipe": "fragments",
+    "description": "White pigmented glass-fiber composite; opaque smooth satin resin with faint substrate fiber print-through."
+  },
+  {
+    "name": "sheetMoldingCompoundGray",
+    "section": 18,
+    "recipe": "fragments",
+    "description": "New gray fiber-reinforced sheet-molding compound; opaque satin resin finish and faint short-fiber mottling."
+  },
+  {
+    "name": "sheetMoldingCompoundBlack",
+    "section": 18,
+    "recipe": "fragments",
+    "description": "New black fiber-reinforced sheet-molding compound; fine matte-to-satin resin surface and subtle short-fiber texture."
+  },
+  {
+    "name": "naturalFiberCompositeFlax",
+    "section": 18,
+    "recipe": "weave",
+    "description": "New flax-fiber composite; warm tan woven fibers visible under clear satin resin, subtle natural yarn color variation."
+  },
+  {
+    "name": "naturalFiberCompositeHemp",
+    "section": 18,
+    "recipe": "fragments",
+    "description": "New hemp-fiber composite; tan-to-brown random fiber texture in a matte resin surface."
+  },
+  {
+    "name": "naturalFiberCompositeKenaf",
+    "section": 18,
+    "recipe": "fragments",
+    "description": "New kenaf-fiber composite; pale brown coarse short-fiber flecks in a matte opaque binder."
+  },
+  {
+    "name": "carbonFiberPrintBlack",
+    "section": 18,
+    "recipe": "weave",
+    "description": "Carbon-weave printed decorative laminate; black and charcoal weave albedo pattern under a smooth polymer finish, without real fiber optical depth."
+  },
+  {
+    "name": "polyurethaneFoamOpenCellCream",
+    "section": 19,
+    "recipe": "cells",
+    "description": "Clean new cream open-cell polyurethane foam; visible fine cellular texture, matte diffuse scattering, and soft color variation."
+  },
+  {
+    "name": "polyurethaneFoamOpenCellYellow",
+    "section": 19,
+    "recipe": "cells",
+    "description": "Clean new yellow open-cell polyurethane foam; visible fine cellular texture, matte diffuse scattering, and soft color variation."
+  },
+  {
+    "name": "polyurethaneFoamOpenCellGray",
+    "section": 19,
+    "recipe": "cells",
+    "description": "Clean new gray open-cell polyurethane foam; visible fine cellular texture, matte diffuse scattering, and soft color variation."
+  },
+  {
+    "name": "polyurethaneFoamOpenCellBlack",
+    "section": 19,
+    "recipe": "cells",
+    "description": "Clean new black open-cell polyurethane foam; visible fine cellular texture, matte diffuse scattering, and soft color variation."
+  },
+  {
+    "name": "polyethyleneFoamClosedCellWhite",
+    "section": 19,
+    "recipe": "cells",
+    "description": "Clean new white closed-cell polyethylene foam; fine dense cellular texture and matte waxy reflectance."
+  },
+  {
+    "name": "polyethyleneFoamClosedCellGray",
+    "section": 19,
+    "recipe": "cells",
+    "description": "Clean new gray closed-cell polyethylene foam; fine dense cellular texture and matte waxy reflectance."
+  },
+  {
+    "name": "polyethyleneFoamClosedCellBlack",
+    "section": 19,
+    "recipe": "cells",
+    "description": "Clean new black closed-cell polyethylene foam; fine dense cellular texture and matte waxy reflectance."
+  },
+  {
+    "name": "melamineFoamLightGray",
+    "section": 19,
+    "recipe": "cells",
+    "description": "New light-gray melamine acoustic foam; extremely fine open-cell texture, low gloss, and soft diffuse response."
+  },
+  {
+    "name": "eppFoamBlack",
+    "section": 19,
+    "recipe": "bead",
+    "description": "New black expanded-polypropylene foam; fused bead surface pattern, matte polymer reflectance, and slight beadwise color variation."
+  },
+  {
+    "name": "eppFoamGray",
+    "section": 19,
+    "recipe": "bead",
+    "description": "New gray expanded-polypropylene foam; visible fused beads and low-gloss polymer response."
+  },
+  {
+    "name": "epsFoamWhite",
+    "section": 19,
+    "recipe": "bead",
+    "description": "New white expanded-polystyrene foam; fine fused bead pattern and soft diffuse response."
+  },
+  {
+    "name": "polyurethaneFoamIntegralSkinBlack",
+    "section": 19,
+    "recipe": "grain",
+    "description": "New black integral-skin polyurethane foam; smooth dense outer skin with fine molded grain and low satin sheen."
+  },
+  {
+    "name": "polyurethaneFoamIntegralSkinGray",
+    "section": 19,
+    "recipe": "grain",
+    "description": "New gray integral-skin polyurethane foam; fine molded surface grain and soft low-gloss highlights."
+  },
+  {
+    "name": "recycledFiberInsulationMulticolor",
+    "section": 19,
+    "recipe": "fiber",
+    "description": "Clean new compressed recycled-fiber insulation; gray dominant mixed textile flecks, random fiber texture, and matte diffuse response."
+  },
+  {
+    "name": "petFiberInsulationGray",
+    "section": 19,
+    "recipe": "grain",
+    "description": "Clean gray polyester-fiber acoustic insulation; dense random fine fibers and soft low-gloss response."
+  },
+  {
+    "name": "petFiberInsulationBlack",
+    "section": 19,
+    "recipe": "grain",
+    "description": "Clean black polyester-fiber acoustic insulation; fine randomized fiber texture and muted sheen."
+  },
+  {
+    "name": "glassWoolInsulationPaleYellow",
+    "section": 19,
+    "recipe": "fiber",
+    "description": "New pale yellow glass-wool insulation; fine randomized fibers and soft diffuse scattering, without exposed coarse glitter."
+  },
+  {
+    "name": "mineralWoolInsulationGrayBrown",
+    "section": 19,
+    "recipe": "fiber",
+    "description": "New gray-brown mineral-fiber insulation; irregular fine fibers, matte diffuse response, no soot."
+  },
+  {
+    "name": "ceramicFiberInsulationWhite",
+    "section": 19,
+    "recipe": "fiber",
+    "description": "New white ceramic-fiber insulation; fine fibrous matte texture and soft diffuse scattering."
+  },
+  {
+    "name": "aerogelBlanketWhite",
+    "section": 19,
+    "recipe": "fiber",
+    "description": "New white aerogel insulation blanket; fine fibrous powdery matte appearance with low contrast."
+  },
+  {
+    "name": "aluminumFoilInsulationBright",
+    "section": 19,
+    "recipe": "grain",
+    "description": "Clean bright aluminum foil surface; high silver conductor reflection with fine manufacturing microtexture."
+  },
+  {
+    "name": "aluminumFoilInsulationEmbossed",
+    "section": 19,
+    "recipe": "weave",
+    "description": "Clean aluminum foil insulation face; silver conductor response with fine embossed surface microtexture, without a prescribed part shape."
+  },
+  {
+    "name": "aluminizedGlassCloth",
+    "section": 19,
+    "recipe": "weave",
+    "description": "New aluminized glass-fiber textile; silver reflective coating with visible woven microtexture and anisotropic yarn sheen."
+  },
+  {
+    "name": "aluminizedPolymerFilm",
+    "section": 19,
+    "recipe": "grain",
+    "description": "New metallized polymer film; bright silver conductor-like reflection beneath a thin transparent polymer layer."
+  },
+  {
+    "name": "bitumenDampingBlack",
+    "section": 19,
+    "recipe": "grain",
+    "description": "Clean new black bituminous damping compound; dark fine-grained surface with low satin-to-waxy sheen."
+  },
+  {
+    "name": "butylDampingGray",
+    "section": 19,
+    "recipe": "grain",
+    "description": "Clean new gray butyl damping compound; dense smooth elastomer with low satin reflectance."
+  },
+  {
+    "name": "filterPaperCream",
+    "section": 19,
+    "recipe": "fiber",
+    "description": "New cream cellulose filter medium; fine fibrous paper texture and matte diffuse response, no trapped dust."
+  },
+  {
+    "name": "filterPaperYellow",
+    "section": 19,
+    "recipe": "fiber",
+    "description": "New yellow resin-treated cellulose filter medium; fine fibrous texture and subdued matte sheen."
+  },
+  {
+    "name": "filterSyntheticWhite",
+    "section": 19,
+    "recipe": "fiber",
+    "description": "New white synthetic filter textile; fine random fibers and matte diffuse scattering."
+  },
+  {
+    "name": "filterSyntheticBlack",
+    "section": 19,
+    "recipe": "fiber",
+    "description": "New black synthetic filter textile; fine randomized fibers and very low gloss."
+  },
+  {
+    "name": "activatedCarbonFilterGray",
+    "section": 19,
+    "recipe": "cells",
+    "description": "New charcoal-gray activated-carbon filter medium; fine dark granular and fibrous texture with matte diffuse response."
+  },
+  {
+    "name": "rubberFlooringFineGrainBlack",
+    "section": 20,
+    "recipe": "grain",
+    "description": "black heavy-duty rubber flooring compound; dense fine grain and low satin sheen, clean new finish without scuffs."
+  },
+  {
+    "name": "rubberFlooringFineGrainCharcoal",
+    "section": 20,
+    "recipe": "grain",
+    "description": "charcoal heavy-duty rubber flooring compound; dense fine grain and low satin sheen, clean new finish without scuffs."
+  },
+  {
+    "name": "rubberFlooringFineGrainGray",
+    "section": 20,
+    "recipe": "grain",
+    "description": "gray heavy-duty rubber flooring compound; dense fine grain and low satin sheen, clean new finish without scuffs."
+  },
+  {
+    "name": "rubberFlooringFineGrainBrown",
+    "section": 20,
+    "recipe": "grain",
+    "description": "brown heavy-duty rubber flooring compound; dense fine grain and low satin sheen, clean new finish without scuffs."
+  },
+  {
+    "name": "vinylFlooringBlack",
+    "section": 20,
+    "recipe": "grain",
+    "description": "black commercial PVC flooring; fine embossed surface texture, opaque durable-looking satin finish."
+  },
+  {
+    "name": "vinylFlooringGray",
+    "section": 20,
+    "recipe": "grain",
+    "description": "gray commercial PVC flooring; fine embossed surface texture, opaque durable-looking satin finish."
+  },
+  {
+    "name": "vinylFlooringBlue",
+    "section": 20,
+    "recipe": "grain",
+    "description": "blue commercial PVC flooring; fine embossed surface texture, opaque durable-looking satin finish."
+  },
+  {
+    "name": "vinylFlooringBeige",
+    "section": 20,
+    "recipe": "grain",
+    "description": "beige commercial PVC flooring; fine embossed surface texture, opaque durable-looking satin finish."
+  },
+  {
+    "name": "vinylFlooringSpeckledGrayBlack",
+    "section": 20,
+    "recipe": "speckle",
+    "description": "gray black speckled commercial vinyl flooring; small integrated pigment flecks and matte-to-satin polymer finish."
+  },
+  {
+    "name": "vinylFlooringSpeckledBlueGray",
+    "section": 20,
+    "recipe": "speckle",
+    "description": "blue gray speckled commercial vinyl flooring; small integrated pigment flecks and matte-to-satin polymer finish."
+  },
+  {
+    "name": "vinylFlooringSpeckledBeigeBrown",
+    "section": 20,
+    "recipe": "speckle",
+    "description": "beige brown speckled commercial vinyl flooring; small integrated pigment flecks and matte-to-satin polymer finish."
+  },
+  {
+    "name": "phenolicPlywoodBrown",
+    "section": 20,
+    "recipe": "grain",
+    "description": "New brown phenolic-film-faced plywood surface; fine resin texture and low satin finish, without bare damaged patches."
+  },
+  {
+    "name": "phenolicPlywoodBlack",
+    "section": 20,
+    "recipe": "grain",
+    "description": "New black phenolic-film-faced plywood surface; fine matte-to-satin resin texture."
+  },
+  {
+    "name": "plywoodBirchSealed",
+    "section": 20,
+    "recipe": "wood",
+    "description": "New sealed birch plywood appearance; pale tan wood grain under clear satin protection, no stains or wear."
+  },
+  {
+    "name": "plywoodHardwoodSealed",
+    "section": 20,
+    "recipe": "wood",
+    "description": "New sealed hardwood plywood appearance; medium brown grain and clear satin finish."
+  },
+  {
+    "name": "hardwoodFlooringNatural",
+    "section": 20,
+    "recipe": "wood",
+    "description": "New natural hardwood surface; warm brown grain under a thin clear satin finish, no dents or use marks."
+  },
+  {
+    "name": "bambooFlooringSealed",
+    "section": 20,
+    "recipe": "wood",
+    "description": "New laminated bamboo surface; pale honey fiber pattern under clear satin protection."
+  },
+  {
+    "name": "fiberglassGelcoatGlossWhite",
+    "section": 20,
+    "recipe": "grain",
+    "description": "white opaque polyester gelcoat over fiber composite; smooth glossy dielectric finish with very faint substrate texture."
+  },
+  {
+    "name": "fiberglassGelcoatGlossCream",
+    "section": 20,
+    "recipe": "grain",
+    "description": "cream opaque polyester gelcoat over fiber composite; smooth glossy dielectric finish with very faint substrate texture."
+  },
+  {
+    "name": "fiberglassGelcoatGlossGray",
+    "section": 20,
+    "recipe": "grain",
+    "description": "gray opaque polyester gelcoat over fiber composite; smooth glossy dielectric finish with very faint substrate texture."
+  },
+  {
+    "name": "fiberglassGelcoatGlossBlack",
+    "section": 20,
+    "recipe": "grain",
+    "description": "black opaque polyester gelcoat over fiber composite; smooth glossy dielectric finish with very faint substrate texture."
+  },
+  {
+    "name": "fiberglassGelcoatGlossRed",
+    "section": 20,
+    "recipe": "grain",
+    "description": "red opaque polyester gelcoat over fiber composite; smooth glossy dielectric finish with very faint substrate texture."
+  },
+  {
+    "name": "fiberglassGelcoatGlossYellow",
+    "section": 20,
+    "recipe": "grain",
+    "description": "yellow opaque polyester gelcoat over fiber composite; smooth glossy dielectric finish with very faint substrate texture."
+  },
+  {
+    "name": "fiberglassGelcoatGlossBlue",
+    "section": 20,
+    "recipe": "grain",
+    "description": "blue opaque polyester gelcoat over fiber composite; smooth glossy dielectric finish with very faint substrate texture."
+  },
+  {
+    "name": "fiberglassGelcoatGlossGreen",
+    "section": 20,
+    "recipe": "grain",
+    "description": "green opaque polyester gelcoat over fiber composite; smooth glossy dielectric finish with very faint substrate texture."
+  },
+  {
+    "name": "fiberglassGelcoatSatinWhite",
+    "section": 20,
+    "recipe": "grain",
+    "description": "white opaque gelcoat over fiber composite; fine satin dielectric surface."
+  },
+  {
+    "name": "fiberglassGelcoatSatinGray",
+    "section": 20,
+    "recipe": "grain",
+    "description": "gray opaque gelcoat over fiber composite; fine satin dielectric surface."
+  },
+  {
+    "name": "fiberglassGelcoatSatinBlack",
+    "section": 20,
+    "recipe": "grain",
+    "description": "black opaque gelcoat over fiber composite; fine satin dielectric surface."
+  },
+  {
+    "name": "fiberglassGelcoatSatinBeige",
+    "section": 20,
+    "recipe": "grain",
+    "description": "beige opaque gelcoat over fiber composite; fine satin dielectric surface."
+  },
+  {
+    "name": "thermoplasticLinerSmoothWhite",
+    "section": 20,
+    "recipe": "grain",
+    "description": "white clean thermoplastic lining finish; smooth opaque satin surface with subtle fine molding texture."
+  },
+  {
+    "name": "thermoplasticLinerSmoothGray",
+    "section": 20,
+    "recipe": "grain",
+    "description": "gray clean thermoplastic lining finish; smooth opaque satin surface with subtle fine molding texture."
+  },
+  {
+    "name": "thermoplasticLinerSmoothBlack",
+    "section": 20,
+    "recipe": "grain",
+    "description": "black clean thermoplastic lining finish; smooth opaque satin surface with subtle fine molding texture."
+  },
+  {
+    "name": "pvcCoatedTarpaulinWhite",
+    "section": 20,
+    "recipe": "weave",
+    "description": "white PVC-coated technical fabric; slight woven reinforcement print-through beneath a flexible satin-to-gloss polymer skin."
+  },
+  {
+    "name": "pvcCoatedTarpaulinGray",
+    "section": 20,
+    "recipe": "weave",
+    "description": "gray PVC-coated technical fabric; slight woven reinforcement print-through beneath a flexible satin-to-gloss polymer skin."
+  },
+  {
+    "name": "pvcCoatedTarpaulinBlack",
+    "section": 20,
+    "recipe": "weave",
+    "description": "black PVC-coated technical fabric; slight woven reinforcement print-through beneath a flexible satin-to-gloss polymer skin."
+  },
+  {
+    "name": "pvcCoatedTarpaulinRed",
+    "section": 20,
+    "recipe": "weave",
+    "description": "red PVC-coated technical fabric; slight woven reinforcement print-through beneath a flexible satin-to-gloss polymer skin."
+  },
+  {
+    "name": "pvcCoatedTarpaulinOrange",
+    "section": 20,
+    "recipe": "weave",
+    "description": "orange PVC-coated technical fabric; slight woven reinforcement print-through beneath a flexible satin-to-gloss polymer skin."
+  },
+  {
+    "name": "pvcCoatedTarpaulinYellow",
+    "section": 20,
+    "recipe": "weave",
+    "description": "yellow PVC-coated technical fabric; slight woven reinforcement print-through beneath a flexible satin-to-gloss polymer skin."
+  },
+  {
+    "name": "pvcCoatedTarpaulinGreen",
+    "section": 20,
+    "recipe": "weave",
+    "description": "green PVC-coated technical fabric; slight woven reinforcement print-through beneath a flexible satin-to-gloss polymer skin."
+  },
+  {
+    "name": "pvcCoatedTarpaulinBlue",
+    "section": 20,
+    "recipe": "weave",
+    "description": "blue PVC-coated technical fabric; slight woven reinforcement print-through beneath a flexible satin-to-gloss polymer skin."
+  },
+  {
+    "name": "polyethyleneWovenTarpaulinWhite",
+    "section": 20,
+    "recipe": "weave",
+    "description": "white woven polyethylene coated fabric; fine flat-tape weave visible beneath a waxy low-satin surface."
+  },
+  {
+    "name": "polyethyleneWovenTarpaulinGray",
+    "section": 20,
+    "recipe": "weave",
+    "description": "gray woven polyethylene coated fabric; fine flat-tape weave visible beneath a waxy low-satin surface."
+  },
+  {
+    "name": "polyethyleneWovenTarpaulinGreen",
+    "section": 20,
+    "recipe": "weave",
+    "description": "green woven polyethylene coated fabric; fine flat-tape weave visible beneath a waxy low-satin surface."
+  },
+  {
+    "name": "polyethyleneWovenTarpaulinBlue",
+    "section": 20,
+    "recipe": "weave",
+    "description": "blue woven polyethylene coated fabric; fine flat-tape weave visible beneath a waxy low-satin surface."
+  },
+  {
+    "name": "coatedCanvasBlack",
+    "section": 20,
+    "recipe": "weave",
+    "description": "black weather-resistant coated canvas; visible coarse textile weave beneath a matte flexible coating."
+  },
+  {
+    "name": "coatedCanvasGray",
+    "section": 20,
+    "recipe": "weave",
+    "description": "gray weather-resistant coated canvas; visible coarse textile weave beneath a matte flexible coating."
+  },
+  {
+    "name": "coatedCanvasTan",
+    "section": 20,
+    "recipe": "weave",
+    "description": "tan weather-resistant coated canvas; visible coarse textile weave beneath a matte flexible coating."
+  },
+  {
+    "name": "coatedCanvasOliveGreen",
+    "section": 20,
+    "recipe": "weave",
+    "description": "olive green weather-resistant coated canvas; visible coarse textile weave beneath a matte flexible coating."
+  },
+  {
+    "name": "coatedCanvasBlue",
+    "section": 20,
+    "recipe": "weave",
+    "description": "blue weather-resistant coated canvas; visible coarse textile weave beneath a matte flexible coating."
+  },
+  {
+    "name": "foodContactPolymerWhite",
+    "section": 20,
+    "recipe": "grain",
+    "description": "white smooth food-contact polymer appearance; clean fine-grained satin finish; natural variant is milky translucent. This is a visual label, not a certification."
+  },
+  {
+    "name": "foodContactPolymerNaturalTranslucent",
+    "section": 20,
+    "recipe": "grain",
+    "description": "natural translucent smooth food-contact polymer appearance; clean fine-grained satin finish; natural variant is milky translucent. This is a visual label, not a certification."
+  },
+  {
+    "name": "foodContactPolymerBlue",
+    "section": 20,
+    "recipe": "grain",
+    "description": "blue smooth food-contact polymer appearance; clean fine-grained satin finish; natural variant is milky translucent. This is a visual label, not a certification."
+  },
+  {
+    "name": "foodContactPolymerBlack",
+    "section": 20,
+    "recipe": "grain",
+    "description": "black smooth food-contact polymer appearance; clean fine-grained satin finish; natural variant is milky translucent. This is a visual label, not a certification."
+  },
+  {
+    "name": "uhmwPolyethyleneNatural",
+    "section": 20,
+    "recipe": "grain",
+    "description": "New natural UHMW polyethylene; milky white waxy polymer with slight diffuse translucency and low satin surface."
+  },
+  {
+    "name": "uhmwPolyethyleneBlack",
+    "section": 20,
+    "recipe": "grain",
+    "description": "New black UHMW polyethylene; smooth waxy low-satin opaque polymer surface."
+  },
+  {
+    "name": "uhmwPolyethyleneBlue",
+    "section": 20,
+    "recipe": "grain",
+    "description": "New blue UHMW polyethylene; opaque smooth polymer with a restrained waxy sheen."
+  },
+  {
+    "name": "uhmwPolyethyleneGreen",
+    "section": 20,
+    "recipe": "grain",
+    "description": "New green UHMW polyethylene; opaque smooth polymer with a restrained waxy sheen."
+  },
+  {
+    "name": "abrasionResistantSteelClean",
+    "section": 20,
+    "recipe": "grain",
+    "description": "New unpainted abrasion-resistant steel; clean dark gray metallic surface with fine mill texture and no rust or field polishing."
+  },
+  {
+    "name": "boronSteelClean",
+    "section": 20,
+    "recipe": "grain",
+    "description": "New clean boron-alloy steel appearance; dark gray conductor response and fine manufacturing texture, without use-induced shine."
+  },
+  {
+    "name": "tungstenCarbideSintered",
+    "section": 20,
+    "recipe": "grain",
+    "description": "New sintered tungsten-carbide hard material; dark neutral gray metallic response with fine granular satin texture."
+  }
+]

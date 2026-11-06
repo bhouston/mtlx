@@ -1,0 +1,5 @@
+tireWhitewallRubber
+
+Fresh white pigmented tire-sidewall compound; slightly warm opaque white, fine rubber texture, low satin sheen.
+
+Use for rendering whitewall tire bands defined by the asset geometry or material assignment.

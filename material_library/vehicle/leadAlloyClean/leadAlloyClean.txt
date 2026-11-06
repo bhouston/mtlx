@@ -1,0 +1,5 @@
+leadAlloyClean
+
+Clean new lead-alloy surface; dull gray metallic response and fine soft manufacturing texture.
+
+Use for rendering clean lead-alloy weights and exposed technical components in assembly or cutaway views.

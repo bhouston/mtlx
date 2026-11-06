@@ -1,0 +1,5 @@
+paperLabelStockWhite
+
+New white coated paper label; fine matte fibrous texture and opaque diffuse appearance.
+
+Use for rendering paper identification and service-label substrates beneath separately modeled print.

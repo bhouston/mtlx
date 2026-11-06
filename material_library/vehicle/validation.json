@@ -1,0 +1,7 @@
+{
+  "catalogCount": 1404,
+  "materialCount": 1404,
+  "checks": ["basic", "structure", "types", "unused"],
+  "strict": true,
+  "failures": []
+}

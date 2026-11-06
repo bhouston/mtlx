@@ -1,0 +1,5 @@
+aluminumBeadBlasted
+
+Clean aluminum with fine isotropic bead-blast texture and broad gray-silver metallic reflections.
+
+Use for rendering matte blasted metal housings, brackets, controls, and technical surfaces.

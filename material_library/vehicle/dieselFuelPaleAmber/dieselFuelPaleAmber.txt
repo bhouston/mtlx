@@ -1,0 +1,5 @@
+dieselFuelPaleAmber
+
+Clean pale amber diesel fuel; transparent dielectric liquid with smooth reflections and absorption tint.
+
+Use for rendering fresh fuel volumes in diesel tank and fuel-system cutaways.

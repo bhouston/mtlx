@@ -1,0 +1,5 @@
+fuelCellMembranePaleCream
+
+Pale-cream ion-conducting polymer membrane appearance; smooth low-satin translucent film, no inherent emission.
+
+Use for rendering thin exposed membrane sheets in fuel-cell stack cutaways.

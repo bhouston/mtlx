@@ -1,0 +1,5 @@
+opticalReflectorAluminizedGloss
+
+Vacuum-aluminized optical finish; smooth bright silver conductor response with a transparent protective lacquer.
+
+Use for rendering aluminized lamp reflectors and optical backing surfaces around separately supplied light sources.

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Near-black thin-film photovoltaic coating; smooth low-reflectance semiconductor appearance and faint angle-dependent tint, no emission. -->
+  <!-- Factory-new appearance target; colors are linear Rec.709 artistic reflectances, not measured OEM data.  -->
+  <nodegraph name="NG_photovoltaicThinFilmBlack">
+    <!-- UV 0..1 is exactly one metre; all height values below are metres. crystal: frequencies 90 × 90 cycles/metre; relief amplitude 0.000001 m. -->
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="feature_uv" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="90, 90" /></multiply>
+    <noise2d name="micro" type="float"><input name="texcoord" type="vector2" nodename="feature_uv" /><input name="amplitude" type="float" value="0.45" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <cellnoise2d name="crystal_domains" type="float"><input name="texcoord" type="vector2" nodename="feature_uv" /></cellnoise2d>
+    <multiply name="micro_relief" type="float"><input name="in1" type="float" nodename="micro" /><input name="in2" type="float" value="1.5e-7" /></multiply>
+    <multiply name="structure_relief" type="float"><input name="in1" type="float" nodename="crystal_domains" /><input name="in2" type="float" value="0.000001" /></multiply>
+    <add name="height" type="float"><input name="in1" type="float" nodename="structure_relief" /><input name="in2" type="float" nodename="micro_relief" /></add>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" value="0.0117, 0.0156, 0.024375" /><input name="fg" type="color3" value="0.012299999999999998, 0.016399999999999998, 0.025625" /><input name="mix" type="float" nodename="crystal_domains" /></mix>
+    <multiply name="roughness_detail" type="float"><input name="in1" type="float" nodename="crystal_domains" /><input name="in2" type="float" value="0.011200000000000002" /></multiply>
+    <add name="roughness" type="float"><input name="in1" type="float" nodename="roughness_detail" /><input name="in2" type="float" value="0.12000000000000001" /></add>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="normal_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="texcoord" type="vector2" nodename="uv_mm" /><input name="scale" type="float" value="16" /></heighttonormal>
+    <normalmap name="normal_world" type="vector3"><input name="in" type="vector3" nodename="normal_tangent" /></normalmap>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.5" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="specular_roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="normal_world" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_photovoltaicThinFilmBlack" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_photovoltaicThinFilmBlack" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_photovoltaicThinFilmBlack" output="specular_roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_photovoltaicThinFilmBlack" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_photovoltaicThinFilmBlack" output="normal_out" />
+    <input name="specular" type="float" nodegraph="NG_photovoltaicThinFilmBlack" output="specular_out" />
+    <input name="specular_IOR" type="float" value="3.5" />
+    <input name="thin_film_thickness" type="float" value="90" />
+    <input name="thin_film_IOR" type="float" value="1.38" />
+  </standard_surface>
+  <surfacematerial name="M_photovoltaicThinFilmBlack" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_photovoltaicThinFilmBlack" /></surfacematerial>
+</materialx>

@@ -1,0 +1,5 @@
+glassAcousticLaminatedLightGray
+
+light gray laminated glass with acoustically damping interlayer; visually clear glossy transmission with mild absorption tint; acoustics add no visible pattern.
+
+Use for rendering laminated windscreens, side windows, and partitions with an acoustic-glazing appearance.

@@ -1,0 +1,5 @@
+paintSolidMatteBlack
+
+Opaque black automotive coating with matte clear finish; soft diffuse highlights and fine coating texture, retaining dielectric reflections at grazing angles.
+
+Use for rendering matte-painted exterior body panels, mirror caps, and exterior trim.

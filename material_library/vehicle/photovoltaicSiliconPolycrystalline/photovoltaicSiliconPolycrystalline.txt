@@ -1,0 +1,5 @@
+photovoltaicSiliconPolycrystalline
+
+Blue polycrystalline silicon photovoltaic surface; fine crystalline color domains and restrained angular reflections beneath anti-reflective treatment, no emission.
+
+Use for rendering the non-emissive exposed cell surface of solar panels integrated into vehicle equipment.

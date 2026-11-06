@@ -1,0 +1,5 @@
+polycarbonateFrostedSmoke
+
+smoke translucent polycarbonate; diffuse transmission from a fine frosted surface or bulk scattering, with broad dielectric highlights.
+
+Use for rendering frosted optical covers, translucent trim, and diffusing plastic panels.

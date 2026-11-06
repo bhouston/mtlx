@@ -1,0 +1,5 @@
+carbonFiberUnidirectionalMatte
+
+New unidirectional carbon composite; aligned dark fibers under matte clear resin with muted anisotropic sheen.
+
+Use for rendering exposed unidirectional composite panels and visible reinforcement layers in cutaways.

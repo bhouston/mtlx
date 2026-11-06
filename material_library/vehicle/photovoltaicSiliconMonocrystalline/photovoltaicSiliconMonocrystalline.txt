@@ -1,0 +1,5 @@
+photovoltaicSiliconMonocrystalline
+
+Dark blue-black monocrystalline silicon photovoltaic surface with anti-reflective treatment; low diffuse brightness and subdued angular blue reflections, no emission.
+
+Use for rendering the non-emissive exposed cell surface of solar panels integrated into vehicle equipment.

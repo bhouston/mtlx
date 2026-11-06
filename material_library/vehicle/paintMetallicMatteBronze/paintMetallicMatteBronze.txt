@@ -1,0 +1,5 @@
+paintMetallicMatteBronze
+
+bronze fine-flake metallic paint beneath matte clearcoat; low-gloss dielectric top surface with restrained metallic depth.
+
+Use for rendering metallic-painted exterior body panels, wheels, mirror caps, and matching decorative trim.

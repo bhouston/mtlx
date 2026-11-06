@@ -1,0 +1,5 @@
+fuelCellCarbonDiffusionMedium
+
+Black carbon-fiber diffusion medium; fine random fibrous texture with low gloss and muted directional fiber sheen.
+
+Use for rendering fibrous diffusion-layer surfaces in fuel-cell stack cutaways.

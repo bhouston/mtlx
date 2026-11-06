@@ -1,0 +1,5 @@
+glassSolarControlBlueGray
+
+blue gray solar-control coated glazing; transparent glass with slightly tinted, angle-dependent coated reflections and thickness-dependent absorption.
+
+Use for rendering tinted solar-control side windows, windscreens, and roof glazing in vehicle renderings.

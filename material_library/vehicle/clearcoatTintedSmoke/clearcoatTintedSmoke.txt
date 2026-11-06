@@ -1,0 +1,5 @@
+clearcoatTintedSmoke
+
+Transparent smoke-tinted clearcoat; smooth gloss dielectric reflections and neutral absorption through the coating.
+
+Use for rendering a transparent finish over a supplied paint, resin, wood, or decorative substrate.

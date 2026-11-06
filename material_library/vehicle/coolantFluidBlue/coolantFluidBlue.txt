@@ -1,0 +1,5 @@
+coolantFluidBlue
+
+Fresh blue coolant; transparent dye absorption in a clear dielectric liquid, no sediment or foam; color alone does not identify chemistry or compatibility.
+
+Use for rendering fresh coolant volumes in cooling reservoirs and cooling-system cutaways.

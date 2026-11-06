@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- snow gray factory-applied printed camouflage vinyl; matte dielectric film with a multi-color printed albedo pattern; colors form a single patterned material. -->
+  <nodegraph name="NG_printedCamouflageFilmSnowGray">
+    <!-- Real-world scale: texcoord 0 to 1 = one metre. All height values below are metres. Factory-new process texture only. -->
+    <texcoord name="uv" type="vector2"></texcoord>
+    <!-- Finish microstructure: coordinate frequencies 650, 650 per metre; relief amplitude 1e-06 m, correlated color and roughness. -->
+    <multiply name="finish_noise_coordinates" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="650, 650" /></multiply>
+    <fractal2d name="finish_noise" type="float"><input name="texcoord" type="vector2" nodename="finish_noise_coordinates" /><input name="octaves" type="integer" value="2" /><input name="amplitude" type="float" value="1" /></fractal2d>
+    <multiply name="finish_gain" type="float"><input name="in1" type="float" nodename="finish_noise" /><input name="in2" type="float" value="0.45" /></multiply>
+    <add name="finish_remap" type="float"><input name="in1" type="float" nodename="finish_gain" /><input name="in2" type="float" value="0.5" /></add>
+    <clamp name="finish_mask" type="float"><input name="in" type="float" nodename="finish_remap" /><input name="low" type="float" value="0" /><input name="high" type="float" value="1" /></clamp>
+    <multiply name="height" type="float"><input name="in1" type="float" nodename="finish_noise" /><input name="in2" type="float" value="1e-06" /></multiply>
+    <multiply name="camouflage_field_coordinates" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="9, 9" /></multiply>
+    <fractal2d name="camouflage_field" type="float"><input name="texcoord" type="vector2" nodename="camouflage_field_coordinates" /><input name="octaves" type="integer" value="2" /><input name="amplitude" type="float" value="1" /></fractal2d>
+    <smoothstep name="camouflage_one" type="float"><input name="in" type="float" nodename="camouflage_field" /><input name="low" type="float" value="-0.2" /><input name="high" type="float" value="-0.15" /></smoothstep>
+    <smoothstep name="camouflage_two" type="float"><input name="in" type="float" nodename="camouflage_field" /><input name="low" type="float" value="0.19" /><input name="high" type="float" value="0.24" /></smoothstep>
+    <mix name="camouflage_low" type="color3"><input name="bg" type="color3" value="0.75, 0.77, 0.78" /><input name="fg" type="color3" value="0.38, 0.41, 0.44" /><input name="mix" type="float" nodename="camouflage_one" /></mix>
+    <mix name="base_color" type="color3"><input name="bg" type="color3" nodename="camouflage_low" /><input name="fg" type="color3" value="0.11, 0.13, 0.15" /><input name="mix" type="float" nodename="camouflage_two" /></mix>
+    <mix name="roughness" type="float"><input name="bg" type="float" value="0.735" /><input name="fg" type="float" value="0.785" /><input name="mix" type="float" nodename="finish_mask" /></mix>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0.0" /></constant>
+    <multiply name="uv_mm" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000.0" /></multiply>
+    <multiply name="height_mm" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000.0" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="height_mm" /><input name="scale" type="float" value="16.0" /><input name="texcoord" type="vector2" nodename="uv_mm" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+  </nodegraph>
+  <standard_surface name="SR_printedCamouflageFilmSnowGray" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="NG_printedCamouflageFilmSnowGray" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_printedCamouflageFilmSnowGray" output="roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_printedCamouflageFilmSnowGray" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_printedCamouflageFilmSnowGray" output="normal_out" />
+    <input name="base" type="float" value="1.0" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0.0" />
+    <input name="coat" type="float" value="0.0" />
+    <input name="coat_roughness" type="float" value="0.09" />
+    <input name="coat_IOR" type="float" value="1.5" />
+    <input name="sheen" type="float" value="0.0" />
+    <input name="sheen_roughness" type="float" value="0.65" />
+  </standard_surface>
+  <surfacematerial name="M_printedCamouflageFilmSnowGray" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_printedCamouflageFilmSnowGray" /></surfacematerial>
+</materialx>

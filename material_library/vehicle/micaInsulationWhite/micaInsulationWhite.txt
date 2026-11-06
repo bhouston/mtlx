@@ -1,0 +1,5 @@
+micaInsulationWhite
+
+New white mica-based insulating sheet; fine flaky mineral texture and matte-to-satin response.
+
+Use for rendering layered insulating sheets around electrical assemblies and battery modules.

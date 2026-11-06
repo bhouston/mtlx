@@ -1,0 +1,5 @@
+glassCeramicFritBlack
+
+Opaque black fired ceramic enamel on glass; very fine matte-to-satin surface, nonmetallic and non-emissive.
+
+Use for rendering opaque ceramic frit borders and printed masking bands on separately modeled vehicle glazing.

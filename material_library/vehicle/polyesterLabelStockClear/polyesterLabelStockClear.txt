@@ -1,0 +1,5 @@
+polyesterLabelStockClear
+
+New clear polyester label film; smooth transparent dielectric surface and negligible haze.
+
+Use for rendering polyester identification and warning-label substrates beneath separately modeled print.

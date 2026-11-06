@@ -1,0 +1,5 @@
+industrialSolidTireRubberBlack
+
+New solid industrial tire compound; dense opaque charcoal rubber with fine low-gloss skin.
+
+Use for rendering new solid industrial tire surfaces on utility and handling vehicles.
