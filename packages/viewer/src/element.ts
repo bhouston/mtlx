@@ -1,3 +1,5 @@
+import type { ScreenshotOptions } from './screenshot.js';
+export type { ScreenshotOptions } from './screenshot.js';
 import { readMaterialResponse, type MaterialProgress } from './progress.js';
 import { ProgressBar, PROGRESS_BAR_STYLES } from './progressBar.js';
 import type { LoadingProgress } from './loadingProgress.js';
@@ -142,6 +144,7 @@ export class MaterialViewerElement extends HTMLElement {
   }
 
   #viewer: Viewer | null = null;
+  #loading: Promise<void> | undefined;
   #generation = 0;
   #abort: AbortController | null = null;
   readonly #errors: ErrorOverlay;
@@ -360,7 +363,22 @@ export class MaterialViewerElement extends HTMLElement {
     return this.#viewer?.getCameraSettings() ?? null;
   }
 
-  async #load(): Promise<void> {
+  /** Waits for the current source to load, then exports its completed preview frame. */
+  async toBlob(options: ScreenshotOptions = {}): Promise<Blob> {
+    const generation = this.#generation;
+    await this.#loading;
+    if (!this.isConnected || generation !== this.#generation)
+      throw new Error('The material source changed or the viewer disconnected during screenshot capture.');
+    if (!this.#viewer) throw new Error('The material viewer is not ready to capture.');
+    return this.#viewer.toBlob(options);
+  }
+
+  #load(): Promise<void> {
+    this.#loading = this.#loadCurrent();
+    return this.#loading;
+  }
+
+  async #loadCurrent(): Promise<void> {
     const src = this.getAttribute('src');
     const modelUrl = this.getAttribute('model');
     this.#abort?.abort();

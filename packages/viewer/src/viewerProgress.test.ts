@@ -3,7 +3,12 @@ import { afterEach, expect, it, vi } from 'vitest';
 import * as THREE from 'three/webgpu';
 import { createViewer } from './viewer.js';
 import { DEFAULT_VIEWER_SETTINGS } from './renderingSettings.js';
-const mocks = vi.hoisted(() => ({ createScene: vi.fn(), render: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  createScene: vi.fn(),
+  render: vi.fn(),
+  capture: vi.fn(async () => new Blob(['image'])),
+}));
+vi.mock('./screenshot.js', () => ({ captureScreenshot: mocks.capture }));
 vi.mock('./runtime.js', () => ({
   createViewerRenderer: async () => ({ domElement: document.createElement('canvas'), setAnimationLoop: vi.fn() }),
   applyViewerRenderingSettings: vi.fn(),
@@ -61,10 +66,24 @@ it('keeps startup and replacement open until textures finish and their render su
   viewer.replaceMaterial(new ArrayBuffer(0), 'replacement.mtlx');
   expect(onReport.mock.lastCall![0].state).toBe('loading');
   expect(onProgress.mock.lastCall![0].totalProgress).toBeLessThan(1);
+  const screenshot = viewer.toBlob();
+  await Promise.resolve();
+  expect(mocks.capture).not.toHaveBeenCalled();
   manager.itemEnd('replacement.png');
+  await expect(screenshot).resolves.toBeInstanceOf(Blob);
   for (let i = 0; i < 5; i++) await Promise.resolve();
   expect(onReport.mock.lastCall![0].state).toBe('ready');
   expect(onProgress.mock.lastCall![0].totalProgress).toBe(1);
+  const staleCapture = viewer.toBlob();
+  const obsolete = expect(staleCapture).rejects.toThrow('changed');
+  viewer.replaceMaterial(new ArrayBuffer(0), 'newer.mtlx');
+  await obsolete;
+  manager.itemEnd('replacement.png');
+  for (let i = 0; i < 5; i++) await Promise.resolve();
+  const oldSettingsCapture = viewer.toBlob();
+  const changedSettings = expect(oldSettingsCapture).rejects.toThrow('changed');
+  await viewer.setSettings({ ...DEFAULT_VIEWER_SETTINGS, exposure: 1 });
+  await changedSettings;
   mocks.render.mockImplementationOnce(() => {
     throw new Error('Shader failed');
   });
@@ -74,6 +93,7 @@ it('keeps startup and replacement open until textures finish and their render su
   viewer.dispose();
   viewer.setAlt('Obsolete description');
   expect(canvas.getAttribute('aria-label')).toBe('Polished copper');
+  await expect(viewer.toBlob()).rejects.toThrow('disposed');
   manager.itemEnd('replacement.png');
   expect(onProgress).toHaveBeenCalledTimes(notifications);
 });

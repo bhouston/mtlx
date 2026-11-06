@@ -152,6 +152,28 @@ function MaterialViewerTagPage() {
       </section>
 
       <section className="flex min-w-0 flex-col gap-4">
+        <h2 className="text-xl font-semibold">Screenshot export</h2>
+        <p className="text-sm text-muted-foreground">
+          Call <code>toBlob()</code> to capture a completed preview without controls. It waits for loading, renders the
+          full lighting and effects pipeline, and preserves the on-screen camera and size. Set exact pixel dimensions
+          and choose a white, environment, or transparent backdrop.
+        </p>
+        <CodeBlock
+          code={`const preview = document.querySelector('material-viewer');
+const blob = await preview.toBlob({
+  width: 1600, height: 1200,
+  mimeType: 'image/png', background: 'white'
+});`}
+        />
+        <p className="text-sm text-muted-foreground">
+          PNG is the default. JPEG and WebP accept a <code>quality</code> from 0 to 1; JPEG uses white behind
+          transparent pixels. If only one dimension is supplied, the current aspect ratio is preserved. The promise
+          rejects if the source or settings change or the viewer is disposed during capture. React consumers can call
+          the same API through a typed component ref.
+        </p>
+      </section>
+
+      <section className="flex min-w-0 flex-col gap-4">
         <h2 className="text-xl font-semibold">Attributes</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
