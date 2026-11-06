@@ -59,17 +59,17 @@ Set preview defaults under **Settings → Mtlx Viewer**, or in `settings.json`:
 }
 ```
 
-| Setting                        | Default         | Values                                                                  |
-| ------------------------------ | --------------- | ----------------------------------------------------------------------- |
-| `mtlx.preview.ibls`            | `[]`            | Extra named `.hdr`, `.exr`, `.png` or `.jpg` environments (path or URL) |
-| `mtlx.preview.defaultIbl`      | `"bridge"`      | `bridge`, `studio`, or one of your environments                         |
-| `mtlx.preview.geometries`      | `[]`            | Extra named `.gltf` / `.glb` models (path or URL)                       |
-| `mtlx.preview.defaultGeometry` | `"totem"`       | `totem`, `sphere`, `cube`, `plane`, or one of your models               |
-| `mtlx.preview.autoRotate`      | `true`          | Rotate the model; reduced-motion preferences turn it off                |
-| `mtlx.preview.bloom`           | `true`          | HDR bloom                                                               |
-| `mtlx.preview.ao`              | `true`          | Ambient occlusion (GTAO)                                                |
-| `mtlx.preview.toneMapping`     | `"neutral"`     | `neutral`, `aces`, `agx`, `reinhard`, `cineon`, `linear`, `none`        |
-| `mtlx.preview.background`      | `"environment"` | `environment` shows the IBL behind the model; `none` is transparent     |
+| Setting                        | Default     | Values                                                                         |
+| ------------------------------ | ----------- | ------------------------------------------------------------------------------ |
+| `mtlx.preview.ibls`            | `[]`        | Extra named `.hdr`, `.exr`, `.png` or `.jpg` environments (path or URL)        |
+| `mtlx.preview.defaultIbl`      | `"studio"`  | `bridge`, `studio`, or one of your environments                                |
+| `mtlx.preview.geometries`      | `[]`        | Extra named `.gltf` / `.glb` models (path or URL)                              |
+| `mtlx.preview.defaultGeometry` | `"totem"`   | `totem`, `sphere`, `cube`, `plane`, or one of your models                      |
+| `mtlx.preview.autoRotate`      | `true`      | Rotate the model; reduced-motion preferences turn it off                       |
+| `mtlx.preview.bloom`           | `true`      | HDR bloom                                                                      |
+| `mtlx.preview.ao`              | `true`      | Ambient occlusion (GTAO)                                                       |
+| `mtlx.preview.toneMapping`     | `"neutral"` | `neutral`, `aces`, `agx`, `reinhard`, `cineon`, `linear`, `none`               |
+| `mtlx.preview.background`      | `"white"`   | `white`, `environment` (IBL), or `none` (transparent); lighting is independent |
 
 Relative paths resolve from the workspace folder. See the
 [full settings reference](https://mtlx.ben3d.ca/extension#settings) for naming rules and limits.

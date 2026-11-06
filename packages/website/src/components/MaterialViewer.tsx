@@ -37,7 +37,6 @@ export interface MaterialViewerProps {
 const STATIC_ASSETS = import.meta.env.DEV ? 'http://localhost:3001/viewer/' : 'https://mtlx-static.ben3d.ca/viewer/';
 const shaderBallUrl = `${STATIC_ASSETS}shaderball.glb`;
 const ENVIRONMENT_URLS: Record<string, string> = {
-  studio: `${STATIC_ASSETS}studio-environment.png`,
   bridge: `${STATIC_ASSETS}default-environment.hdr`,
 };
 const STAGE_PROGRESS = {
@@ -189,7 +188,8 @@ export function MaterialViewer({
         playing: callbacks.current.animationMode !== 'pause',
         resolveUrl: (url) => resolveResource(resourceUrls.current, url),
         loadEnvironment: async (kind) => {
-          const url = ENVIRONMENT_URLS[kind] ?? ENVIRONMENT_URLS.studio!;
+          const url = ENVIRONMENT_URLS[kind];
+          if (!url) throw new Error(`Unknown IBL: ${kind}`);
           return parseEnvironmentFile(await fetchBytes(url, abort.signal), url);
         },
         onLog: (line) => {

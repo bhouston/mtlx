@@ -530,13 +530,13 @@ Options:
                      leaves the PNG transparent
                               [choices: "none", "environment"] [default: "none"]
   -s, --size         Image width and height in pixels    [number] [default: 800]
-      --ibl          Lighting: studio (soft, dim room), bridge (outdoor, shows
-                     relief, green-yellow cast), sun (hard midday sun, strongest
-                     relief), overcast (soft medium daylight, near neutral),
-                     neutral (colorless grey studio, for judging albedo), strips
-                     (dark room with sharp softbox strips, for judging gloss and
-                     roughness breakup), dusk (warm, medium-dark street), night
-                     (very dark)
+      --ibl          Lighting: studio (generated neutral HDR room), bridge
+                     (outdoor, shows relief, green-yellow cast), sun (hard
+                     midday sun, strongest relief), overcast (soft medium
+                     daylight, near neutral), neutral (colorless grey studio,
+                     for judging albedo), strips (dark room with sharp softbox
+                     strips, for judging gloss and roughness breakup), dusk
+                     (warm, medium-dark street), night (very dark)
    [choices: "studio", "bridge", "sun", "overcast", "neutral", "strips", "dusk",
                                                     "night"] [default: "studio"]
   -e, --exposure     Exposure in stops (-2..2)             [number] [default: 0]

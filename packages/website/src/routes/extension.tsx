@@ -136,7 +136,11 @@ function ExtensionPage() {
             <tbody className="text-muted-foreground">
               {[
                 ['mtlx.preview.ibls', '[]', 'Additional named equirectangular .hdr, .exr, .png, .jpg / .jpeg files.'],
-                ['mtlx.preview.defaultIbl', '"bridge"', 'bridge, studio, or an additional IBL name.'],
+                [
+                  'mtlx.preview.defaultIbl',
+                  '"studio"',
+                  'studio (generated neutral HDR), bridge, or an additional IBL name.',
+                ],
                 [
                   'mtlx.preview.autoRotate',
                   'true',
@@ -151,8 +155,8 @@ function ExtensionPage() {
                 ],
                 [
                   'mtlx.preview.background',
-                  '"environment"',
-                  'environment shows the IBL behind the model; none leaves it transparent.',
+                  '"white"',
+                  'white, environment (IBL), or none (transparent); lighting is independent.',
                 ],
                 ['mtlx.preview.geometries', '[]', 'Additional named .gltf / .glb mesh scenes.'],
                 [

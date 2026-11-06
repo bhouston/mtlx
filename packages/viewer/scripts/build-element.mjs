@@ -17,7 +17,7 @@ await esbuild.build({
   target: 'es2022',
   minify: true,
   sourcemap: true,
-  legalComments: 'none',
+  legalComments: 'inline',
   define: { 'process.env.NODE_ENV': '"production"' },
 });
 

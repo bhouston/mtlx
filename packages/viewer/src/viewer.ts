@@ -7,7 +7,7 @@ import * as THREE from 'three/webgpu';
 import { LoadingTracker, type LoadingProgress } from './loadingProgress.js';
 import { frameId, time } from 'three/tsl';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createEnvironmentSwitcher } from './environment.js';
+import { createViewerEnvironmentSwitcher } from './neutralEnvironment.js';
 import { registerHdrTextureHandler } from './hdrTextureHandler.js';
 import { CleanupScope } from './lifecycle.js';
 import { createViewerRendering } from './rendering.js';
@@ -108,6 +108,10 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     onLog?.(`Renderer ready (backend: ${backend?.isWebGPUBackend ? 'WebGPU' : 'WebGL2 fallback'}).`);
     if (!options.canvas) container.replaceChildren(renderer.domElement);
     const canvas = renderer.domElement;
+    const previousBackground = canvas.style.backgroundColor;
+    scope.own(() => {
+      canvas.style.backgroundColor = previousBackground;
+    });
     canvas.tabIndex = 0;
     canvas.setAttribute('aria-label', 'Material preview. Arrow keys pan the camera.');
 
@@ -117,24 +121,29 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
     scope.own(() => rendering.dispose());
     const applyRendering = (settings: ViewerSettings) => {
       applyViewerRenderingSettings(renderer, scene, rendering, settings);
-      scene.background = settings.background === 'none' ? null : scene.environment;
+      scene.background = settings.background === 'environment' ? scene.environment : null;
+      // CSS white stays white through exposure/tone mapping, just like model-viewer's backdrop.
+      canvas.style.backgroundColor = settings.background === 'white' ? '#fff' : 'transparent';
     };
     applyRendering(applied);
 
     // @types/three lags three's addon source: fromEquirectangular() isn't in its PMREMGenerator typings yet.
     const pmrem = new THREE.PMREMGenerator(renderer) as unknown as {
       fromEquirectangular: (texture: THREE.Texture) => { texture: THREE.Texture; dispose(): void };
+      fromScene: (
+        scene: THREE.Scene,
+        sigma: number,
+        near: number,
+        far: number,
+        options: { size: number },
+      ) => { texture: THREE.Texture; dispose(): void };
       dispose(): void;
     };
     scope.own(() => pmrem.dispose());
-    const environments = createEnvironmentSwitcher(
-      options.loadEnvironment,
-      (texture) => pmrem.fromEquirectangular(texture),
-      (texture) => {
-        scene.environment = texture;
-        scene.background = applied.background === 'none' ? null : texture;
-      },
-    );
+    const environments = createViewerEnvironmentSwitcher(pmrem, options.loadEnvironment, (texture) => {
+      scene.environment = texture;
+      applyRendering(applied);
+    });
     scope.own(() => environments.dispose());
     const setEnvironment = async (kind: string): Promise<void> => {
       const progress = tracker.start('environment-update');
@@ -151,7 +160,7 @@ export async function createViewer(options: ViewerOptions): Promise<Viewer> {
         const text = `Environment failed to load: ${message(error)}`;
         onStatus?.({ environment: text });
         onLog?.(text);
-        // The bundled studio room is the one environment every host ships, so it is the fallback.
+        // The generated studio requires no network assets, so it is the fallback.
         if (!scene.environment && kind !== 'studio') {
           onLog?.('Using fallback IBL: studio.');
           await setEnvironment('studio');
