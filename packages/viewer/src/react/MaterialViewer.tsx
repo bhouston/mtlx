@@ -10,7 +10,7 @@ export interface MaterialViewerProps {
   rotate?: 'false' | 'true';
   bloom?: 'false' | 'true';
   ao?: 'false' | 'true';
-  background?: 'environment' | 'none';
+  background?: 'white' | 'environment' | 'none';
   'tone-mapping'?: string;
   exposure?: number;
   intensity?: number;
