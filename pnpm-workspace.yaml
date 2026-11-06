@@ -22,5 +22,8 @@ minimumReleaseAgeExclude:
 # One vite for the whole workspace: when the website's plugins resolved a newer vite than its
 # `vite` binary, TanStack Start's dev SSR handler never registered and every route returned 404.
 overrides:
+  serialize-javascript: ^7.0.3
+  source-map-js: ^1.2.2
+  tinypool: ^2.1.2
   vite: 8.3.5
   '@azure/msal-node': ^7.1.0
