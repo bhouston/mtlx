@@ -49,6 +49,16 @@ describe('shared viewer and embed search state', () => {
   });
 });
 
+it('preserves environment rotation in viewer and embed share links', () => {
+  const search = viewerSearch({ environmentRotation: '-90' });
+  expect(search.environmentRotation).toBe(270);
+  for (const route of ['viewer', 'embed'] as const) {
+    const url = new URL(viewerShareUrl('https://example.com', route, search));
+    expect(url.searchParams.get('environmentRotation')).toBe('270');
+    expect(viewerSettings(viewerSearch(Object.fromEntries(url.searchParams))).environmentRotation).toBe(270);
+  }
+});
+
 it('validates accessible descriptions in iframe and shared links', () => {
   expect(viewerSearch({ alt: '  Copper & brass  ' })).toEqual({ alt: 'Copper & brass' });
   for (const alt of ['', ' ', null, true, 123, {}]) expect(viewerSearch({ alt })).toEqual({});

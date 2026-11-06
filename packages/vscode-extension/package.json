@@ -206,6 +206,12 @@
           "scope": "resource",
           "description": "Tone mapping for new previews: Neutral, ACES Filmic, AgX, Reinhard, Cineon, Linear, or None."
         },
+        "mtlx.preview.environmentRotation": {
+          "type": "number",
+          "default": 0,
+          "scope": "resource",
+          "description": "Environment lighting yaw in degrees. Full turns wrap to 0; the environment backdrop follows the lighting."
+        },
         "mtlx.preview.background": {
           "type": "string",
           "default": "white",

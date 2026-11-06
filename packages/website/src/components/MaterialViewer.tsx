@@ -235,8 +235,19 @@ export function MaterialViewer({
     viewer?.setAlt(description);
   }, [viewer, description]);
 
-  const { ibl, geometry, rotate, bloom, ao, toneMapping, background, exposure, intensity, materialName } =
-    currentSettings;
+  const {
+    ibl,
+    geometry,
+    rotate,
+    bloom,
+    ao,
+    toneMapping,
+    background,
+    exposure,
+    intensity,
+    environmentRotation,
+    materialName,
+  } = currentSettings;
   useEffect(() => {
     void viewer?.setSettings({
       ibl,
@@ -248,9 +259,23 @@ export function MaterialViewer({
       background,
       exposure,
       intensity,
+      environmentRotation,
       materialName,
     });
-  }, [viewer, ibl, geometry, rotate, bloom, ao, toneMapping, background, exposure, intensity, materialName]);
+  }, [
+    viewer,
+    ibl,
+    geometry,
+    rotate,
+    bloom,
+    ao,
+    toneMapping,
+    background,
+    exposure,
+    intensity,
+    environmentRotation,
+    materialName,
+  ]);
 
   const loading = !!source && previewState !== 'ready' && previewState !== 'error';
   const activeProgress =

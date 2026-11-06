@@ -169,6 +169,19 @@ export function ViewerSettingsPanel({
               </label>
             ))}
             <label className="flex items-center gap-2">
+              Lighting rotation ({settings.environmentRotation.toFixed(0)}°)
+              <input
+                aria-label="Environment rotation"
+                type="range"
+                min="0"
+                max="360"
+                step="1"
+                value={settings.environmentRotation}
+                onChange={(event) => onChange({ environmentRotation: Number(event.target.value) })}
+                className="w-24"
+              />
+            </label>
+            <label className="flex items-center gap-2">
               Exposure ({settings.exposure.toFixed(1)} EV)
               <input
                 aria-label="Exposure"
