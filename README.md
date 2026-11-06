@@ -15,7 +15,7 @@ packaging, transforming, and previewing materials._
 The [Mtlx suite of web-focused MaterialX tools](https://mtlx.ben3d.ca) includes libraries, a CLI, a web viewer, and a VS Code extension.
 
 mtlx works with loose `.mtlx` documents and `.mtlx.zip` archives. Try the
-[web viewer](https://mtlx.ben3d.ca), automate material preparation with the CLI, or embed the
+[web viewer](https://mtlx.ben3d.ca/viewer), automate material preparation with the CLI, or embed the
 library in your application. The root `mtlx-core` API is browser-safe and has no filesystem or
 native imports. Node texture transforms use [sharp](https://sharp.pixelplumbing.com/) for SDR
 formats (webp/png/jpg/avif) and [hdrify](https://www.npmjs.com/package/hdrify) for HDR formats
@@ -51,11 +51,13 @@ fallback, including the extension's bundled webview; real editor/GPU combination
 | [`mtlx-core`](https://github.com/bhouston/mtlx/tree/main/packages/core)                         | Parse, validate, package, and transform MaterialX. Pure and browser-safe; Node helpers under `mtlx-core/node`, texture processing under `mtlx-core/textures`. |
 | [`mtlx-cli`](https://github.com/bhouston/mtlx/tree/main/packages/cli)                           | The `mtlx` command for local validation, preview, conversion, and MTLX.ai cloud login, upload, download, and search.                                          |
 | [`mtlx-sdk`](https://github.com/bhouston/mtlx/tree/main/packages/sdk)                           | Public TypeScript client for the MTLX.ai REST API.                                                                                                            |
-| [`website`](https://github.com/bhouston/mtlx/tree/main/packages/website)                        | Drag-and-drop viewer and validator at [mtlx.ben3d.ca](https://mtlx.ben3d.ca), plus these docs.                                                                |
+| [`website`](https://github.com/bhouston/mtlx/tree/main/packages/website)                        | Interactive viewer and editor implementation, including the static app bundled by the docs site.                                                              |
 | [`mtlx-vscode-extension`](https://github.com/bhouston/mtlx/tree/main/packages/vscode-extension) | "Mtlx Viewer for MaterialX": preview, inspect, and convert MaterialX files inside VS Code.                                                                    |
 | [`mtlx-viewer`](https://github.com/bhouston/mtlx/tree/main/packages/viewer)                     | Shared three.js preview scenes and environment assets for applications.                                                                                       |
 
-The prototype at `/editor` combines a reusable node library and React Flow graph with the
+The Docusaurus site in [`packages/docs`](packages/docs) publishes the documentation and marketing home to [mtlx.ben3d.ca](https://mtlx.ben3d.ca), including the [viewer](https://mtlx.ben3d.ca/viewer) and [editor](https://mtlx.ben3d.ca/editor). Build it with `pnpm docs:build`; GitHub Actions publishes the static artifact.
+
+The browser editor at `/editor` combines a reusable node library and React Flow graph with the
 Three.js preview. See [mtlx-editor](packages/editor/README.md) for the component API and architecture.
 
 ## Scripting

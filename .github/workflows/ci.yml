@@ -28,6 +28,13 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - name: Build documentation and interactive static pages
+        run: pnpm docs:build
+      - uses: actions/upload-artifact@v6
+        with:
+          name: documentation-site
+          path: packages/docs/build
+          retention-days: 7
       - run: pnpm tsc
       - run: pnpm lint
       - name: Check formatting

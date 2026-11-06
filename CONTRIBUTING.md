@@ -31,6 +31,7 @@ Use the Node version in `.nvmrc` and the pnpm version pinned in `package.json` (
 ```sh
 pnpm install --frozen-lockfile
 pnpm build
+pnpm docs:build
 pnpm tsc
 pnpm lint
 pnpm test

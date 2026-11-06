@@ -10,7 +10,8 @@
     "start": "node --import ./.output/server/instrument.server.mjs .output/server/index.mjs",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:e2e": "vitest run --config vitest.e2e.config.ts"
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "build:static": "vite build --config vite.static.config.ts"
   },
   "dependencies": {
     "@sentry/tanstackstart-react": "^10.74.0",

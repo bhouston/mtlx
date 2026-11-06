@@ -1,0 +1,78 @@
+---
+title: Embedding material-viewer
+---
+
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+Use the custom element for a standalone material preview. The script is built from the same source as the online viewer and is served unchanged alongside this static site.
+
+```html
+<script type="module" src="https://mtlx.ben3d.ca/material-viewer.js"></script>
+<material-viewer
+  src="https://mtlx.ben3d.ca/materials/copper/copper.mtlx"
+  alt="Copper material under neutral studio lighting"
+  settings-panel="closed"
+  style="display:block;height:440px"
+></material-viewer>
+```
+
+## Live example
+
+<BrowserOnly fallback={<p>Loading material preview…</p>}>
+  {() => (
+    <iframe
+      title="Embedded copper material preview"
+      src="/embed?materialUrl=/materials/copper/copper.mtlx&geometry=sphere&rotate=false&alt=Copper%20material%20under%20neutral%20studio%20lighting"
+      style={{ width: '100%', height: 480, border: 0 }}
+    />
+  )}
+</BrowserOnly>
+
+## Attributes
+
+| Attribute               | Behavior                                                                                 |
+| ----------------------- | ---------------------------------------------------------------------------------------- |
+| `src`                   | URL to a loose `.mtlx` or `.mtlx.zip` package                                            |
+| `alt`                   | Accessible description; changes update the current preview without reloading             |
+| `geometry`              | `totem`, `sphere`, `cube`, `plane`, or `custom` with `model`                             |
+| `model`                 | Custom glTF/GLB preview model URL                                                        |
+| `ibl`                   | `studio` (default), `bridge`, or a custom HDR/EXR/PNG/JPEG URL                           |
+| `background`            | `white` (default), `environment`, or `none`                                              |
+| `environment-rotation`  | Lighting yaw in degrees, normalized to `[0, 360)`                                        |
+| `camera-orbit`          | Azimuth, polar angle, and radius, for example `30deg 65deg 2m`                           |
+| `camera-target`         | Camera aim point in normalized scene meters, for example `0m 0m 0m`                      |
+| `field-of-view`         | Vertical field of view in degrees                                                        |
+| `settings-panel`        | `hidden` (default) hides panel and gear; `closed` shows the gear; `open` shows the panel |
+| `rotate`, `bloom`, `ao` | Set to `"false"` to disable                                                              |
+| `tone-mapping`          | `neutral` (default), `aces`, `agx`, `reinhard`, `cineon`, `linear`, or `none`            |
+| `exposure`, `intensity` | Exposure in EV and environment intensity                                                 |
+| `animation`             | `play`, `pause`, or `false` to hide the material-animation control                       |
+| `errors`                | `silent` hides the overlay; error events still fire                                      |
+
+The built-in progress bar appears automatically during setup and updates. Customize `--progress-bar-color`, `--progress-bar-height`, or provide a `slot="progress-bar"` replacement. An empty replacement slot hides it.
+
+The component dispatches `load`, `error`, `progress`, and `camera-change` events. Use `getCameraSettings()` to read current framing after load. Source and custom-model changes reload the preview; inspection settings update it in place.
+
+For a simple chromeless iframe, use `/embed?materialUrl=<encoded-material-url>`. The viewer's Share menu generates viewer, embed, and iframe links with the current framing and rendering choices.
+
+## Screenshot export
+
+The standalone element and shared viewer expose `toBlob(options?)`. Capture PNG, JPEG, or WebP with explicit dimensions and a white, environment, or transparent backdrop. Captures wait for current resources and GPU rendering and preserve the on-screen viewport.
+
+```js
+const viewer = document.querySelector('material-viewer');
+const blob = await viewer.toBlob({
+  width: 1200,
+  height: 800,
+  background: 'white',
+  mimeType: 'image/png',
+});
+const url = URL.createObjectURL(blob);
+const download = document.createElement('a');
+download.href = url;
+download.download = 'material.png';
+download.click();
+URL.revokeObjectURL(url);
+```
+
+The React wrapper accepts a typed ref to the custom element. The online viewer also has a **Download screenshot** button. Source replacement or disposal cancels obsolete captures; see the generated viewer API for option and error details. These APIs follow repository main; published npm versions can lag behind the documentation.

@@ -1,9 +1,8 @@
-name: Deploy website to Cloud Run
+name: Deploy legacy website to Cloud Run
 
+# Production documentation is published by docs.yml. Keep manual legacy deployment for rollback.
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
