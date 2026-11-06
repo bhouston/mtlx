@@ -1,7 +1,7 @@
 import { NeutralToneMapping, SRGBColorSpace, WebGPURenderer } from 'three/webgpu';
 import type { PerspectiveCamera } from 'three/webgpu';
 import type { CleanupScope } from './lifecycle.js';
-import type { RenderingSettings } from './renderingSettings.js';
+import { normalizeEnvironmentRotation, type RenderingSettings } from './renderingSettings.js';
 
 /** Own the renderer before async initialization so replacement/unmount can always clean it up. */
 export async function createViewerRenderer(
@@ -44,13 +44,16 @@ export function observeViewerResize(
 
 export function applyViewerRenderingSettings(
   renderer: { toneMappingExposure: number },
-  scene: { environmentIntensity: number },
+  scene: { environmentIntensity: number; environmentRotation: { y: number }; backgroundRotation: { y: number } },
   rendering: { configure(settings: RenderingSettings): void },
-  settings: RenderingSettings & { exposure: number; intensity: number },
+  settings: RenderingSettings & { exposure: number; intensity: number; environmentRotation: number },
 ): void {
   rendering.configure(settings);
   renderer.toneMappingExposure = 2 ** settings.exposure;
   scene.environmentIntensity = settings.intensity;
+  const yaw = ((normalizeEnvironmentRotation(settings.environmentRotation) ?? 0) * Math.PI) / 180;
+  scene.environmentRotation.y = yaw;
+  scene.backgroundRotation.y = yaw;
 }
 
 /** Decode a base64 data: URL (e.g. a bundler-inlined asset) into bytes; data: URLs are not fetchable under strict CSP. */

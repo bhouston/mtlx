@@ -93,17 +93,20 @@ it('updates the camera and backing buffer when the host resizes and disconnects 
 });
 it('applies exposure in EV and environment intensity consistently', () => {
   const renderer = { toneMappingExposure: 1 };
-  const scene = { environmentIntensity: 1 };
+  const scene = { environmentIntensity: 1, environmentRotation: { y: 0 }, backgroundRotation: { y: 0 } };
   const rendering = { configure: vi.fn() };
   applyViewerRenderingSettings(renderer, scene, rendering, {
     exposure: -1,
     intensity: 0.7,
+    environmentRotation: -270,
     bloom: false,
     ao: true,
     toneMapping: 'agx',
   });
   expect(renderer.toneMappingExposure).toBe(0.5);
   expect(scene.environmentIntensity).toBe(0.7);
+  expect(scene.environmentRotation.y).toBeCloseTo(Math.PI / 2);
+  expect(scene.backgroundRotation.y).toBeCloseTo(Math.PI / 2);
   expect(rendering.configure).toHaveBeenCalledWith(
     expect.objectContaining({ bloom: false, ao: true, toneMapping: 'agx' }),
   );

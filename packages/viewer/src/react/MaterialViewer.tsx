@@ -20,6 +20,7 @@ export interface MaterialViewerProps {
   'tone-mapping'?: string;
   exposure?: number;
   intensity?: number;
+  'environment-rotation'?: number;
   animation?: 'play' | 'pause' | 'false';
   'settings-panel'?: 'open' | 'closed' | 'hidden';
   errors?: 'silent';

@@ -60,6 +60,10 @@ const ATTRIBUTES: Array<[string, string]> = [
   ['rotate / bloom / ao', '"false" to disable; all default on.'],
   ['background', '"white" (default); "environment" shows the IBL; "none" leaves it transparent.'],
   ['tone-mapping', 'neutral (default), aces, agx, reinhard, cineon, linear, none.'],
+  [
+    'environment-rotation',
+    'Environment yaw in degrees (default 0). Negative values and full turns wrap into 0..360. Rotates lighting and the environment backdrop together.',
+  ],
   ['exposure / intensity', 'Numbers in -2..2 / 0..2.'],
   ['errors', '"silent" hides the error overlay; omitted shows errors. Error events always fire.'],
   ['settings-panel', '"open" | "closed" | "hidden" (default) — a built-in overlay for the above.'],

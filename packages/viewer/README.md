@@ -233,6 +233,14 @@ transparent canvas, `environment` displays the active IBL, and `none` leaves the
 for the host page or image exports. White stays white when exposure or tone mapping changes.
 The CLI's render exports retain their existing transparent-background default.
 
+Set `environmentRotation` in shared viewer settings, `environment-rotation` on the custom element
+or React wrapper, or `environmentRotation` in website viewer/embed query parameters to rotate the
+lighting independently of the object and camera. The angle is a yaw in degrees, normalized into
+`[0, 360)` (for example, `-90` becomes `270`, and `360` becomes `0`). The default is `0`.
+Both settings panels include a Lighting rotation slider. This also rotates an `environment`
+backdrop; `white` and `none` stay independent. Rotation reuses the active filtered environment
+and does not trigger a download, environment regeneration, or material/renderer rebuild.
+
 The old 8-bit studio PNG and its bake scripts have been removed. Existing `ibl="studio"` embeds
 now use the generated HDR room. The room layout is adapted under Apache 2.0; see
 [LICENSE.model-viewer](LICENSE.model-viewer). Details and API recommendations are in

@@ -135,6 +135,11 @@ function ExtensionPage() {
             </thead>
             <tbody className="text-muted-foreground">
               {[
+                [
+                  'mtlx.preview.environmentRotation',
+                  '0',
+                  'Environment yaw in degrees. Full turns wrap to 0; the IBL backdrop follows.',
+                ],
                 ['mtlx.preview.ibls', '[]', 'Additional named equirectangular .hdr, .exr, .png, .jpg / .jpeg files.'],
                 [
                   'mtlx.preview.defaultIbl',
