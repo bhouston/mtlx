@@ -40,11 +40,11 @@ test.each([false, true])(
           path: resolve(import.meta.dirname, '../../static-assets/public/viewer/default-environment.hdr'),
         }),
       );
-      const customPng = (
-        await readFile(resolve(import.meta.dirname, '../../static-assets/public/viewer/studio-environment.png'))
+      const customHdr = (
+        await readFile(resolve(import.meta.dirname, '../../static-assets/public/viewer/default-environment.hdr'))
       ).toString('base64');
       await page.addInitScript(
-        ({ png }) => {
+        ({ hdr }) => {
           type HostMessage = { type: string; kind?: string; name?: string; requestId?: number };
           const host = window as unknown as { acquireVsCodeApi: () => unknown; messages: HostMessage[] };
           host.messages = [];
@@ -60,8 +60,8 @@ test.each([false, true])(
                 return;
               }
               if (message.kind === 'ibl') {
-                const bytes = Uint8Array.from(atob(png), (c) => c.charCodeAt(0));
-                window.postMessage({ ...reply, data: bytes.buffer, source: 'gallery.png', resources: [] }, '*');
+                const bytes = Uint8Array.from(atob(hdr), (c) => c.charCodeAt(0));
+                window.postMessage({ ...reply, data: bytes.buffer, source: 'gallery.hdr', resources: [] }, '*');
               } else {
                 const positions = new Float32Array([-1, -1, 0, 1, -1, 0, 0, 1, 0]);
                 const gltf = {
@@ -89,12 +89,12 @@ test.each([false, true])(
             },
           });
         },
-        { png: customPng },
+        { hdr: customHdr },
       );
       await page.emulateMedia({ reducedMotion: custom ? 'no-preference' : 'reduce' });
       const settings = custom
         ? {
-            ibls: [{ name: 'gallery', source: 'https://example.com/gallery.png' }],
+            ibls: [{ name: 'gallery', source: 'https://example.com/gallery.hdr' }],
             geometries: [
               { name: 'bust', source: 'bust.gltf' },
               { name: 'broken', source: 'missing.glb' },
@@ -137,7 +137,11 @@ test.each([false, true])(
         );
         await expect
           .poll(() => page.locator('body').getAttribute('data-preview-state'), { timeout: 30_000 })
-          .toBe('ready');
+          .toBe('ready')
+          .catch(async (error) => {
+            console.error('Extension startup:', errors, await page.locator('body').innerText());
+            throw error;
+          });
         await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
       };
       await page.goto(`http://localhost:${PORT}/__extension-test__/index.html`);
@@ -148,7 +152,7 @@ test.each([false, true])(
       expect(await page.getByRole('checkbox', { name: 'Rotate', exact: true }).isChecked()).toBe(false);
       expect(await page.getByRole('combobox', { name: 'Geometry' }).inputValue()).toBe(custom ? 'bust' : 'totem');
       expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe(
-        custom ? 'gallery' : 'bridge',
+        custom ? 'gallery' : 'studio',
       );
       expect(await page.getByRole('checkbox', { name: 'Bloom', exact: true }).isChecked()).toBe(!custom);
       expect(await page.getByRole('checkbox', { name: 'Ambient occlusion' }).isChecked()).toBe(!custom);

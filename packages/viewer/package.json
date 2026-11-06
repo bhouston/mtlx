@@ -13,11 +13,14 @@
     "dist",
     "!dist/**/*.test.*",
     "!dist/**/*.tsbuildinfo",
-    "styles"
+    "styles",
+    "LICENSE.model-viewer"
   ],
   "type": "module",
   "sideEffects": [
     "./dist/element.js",
+    "./dist/index.js",
+    "./dist/viewer.js",
     "./dist/material-viewer.js"
   ],
   "main": "./dist/index.js",
@@ -50,8 +53,7 @@
     "./styles/*": "./styles/*"
   },
   "scripts": {
-    "build": "tsc -p . && node scripts/build-element.mjs",
-    "bake:studio-environment": "node scripts/bake-studio-environment.mjs"
+    "build": "tsc -p . && node scripts/build-element.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

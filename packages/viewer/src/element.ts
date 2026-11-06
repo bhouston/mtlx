@@ -4,18 +4,18 @@ import { ErrorOverlay } from './errorOverlay.js';
 import { ERROR_OVERLAY_STYLES } from './errorOverlayStyles.js';
 /**
  * `<material-viewer src="model.mtlx">` — a drop-in custom element in the spirit of Google's
- * `<model-viewer>`. Bundles the studio/bridge IBLs and shaderball geometry so a host page needs
+ * `<model-viewer>`. Generates neutral studio lighting and supplies bridge IBL and shaderball geometry so a host page needs
  * nothing but this script and a `src` pointing at a `.mtlx` or `.mtlx.zip` file.
  *
  * Attributes:
  * - `errors`: `silent` hides the error overlay; omitted shows errors. Error events always fire.
  * - `src` (required): the `.mtlx` / `.mtlx.zip` file to preview.
  * - `model`: a custom glTF/GLB URL to preview the material on, in place of the built-in shaderball.
- * - `ibl`: `bridge` (default) or `studio`, or a URL to a custom `.hdr`/`.exr`/`.png`/`.jpg` environment.
+ * - `ibl`: `studio` (default) or `bridge`, or a URL to a custom `.hdr`/`.exr`/`.png`/`.jpg` environment.
  * - `geometry`: `totem` | `sphere` | `cube` | `plane` | `custom` (the last selects `model`, if given).
  * - `material`: initial material name; defaults to the document's last material.
  * - `rotate`, `bloom`, `ao`: `"false"` to disable (all default on).
- * - `background`: `environment` (default) shows the IBL; `none` leaves the backdrop transparent.
+ * - `background`: `white` (default), `environment` to show the IBL, or `none` for transparency.
  * - `tone-mapping`: one of {@link TONE_MAPPING_OPTIONS}; defaults to `neutral`.
  * - `exposure` (-2..2), `intensity` (0..2).
  * - `animation`: `play` (default) | `pause` | `false` — for documents with `<time>`/`<frame>` nodes,
@@ -32,6 +32,7 @@ import {
   DEFAULT_VIEWER_SETTINGS,
   GEOMETRY_OPTIONS,
   IBL_OPTIONS,
+  BACKGROUND_OPTIONS,
   TONE_MAPPING_OPTIONS,
   type SettingsOption,
   type ViewerSettings,
@@ -42,7 +43,6 @@ import {
 const HOSTED_ASSETS = 'https://mtlx-static.ben3d.ca/viewer/';
 const SHADERBALL_URL = new URL('shaderball.glb', HOSTED_ASSETS);
 const BUILTIN_IBLS: Record<string, URL> = {
-  studio: new URL('studio-environment.png', HOSTED_ASSETS),
   bridge: new URL('default-environment.hdr', HOSTED_ASSETS),
 };
 const RELOAD_ATTRIBUTES = new Set(['src', 'model']);
@@ -98,7 +98,7 @@ const PANEL_HTML = `
   </div>
   <div class="column">
     <label class="row"><span>Rotate</span><input id="rotate" type="checkbox" /></label>
-    <label class="row"><span>Background</span><input id="background" type="checkbox" /></label>
+    <label class="row"><span>Background</span><select id="background"></select></label>
     <label class="row"><span>Bloom</span><input id="bloom" type="checkbox" /></label>
     <label class="row"><span>Ambient occlusion</span><input id="ao" type="checkbox" /></label>
     <label>Exposure<input id="exposure" type="range" min="-2" max="2" step="0.1" /></label>
@@ -160,6 +160,7 @@ export class MaterialViewerElement extends HTMLElement {
     this.#panelEl = document.createElement('div');
     this.#panelEl.className = 'panel';
     this.#panelEl.innerHTML = PANEL_HTML;
+    this.#panelEl.querySelector('#background')!.innerHTML = optionsHtml(BACKGROUND_OPTIONS);
     this.#panelEl.querySelector('#tone-mapping')!.innerHTML = optionsHtml(TONE_MAPPING_OPTIONS);
     this.#panelEl.querySelector('.close')!.addEventListener('click', () => this.#panelEl.classList.remove('open'));
     shadow.append(style, this.#viewportEl, this.#playEl, this.#toggleEl, this.#panelEl, this.#errors.root);
@@ -229,7 +230,7 @@ export class MaterialViewerElement extends HTMLElement {
     bind('material', 'material', (el) => el.value);
     bind('tone-mapping', 'tone-mapping', (el) => el.value);
     bind('rotate', 'rotate', (el) => (el.checked ? null : 'false'));
-    bind('background', 'background', (el) => (el.checked ? null : 'none'));
+    bind('background', 'background', (el) => el.value);
     bind('bloom', 'bloom', (el) => (el.checked ? null : 'false'));
     bind('ao', 'ao', (el) => (el.checked ? null : 'false'));
     bind('exposure', 'exposure', (el) => el.value);
@@ -258,7 +259,9 @@ export class MaterialViewerElement extends HTMLElement {
     this.#panelEl.querySelector<HTMLSelectElement>('#geometry')!.innerHTML = optionsHtml(geometryOptions);
     const iblAttr = this.getAttribute('ibl');
     const iblOptions =
-      iblAttr && !BUILTIN_IBLS[iblAttr] ? [...IBL_OPTIONS, { value: iblAttr, label: 'Custom' }] : IBL_OPTIONS;
+      iblAttr && !IBL_OPTIONS.some(({ value }) => value === iblAttr)
+        ? [...IBL_OPTIONS, { value: iblAttr, label: 'Custom' }]
+        : IBL_OPTIONS;
     this.#panelEl.querySelector<HTMLSelectElement>('#ibl')!.innerHTML = optionsHtml(iblOptions);
     const materialSelect = this.#panelEl.querySelector<HTMLSelectElement>('#material')!;
     const names = this.#viewer?.scene.materialNames ?? [];
@@ -277,7 +280,7 @@ export class MaterialViewerElement extends HTMLElement {
     set('ibl', settings.ibl);
     set('tone-mapping', settings.toneMapping);
     set('rotate', settings.rotate);
-    set('background', settings.background !== 'none');
+    set('background', settings.background);
     set('bloom', settings.bloom);
     set('ao', settings.ao);
     set('exposure', String(settings.exposure));
@@ -295,11 +298,13 @@ export class MaterialViewerElement extends HTMLElement {
       DEFAULT_VIEWER_SETTINGS.toneMapping;
     return {
       ...DEFAULT_VIEWER_SETTINGS,
-      ibl: this.getAttribute('ibl') ?? 'bridge',
+      ibl: this.getAttribute('ibl') ?? DEFAULT_VIEWER_SETTINGS.ibl,
       geometry: this.getAttribute('geometry') ?? (this.getAttribute('model') ? 'custom' : 'totem'),
       materialName: this.getAttribute('material') ?? '',
       rotate: bool('rotate', true),
-      background: this.getAttribute('background') === 'none' ? 'none' : 'environment',
+      background:
+        BACKGROUND_OPTIONS.find(({ value }) => value === this.getAttribute('background'))?.value ??
+        DEFAULT_VIEWER_SETTINGS.background,
       bloom: bool('bloom', DEFAULT_VIEWER_SETTINGS.bloom),
       ao: bool('ao', DEFAULT_VIEWER_SETTINGS.ao),
       toneMapping,

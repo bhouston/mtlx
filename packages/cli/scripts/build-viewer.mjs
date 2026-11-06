@@ -30,8 +30,7 @@ await esbuild.build({
   target: 'es2020',
   minify: true,
   sourcemap: false,
-  // Inline the shared studio IBL PNG (from mtlx-viewer) as a data URL — no separate asset route
-  // for the local server to serve.
+  // Inline small image resources. The studio lighting is generated at runtime.
   loader: { '.png': 'dataurl' },
   define: {
     'process.env.NODE_ENV': '"production"',
@@ -44,7 +43,7 @@ copyFileSync(join(root, '..', 'static-assets', 'public', 'viewer', 'shaderball.g
 // Lighting for `mtlx render --ibl <name>` (the studio room is inlined in viewer.js). The HDRs are
 // Poly Haven CC0 1k maps from the three.js examples: sun (quarry_01), overcast (blouberg_sunrise_2),
 // neutral (monochrome_studio_02), dusk (venice_sunset), night (moonless_golf); bridge is the
-// website's default environment (san_giuseppe_bridge).
+// optional bridge environment (san_giuseppe_bridge).
 const environmentsDir = join(root, '..', 'static-assets', 'public', 'viewer', 'environments');
 for (const file of readdirSync(environmentsDir)) {
   copyFileSync(join(environmentsDir, file), join(mediaDir, file.replace(/\.hdr$/, '-environment.hdr')));
@@ -55,3 +54,5 @@ copyFileSync(
 );
 
 console.log('Built viewer.js');
+
+copyFileSync(join(root, '..', 'viewer', 'LICENSE.model-viewer'), join(mediaDir, 'LICENSE.model-viewer'));

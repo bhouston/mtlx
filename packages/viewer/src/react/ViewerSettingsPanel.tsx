@@ -1,6 +1,7 @@
 import { Settings, X } from 'lucide-react';
 import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import {
+  BACKGROUND_OPTIONS,
   GEOMETRY_OPTIONS,
   IBL_OPTIONS,
   TONE_MAPPING_OPTIONS,
@@ -142,13 +143,19 @@ export function ViewerSettingsPanel({
               Rotate
             </label>
             <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={settings.background !== 'none'}
-                aria-label="Background"
-                onChange={(event) => onChange({ background: event.target.checked ? 'environment' : 'none' })}
-              />
               Background
+              <select
+                aria-label="Background"
+                className={selectClass}
+                value={settings.background}
+                onChange={(event) => onChange({ background: event.target.value as ViewerSettings['background'] })}
+              >
+                {BACKGROUND_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
             </label>
             {(['bloom', 'ao'] as const).map((effect) => (
               <label key={effect} className="flex items-center gap-2">

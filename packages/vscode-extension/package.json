@@ -161,7 +161,7 @@
         },
         "mtlx.preview.defaultIbl": {
           "type": "string",
-          "default": "bridge",
+          "default": "studio",
           "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
           "scope": "resource",
           "description": "IBL name used for new previews. Built-ins: bridge, studio; or an additional IBL name."
@@ -208,13 +208,14 @@
         },
         "mtlx.preview.background": {
           "type": "string",
-          "default": "environment",
+          "default": "white",
           "enum": [
+            "white",
             "environment",
             "none"
           ],
           "scope": "resource",
-          "description": "Backdrop for new previews: the IBL environment, or none for a transparent backdrop."
+          "description": "Backdrop for new previews: white, the IBL environment, or none for transparency. Lighting is independent of the backdrop."
         }
       }
     }

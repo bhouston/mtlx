@@ -136,25 +136,20 @@ materials/textures, and their Reset orientations. `preview.dispose()` releases t
 
 ## Environments
 
-The studio and bridge IBL environments used by the preview scene are exposed separately in case
-you want to build your own lighting rig.
+The default `studio` is generated on the GPU from Google model-viewer's neutral room, preserving
+HDR light-panel intensities. It downloads no environment image and reuses its filtered target
+when switching away and back. `bridge` remains an optional photographic HDR; custom HDR, EXR,
+PNG and JPEG environments still use `loadEnvironment` and `parseEnvironmentFile`.
 
-```ts
-import { ENVIRONMENT_ASSET_FILES, parseEnvironment, type EnvironmentKind } from 'mtlx-viewer';
+`background` is independent of the lighting: `white` (default) is a CSS white backdrop behind a
+transparent canvas, `environment` displays the active IBL, and `none` leaves the canvas transparent
+for the host page or image exports. White stays white when exposure or tone mapping changes.
+The CLI's render exports retain their existing transparent-background default.
 
-const kind: EnvironmentKind = 'studio'; // 'default' is San Giuseppe Bridge (the three-ntc website IBL)
-const texture = await parseEnvironment(
-  kind,
-  await (await fetch('https://mtlx-static.ben3d.ca/viewer/studio-environment.png')).arrayBuffer(),
-);
-threeScene.environment = texture;
-// Clear the environment and dispose its texture when the caller no longer needs it.
-// threeScene.environment = null;
-// texture.dispose();
-
-// ENVIRONMENT_ASSET_FILES maps each kind to its asset file name; both are served at
-// https://mtlx-static.ben3d.ca/viewer/.
-```
+The old 8-bit studio PNG and its bake scripts have been removed. Existing `ibl="studio"` embeds
+now use the generated HDR room. The room layout is adapted under Apache 2.0; see
+[LICENSE.model-viewer](LICENSE.model-viewer). Details and API recommendations are in
+[the model-viewer comparison](../../docs/model-viewer-comparison.md).
 
 ## Shared host utilities
 

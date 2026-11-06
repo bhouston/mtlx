@@ -47,11 +47,11 @@ function registerElement(): Promise<unknown> {
 const ATTRIBUTES: Array<[string, string]> = [
   ['src', 'Required. The .mtlx or .mtlx.zip file to preview.'],
   ['model', 'A custom glTF/GLB URL to preview the material on, instead of the built-in shaderball.'],
-  ['ibl', '"bridge" (default), "studio", or a URL to a custom .hdr/.exr/.png/.jpg environment.'],
+  ['ibl', '"studio" (default), "bridge", or a URL to a custom .hdr/.exr/.png/.jpg environment.'],
   ['geometry', '"totem" | "sphere" | "cube" | "plane" | "custom" (the last selects model, if given).'],
   ['material', 'Initial material name; defaults to the document’s last material.'],
   ['rotate / bloom / ao', '"false" to disable; all default on.'],
-  ['background', '"environment" (default) shows the IBL behind the model; "none" leaves it transparent.'],
+  ['background', '"white" (default); "environment" shows the IBL; "none" leaves it transparent.'],
   ['tone-mapping', 'neutral (default), aces, agx, reinhard, cineon, linear, none.'],
   ['exposure / intensity', 'Numbers in -2..2 / 0..2.'],
   ['errors', '"silent" hides the error overlay; omitted shows errors. Error events always fire.'],

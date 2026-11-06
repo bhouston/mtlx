@@ -130,7 +130,7 @@ export function createMcpServer(): McpServer {
           .enum(IBLS)
           .optional()
           .describe(
-            'Lighting (default studio, soft and dim). bridge: outdoor, shows relief, green-yellow cast. sun: hard midday sun, strongest relief. overcast: soft medium daylight, near neutral. neutral: colorless grey studio for judging albedo. strips: dark room with sharp softbox strips, for judging gloss and roughness variation. dusk: warm medium-dark street. night: very dark.',
+            'Lighting (default studio, generated neutral HDR room). bridge: outdoor, shows relief, green-yellow cast. sun: hard midday sun, strongest relief. overcast: soft medium daylight, near neutral. neutral: colorless grey studio for judging albedo. strips: dark room with sharp softbox strips, for judging gloss and roughness variation. dusk: warm medium-dark street. night: very dark.',
           ),
         exposure: z.number().min(-2).max(2).optional().describe('Exposure in stops (default 0)'),
         zoom: z.number().min(1).max(100).optional().describe('Camera zoom when views is absent (default 1)'),

@@ -55,6 +55,36 @@ test('viewer renders a dropped .mtlx through the first completed frame and valid
   if (process.env.MTLX_SCREENSHOT) await page.screenshot({ path: process.env.MTLX_SCREENSHOT, fullPage: true });
 });
 
+test('neutral lighting needs no environment download and the backdrop changes independently', async () => {
+  const environmentRequests: string[] = [];
+  page.on('request', (request) => {
+    if (/\.(hdr|exr)([?#]|$)|studio-environment\.png/.test(request.url())) environmentRequests.push(request.url());
+  });
+  await page.goto(`http://localhost:${PORT}/viewer`);
+  await page.setInputFiles('input[type=file]', materialPath);
+  await expectReady();
+  const canvas = await page.locator('canvas').elementHandle();
+  expect(await canvas.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(255, 255, 255)');
+  await page.getByRole('button', { name: 'Viewer settings', exact: true }).click();
+  const background = page.getByRole('combobox', { name: 'Background', exact: true });
+  expect(await background.inputValue()).toBe('white');
+  expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('studio');
+  await background.selectOption('none');
+  await expect
+    .poll(() => canvas.evaluate((element) => getComputedStyle(element).backgroundColor))
+    .toBe('rgba(0, 0, 0, 0)');
+  await background.selectOption('environment');
+  await background.selectOption('white');
+  await page.getByRole('slider', { name: /Exposure/ }).focus();
+  await page.keyboard.press('Home');
+  await expect
+    .poll(() => canvas.evaluate((element) => getComputedStyle(element).backgroundColor))
+    .toBe('rgb(255, 255, 255)');
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
+  expect(environmentRequests).toEqual([]);
+  expect(pageErrors).toEqual([]);
+});
+
 test('a failed replacement clears old details and repeated loads resize the canvas correctly', async () => {
   await page.goto(`http://localhost:${PORT}/viewer`);
   await page.setInputFiles('input[type=file]', materialPath);
@@ -98,9 +128,9 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await page.keyboard.press('Space');
   expect(await rotation.isChecked()).toBe(true);
   await page.getByRole('combobox', { name: 'Geometry', exact: true }).selectOption('sphere');
-  expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('bridge');
+  expect(await page.getByRole('combobox', { name: 'IBL environment' }).inputValue()).toBe('studio');
   expect(await page.getByRole('combobox', { name: 'IBL environment' }).locator('option').allTextContents()).toEqual([
-    'Studio',
+    'Neutral Studio',
     'San Giuseppe Bridge',
   ]);
   const canvas = await page.locator('canvas').elementHandle();
@@ -108,14 +138,14 @@ test('inspection controls work with a keyboard, reduced motion and narrow screen
   await expect
     .poll(() => page.locator('main').innerText(), { timeout: 30_000 })
     .toContain('Environment ready: San Giuseppe Bridge.');
-  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
   expect(await page.getByRole('combobox', { name: 'Geometry', exact: true }).inputValue()).toBe('sphere');
   await page.getByRole('combobox', { name: 'IBL environment' }).selectOption('studio');
   await expect
-    .poll(async () => (await page.locator('main').innerText()).split('Environment ready: Studio.').length, {
+    .poll(async () => (await page.locator('main').innerText()).split('Environment ready: Neutral Studio.').length, {
       timeout: 30_000,
     })
-    .toBe(2);
+    .toBe(3);
   expect(await page.getByRole('combobox', { name: 'Material', exact: true }).count()).toBe(1);
   await page.setViewportSize({ width: 375, height: 800 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
@@ -240,7 +270,7 @@ test('rendering effects default on and toggle without replacing the scene', asyn
     await toneMapping.selectOption(value);
     await page.locator('canvas').screenshot();
   }
-  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
   await page.setViewportSize({ width: 375, height: 800 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
   await expectReady();
@@ -392,7 +422,6 @@ test('shared embed restores rendering state and controls update without rebuildi
   expect(await page.getByLabel('IBL environment').inputValue()).toBe('studio');
   expect(await page.getByLabel('Bloom', { exact: true }).isChecked()).toBe(false);
   expect(await page.getByLabel('Ambient occlusion').isChecked()).toBe(false);
-  expect(await page.getByLabel('Environment intensity').inputValue()).toBe('0.7');
   expect(await page.getByLabel('Exposure', { exact: true }).inputValue()).toBe('-0.5');
   expect(await page.getByLabel('Tone mapping').inputValue()).toBe('agx');
   expect(await page.getByLabel('Geometry', { exact: true }).inputValue()).toBe('sphere');
@@ -400,7 +429,7 @@ test('shared embed restores rendering state and controls update without rebuildi
   const canvas = await page.locator('canvas').elementHandle();
   await page.getByLabel('Bloom', { exact: true }).check();
   await expect.poll(() => new URL(page.url()).searchParams.get('bloom')).toBe('true');
-  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
+  expect(await canvas.evaluate((element) => element.isConnected)).toBe(true);
   await page.reload();
   await expect
     .poll(() => page.locator('[data-preview-state]').getAttribute('data-preview-state'), { timeout: 30_000 })
