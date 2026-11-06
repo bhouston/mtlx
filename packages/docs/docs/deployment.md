@@ -6,7 +6,7 @@ The primary site is a static Docusaurus build in `packages/docs/build`. The edit
 
 ## GitHub Actions
 
-The Documentation workflow builds on `main` and supports manual dispatch. It uploads a GitHub Pages artifact and deploys it with `actions/deploy-pages`. Pull-request CI builds the same docs and uploads a review artifact without changing production.
+The Documentation workflow never runs on pushes or merges to `main`. The Release workflow calls it after each release (including a recovered release, but not a dry run), passing the release tag; it checks out that tag, builds from it, uploads a GitHub Pages artifact and deploys it with `actions/deploy-pages`. To redeploy manually, dispatch the workflow on `main`; it builds the `ref` tag you give, or the latest `v*` tag. Pull-request CI builds the same docs and uploads a review artifact without changing production.
 
 GitHub repository Pages settings must use **GitHub Actions** as their build source. Configure `mtlx.ben3d.ca` as the repository's custom Pages domain; with a custom Actions workflow the `CNAME` file alone does not configure the domain.
 
