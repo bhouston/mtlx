@@ -19,3 +19,8 @@ submodules
 experiments
 __pycache__/
 packages/cli/opencli.json
+
+# Agent tooling
+.claude/
+.codex/
+.cursor/
