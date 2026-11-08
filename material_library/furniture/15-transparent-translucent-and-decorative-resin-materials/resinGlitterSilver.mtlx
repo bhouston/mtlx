@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Clear resin containing fine silver reflective particles with a smooth glossy surface. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: metallicFlakeBinder. -->
+  <nodegraph name="NG_resinGlitterSilver">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_4" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="240" /></multiply>
+    <add name="add_5" type="vector2"><input name="in1" type="vector2" nodename="multiply_4" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_6" type="float"><input name="texcoord" type="vector2" nodename="add_5" /><input name="amplitude" type="float" value="0.000012" /><input name="pivot" type="float" value="0" /></noise2d>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="900" /></multiply>
+    <worleynoise2d name="worleynoise2d_8" type="float"><input name="texcoord" type="vector2" nodename="multiply_7" /><input name="jitter" type="float" value="0.7" /></worleynoise2d>
+    <smoothstep name="smoothstep_9" type="float"><input name="in" type="float" nodename="worleynoise2d_8" /><input name="low" type="float" value="0.04" /><input name="high" type="float" value="0.13" /></smoothstep>
+    <subtract name="subtract_10" type="float"><input name="in1" type="float" value="1" /><input name="in2" type="float" nodename="smoothstep_9" /></subtract>
+    <multiply name="multiply_11" type="float"><input name="in1" type="float" nodename="subtract_10" /><input name="in2" type="float" value="0.95" /></multiply>
+    <mix name="mix_12" type="color3"><input name="bg" type="color3" value="0.7, 0.72, 0.73" /><input name="fg" type="color3" value="0.77, 0.78, 0.8" /><input name="mix" type="float" nodename="subtract_10" /></mix>
+    <subtract name="subtract_13" type="float"><input name="in1" type="float" nodename="subtract_10" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_14" type="float"><input name="in1" type="float" nodename="subtract_13" /><input name="in2" type="float" value="0.0525" /></multiply>
+    <add name="add_15" type="float"><input name="in1" type="float" value="0.35" /><input name="in2" type="float" nodename="multiply_14" /></add>
+    <clamp name="clamp_16" type="float"><input name="in" type="float" nodename="add_15" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_17" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_18" type="float"><input name="in1" type="float" nodename="noise2d_6" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_19" type="vector3"><input name="in" type="float" nodename="multiply_18" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_17" /></heighttonormal>
+    <normalmap name="normalmap_20" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_19" /></normalmap>
+    <output name="base_color" type="color3" nodename="mix_12" />
+    <output name="specular_roughness" type="float" nodename="clamp_16" />
+    <output name="metalness" type="float" nodename="multiply_11" />
+    <output name="normal" type="vector3" nodename="normalmap_20" />
+    <output name="height" type="float" nodename="noise2d_6" />
+  </nodegraph>
+  <standard_surface name="SR_resinGlitterSilver" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="coat" type="float" value="0.3" />
+    <input name="coat_roughness" type="float" value="0.24499999999999997" />
+    <input name="base_color" type="color3" nodegraph="NG_resinGlitterSilver" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_resinGlitterSilver" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_resinGlitterSilver" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_resinGlitterSilver" output="normal" />
+    <input name="coat_normal" type="vector3" nodegraph="NG_resinGlitterSilver" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_resinGlitterSilver" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_resinGlitterSilver" /></surfacematerial>
+</materialx>

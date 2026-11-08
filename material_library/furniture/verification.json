@@ -1,0 +1,25 @@
+{
+  "catalogMaterials": 2667,
+  "catalogFamilies": 23,
+  "strictMcpPassed": 2667,
+  "renderSheets": 51,
+  "renderedMaterials": 44,
+  "renderFailures": 0,
+  "views": ["plane", "closeup", "detail", "sphere", "totem"],
+  "gpu": {
+    "webgl": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3, Unspecified Version)",
+    "webgpu": {
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "isFallbackAdapter": false
+    }
+  },
+  "checks": {
+    "install": "pnpm install --frozen-lockfile passed",
+    "build": "pnpm build passed",
+    "types": "pnpm tsc passed",
+    "lint": "pnpm lint passed with existing warnings",
+    "tests": "pnpm test: 72 files, 490 tests passed"
+  },
+  "scope": "All files structurally validated; visual previews sample families and recipes."
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "whiteOakClearSatin",
+    "heightUnit": "meter",
+    "range": "-0.00005,0.00001",
+    "statistics": "Wrote whiteOakClearSatin-height.avif in 7.3s (first view 1.6s)\nheight:\nvalue: min -0.00002647 (uv 0.5242,0.4752)  p5 -0.000009059  mean -0.000002853  p95 -1.176e-7  max -1.176e-7 (uv 0.5083,0.5249)\n"
+  },
+  {
+    "name": "cottonPlainWeaveIvory",
+    "heightUnit": "meter",
+    "range": "0,0.000005",
+    "statistics": "Wrote cottonPlainWeaveIvory-height.avif in 37.2s (first view 2.1s)\nheight:\nvalue: min 5.882e-8 (uv 0.5165,0.5208)  p5 9.608e-7  mean 0.000002063  p95 0.000003157  max 0.000004471 (uv 0.5188,0.5215)\n"
+  },
+  {
+    "name": "travertineIvoryUnfilledMatte",
+    "heightUnit": "meter",
+    "range": "-0.00025,0.00015",
+    "statistics": "Wrote furniture-travertine-height.avif in 7.4s (first view 1.2s)\nheight:\nvalue: min -0.0002029 (uv 0.5217,0.4775)  p5 -0.00008059  mean -0.000006067  p95 0.00006529  max 0.0001045 (uv 0.4956,0.4817)\n"
+  }
+]

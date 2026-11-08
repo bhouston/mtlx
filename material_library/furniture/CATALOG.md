@@ -1,0 +1,2739 @@
+# Furniture material index
+
+UV 0–1 spans one meter in every material. Heights are in meters.
+
+## Natural wood
+
+- [whiteOakUnfinished](natural-wood/whiteOakUnfinished.mtlx) — Pale honey-beige wood with open pores, prominent rays, and strong earlywood/latewood contrast. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [whiteOakClearOil](natural-wood/whiteOakClearOil.mtlx) — Pale honey-beige wood with open pores, prominent rays, and strong earlywood/latewood contrast. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [whiteOakClearMatte](natural-wood/whiteOakClearMatte.mtlx) — Pale honey-beige wood with open pores, prominent rays, and strong earlywood/latewood contrast. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [whiteOakClearSatin](natural-wood/whiteOakClearSatin.mtlx) — Pale honey-beige wood with open pores, prominent rays, and strong earlywood/latewood contrast. Colorless satin clearcoat; moderate highlights over visible grain.
+- [whiteOakClearGloss](natural-wood/whiteOakClearGloss.mtlx) — Pale honey-beige wood with open pores, prominent rays, and strong earlywood/latewood contrast. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [whiteOakEndGrainMatte](natural-wood/whiteOakEndGrainMatte.mtlx) — Pale honey-beige wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [redOakUnfinished](natural-wood/redOakUnfinished.mtlx) — Pinkish tan wood with open pores and warm, coarse grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [redOakClearOil](natural-wood/redOakClearOil.mtlx) — Pinkish tan wood with open pores and warm, coarse grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [redOakClearMatte](natural-wood/redOakClearMatte.mtlx) — Pinkish tan wood with open pores and warm, coarse grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [redOakClearSatin](natural-wood/redOakClearSatin.mtlx) — Pinkish tan wood with open pores and warm, coarse grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [redOakClearGloss](natural-wood/redOakClearGloss.mtlx) — Pinkish tan wood with open pores and warm, coarse grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [redOakEndGrainMatte](natural-wood/redOakEndGrainMatte.mtlx) — Pinkish tan wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [europeanOakUnfinished](natural-wood/europeanOakUnfinished.mtlx) — Warm golden tan wood with open pores, visible rays, and moderately varied grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [europeanOakClearOil](natural-wood/europeanOakClearOil.mtlx) — Warm golden tan wood with open pores, visible rays, and moderately varied grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [europeanOakClearMatte](natural-wood/europeanOakClearMatte.mtlx) — Warm golden tan wood with open pores, visible rays, and moderately varied grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [europeanOakClearSatin](natural-wood/europeanOakClearSatin.mtlx) — Warm golden tan wood with open pores, visible rays, and moderately varied grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [europeanOakClearGloss](natural-wood/europeanOakClearGloss.mtlx) — Warm golden tan wood with open pores, visible rays, and moderately varied grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [europeanOakEndGrainMatte](natural-wood/europeanOakEndGrainMatte.mtlx) — Warm golden tan wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [americanWalnutUnfinished](natural-wood/americanWalnutUnfinished.mtlx) — Rich chocolate brown with muted purple undertones wood with semi-open pores and dark, flowing grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [americanWalnutClearOil](natural-wood/americanWalnutClearOil.mtlx) — Rich chocolate brown with muted purple undertones wood with semi-open pores and dark, flowing grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [americanWalnutClearMatte](natural-wood/americanWalnutClearMatte.mtlx) — Rich chocolate brown with muted purple undertones wood with semi-open pores and dark, flowing grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [americanWalnutClearSatin](natural-wood/americanWalnutClearSatin.mtlx) — Rich chocolate brown with muted purple undertones wood with semi-open pores and dark, flowing grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [americanWalnutClearGloss](natural-wood/americanWalnutClearGloss.mtlx) — Rich chocolate brown with muted purple undertones wood with semi-open pores and dark, flowing grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [americanWalnutEndGrainMatte](natural-wood/americanWalnutEndGrainMatte.mtlx) — Rich chocolate brown with muted purple undertones wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [europeanWalnutUnfinished](natural-wood/europeanWalnutUnfinished.mtlx) — Gray-brown with dark brown streaks wood with fine-to-medium pores and irregular tonal figuring. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [europeanWalnutClearOil](natural-wood/europeanWalnutClearOil.mtlx) — Gray-brown with dark brown streaks wood with fine-to-medium pores and irregular tonal figuring. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [europeanWalnutClearMatte](natural-wood/europeanWalnutClearMatte.mtlx) — Gray-brown with dark brown streaks wood with fine-to-medium pores and irregular tonal figuring. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [europeanWalnutClearSatin](natural-wood/europeanWalnutClearSatin.mtlx) — Gray-brown with dark brown streaks wood with fine-to-medium pores and irregular tonal figuring. Colorless satin clearcoat; moderate highlights over visible grain.
+- [europeanWalnutClearGloss](natural-wood/europeanWalnutClearGloss.mtlx) — Gray-brown with dark brown streaks wood with fine-to-medium pores and irregular tonal figuring. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [europeanWalnutEndGrainMatte](natural-wood/europeanWalnutEndGrainMatte.mtlx) — Gray-brown with dark brown streaks wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [blackCherryUnfinished](natural-wood/blackCherryUnfinished.mtlx) — Warm reddish amber wood with fine pores and subtle flowing grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [blackCherryClearOil](natural-wood/blackCherryClearOil.mtlx) — Warm reddish amber wood with fine pores and subtle flowing grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [blackCherryClearMatte](natural-wood/blackCherryClearMatte.mtlx) — Warm reddish amber wood with fine pores and subtle flowing grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [blackCherryClearSatin](natural-wood/blackCherryClearSatin.mtlx) — Warm reddish amber wood with fine pores and subtle flowing grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [blackCherryClearGloss](natural-wood/blackCherryClearGloss.mtlx) — Warm reddish amber wood with fine pores and subtle flowing grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [blackCherryEndGrainMatte](natural-wood/blackCherryEndGrainMatte.mtlx) — Warm reddish amber wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [hardMapleUnfinished](natural-wood/hardMapleUnfinished.mtlx) — Pale creamy beige wood with tight pores and restrained grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [hardMapleClearOil](natural-wood/hardMapleClearOil.mtlx) — Pale creamy beige wood with tight pores and restrained grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [hardMapleClearMatte](natural-wood/hardMapleClearMatte.mtlx) — Pale creamy beige wood with tight pores and restrained grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [hardMapleClearSatin](natural-wood/hardMapleClearSatin.mtlx) — Pale creamy beige wood with tight pores and restrained grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [hardMapleClearGloss](natural-wood/hardMapleClearGloss.mtlx) — Pale creamy beige wood with tight pores and restrained grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [hardMapleEndGrainMatte](natural-wood/hardMapleEndGrainMatte.mtlx) — Pale creamy beige wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [birdsEyeMapleUnfinished](natural-wood/birdsEyeMapleUnfinished.mtlx) — Pale golden cream wood with small eye-like grain figuring and tight pores. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [birdsEyeMapleClearOil](natural-wood/birdsEyeMapleClearOil.mtlx) — Pale golden cream wood with small eye-like grain figuring and tight pores. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [birdsEyeMapleClearMatte](natural-wood/birdsEyeMapleClearMatte.mtlx) — Pale golden cream wood with small eye-like grain figuring and tight pores. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [birdsEyeMapleClearSatin](natural-wood/birdsEyeMapleClearSatin.mtlx) — Pale golden cream wood with small eye-like grain figuring and tight pores. Colorless satin clearcoat; moderate highlights over visible grain.
+- [birdsEyeMapleClearGloss](natural-wood/birdsEyeMapleClearGloss.mtlx) — Pale golden cream wood with small eye-like grain figuring and tight pores. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [birdsEyeMapleEndGrainMatte](natural-wood/birdsEyeMapleEndGrainMatte.mtlx) — Pale golden cream wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [curlyMapleUnfinished](natural-wood/curlyMapleUnfinished.mtlx) — Pale amber cream wood with alternating curly figure with directional reflectance. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [curlyMapleClearOil](natural-wood/curlyMapleClearOil.mtlx) — Pale amber cream wood with alternating curly figure with directional reflectance. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [curlyMapleClearMatte](natural-wood/curlyMapleClearMatte.mtlx) — Pale amber cream wood with alternating curly figure with directional reflectance. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [curlyMapleClearSatin](natural-wood/curlyMapleClearSatin.mtlx) — Pale amber cream wood with alternating curly figure with directional reflectance. Colorless satin clearcoat; moderate highlights over visible grain.
+- [curlyMapleClearGloss](natural-wood/curlyMapleClearGloss.mtlx) — Pale amber cream wood with alternating curly figure with directional reflectance. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [curlyMapleEndGrainMatte](natural-wood/curlyMapleEndGrainMatte.mtlx) — Pale amber cream wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [beechUnfinished](natural-wood/beechUnfinished.mtlx) — Pale pinkish beige wood with fine pores and short, subtle flecks. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [beechClearOil](natural-wood/beechClearOil.mtlx) — Pale pinkish beige wood with fine pores and short, subtle flecks. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [beechClearMatte](natural-wood/beechClearMatte.mtlx) — Pale pinkish beige wood with fine pores and short, subtle flecks. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [beechClearSatin](natural-wood/beechClearSatin.mtlx) — Pale pinkish beige wood with fine pores and short, subtle flecks. Colorless satin clearcoat; moderate highlights over visible grain.
+- [beechClearGloss](natural-wood/beechClearGloss.mtlx) — Pale pinkish beige wood with fine pores and short, subtle flecks. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [beechEndGrainMatte](natural-wood/beechEndGrainMatte.mtlx) — Pale pinkish beige wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [ashUnfinished](natural-wood/ashUnfinished.mtlx) — Light straw tan wood with open pores and strong grain contrast. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [ashClearOil](natural-wood/ashClearOil.mtlx) — Light straw tan wood with open pores and strong grain contrast. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [ashClearMatte](natural-wood/ashClearMatte.mtlx) — Light straw tan wood with open pores and strong grain contrast. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [ashClearSatin](natural-wood/ashClearSatin.mtlx) — Light straw tan wood with open pores and strong grain contrast. Colorless satin clearcoat; moderate highlights over visible grain.
+- [ashClearGloss](natural-wood/ashClearGloss.mtlx) — Light straw tan wood with open pores and strong grain contrast. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [ashEndGrainMatte](natural-wood/ashEndGrainMatte.mtlx) — Light straw tan wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [elmUnfinished](natural-wood/elmUnfinished.mtlx) — Warm medium brown wood with interlocked, visibly varied grain and open pores. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [elmClearOil](natural-wood/elmClearOil.mtlx) — Warm medium brown wood with interlocked, visibly varied grain and open pores. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [elmClearMatte](natural-wood/elmClearMatte.mtlx) — Warm medium brown wood with interlocked, visibly varied grain and open pores. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [elmClearSatin](natural-wood/elmClearSatin.mtlx) — Warm medium brown wood with interlocked, visibly varied grain and open pores. Colorless satin clearcoat; moderate highlights over visible grain.
+- [elmClearGloss](natural-wood/elmClearGloss.mtlx) — Warm medium brown wood with interlocked, visibly varied grain and open pores. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [elmEndGrainMatte](natural-wood/elmEndGrainMatte.mtlx) — Warm medium brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [birchUnfinished](natural-wood/birchUnfinished.mtlx) — Pale cream with faint yellow warmth wood with fine pores and subdued grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [birchClearOil](natural-wood/birchClearOil.mtlx) — Pale cream with faint yellow warmth wood with fine pores and subdued grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [birchClearMatte](natural-wood/birchClearMatte.mtlx) — Pale cream with faint yellow warmth wood with fine pores and subdued grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [birchClearSatin](natural-wood/birchClearSatin.mtlx) — Pale cream with faint yellow warmth wood with fine pores and subdued grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [birchClearGloss](natural-wood/birchClearGloss.mtlx) — Pale cream with faint yellow warmth wood with fine pores and subdued grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [birchEndGrainMatte](natural-wood/birchEndGrainMatte.mtlx) — Pale cream with faint yellow warmth wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [alderUnfinished](natural-wood/alderUnfinished.mtlx) — Light reddish tan wood with fine pores and relatively uniform grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [alderClearOil](natural-wood/alderClearOil.mtlx) — Light reddish tan wood with fine pores and relatively uniform grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [alderClearMatte](natural-wood/alderClearMatte.mtlx) — Light reddish tan wood with fine pores and relatively uniform grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [alderClearSatin](natural-wood/alderClearSatin.mtlx) — Light reddish tan wood with fine pores and relatively uniform grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [alderClearGloss](natural-wood/alderClearGloss.mtlx) — Light reddish tan wood with fine pores and relatively uniform grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [alderEndGrainMatte](natural-wood/alderEndGrainMatte.mtlx) — Light reddish tan wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [poplarUnfinished](natural-wood/poplarUnfinished.mtlx) — Pale cream with restrained green-gray streaks wood with fine pores and low grain contrast. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [poplarClearOil](natural-wood/poplarClearOil.mtlx) — Pale cream with restrained green-gray streaks wood with fine pores and low grain contrast. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [poplarClearMatte](natural-wood/poplarClearMatte.mtlx) — Pale cream with restrained green-gray streaks wood with fine pores and low grain contrast. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [poplarClearSatin](natural-wood/poplarClearSatin.mtlx) — Pale cream with restrained green-gray streaks wood with fine pores and low grain contrast. Colorless satin clearcoat; moderate highlights over visible grain.
+- [poplarClearGloss](natural-wood/poplarClearGloss.mtlx) — Pale cream with restrained green-gray streaks wood with fine pores and low grain contrast. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [poplarEndGrainMatte](natural-wood/poplarEndGrainMatte.mtlx) — Pale cream with restrained green-gray streaks wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [sycamoreUnfinished](natural-wood/sycamoreUnfinished.mtlx) — Pale golden beige wood with fine texture and small ray flecks. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [sycamoreClearOil](natural-wood/sycamoreClearOil.mtlx) — Pale golden beige wood with fine texture and small ray flecks. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [sycamoreClearMatte](natural-wood/sycamoreClearMatte.mtlx) — Pale golden beige wood with fine texture and small ray flecks. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [sycamoreClearSatin](natural-wood/sycamoreClearSatin.mtlx) — Pale golden beige wood with fine texture and small ray flecks. Colorless satin clearcoat; moderate highlights over visible grain.
+- [sycamoreClearGloss](natural-wood/sycamoreClearGloss.mtlx) — Pale golden beige wood with fine texture and small ray flecks. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [sycamoreEndGrainMatte](natural-wood/sycamoreEndGrainMatte.mtlx) — Pale golden beige wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [hickoryUnfinished](natural-wood/hickoryUnfinished.mtlx) — Cream to medium brown wood with strong natural color contrast and coarse grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [hickoryClearOil](natural-wood/hickoryClearOil.mtlx) — Cream to medium brown wood with strong natural color contrast and coarse grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [hickoryClearMatte](natural-wood/hickoryClearMatte.mtlx) — Cream to medium brown wood with strong natural color contrast and coarse grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [hickoryClearSatin](natural-wood/hickoryClearSatin.mtlx) — Cream to medium brown wood with strong natural color contrast and coarse grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [hickoryClearGloss](natural-wood/hickoryClearGloss.mtlx) — Cream to medium brown wood with strong natural color contrast and coarse grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [hickoryEndGrainMatte](natural-wood/hickoryEndGrainMatte.mtlx) — Cream to medium brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [pecanUnfinished](natural-wood/pecanUnfinished.mtlx) — Warm tan to brown wood with contrasting grain bands and moderately open pores. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [pecanClearOil](natural-wood/pecanClearOil.mtlx) — Warm tan to brown wood with contrasting grain bands and moderately open pores. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [pecanClearMatte](natural-wood/pecanClearMatte.mtlx) — Warm tan to brown wood with contrasting grain bands and moderately open pores. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [pecanClearSatin](natural-wood/pecanClearSatin.mtlx) — Warm tan to brown wood with contrasting grain bands and moderately open pores. Colorless satin clearcoat; moderate highlights over visible grain.
+- [pecanClearGloss](natural-wood/pecanClearGloss.mtlx) — Warm tan to brown wood with contrasting grain bands and moderately open pores. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [pecanEndGrainMatte](natural-wood/pecanEndGrainMatte.mtlx) — Warm tan to brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [teakUnfinished](natural-wood/teakUnfinished.mtlx) — Golden medium brown wood with dark streaks and open, oily-looking grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [teakClearOil](natural-wood/teakClearOil.mtlx) — Golden medium brown wood with dark streaks and open, oily-looking grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [teakClearMatte](natural-wood/teakClearMatte.mtlx) — Golden medium brown wood with dark streaks and open, oily-looking grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [teakClearSatin](natural-wood/teakClearSatin.mtlx) — Golden medium brown wood with dark streaks and open, oily-looking grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [teakClearGloss](natural-wood/teakClearGloss.mtlx) — Golden medium brown wood with dark streaks and open, oily-looking grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [teakEndGrainMatte](natural-wood/teakEndGrainMatte.mtlx) — Golden medium brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [irokoUnfinished](natural-wood/irokoUnfinished.mtlx) — Warm honey brown wood with interlocked grain and medium open pores. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [irokoClearOil](natural-wood/irokoClearOil.mtlx) — Warm honey brown wood with interlocked grain and medium open pores. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [irokoClearMatte](natural-wood/irokoClearMatte.mtlx) — Warm honey brown wood with interlocked grain and medium open pores. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [irokoClearSatin](natural-wood/irokoClearSatin.mtlx) — Warm honey brown wood with interlocked grain and medium open pores. Colorless satin clearcoat; moderate highlights over visible grain.
+- [irokoClearGloss](natural-wood/irokoClearGloss.mtlx) — Warm honey brown wood with interlocked grain and medium open pores. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [irokoEndGrainMatte](natural-wood/irokoEndGrainMatte.mtlx) — Warm honey brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [sapeleUnfinished](natural-wood/sapeleUnfinished.mtlx) — Reddish brown wood with ribbon-like figure and interlocked grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [sapeleClearOil](natural-wood/sapeleClearOil.mtlx) — Reddish brown wood with ribbon-like figure and interlocked grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [sapeleClearMatte](natural-wood/sapeleClearMatte.mtlx) — Reddish brown wood with ribbon-like figure and interlocked grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [sapeleClearSatin](natural-wood/sapeleClearSatin.mtlx) — Reddish brown wood with ribbon-like figure and interlocked grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [sapeleClearGloss](natural-wood/sapeleClearGloss.mtlx) — Reddish brown wood with ribbon-like figure and interlocked grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [sapeleEndGrainMatte](natural-wood/sapeleEndGrainMatte.mtlx) — Reddish brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [mahoganyUnfinished](natural-wood/mahoganyUnfinished.mtlx) — Warm red-brown wood with even medium pores and subtle ribbon figure. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [mahoganyClearOil](natural-wood/mahoganyClearOil.mtlx) — Warm red-brown wood with even medium pores and subtle ribbon figure. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [mahoganyClearMatte](natural-wood/mahoganyClearMatte.mtlx) — Warm red-brown wood with even medium pores and subtle ribbon figure. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [mahoganyClearSatin](natural-wood/mahoganyClearSatin.mtlx) — Warm red-brown wood with even medium pores and subtle ribbon figure. Colorless satin clearcoat; moderate highlights over visible grain.
+- [mahoganyClearGloss](natural-wood/mahoganyClearGloss.mtlx) — Warm red-brown wood with even medium pores and subtle ribbon figure. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [mahoganyEndGrainMatte](natural-wood/mahoganyEndGrainMatte.mtlx) — Warm red-brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [acaciaUnfinished](natural-wood/acaciaUnfinished.mtlx) — Golden brown with dark streaks wood with strong, irregular grain contrast. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [acaciaClearOil](natural-wood/acaciaClearOil.mtlx) — Golden brown with dark streaks wood with strong, irregular grain contrast. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [acaciaClearMatte](natural-wood/acaciaClearMatte.mtlx) — Golden brown with dark streaks wood with strong, irregular grain contrast. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [acaciaClearSatin](natural-wood/acaciaClearSatin.mtlx) — Golden brown with dark streaks wood with strong, irregular grain contrast. Colorless satin clearcoat; moderate highlights over visible grain.
+- [acaciaClearGloss](natural-wood/acaciaClearGloss.mtlx) — Golden brown with dark streaks wood with strong, irregular grain contrast. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [acaciaEndGrainMatte](natural-wood/acaciaEndGrainMatte.mtlx) — Golden brown with dark streaks wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [mangoUnfinished](natural-wood/mangoUnfinished.mtlx) — Golden tan with gray-brown variation wood with interlocked grain and variable figure. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [mangoClearOil](natural-wood/mangoClearOil.mtlx) — Golden tan with gray-brown variation wood with interlocked grain and variable figure. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [mangoClearMatte](natural-wood/mangoClearMatte.mtlx) — Golden tan with gray-brown variation wood with interlocked grain and variable figure. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [mangoClearSatin](natural-wood/mangoClearSatin.mtlx) — Golden tan with gray-brown variation wood with interlocked grain and variable figure. Colorless satin clearcoat; moderate highlights over visible grain.
+- [mangoClearGloss](natural-wood/mangoClearGloss.mtlx) — Golden tan with gray-brown variation wood with interlocked grain and variable figure. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [mangoEndGrainMatte](natural-wood/mangoEndGrainMatte.mtlx) — Golden tan with gray-brown variation wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [rubberwoodUnfinished](natural-wood/rubberwoodUnfinished.mtlx) — Pale straw beige wood with soft grain contrast and fine-to-medium pores. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [rubberwoodClearOil](natural-wood/rubberwoodClearOil.mtlx) — Pale straw beige wood with soft grain contrast and fine-to-medium pores. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [rubberwoodClearMatte](natural-wood/rubberwoodClearMatte.mtlx) — Pale straw beige wood with soft grain contrast and fine-to-medium pores. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [rubberwoodClearSatin](natural-wood/rubberwoodClearSatin.mtlx) — Pale straw beige wood with soft grain contrast and fine-to-medium pores. Colorless satin clearcoat; moderate highlights over visible grain.
+- [rubberwoodClearGloss](natural-wood/rubberwoodClearGloss.mtlx) — Pale straw beige wood with soft grain contrast and fine-to-medium pores. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [rubberwoodEndGrainMatte](natural-wood/rubberwoodEndGrainMatte.mtlx) — Pale straw beige wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [pineUnfinished](natural-wood/pineUnfinished.mtlx) — Pale yellow cream wood with contrasting growth bands and clean sound knots. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [pineClearOil](natural-wood/pineClearOil.mtlx) — Pale yellow cream wood with contrasting growth bands and clean sound knots. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [pineClearMatte](natural-wood/pineClearMatte.mtlx) — Pale yellow cream wood with contrasting growth bands and clean sound knots. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [pineClearSatin](natural-wood/pineClearSatin.mtlx) — Pale yellow cream wood with contrasting growth bands and clean sound knots. Colorless satin clearcoat; moderate highlights over visible grain.
+- [pineClearGloss](natural-wood/pineClearGloss.mtlx) — Pale yellow cream wood with contrasting growth bands and clean sound knots. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [pineEndGrainMatte](natural-wood/pineEndGrainMatte.mtlx) — Pale yellow cream wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [knotFreePineUnfinished](natural-wood/knotFreePineUnfinished.mtlx) — Pale yellow cream wood with straight growth bands without visible knots. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [knotFreePineClearOil](natural-wood/knotFreePineClearOil.mtlx) — Pale yellow cream wood with straight growth bands without visible knots. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [knotFreePineClearMatte](natural-wood/knotFreePineClearMatte.mtlx) — Pale yellow cream wood with straight growth bands without visible knots. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [knotFreePineClearSatin](natural-wood/knotFreePineClearSatin.mtlx) — Pale yellow cream wood with straight growth bands without visible knots. Colorless satin clearcoat; moderate highlights over visible grain.
+- [knotFreePineClearGloss](natural-wood/knotFreePineClearGloss.mtlx) — Pale yellow cream wood with straight growth bands without visible knots. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [knotFreePineEndGrainMatte](natural-wood/knotFreePineEndGrainMatte.mtlx) — Pale yellow cream wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [douglasFirUnfinished](natural-wood/douglasFirUnfinished.mtlx) — Warm orange tan wood with pronounced straight growth bands. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [douglasFirClearOil](natural-wood/douglasFirClearOil.mtlx) — Warm orange tan wood with pronounced straight growth bands. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [douglasFirClearMatte](natural-wood/douglasFirClearMatte.mtlx) — Warm orange tan wood with pronounced straight growth bands. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [douglasFirClearSatin](natural-wood/douglasFirClearSatin.mtlx) — Warm orange tan wood with pronounced straight growth bands. Colorless satin clearcoat; moderate highlights over visible grain.
+- [douglasFirClearGloss](natural-wood/douglasFirClearGloss.mtlx) — Warm orange tan wood with pronounced straight growth bands. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [douglasFirEndGrainMatte](natural-wood/douglasFirEndGrainMatte.mtlx) — Warm orange tan wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [spruceUnfinished](natural-wood/spruceUnfinished.mtlx) — Pale creamy yellow wood with fine straight growth lines and low pore visibility. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [spruceClearOil](natural-wood/spruceClearOil.mtlx) — Pale creamy yellow wood with fine straight growth lines and low pore visibility. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [spruceClearMatte](natural-wood/spruceClearMatte.mtlx) — Pale creamy yellow wood with fine straight growth lines and low pore visibility. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [spruceClearSatin](natural-wood/spruceClearSatin.mtlx) — Pale creamy yellow wood with fine straight growth lines and low pore visibility. Colorless satin clearcoat; moderate highlights over visible grain.
+- [spruceClearGloss](natural-wood/spruceClearGloss.mtlx) — Pale creamy yellow wood with fine straight growth lines and low pore visibility. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [spruceEndGrainMatte](natural-wood/spruceEndGrainMatte.mtlx) — Pale creamy yellow wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [cedarUnfinished](natural-wood/cedarUnfinished.mtlx) — Warm reddish tan wood with fine straight grain and distinct tonal bands. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [cedarClearOil](natural-wood/cedarClearOil.mtlx) — Warm reddish tan wood with fine straight grain and distinct tonal bands. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [cedarClearMatte](natural-wood/cedarClearMatte.mtlx) — Warm reddish tan wood with fine straight grain and distinct tonal bands. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [cedarClearSatin](natural-wood/cedarClearSatin.mtlx) — Warm reddish tan wood with fine straight grain and distinct tonal bands. Colorless satin clearcoat; moderate highlights over visible grain.
+- [cedarClearGloss](natural-wood/cedarClearGloss.mtlx) — Warm reddish tan wood with fine straight grain and distinct tonal bands. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [cedarEndGrainMatte](natural-wood/cedarEndGrainMatte.mtlx) — Warm reddish tan wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [larchUnfinished](natural-wood/larchUnfinished.mtlx) — Warm golden tan wood with strong growth bands and fine texture. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [larchClearOil](natural-wood/larchClearOil.mtlx) — Warm golden tan wood with strong growth bands and fine texture. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [larchClearMatte](natural-wood/larchClearMatte.mtlx) — Warm golden tan wood with strong growth bands and fine texture. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [larchClearSatin](natural-wood/larchClearSatin.mtlx) — Warm golden tan wood with strong growth bands and fine texture. Colorless satin clearcoat; moderate highlights over visible grain.
+- [larchClearGloss](natural-wood/larchClearGloss.mtlx) — Warm golden tan wood with strong growth bands and fine texture. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [larchEndGrainMatte](natural-wood/larchEndGrainMatte.mtlx) — Warm golden tan wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [wengeUnfinished](natural-wood/wengeUnfinished.mtlx) — Very dark chocolate brown wood with coarse open pores and nearly black grain streaks. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [wengeClearOil](natural-wood/wengeClearOil.mtlx) — Very dark chocolate brown wood with coarse open pores and nearly black grain streaks. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [wengeClearMatte](natural-wood/wengeClearMatte.mtlx) — Very dark chocolate brown wood with coarse open pores and nearly black grain streaks. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [wengeClearSatin](natural-wood/wengeClearSatin.mtlx) — Very dark chocolate brown wood with coarse open pores and nearly black grain streaks. Colorless satin clearcoat; moderate highlights over visible grain.
+- [wengeClearGloss](natural-wood/wengeClearGloss.mtlx) — Very dark chocolate brown wood with coarse open pores and nearly black grain streaks. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [wengeEndGrainMatte](natural-wood/wengeEndGrainMatte.mtlx) — Very dark chocolate brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [ebonyUnfinished](natural-wood/ebonyUnfinished.mtlx) — Near-black brown wood with very fine pores and restrained dark streaks. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [ebonyClearOil](natural-wood/ebonyClearOil.mtlx) — Near-black brown wood with very fine pores and restrained dark streaks. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [ebonyClearMatte](natural-wood/ebonyClearMatte.mtlx) — Near-black brown wood with very fine pores and restrained dark streaks. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [ebonyClearSatin](natural-wood/ebonyClearSatin.mtlx) — Near-black brown wood with very fine pores and restrained dark streaks. Colorless satin clearcoat; moderate highlights over visible grain.
+- [ebonyClearGloss](natural-wood/ebonyClearGloss.mtlx) — Near-black brown wood with very fine pores and restrained dark streaks. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [ebonyEndGrainMatte](natural-wood/ebonyEndGrainMatte.mtlx) — Near-black brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [zebrawoodUnfinished](natural-wood/zebrawoodUnfinished.mtlx) — Golden beige with dark brown stripes wood with high-contrast striped grain and open pores. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [zebrawoodClearOil](natural-wood/zebrawoodClearOil.mtlx) — Golden beige with dark brown stripes wood with high-contrast striped grain and open pores. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [zebrawoodClearMatte](natural-wood/zebrawoodClearMatte.mtlx) — Golden beige with dark brown stripes wood with high-contrast striped grain and open pores. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [zebrawoodClearSatin](natural-wood/zebrawoodClearSatin.mtlx) — Golden beige with dark brown stripes wood with high-contrast striped grain and open pores. Colorless satin clearcoat; moderate highlights over visible grain.
+- [zebrawoodClearGloss](natural-wood/zebrawoodClearGloss.mtlx) — Golden beige with dark brown stripes wood with high-contrast striped grain and open pores. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [zebrawoodEndGrainMatte](natural-wood/zebrawoodEndGrainMatte.mtlx) — Golden beige with dark brown stripes wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [rosewoodUnfinished](natural-wood/rosewoodUnfinished.mtlx) — Deep reddish brown wood with dark flowing stripes and moderately open pores. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [rosewoodClearOil](natural-wood/rosewoodClearOil.mtlx) — Deep reddish brown wood with dark flowing stripes and moderately open pores. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [rosewoodClearMatte](natural-wood/rosewoodClearMatte.mtlx) — Deep reddish brown wood with dark flowing stripes and moderately open pores. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [rosewoodClearSatin](natural-wood/rosewoodClearSatin.mtlx) — Deep reddish brown wood with dark flowing stripes and moderately open pores. Colorless satin clearcoat; moderate highlights over visible grain.
+- [rosewoodClearGloss](natural-wood/rosewoodClearGloss.mtlx) — Deep reddish brown wood with dark flowing stripes and moderately open pores. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [rosewoodEndGrainMatte](natural-wood/rosewoodEndGrainMatte.mtlx) — Deep reddish brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [oliveWoodUnfinished](natural-wood/oliveWoodUnfinished.mtlx) — Golden cream wood with dramatic dark brown swirling grain. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [oliveWoodClearOil](natural-wood/oliveWoodClearOil.mtlx) — Golden cream wood with dramatic dark brown swirling grain. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [oliveWoodClearMatte](natural-wood/oliveWoodClearMatte.mtlx) — Golden cream wood with dramatic dark brown swirling grain. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [oliveWoodClearSatin](natural-wood/oliveWoodClearSatin.mtlx) — Golden cream wood with dramatic dark brown swirling grain. Colorless satin clearcoat; moderate highlights over visible grain.
+- [oliveWoodClearGloss](natural-wood/oliveWoodClearGloss.mtlx) — Golden cream wood with dramatic dark brown swirling grain. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [oliveWoodEndGrainMatte](natural-wood/oliveWoodEndGrainMatte.mtlx) — Golden cream wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [eucalyptusUnfinished](natural-wood/eucalyptusUnfinished.mtlx) — Pinkish golden brown wood with interlocked grain and moderate pore contrast. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [eucalyptusClearOil](natural-wood/eucalyptusClearOil.mtlx) — Pinkish golden brown wood with interlocked grain and moderate pore contrast. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [eucalyptusClearMatte](natural-wood/eucalyptusClearMatte.mtlx) — Pinkish golden brown wood with interlocked grain and moderate pore contrast. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [eucalyptusClearSatin](natural-wood/eucalyptusClearSatin.mtlx) — Pinkish golden brown wood with interlocked grain and moderate pore contrast. Colorless satin clearcoat; moderate highlights over visible grain.
+- [eucalyptusClearGloss](natural-wood/eucalyptusClearGloss.mtlx) — Pinkish golden brown wood with interlocked grain and moderate pore contrast. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [eucalyptusEndGrainMatte](natural-wood/eucalyptusEndGrainMatte.mtlx) — Pinkish golden brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [bambooNaturalUnfinished](natural-wood/bambooNaturalUnfinished.mtlx) — Pale straw yellow wood with fine linear fibers and natural tonal variation. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [bambooNaturalClearOil](natural-wood/bambooNaturalClearOil.mtlx) — Pale straw yellow wood with fine linear fibers and natural tonal variation. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [bambooNaturalClearMatte](natural-wood/bambooNaturalClearMatte.mtlx) — Pale straw yellow wood with fine linear fibers and natural tonal variation. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [bambooNaturalClearSatin](natural-wood/bambooNaturalClearSatin.mtlx) — Pale straw yellow wood with fine linear fibers and natural tonal variation. Colorless satin clearcoat; moderate highlights over visible grain.
+- [bambooNaturalClearGloss](natural-wood/bambooNaturalClearGloss.mtlx) — Pale straw yellow wood with fine linear fibers and natural tonal variation. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [bambooNaturalEndGrainMatte](natural-wood/bambooNaturalEndGrainMatte.mtlx) — Pale straw yellow wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+- [bambooCarbonizedUnfinished](natural-wood/bambooCarbonizedUnfinished.mtlx) — Warm caramel brown wood with fine linear fibers and an even darkened tone. Uncoated wood; matte, diffuse surface with exposed pore texture.
+- [bambooCarbonizedClearOil](natural-wood/bambooCarbonizedClearOil.mtlx) — Warm caramel brown wood with fine linear fibers and an even darkened tone. Transparent oil finish; low sheen, enhanced color depth, and visible pores.
+- [bambooCarbonizedClearMatte](natural-wood/bambooCarbonizedClearMatte.mtlx) — Warm caramel brown wood with fine linear fibers and an even darkened tone. Colorless matte clearcoat; soft broad highlights with grain and pores retained.
+- [bambooCarbonizedClearSatin](natural-wood/bambooCarbonizedClearSatin.mtlx) — Warm caramel brown wood with fine linear fibers and an even darkened tone. Colorless satin clearcoat; moderate highlights over visible grain.
+- [bambooCarbonizedClearGloss](natural-wood/bambooCarbonizedClearGloss.mtlx) — Warm caramel brown wood with fine linear fibers and an even darkened tone. Colorless gloss clearcoat; sharp dielectric highlights over a smooth sealed surface.
+- [bambooCarbonizedEndGrainMatte](natural-wood/bambooCarbonizedEndGrainMatte.mtlx) — Warm caramel brown wood end-grain appearance with growth-ring cross sections and exposed fiber ends; matte clear finish.
+
+## Wood grain cuts and decorative figuring
+
+- [whiteOakPlainSawnSatin](wood-grain-cuts-and-decorative-figuring/whiteOakPlainSawnSatin.mtlx) — Pale honey-beige wood with broad cathedral-like growth-ring figure; species texture: open pores, prominent rays, and strong earlywood/latewood contrast; clear satin finish.
+- [whiteOakQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/whiteOakQuarterSawnSatin.mtlx) — Pale honey-beige wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: open pores, prominent rays, and strong earlywood/latewood contrast; clear satin finish.
+- [whiteOakRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/whiteOakRiftSawnSatin.mtlx) — Pale honey-beige wood with predominantly narrow, straight grain with reduced ray figure; species texture: open pores, prominent rays, and strong earlywood/latewood contrast; clear satin finish.
+- [redOakPlainSawnSatin](wood-grain-cuts-and-decorative-figuring/redOakPlainSawnSatin.mtlx) — Pinkish tan wood with broad cathedral-like growth-ring figure; species texture: open pores and warm, coarse grain; clear satin finish.
+- [redOakQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/redOakQuarterSawnSatin.mtlx) — Pinkish tan wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: open pores and warm, coarse grain; clear satin finish.
+- [redOakRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/redOakRiftSawnSatin.mtlx) — Pinkish tan wood with predominantly narrow, straight grain with reduced ray figure; species texture: open pores and warm, coarse grain; clear satin finish.
+- [europeanOakPlainSawnSatin](wood-grain-cuts-and-decorative-figuring/europeanOakPlainSawnSatin.mtlx) — Warm golden tan wood with broad cathedral-like growth-ring figure; species texture: open pores, visible rays, and moderately varied grain; clear satin finish.
+- [europeanOakQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/europeanOakQuarterSawnSatin.mtlx) — Warm golden tan wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: open pores, visible rays, and moderately varied grain; clear satin finish.
+- [europeanOakRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/europeanOakRiftSawnSatin.mtlx) — Warm golden tan wood with predominantly narrow, straight grain with reduced ray figure; species texture: open pores, visible rays, and moderately varied grain; clear satin finish.
+- [americanWalnutPlainSawnSatin](wood-grain-cuts-and-decorative-figuring/americanWalnutPlainSawnSatin.mtlx) — Rich chocolate brown with muted purple undertones wood with broad cathedral-like growth-ring figure; species texture: semi-open pores and dark, flowing grain; clear satin finish.
+- [americanWalnutQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/americanWalnutQuarterSawnSatin.mtlx) — Rich chocolate brown with muted purple undertones wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: semi-open pores and dark, flowing grain; clear satin finish.
+- [americanWalnutRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/americanWalnutRiftSawnSatin.mtlx) — Rich chocolate brown with muted purple undertones wood with predominantly narrow, straight grain with reduced ray figure; species texture: semi-open pores and dark, flowing grain; clear satin finish.
+- [europeanWalnutPlainSawnSatin](wood-grain-cuts-and-decorative-figuring/europeanWalnutPlainSawnSatin.mtlx) — Gray-brown with dark brown streaks wood with broad cathedral-like growth-ring figure; species texture: fine-to-medium pores and irregular tonal figuring; clear satin finish.
+- [europeanWalnutQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/europeanWalnutQuarterSawnSatin.mtlx) — Gray-brown with dark brown streaks wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: fine-to-medium pores and irregular tonal figuring; clear satin finish.
+- [europeanWalnutRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/europeanWalnutRiftSawnSatin.mtlx) — Gray-brown with dark brown streaks wood with predominantly narrow, straight grain with reduced ray figure; species texture: fine-to-medium pores and irregular tonal figuring; clear satin finish.
+- [blackCherryPlainSawnSatin](wood-grain-cuts-and-decorative-figuring/blackCherryPlainSawnSatin.mtlx) — Warm reddish amber wood with broad cathedral-like growth-ring figure; species texture: fine pores and subtle flowing grain; clear satin finish.
+- [blackCherryQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/blackCherryQuarterSawnSatin.mtlx) — Warm reddish amber wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: fine pores and subtle flowing grain; clear satin finish.
+- [blackCherryRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/blackCherryRiftSawnSatin.mtlx) — Warm reddish amber wood with predominantly narrow, straight grain with reduced ray figure; species texture: fine pores and subtle flowing grain; clear satin finish.
+- [hardMaplePlainSawnSatin](wood-grain-cuts-and-decorative-figuring/hardMaplePlainSawnSatin.mtlx) — Pale creamy beige wood with broad cathedral-like growth-ring figure; species texture: tight pores and restrained grain; clear satin finish.
+- [hardMapleQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/hardMapleQuarterSawnSatin.mtlx) — Pale creamy beige wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: tight pores and restrained grain; clear satin finish.
+- [hardMapleRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/hardMapleRiftSawnSatin.mtlx) — Pale creamy beige wood with predominantly narrow, straight grain with reduced ray figure; species texture: tight pores and restrained grain; clear satin finish.
+- [birdsEyeMaplePlainSawnSatin](wood-grain-cuts-and-decorative-figuring/birdsEyeMaplePlainSawnSatin.mtlx) — Pale golden cream wood with broad cathedral-like growth-ring figure; species texture: small eye-like grain figuring and tight pores; clear satin finish.
+- [birdsEyeMapleQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/birdsEyeMapleQuarterSawnSatin.mtlx) — Pale golden cream wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: small eye-like grain figuring and tight pores; clear satin finish.
+- [birdsEyeMapleRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/birdsEyeMapleRiftSawnSatin.mtlx) — Pale golden cream wood with predominantly narrow, straight grain with reduced ray figure; species texture: small eye-like grain figuring and tight pores; clear satin finish.
+- [curlyMaplePlainSawnSatin](wood-grain-cuts-and-decorative-figuring/curlyMaplePlainSawnSatin.mtlx) — Pale amber cream wood with broad cathedral-like growth-ring figure; species texture: alternating curly figure with directional reflectance; clear satin finish.
+- [curlyMapleQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/curlyMapleQuarterSawnSatin.mtlx) — Pale amber cream wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: alternating curly figure with directional reflectance; clear satin finish.
+- [curlyMapleRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/curlyMapleRiftSawnSatin.mtlx) — Pale amber cream wood with predominantly narrow, straight grain with reduced ray figure; species texture: alternating curly figure with directional reflectance; clear satin finish.
+- [beechPlainSawnSatin](wood-grain-cuts-and-decorative-figuring/beechPlainSawnSatin.mtlx) — Pale pinkish beige wood with broad cathedral-like growth-ring figure; species texture: fine pores and short, subtle flecks; clear satin finish.
+- [beechQuarterSawnSatin](wood-grain-cuts-and-decorative-figuring/beechQuarterSawnSatin.mtlx) — Pale pinkish beige wood with predominantly straight grain with pronounced ray flecks where characteristic of the species; species texture: fine pores and short, subtle flecks; clear satin finish.
+- [beechRiftSawnSatin](wood-grain-cuts-and-decorative-figuring/beechRiftSawnSatin.mtlx) — Pale pinkish beige wood with predominantly narrow, straight grain with reduced ray figure; species texture: fine pores and short, subtle flecks; clear satin finish.
+- [walnutBurlSatin](wood-grain-cuts-and-decorative-figuring/walnutBurlSatin.mtlx) — Brown walnut burl with dense swirling eyes, irregular figuring, fine pores, and clear satin finish.
+- [walnutBurlGloss](wood-grain-cuts-and-decorative-figuring/walnutBurlGloss.mtlx) — Brown walnut burl with dense swirling eyes, irregular figuring, and smooth glossy clearcoat.
+- [mapleBurlSatin](wood-grain-cuts-and-decorative-figuring/mapleBurlSatin.mtlx) — Pale golden maple burl with clustered eye figure, fine pores, and clear satin finish.
+- [mapleBurlGloss](wood-grain-cuts-and-decorative-figuring/mapleBurlGloss.mtlx) — Pale golden maple burl with clustered eye figure and smooth glossy clearcoat.
+- [ashOliveFigureSatin](wood-grain-cuts-and-decorative-figuring/ashOliveFigureSatin.mtlx) — Cream and brown figured ash with flowing dark streaks, open pores, and satin clearcoat.
+- [sapelePommeleGloss](wood-grain-cuts-and-decorative-figuring/sapelePommeleGloss.mtlx) — Red-brown sapele with mottled blister-like figure, directional shimmer, and glossy clearcoat.
+- [lacewoodSatin](wood-grain-cuts-and-decorative-figuring/lacewoodSatin.mtlx) — Warm reddish tan wood with conspicuous pale ray-fleck pattern and clear satin finish.
+- [smokedOakMatte](wood-grain-cuts-and-decorative-figuring/smokedOakMatte.mtlx) — Freshly fumed oak in deep gray-brown with visible rays, open pores, and matte clearcoat.
+- [bleachedOakMatte](wood-grain-cuts-and-decorative-figuring/bleachedOakMatte.mtlx) — Freshly bleached pale ivory oak with visible grain and open pores beneath a matte clearcoat.
+- [bleachedAshMatte](wood-grain-cuts-and-decorative-figuring/bleachedAshMatte.mtlx) — Freshly bleached near-white ash with visible growth bands and matte clearcoat.
+
+## Stained and tinted wood
+
+- [whiteOakWhitewashMatte](stained-and-tinted-wood/whiteOakWhitewashMatte.mtlx) — Translucent chalk white stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; matte clear finish; underlying grain remains visible.
+- [whiteOakWhitewashSatin](stained-and-tinted-wood/whiteOakWhitewashSatin.mtlx) — Translucent chalk white stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; satin clear finish; underlying grain remains visible.
+- [whiteOakGrayWashMatte](stained-and-tinted-wood/whiteOakGrayWashMatte.mtlx) — Translucent cool gray stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; matte clear finish; underlying grain remains visible.
+- [whiteOakGrayWashSatin](stained-and-tinted-wood/whiteOakGrayWashSatin.mtlx) — Translucent cool gray stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; satin clear finish; underlying grain remains visible.
+- [whiteOakHoneyMatte](stained-and-tinted-wood/whiteOakHoneyMatte.mtlx) — Transparent golden honey stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; matte clear finish; underlying grain remains visible.
+- [whiteOakHoneySatin](stained-and-tinted-wood/whiteOakHoneySatin.mtlx) — Transparent golden honey stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; satin clear finish; underlying grain remains visible.
+- [whiteOakAmberMatte](stained-and-tinted-wood/whiteOakAmberMatte.mtlx) — Transparent warm amber stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; matte clear finish; underlying grain remains visible.
+- [whiteOakAmberSatin](stained-and-tinted-wood/whiteOakAmberSatin.mtlx) — Transparent warm amber stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; satin clear finish; underlying grain remains visible.
+- [whiteOakCherryMatte](stained-and-tinted-wood/whiteOakCherryMatte.mtlx) — Transparent warm red-brown stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; matte clear finish; underlying grain remains visible.
+- [whiteOakCherrySatin](stained-and-tinted-wood/whiteOakCherrySatin.mtlx) — Transparent warm red-brown stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; satin clear finish; underlying grain remains visible.
+- [whiteOakWalnutMatte](stained-and-tinted-wood/whiteOakWalnutMatte.mtlx) — Transparent medium chocolate brown stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; matte clear finish; underlying grain remains visible.
+- [whiteOakWalnutSatin](stained-and-tinted-wood/whiteOakWalnutSatin.mtlx) — Transparent medium chocolate brown stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; satin clear finish; underlying grain remains visible.
+- [whiteOakEspressoMatte](stained-and-tinted-wood/whiteOakEspressoMatte.mtlx) — Transparent deep brown stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; matte clear finish; underlying grain remains visible.
+- [whiteOakEspressoSatin](stained-and-tinted-wood/whiteOakEspressoSatin.mtlx) — Transparent deep brown stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; satin clear finish; underlying grain remains visible.
+- [whiteOakBlackMatte](stained-and-tinted-wood/whiteOakBlackMatte.mtlx) — Translucent neutral black stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; matte clear finish; underlying grain remains visible.
+- [whiteOakBlackSatin](stained-and-tinted-wood/whiteOakBlackSatin.mtlx) — Translucent neutral black stain over wood with open pores, prominent rays, and strong earlywood/latewood contrast; satin clear finish; underlying grain remains visible.
+- [redOakWhitewashMatte](stained-and-tinted-wood/redOakWhitewashMatte.mtlx) — Translucent chalk white stain over wood with open pores and warm, coarse grain; matte clear finish; underlying grain remains visible.
+- [redOakWhitewashSatin](stained-and-tinted-wood/redOakWhitewashSatin.mtlx) — Translucent chalk white stain over wood with open pores and warm, coarse grain; satin clear finish; underlying grain remains visible.
+- [redOakGrayWashMatte](stained-and-tinted-wood/redOakGrayWashMatte.mtlx) — Translucent cool gray stain over wood with open pores and warm, coarse grain; matte clear finish; underlying grain remains visible.
+- [redOakGrayWashSatin](stained-and-tinted-wood/redOakGrayWashSatin.mtlx) — Translucent cool gray stain over wood with open pores and warm, coarse grain; satin clear finish; underlying grain remains visible.
+- [redOakHoneyMatte](stained-and-tinted-wood/redOakHoneyMatte.mtlx) — Transparent golden honey stain over wood with open pores and warm, coarse grain; matte clear finish; underlying grain remains visible.
+- [redOakHoneySatin](stained-and-tinted-wood/redOakHoneySatin.mtlx) — Transparent golden honey stain over wood with open pores and warm, coarse grain; satin clear finish; underlying grain remains visible.
+- [redOakAmberMatte](stained-and-tinted-wood/redOakAmberMatte.mtlx) — Transparent warm amber stain over wood with open pores and warm, coarse grain; matte clear finish; underlying grain remains visible.
+- [redOakAmberSatin](stained-and-tinted-wood/redOakAmberSatin.mtlx) — Transparent warm amber stain over wood with open pores and warm, coarse grain; satin clear finish; underlying grain remains visible.
+- [redOakCherryMatte](stained-and-tinted-wood/redOakCherryMatte.mtlx) — Transparent warm red-brown stain over wood with open pores and warm, coarse grain; matte clear finish; underlying grain remains visible.
+- [redOakCherrySatin](stained-and-tinted-wood/redOakCherrySatin.mtlx) — Transparent warm red-brown stain over wood with open pores and warm, coarse grain; satin clear finish; underlying grain remains visible.
+- [redOakWalnutMatte](stained-and-tinted-wood/redOakWalnutMatte.mtlx) — Transparent medium chocolate brown stain over wood with open pores and warm, coarse grain; matte clear finish; underlying grain remains visible.
+- [redOakWalnutSatin](stained-and-tinted-wood/redOakWalnutSatin.mtlx) — Transparent medium chocolate brown stain over wood with open pores and warm, coarse grain; satin clear finish; underlying grain remains visible.
+- [redOakEspressoMatte](stained-and-tinted-wood/redOakEspressoMatte.mtlx) — Transparent deep brown stain over wood with open pores and warm, coarse grain; matte clear finish; underlying grain remains visible.
+- [redOakEspressoSatin](stained-and-tinted-wood/redOakEspressoSatin.mtlx) — Transparent deep brown stain over wood with open pores and warm, coarse grain; satin clear finish; underlying grain remains visible.
+- [redOakBlackMatte](stained-and-tinted-wood/redOakBlackMatte.mtlx) — Translucent neutral black stain over wood with open pores and warm, coarse grain; matte clear finish; underlying grain remains visible.
+- [redOakBlackSatin](stained-and-tinted-wood/redOakBlackSatin.mtlx) — Translucent neutral black stain over wood with open pores and warm, coarse grain; satin clear finish; underlying grain remains visible.
+- [americanWalnutWhitewashMatte](stained-and-tinted-wood/americanWalnutWhitewashMatte.mtlx) — Translucent chalk white stain over wood with semi-open pores and dark, flowing grain; matte clear finish; underlying grain remains visible.
+- [americanWalnutWhitewashSatin](stained-and-tinted-wood/americanWalnutWhitewashSatin.mtlx) — Translucent chalk white stain over wood with semi-open pores and dark, flowing grain; satin clear finish; underlying grain remains visible.
+- [americanWalnutGrayWashMatte](stained-and-tinted-wood/americanWalnutGrayWashMatte.mtlx) — Translucent cool gray stain over wood with semi-open pores and dark, flowing grain; matte clear finish; underlying grain remains visible.
+- [americanWalnutGrayWashSatin](stained-and-tinted-wood/americanWalnutGrayWashSatin.mtlx) — Translucent cool gray stain over wood with semi-open pores and dark, flowing grain; satin clear finish; underlying grain remains visible.
+- [americanWalnutHoneyMatte](stained-and-tinted-wood/americanWalnutHoneyMatte.mtlx) — Transparent golden honey stain over wood with semi-open pores and dark, flowing grain; matte clear finish; underlying grain remains visible.
+- [americanWalnutHoneySatin](stained-and-tinted-wood/americanWalnutHoneySatin.mtlx) — Transparent golden honey stain over wood with semi-open pores and dark, flowing grain; satin clear finish; underlying grain remains visible.
+- [americanWalnutAmberMatte](stained-and-tinted-wood/americanWalnutAmberMatte.mtlx) — Transparent warm amber stain over wood with semi-open pores and dark, flowing grain; matte clear finish; underlying grain remains visible.
+- [americanWalnutAmberSatin](stained-and-tinted-wood/americanWalnutAmberSatin.mtlx) — Transparent warm amber stain over wood with semi-open pores and dark, flowing grain; satin clear finish; underlying grain remains visible.
+- [americanWalnutCherryMatte](stained-and-tinted-wood/americanWalnutCherryMatte.mtlx) — Transparent warm red-brown stain over wood with semi-open pores and dark, flowing grain; matte clear finish; underlying grain remains visible.
+- [americanWalnutCherrySatin](stained-and-tinted-wood/americanWalnutCherrySatin.mtlx) — Transparent warm red-brown stain over wood with semi-open pores and dark, flowing grain; satin clear finish; underlying grain remains visible.
+- [americanWalnutWalnutMatte](stained-and-tinted-wood/americanWalnutWalnutMatte.mtlx) — Transparent medium chocolate brown stain over wood with semi-open pores and dark, flowing grain; matte clear finish; underlying grain remains visible.
+- [americanWalnutWalnutSatin](stained-and-tinted-wood/americanWalnutWalnutSatin.mtlx) — Transparent medium chocolate brown stain over wood with semi-open pores and dark, flowing grain; satin clear finish; underlying grain remains visible.
+- [americanWalnutEspressoMatte](stained-and-tinted-wood/americanWalnutEspressoMatte.mtlx) — Transparent deep brown stain over wood with semi-open pores and dark, flowing grain; matte clear finish; underlying grain remains visible.
+- [americanWalnutEspressoSatin](stained-and-tinted-wood/americanWalnutEspressoSatin.mtlx) — Transparent deep brown stain over wood with semi-open pores and dark, flowing grain; satin clear finish; underlying grain remains visible.
+- [americanWalnutBlackMatte](stained-and-tinted-wood/americanWalnutBlackMatte.mtlx) — Translucent neutral black stain over wood with semi-open pores and dark, flowing grain; matte clear finish; underlying grain remains visible.
+- [americanWalnutBlackSatin](stained-and-tinted-wood/americanWalnutBlackSatin.mtlx) — Translucent neutral black stain over wood with semi-open pores and dark, flowing grain; satin clear finish; underlying grain remains visible.
+- [hardMapleWhitewashMatte](stained-and-tinted-wood/hardMapleWhitewashMatte.mtlx) — Translucent chalk white stain over wood with tight pores and restrained grain; matte clear finish; underlying grain remains visible.
+- [hardMapleWhitewashSatin](stained-and-tinted-wood/hardMapleWhitewashSatin.mtlx) — Translucent chalk white stain over wood with tight pores and restrained grain; satin clear finish; underlying grain remains visible.
+- [hardMapleGrayWashMatte](stained-and-tinted-wood/hardMapleGrayWashMatte.mtlx) — Translucent cool gray stain over wood with tight pores and restrained grain; matte clear finish; underlying grain remains visible.
+- [hardMapleGrayWashSatin](stained-and-tinted-wood/hardMapleGrayWashSatin.mtlx) — Translucent cool gray stain over wood with tight pores and restrained grain; satin clear finish; underlying grain remains visible.
+- [hardMapleHoneyMatte](stained-and-tinted-wood/hardMapleHoneyMatte.mtlx) — Transparent golden honey stain over wood with tight pores and restrained grain; matte clear finish; underlying grain remains visible.
+- [hardMapleHoneySatin](stained-and-tinted-wood/hardMapleHoneySatin.mtlx) — Transparent golden honey stain over wood with tight pores and restrained grain; satin clear finish; underlying grain remains visible.
+- [hardMapleAmberMatte](stained-and-tinted-wood/hardMapleAmberMatte.mtlx) — Transparent warm amber stain over wood with tight pores and restrained grain; matte clear finish; underlying grain remains visible.
+- [hardMapleAmberSatin](stained-and-tinted-wood/hardMapleAmberSatin.mtlx) — Transparent warm amber stain over wood with tight pores and restrained grain; satin clear finish; underlying grain remains visible.
+- [hardMapleCherryMatte](stained-and-tinted-wood/hardMapleCherryMatte.mtlx) — Transparent warm red-brown stain over wood with tight pores and restrained grain; matte clear finish; underlying grain remains visible.
+- [hardMapleCherrySatin](stained-and-tinted-wood/hardMapleCherrySatin.mtlx) — Transparent warm red-brown stain over wood with tight pores and restrained grain; satin clear finish; underlying grain remains visible.
+- [hardMapleWalnutMatte](stained-and-tinted-wood/hardMapleWalnutMatte.mtlx) — Transparent medium chocolate brown stain over wood with tight pores and restrained grain; matte clear finish; underlying grain remains visible.
+- [hardMapleWalnutSatin](stained-and-tinted-wood/hardMapleWalnutSatin.mtlx) — Transparent medium chocolate brown stain over wood with tight pores and restrained grain; satin clear finish; underlying grain remains visible.
+- [hardMapleEspressoMatte](stained-and-tinted-wood/hardMapleEspressoMatte.mtlx) — Transparent deep brown stain over wood with tight pores and restrained grain; matte clear finish; underlying grain remains visible.
+- [hardMapleEspressoSatin](stained-and-tinted-wood/hardMapleEspressoSatin.mtlx) — Transparent deep brown stain over wood with tight pores and restrained grain; satin clear finish; underlying grain remains visible.
+- [hardMapleBlackMatte](stained-and-tinted-wood/hardMapleBlackMatte.mtlx) — Translucent neutral black stain over wood with tight pores and restrained grain; matte clear finish; underlying grain remains visible.
+- [hardMapleBlackSatin](stained-and-tinted-wood/hardMapleBlackSatin.mtlx) — Translucent neutral black stain over wood with tight pores and restrained grain; satin clear finish; underlying grain remains visible.
+- [ashWhitewashMatte](stained-and-tinted-wood/ashWhitewashMatte.mtlx) — Translucent chalk white stain over wood with open pores and strong grain contrast; matte clear finish; underlying grain remains visible.
+- [ashWhitewashSatin](stained-and-tinted-wood/ashWhitewashSatin.mtlx) — Translucent chalk white stain over wood with open pores and strong grain contrast; satin clear finish; underlying grain remains visible.
+- [ashGrayWashMatte](stained-and-tinted-wood/ashGrayWashMatte.mtlx) — Translucent cool gray stain over wood with open pores and strong grain contrast; matte clear finish; underlying grain remains visible.
+- [ashGrayWashSatin](stained-and-tinted-wood/ashGrayWashSatin.mtlx) — Translucent cool gray stain over wood with open pores and strong grain contrast; satin clear finish; underlying grain remains visible.
+- [ashHoneyMatte](stained-and-tinted-wood/ashHoneyMatte.mtlx) — Transparent golden honey stain over wood with open pores and strong grain contrast; matte clear finish; underlying grain remains visible.
+- [ashHoneySatin](stained-and-tinted-wood/ashHoneySatin.mtlx) — Transparent golden honey stain over wood with open pores and strong grain contrast; satin clear finish; underlying grain remains visible.
+- [ashAmberMatte](stained-and-tinted-wood/ashAmberMatte.mtlx) — Transparent warm amber stain over wood with open pores and strong grain contrast; matte clear finish; underlying grain remains visible.
+- [ashAmberSatin](stained-and-tinted-wood/ashAmberSatin.mtlx) — Transparent warm amber stain over wood with open pores and strong grain contrast; satin clear finish; underlying grain remains visible.
+- [ashCherryMatte](stained-and-tinted-wood/ashCherryMatte.mtlx) — Transparent warm red-brown stain over wood with open pores and strong grain contrast; matte clear finish; underlying grain remains visible.
+- [ashCherrySatin](stained-and-tinted-wood/ashCherrySatin.mtlx) — Transparent warm red-brown stain over wood with open pores and strong grain contrast; satin clear finish; underlying grain remains visible.
+- [ashWalnutMatte](stained-and-tinted-wood/ashWalnutMatte.mtlx) — Transparent medium chocolate brown stain over wood with open pores and strong grain contrast; matte clear finish; underlying grain remains visible.
+- [ashWalnutSatin](stained-and-tinted-wood/ashWalnutSatin.mtlx) — Transparent medium chocolate brown stain over wood with open pores and strong grain contrast; satin clear finish; underlying grain remains visible.
+- [ashEspressoMatte](stained-and-tinted-wood/ashEspressoMatte.mtlx) — Transparent deep brown stain over wood with open pores and strong grain contrast; matte clear finish; underlying grain remains visible.
+- [ashEspressoSatin](stained-and-tinted-wood/ashEspressoSatin.mtlx) — Transparent deep brown stain over wood with open pores and strong grain contrast; satin clear finish; underlying grain remains visible.
+- [ashBlackMatte](stained-and-tinted-wood/ashBlackMatte.mtlx) — Translucent neutral black stain over wood with open pores and strong grain contrast; matte clear finish; underlying grain remains visible.
+- [ashBlackSatin](stained-and-tinted-wood/ashBlackSatin.mtlx) — Translucent neutral black stain over wood with open pores and strong grain contrast; satin clear finish; underlying grain remains visible.
+- [pineWhitewashMatte](stained-and-tinted-wood/pineWhitewashMatte.mtlx) — Translucent chalk white stain over wood with contrasting growth bands and clean sound knots; matte clear finish; underlying grain remains visible.
+- [pineWhitewashSatin](stained-and-tinted-wood/pineWhitewashSatin.mtlx) — Translucent chalk white stain over wood with contrasting growth bands and clean sound knots; satin clear finish; underlying grain remains visible.
+- [pineGrayWashMatte](stained-and-tinted-wood/pineGrayWashMatte.mtlx) — Translucent cool gray stain over wood with contrasting growth bands and clean sound knots; matte clear finish; underlying grain remains visible.
+- [pineGrayWashSatin](stained-and-tinted-wood/pineGrayWashSatin.mtlx) — Translucent cool gray stain over wood with contrasting growth bands and clean sound knots; satin clear finish; underlying grain remains visible.
+- [pineHoneyMatte](stained-and-tinted-wood/pineHoneyMatte.mtlx) — Transparent golden honey stain over wood with contrasting growth bands and clean sound knots; matte clear finish; underlying grain remains visible.
+- [pineHoneySatin](stained-and-tinted-wood/pineHoneySatin.mtlx) — Transparent golden honey stain over wood with contrasting growth bands and clean sound knots; satin clear finish; underlying grain remains visible.
+- [pineAmberMatte](stained-and-tinted-wood/pineAmberMatte.mtlx) — Transparent warm amber stain over wood with contrasting growth bands and clean sound knots; matte clear finish; underlying grain remains visible.
+- [pineAmberSatin](stained-and-tinted-wood/pineAmberSatin.mtlx) — Transparent warm amber stain over wood with contrasting growth bands and clean sound knots; satin clear finish; underlying grain remains visible.
+- [pineCherryMatte](stained-and-tinted-wood/pineCherryMatte.mtlx) — Transparent warm red-brown stain over wood with contrasting growth bands and clean sound knots; matte clear finish; underlying grain remains visible.
+- [pineCherrySatin](stained-and-tinted-wood/pineCherrySatin.mtlx) — Transparent warm red-brown stain over wood with contrasting growth bands and clean sound knots; satin clear finish; underlying grain remains visible.
+- [pineWalnutMatte](stained-and-tinted-wood/pineWalnutMatte.mtlx) — Transparent medium chocolate brown stain over wood with contrasting growth bands and clean sound knots; matte clear finish; underlying grain remains visible.
+- [pineWalnutSatin](stained-and-tinted-wood/pineWalnutSatin.mtlx) — Transparent medium chocolate brown stain over wood with contrasting growth bands and clean sound knots; satin clear finish; underlying grain remains visible.
+- [pineEspressoMatte](stained-and-tinted-wood/pineEspressoMatte.mtlx) — Transparent deep brown stain over wood with contrasting growth bands and clean sound knots; matte clear finish; underlying grain remains visible.
+- [pineEspressoSatin](stained-and-tinted-wood/pineEspressoSatin.mtlx) — Transparent deep brown stain over wood with contrasting growth bands and clean sound knots; satin clear finish; underlying grain remains visible.
+- [pineBlackMatte](stained-and-tinted-wood/pineBlackMatte.mtlx) — Translucent neutral black stain over wood with contrasting growth bands and clean sound knots; matte clear finish; underlying grain remains visible.
+- [pineBlackSatin](stained-and-tinted-wood/pineBlackSatin.mtlx) — Translucent neutral black stain over wood with contrasting growth bands and clean sound knots; satin clear finish; underlying grain remains visible.
+- [hickoryWhitewashMatte](stained-and-tinted-wood/hickoryWhitewashMatte.mtlx) — Translucent chalk white stain over wood with strong natural color contrast and coarse grain; matte clear finish; underlying grain remains visible.
+- [hickoryWhitewashSatin](stained-and-tinted-wood/hickoryWhitewashSatin.mtlx) — Translucent chalk white stain over wood with strong natural color contrast and coarse grain; satin clear finish; underlying grain remains visible.
+- [hickoryGrayWashMatte](stained-and-tinted-wood/hickoryGrayWashMatte.mtlx) — Translucent cool gray stain over wood with strong natural color contrast and coarse grain; matte clear finish; underlying grain remains visible.
+- [hickoryGrayWashSatin](stained-and-tinted-wood/hickoryGrayWashSatin.mtlx) — Translucent cool gray stain over wood with strong natural color contrast and coarse grain; satin clear finish; underlying grain remains visible.
+- [hickoryHoneyMatte](stained-and-tinted-wood/hickoryHoneyMatte.mtlx) — Transparent golden honey stain over wood with strong natural color contrast and coarse grain; matte clear finish; underlying grain remains visible.
+- [hickoryHoneySatin](stained-and-tinted-wood/hickoryHoneySatin.mtlx) — Transparent golden honey stain over wood with strong natural color contrast and coarse grain; satin clear finish; underlying grain remains visible.
+- [hickoryAmberMatte](stained-and-tinted-wood/hickoryAmberMatte.mtlx) — Transparent warm amber stain over wood with strong natural color contrast and coarse grain; matte clear finish; underlying grain remains visible.
+- [hickoryAmberSatin](stained-and-tinted-wood/hickoryAmberSatin.mtlx) — Transparent warm amber stain over wood with strong natural color contrast and coarse grain; satin clear finish; underlying grain remains visible.
+- [hickoryCherryMatte](stained-and-tinted-wood/hickoryCherryMatte.mtlx) — Transparent warm red-brown stain over wood with strong natural color contrast and coarse grain; matte clear finish; underlying grain remains visible.
+- [hickoryCherrySatin](stained-and-tinted-wood/hickoryCherrySatin.mtlx) — Transparent warm red-brown stain over wood with strong natural color contrast and coarse grain; satin clear finish; underlying grain remains visible.
+- [hickoryWalnutMatte](stained-and-tinted-wood/hickoryWalnutMatte.mtlx) — Transparent medium chocolate brown stain over wood with strong natural color contrast and coarse grain; matte clear finish; underlying grain remains visible.
+- [hickoryWalnutSatin](stained-and-tinted-wood/hickoryWalnutSatin.mtlx) — Transparent medium chocolate brown stain over wood with strong natural color contrast and coarse grain; satin clear finish; underlying grain remains visible.
+- [hickoryEspressoMatte](stained-and-tinted-wood/hickoryEspressoMatte.mtlx) — Transparent deep brown stain over wood with strong natural color contrast and coarse grain; matte clear finish; underlying grain remains visible.
+- [hickoryEspressoSatin](stained-and-tinted-wood/hickoryEspressoSatin.mtlx) — Transparent deep brown stain over wood with strong natural color contrast and coarse grain; satin clear finish; underlying grain remains visible.
+- [hickoryBlackMatte](stained-and-tinted-wood/hickoryBlackMatte.mtlx) — Translucent neutral black stain over wood with strong natural color contrast and coarse grain; matte clear finish; underlying grain remains visible.
+- [hickoryBlackSatin](stained-and-tinted-wood/hickoryBlackSatin.mtlx) — Translucent neutral black stain over wood with strong natural color contrast and coarse grain; satin clear finish; underlying grain remains visible.
+- [rubberwoodWhitewashMatte](stained-and-tinted-wood/rubberwoodWhitewashMatte.mtlx) — Translucent chalk white stain over wood with soft grain contrast and fine-to-medium pores; matte clear finish; underlying grain remains visible.
+- [rubberwoodWhitewashSatin](stained-and-tinted-wood/rubberwoodWhitewashSatin.mtlx) — Translucent chalk white stain over wood with soft grain contrast and fine-to-medium pores; satin clear finish; underlying grain remains visible.
+- [rubberwoodGrayWashMatte](stained-and-tinted-wood/rubberwoodGrayWashMatte.mtlx) — Translucent cool gray stain over wood with soft grain contrast and fine-to-medium pores; matte clear finish; underlying grain remains visible.
+- [rubberwoodGrayWashSatin](stained-and-tinted-wood/rubberwoodGrayWashSatin.mtlx) — Translucent cool gray stain over wood with soft grain contrast and fine-to-medium pores; satin clear finish; underlying grain remains visible.
+- [rubberwoodHoneyMatte](stained-and-tinted-wood/rubberwoodHoneyMatte.mtlx) — Transparent golden honey stain over wood with soft grain contrast and fine-to-medium pores; matte clear finish; underlying grain remains visible.
+- [rubberwoodHoneySatin](stained-and-tinted-wood/rubberwoodHoneySatin.mtlx) — Transparent golden honey stain over wood with soft grain contrast and fine-to-medium pores; satin clear finish; underlying grain remains visible.
+- [rubberwoodAmberMatte](stained-and-tinted-wood/rubberwoodAmberMatte.mtlx) — Transparent warm amber stain over wood with soft grain contrast and fine-to-medium pores; matte clear finish; underlying grain remains visible.
+- [rubberwoodAmberSatin](stained-and-tinted-wood/rubberwoodAmberSatin.mtlx) — Transparent warm amber stain over wood with soft grain contrast and fine-to-medium pores; satin clear finish; underlying grain remains visible.
+- [rubberwoodCherryMatte](stained-and-tinted-wood/rubberwoodCherryMatte.mtlx) — Transparent warm red-brown stain over wood with soft grain contrast and fine-to-medium pores; matte clear finish; underlying grain remains visible.
+- [rubberwoodCherrySatin](stained-and-tinted-wood/rubberwoodCherrySatin.mtlx) — Transparent warm red-brown stain over wood with soft grain contrast and fine-to-medium pores; satin clear finish; underlying grain remains visible.
+- [rubberwoodWalnutMatte](stained-and-tinted-wood/rubberwoodWalnutMatte.mtlx) — Transparent medium chocolate brown stain over wood with soft grain contrast and fine-to-medium pores; matte clear finish; underlying grain remains visible.
+- [rubberwoodWalnutSatin](stained-and-tinted-wood/rubberwoodWalnutSatin.mtlx) — Transparent medium chocolate brown stain over wood with soft grain contrast and fine-to-medium pores; satin clear finish; underlying grain remains visible.
+- [rubberwoodEspressoMatte](stained-and-tinted-wood/rubberwoodEspressoMatte.mtlx) — Transparent deep brown stain over wood with soft grain contrast and fine-to-medium pores; matte clear finish; underlying grain remains visible.
+- [rubberwoodEspressoSatin](stained-and-tinted-wood/rubberwoodEspressoSatin.mtlx) — Transparent deep brown stain over wood with soft grain contrast and fine-to-medium pores; satin clear finish; underlying grain remains visible.
+- [rubberwoodBlackMatte](stained-and-tinted-wood/rubberwoodBlackMatte.mtlx) — Translucent neutral black stain over wood with soft grain contrast and fine-to-medium pores; matte clear finish; underlying grain remains visible.
+- [rubberwoodBlackSatin](stained-and-tinted-wood/rubberwoodBlackSatin.mtlx) — Translucent neutral black stain over wood with soft grain contrast and fine-to-medium pores; satin clear finish; underlying grain remains visible.
+
+## Engineered wood, fiberboard, paper, and cork
+
+- [birchPlywoodFaceMatte](engineered-wood-fiberboard-paper-and-cork/birchPlywoodFaceMatte.mtlx) — Pale cream birch veneer surface with fine grain and a matte clear finish.
+- [birchPlywoodEdgeMatte](engineered-wood-fiberboard-paper-and-cork/birchPlywoodEdgeMatte.mtlx) — Pale cream and tan alternating veneer-layer cross-section texture; matte sealed finish.
+- [poplarPlywoodFaceRaw](engineered-wood-fiberboard-paper-and-cork/poplarPlywoodFaceRaw.mtlx) — Pale cream poplar veneer surface with faint green-gray variation; uncoated and matte.
+- [softwoodPlywoodFaceRaw](engineered-wood-fiberboard-paper-and-cork/softwoodPlywoodFaceRaw.mtlx) — Light yellow softwood veneer surface with broad grain and clean sound knots; uncoated and matte.
+- [softwoodPlywoodEdgeRaw](engineered-wood-fiberboard-paper-and-cork/softwoodPlywoodEdgeRaw.mtlx) — Pale tan alternating softwood veneer-layer cross-section texture; uncoated and matte.
+- [mediumDensityFiberboardRaw](engineered-wood-fiberboard-paper-and-cork/mediumDensityFiberboardRaw.mtlx) — Uniform tan medium-density fiberboard; fine random fibers and a matte porous appearance.
+- [mediumDensityFiberboardEdgeRaw](engineered-wood-fiberboard-paper-and-cork/mediumDensityFiberboardEdgeRaw.mtlx) — Tan medium-density fiberboard cross-section appearance with fine exposed fibers; matte and unsealed.
+- [highDensityFiberboardRaw](engineered-wood-fiberboard-paper-and-cork/highDensityFiberboardRaw.mtlx) — Dense dark tan fiberboard with fine random fibers and a smooth matte surface.
+- [hardboardSmoothBrown](engineered-wood-fiberboard-paper-and-cork/hardboardSmoothBrown.mtlx) — Dark brown compressed wood fiber with smooth low-sheen face texture.
+- [hardboardScreenBackBrown](engineered-wood-fiberboard-paper-and-cork/hardboardScreenBackBrown.mtlx) — Dark brown compressed wood fiber with fine screen-imprinted surface texture; matte.
+- [particleboardRaw](engineered-wood-fiberboard-paper-and-cork/particleboardRaw.mtlx) — Tan particleboard with mixed small and large wood particles; matte porous appearance.
+- [particleboardEdgeRaw](engineered-wood-fiberboard-paper-and-cork/particleboardEdgeRaw.mtlx) — Tan particleboard cross-section texture with coarse chips and fine binder-rich particles; matte.
+- [orientedStrandBoardRaw](engineered-wood-fiberboard-paper-and-cork/orientedStrandBoardRaw.mtlx) — Golden tan oriented wood-strand composite; broad overlapping strand texture and low sheen.
+- [laminatedBambooEdgeNatural](engineered-wood-fiberboard-paper-and-cork/laminatedBambooEdgeNatural.mtlx) — Pale straw bamboo laminate cross-section appearance with alternating fine fiber bands; clear matte finish.
+- [laminatedBambooEdgeCaramel](engineered-wood-fiberboard-paper-and-cork/laminatedBambooEdgeCaramel.mtlx) — Caramel bamboo laminate cross-section appearance with alternating fine fiber bands; clear matte finish.
+- [corkNatural](engineered-wood-fiberboard-paper-and-cork/corkNatural.mtlx) — Light tan cork with irregular fine-to-medium cellular pores; matte.
+- [corkFineGrainNatural](engineered-wood-fiberboard-paper-and-cork/corkFineGrainNatural.mtlx) — Light tan agglomerated cork with fine uniform granules and matte finish.
+- [corkCoarseGrainNatural](engineered-wood-fiberboard-paper-and-cork/corkCoarseGrainNatural.mtlx) — Warm brown agglomerated cork with conspicuous coarse granules and matte finish.
+- [corkDarkBrown](engineered-wood-fiberboard-paper-and-cork/corkDarkBrown.mtlx) — Deep brown cork with visible cellular texture and matte finish.
+- [corkCharcoal](engineered-wood-fiberboard-paper-and-cork/corkCharcoal.mtlx) — Charcoal-colored cork with visible cellular texture and matte finish.
+- [corkWhite](engineered-wood-fiberboard-paper-and-cork/corkWhite.mtlx) — White-pigmented cork with retained cellular texture and matte finish.
+- [corkNaturalSealed](engineered-wood-fiberboard-paper-and-cork/corkNaturalSealed.mtlx) — Natural tan cork with visible cells and a transparent low-sheen sealer.
+- [kraftPaperNatural](engineered-wood-fiberboard-paper-and-cork/kraftPaperNatural.mtlx) — Natural brown kraft paper with fine visible fibers and a dry matte finish.
+- [kraftPaperBlack](engineered-wood-fiberboard-paper-and-cork/kraftPaperBlack.mtlx) — Black-dyed kraft paper with fine visible fibers and a dry matte finish.
+- [paperCompositeBrown](engineered-wood-fiberboard-paper-and-cork/paperCompositeBrown.mtlx) — Dense brown paper-resin composite with subtle layered fiber texture and a smooth matte finish.
+- [paperCompositeBlack](engineered-wood-fiberboard-paper-and-cork/paperCompositeBlack.mtlx) — Dense black paper-resin composite with subtle fiber texture and a smooth matte finish.
+- [paperCompositeSlate](engineered-wood-fiberboard-paper-and-cork/paperCompositeSlate.mtlx) — Dense slate-gray paper-resin composite with subtle fiber texture and a smooth matte finish.
+- [cardboardNatural](engineered-wood-fiberboard-paper-and-cork/cardboardNatural.mtlx) — Pale brown paperboard surface with subtle fibers and matte finish.
+
+## Opaque paint, lacquer, and pigmented finishes
+
+- [paintMatteWhite](opaque-paint-lacquer-and-pigmented-finishes/paintMatteWhite.mtlx) — Opaque neutral white paint; smooth matte dielectric surface.
+- [paintMatteIvory](opaque-paint-lacquer-and-pigmented-finishes/paintMatteIvory.mtlx) — Opaque warm ivory paint; smooth matte dielectric surface.
+- [paintMatteCream](opaque-paint-lacquer-and-pigmented-finishes/paintMatteCream.mtlx) — Opaque yellow-tinted cream paint; smooth matte dielectric surface.
+- [paintMatteBeige](opaque-paint-lacquer-and-pigmented-finishes/paintMatteBeige.mtlx) — Opaque warm beige paint; smooth matte dielectric surface.
+- [paintMatteTaupe](opaque-paint-lacquer-and-pigmented-finishes/paintMatteTaupe.mtlx) — Opaque gray-brown taupe paint; smooth matte dielectric surface.
+- [paintMatteLightGray](opaque-paint-lacquer-and-pigmented-finishes/paintMatteLightGray.mtlx) — Opaque light neutral gray paint; smooth matte dielectric surface.
+- [paintMatteMediumGray](opaque-paint-lacquer-and-pigmented-finishes/paintMatteMediumGray.mtlx) — Opaque medium neutral gray paint; smooth matte dielectric surface.
+- [paintMatteCharcoal](opaque-paint-lacquer-and-pigmented-finishes/paintMatteCharcoal.mtlx) — Opaque dark charcoal gray paint; smooth matte dielectric surface.
+- [paintMatteBlack](opaque-paint-lacquer-and-pigmented-finishes/paintMatteBlack.mtlx) — Opaque neutral black paint; smooth matte dielectric surface.
+- [paintMatteNavy](opaque-paint-lacquer-and-pigmented-finishes/paintMatteNavy.mtlx) — Opaque deep navy blue paint; smooth matte dielectric surface.
+- [paintMattePowderBlue](opaque-paint-lacquer-and-pigmented-finishes/paintMattePowderBlue.mtlx) — Opaque pale powder blue paint; smooth matte dielectric surface.
+- [paintMatteTeal](opaque-paint-lacquer-and-pigmented-finishes/paintMatteTeal.mtlx) — Opaque blue-green teal paint; smooth matte dielectric surface.
+- [paintMatteSage](opaque-paint-lacquer-and-pigmented-finishes/paintMatteSage.mtlx) — Opaque muted gray-green sage paint; smooth matte dielectric surface.
+- [paintMatteOlive](opaque-paint-lacquer-and-pigmented-finishes/paintMatteOlive.mtlx) — Opaque yellow-green olive paint; smooth matte dielectric surface.
+- [paintMatteForestGreen](opaque-paint-lacquer-and-pigmented-finishes/paintMatteForestGreen.mtlx) — Opaque deep forest green paint; smooth matte dielectric surface.
+- [paintMatteMustard](opaque-paint-lacquer-and-pigmented-finishes/paintMatteMustard.mtlx) — Opaque ochre mustard yellow paint; smooth matte dielectric surface.
+- [paintMatteTerracotta](opaque-paint-lacquer-and-pigmented-finishes/paintMatteTerracotta.mtlx) — Opaque earthy orange-red terracotta paint; smooth matte dielectric surface.
+- [paintMatteRed](opaque-paint-lacquer-and-pigmented-finishes/paintMatteRed.mtlx) — Opaque saturated red paint; smooth matte dielectric surface.
+- [paintMatteBurgundy](opaque-paint-lacquer-and-pigmented-finishes/paintMatteBurgundy.mtlx) — Opaque deep wine red paint; smooth matte dielectric surface.
+- [paintMatteBlush](opaque-paint-lacquer-and-pigmented-finishes/paintMatteBlush.mtlx) — Opaque pale blush pink paint; smooth matte dielectric surface.
+- [paintMatteLavender](opaque-paint-lacquer-and-pigmented-finishes/paintMatteLavender.mtlx) — Opaque pale gray-purple paint; smooth matte dielectric surface.
+- [paintSatinWhite](opaque-paint-lacquer-and-pigmented-finishes/paintSatinWhite.mtlx) — Opaque neutral white paint; smooth satin dielectric surface.
+- [paintSatinIvory](opaque-paint-lacquer-and-pigmented-finishes/paintSatinIvory.mtlx) — Opaque warm ivory paint; smooth satin dielectric surface.
+- [paintSatinCream](opaque-paint-lacquer-and-pigmented-finishes/paintSatinCream.mtlx) — Opaque yellow-tinted cream paint; smooth satin dielectric surface.
+- [paintSatinBeige](opaque-paint-lacquer-and-pigmented-finishes/paintSatinBeige.mtlx) — Opaque warm beige paint; smooth satin dielectric surface.
+- [paintSatinTaupe](opaque-paint-lacquer-and-pigmented-finishes/paintSatinTaupe.mtlx) — Opaque gray-brown taupe paint; smooth satin dielectric surface.
+- [paintSatinLightGray](opaque-paint-lacquer-and-pigmented-finishes/paintSatinLightGray.mtlx) — Opaque light neutral gray paint; smooth satin dielectric surface.
+- [paintSatinMediumGray](opaque-paint-lacquer-and-pigmented-finishes/paintSatinMediumGray.mtlx) — Opaque medium neutral gray paint; smooth satin dielectric surface.
+- [paintSatinCharcoal](opaque-paint-lacquer-and-pigmented-finishes/paintSatinCharcoal.mtlx) — Opaque dark charcoal gray paint; smooth satin dielectric surface.
+- [paintSatinBlack](opaque-paint-lacquer-and-pigmented-finishes/paintSatinBlack.mtlx) — Opaque neutral black paint; smooth satin dielectric surface.
+- [paintSatinNavy](opaque-paint-lacquer-and-pigmented-finishes/paintSatinNavy.mtlx) — Opaque deep navy blue paint; smooth satin dielectric surface.
+- [paintSatinPowderBlue](opaque-paint-lacquer-and-pigmented-finishes/paintSatinPowderBlue.mtlx) — Opaque pale powder blue paint; smooth satin dielectric surface.
+- [paintSatinTeal](opaque-paint-lacquer-and-pigmented-finishes/paintSatinTeal.mtlx) — Opaque blue-green teal paint; smooth satin dielectric surface.
+- [paintSatinSage](opaque-paint-lacquer-and-pigmented-finishes/paintSatinSage.mtlx) — Opaque muted gray-green sage paint; smooth satin dielectric surface.
+- [paintSatinOlive](opaque-paint-lacquer-and-pigmented-finishes/paintSatinOlive.mtlx) — Opaque yellow-green olive paint; smooth satin dielectric surface.
+- [paintSatinForestGreen](opaque-paint-lacquer-and-pigmented-finishes/paintSatinForestGreen.mtlx) — Opaque deep forest green paint; smooth satin dielectric surface.
+- [paintSatinMustard](opaque-paint-lacquer-and-pigmented-finishes/paintSatinMustard.mtlx) — Opaque ochre mustard yellow paint; smooth satin dielectric surface.
+- [paintSatinTerracotta](opaque-paint-lacquer-and-pigmented-finishes/paintSatinTerracotta.mtlx) — Opaque earthy orange-red terracotta paint; smooth satin dielectric surface.
+- [paintSatinRed](opaque-paint-lacquer-and-pigmented-finishes/paintSatinRed.mtlx) — Opaque saturated red paint; smooth satin dielectric surface.
+- [paintSatinBurgundy](opaque-paint-lacquer-and-pigmented-finishes/paintSatinBurgundy.mtlx) — Opaque deep wine red paint; smooth satin dielectric surface.
+- [paintSatinBlush](opaque-paint-lacquer-and-pigmented-finishes/paintSatinBlush.mtlx) — Opaque pale blush pink paint; smooth satin dielectric surface.
+- [paintSatinLavender](opaque-paint-lacquer-and-pigmented-finishes/paintSatinLavender.mtlx) — Opaque pale gray-purple paint; smooth satin dielectric surface.
+- [paintGlossWhite](opaque-paint-lacquer-and-pigmented-finishes/paintGlossWhite.mtlx) — Opaque neutral white paint; smooth glossy dielectric surface.
+- [paintGlossIvory](opaque-paint-lacquer-and-pigmented-finishes/paintGlossIvory.mtlx) — Opaque warm ivory paint; smooth glossy dielectric surface.
+- [paintGlossCream](opaque-paint-lacquer-and-pigmented-finishes/paintGlossCream.mtlx) — Opaque yellow-tinted cream paint; smooth glossy dielectric surface.
+- [paintGlossBeige](opaque-paint-lacquer-and-pigmented-finishes/paintGlossBeige.mtlx) — Opaque warm beige paint; smooth glossy dielectric surface.
+- [paintGlossTaupe](opaque-paint-lacquer-and-pigmented-finishes/paintGlossTaupe.mtlx) — Opaque gray-brown taupe paint; smooth glossy dielectric surface.
+- [paintGlossLightGray](opaque-paint-lacquer-and-pigmented-finishes/paintGlossLightGray.mtlx) — Opaque light neutral gray paint; smooth glossy dielectric surface.
+- [paintGlossMediumGray](opaque-paint-lacquer-and-pigmented-finishes/paintGlossMediumGray.mtlx) — Opaque medium neutral gray paint; smooth glossy dielectric surface.
+- [paintGlossCharcoal](opaque-paint-lacquer-and-pigmented-finishes/paintGlossCharcoal.mtlx) — Opaque dark charcoal gray paint; smooth glossy dielectric surface.
+- [paintGlossBlack](opaque-paint-lacquer-and-pigmented-finishes/paintGlossBlack.mtlx) — Opaque neutral black paint; smooth glossy dielectric surface.
+- [paintGlossNavy](opaque-paint-lacquer-and-pigmented-finishes/paintGlossNavy.mtlx) — Opaque deep navy blue paint; smooth glossy dielectric surface.
+- [paintGlossPowderBlue](opaque-paint-lacquer-and-pigmented-finishes/paintGlossPowderBlue.mtlx) — Opaque pale powder blue paint; smooth glossy dielectric surface.
+- [paintGlossTeal](opaque-paint-lacquer-and-pigmented-finishes/paintGlossTeal.mtlx) — Opaque blue-green teal paint; smooth glossy dielectric surface.
+- [paintGlossSage](opaque-paint-lacquer-and-pigmented-finishes/paintGlossSage.mtlx) — Opaque muted gray-green sage paint; smooth glossy dielectric surface.
+- [paintGlossOlive](opaque-paint-lacquer-and-pigmented-finishes/paintGlossOlive.mtlx) — Opaque yellow-green olive paint; smooth glossy dielectric surface.
+- [paintGlossForestGreen](opaque-paint-lacquer-and-pigmented-finishes/paintGlossForestGreen.mtlx) — Opaque deep forest green paint; smooth glossy dielectric surface.
+- [paintGlossMustard](opaque-paint-lacquer-and-pigmented-finishes/paintGlossMustard.mtlx) — Opaque ochre mustard yellow paint; smooth glossy dielectric surface.
+- [paintGlossTerracotta](opaque-paint-lacquer-and-pigmented-finishes/paintGlossTerracotta.mtlx) — Opaque earthy orange-red terracotta paint; smooth glossy dielectric surface.
+- [paintGlossRed](opaque-paint-lacquer-and-pigmented-finishes/paintGlossRed.mtlx) — Opaque saturated red paint; smooth glossy dielectric surface.
+- [paintGlossBurgundy](opaque-paint-lacquer-and-pigmented-finishes/paintGlossBurgundy.mtlx) — Opaque deep wine red paint; smooth glossy dielectric surface.
+- [paintGlossBlush](opaque-paint-lacquer-and-pigmented-finishes/paintGlossBlush.mtlx) — Opaque pale blush pink paint; smooth glossy dielectric surface.
+- [paintGlossLavender](opaque-paint-lacquer-and-pigmented-finishes/paintGlossLavender.mtlx) — Opaque pale gray-purple paint; smooth glossy dielectric surface.
+- [lacquerHighGlossWhite](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossWhite.mtlx) — Opaque neutral white lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossIvory](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossIvory.mtlx) — Opaque warm ivory lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossCream](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossCream.mtlx) — Opaque yellow-tinted cream lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossBeige](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossBeige.mtlx) — Opaque warm beige lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossTaupe](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossTaupe.mtlx) — Opaque gray-brown taupe lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossLightGray](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossLightGray.mtlx) — Opaque light neutral gray lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossMediumGray](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossMediumGray.mtlx) — Opaque medium neutral gray lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossCharcoal](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossCharcoal.mtlx) — Opaque dark charcoal gray lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossBlack](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossBlack.mtlx) — Opaque neutral black lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossNavy](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossNavy.mtlx) — Opaque deep navy blue lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossPowderBlue](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossPowderBlue.mtlx) — Opaque pale powder blue lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossTeal](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossTeal.mtlx) — Opaque blue-green teal lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossSage](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossSage.mtlx) — Opaque muted gray-green sage lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossOlive](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossOlive.mtlx) — Opaque yellow-green olive lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossForestGreen](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossForestGreen.mtlx) — Opaque deep forest green lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossMustard](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossMustard.mtlx) — Opaque ochre mustard yellow lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossTerracotta](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossTerracotta.mtlx) — Opaque earthy orange-red terracotta lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossRed](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossRed.mtlx) — Opaque saturated red lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossBurgundy](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossBurgundy.mtlx) — Opaque deep wine red lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossBlush](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossBlush.mtlx) — Opaque pale blush pink lacquer; highly polished, deep glossy dielectric appearance.
+- [lacquerHighGlossLavender](opaque-paint-lacquer-and-pigmented-finishes/lacquerHighGlossLavender.mtlx) — Opaque pale gray-purple lacquer; highly polished, deep glossy dielectric appearance.
+- [woodPaintOpenGrainWhite](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainWhite.mtlx) — Opaque neutral white coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainIvory](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainIvory.mtlx) — Opaque warm ivory coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainCream](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainCream.mtlx) — Opaque yellow-tinted cream coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainBeige](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainBeige.mtlx) — Opaque warm beige coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainTaupe](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainTaupe.mtlx) — Opaque gray-brown taupe coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainLightGray](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainLightGray.mtlx) — Opaque light neutral gray coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainMediumGray](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainMediumGray.mtlx) — Opaque medium neutral gray coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainCharcoal](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainCharcoal.mtlx) — Opaque dark charcoal gray coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainBlack](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainBlack.mtlx) — Opaque neutral black coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainNavy](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainNavy.mtlx) — Opaque deep navy blue coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainPowderBlue](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainPowderBlue.mtlx) — Opaque pale powder blue coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainTeal](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainTeal.mtlx) — Opaque blue-green teal coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainSage](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainSage.mtlx) — Opaque muted gray-green sage coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainOlive](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainOlive.mtlx) — Opaque yellow-green olive coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainForestGreen](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainForestGreen.mtlx) — Opaque deep forest green coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainMustard](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainMustard.mtlx) — Opaque ochre mustard yellow coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainTerracotta](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainTerracotta.mtlx) — Opaque earthy orange-red terracotta coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainRed](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainRed.mtlx) — Opaque saturated red coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainBurgundy](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainBurgundy.mtlx) — Opaque deep wine red coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainBlush](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainBlush.mtlx) — Opaque pale blush pink coating with visible open wood-pore relief; low sheen.
+- [woodPaintOpenGrainLavender](opaque-paint-lacquer-and-pigmented-finishes/woodPaintOpenGrainLavender.mtlx) — Opaque pale gray-purple coating with visible open wood-pore relief; low sheen.
+- [powderCoatSmoothWhite](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothWhite.mtlx) — Opaque neutral white powder coating; smooth satin polymer surface.
+- [powderCoatSmoothIvory](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothIvory.mtlx) — Opaque warm ivory powder coating; smooth satin polymer surface.
+- [powderCoatSmoothCream](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothCream.mtlx) — Opaque yellow-tinted cream powder coating; smooth satin polymer surface.
+- [powderCoatSmoothBeige](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothBeige.mtlx) — Opaque warm beige powder coating; smooth satin polymer surface.
+- [powderCoatSmoothTaupe](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothTaupe.mtlx) — Opaque gray-brown taupe powder coating; smooth satin polymer surface.
+- [powderCoatSmoothLightGray](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothLightGray.mtlx) — Opaque light neutral gray powder coating; smooth satin polymer surface.
+- [powderCoatSmoothMediumGray](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothMediumGray.mtlx) — Opaque medium neutral gray powder coating; smooth satin polymer surface.
+- [powderCoatSmoothCharcoal](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothCharcoal.mtlx) — Opaque dark charcoal gray powder coating; smooth satin polymer surface.
+- [powderCoatSmoothBlack](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothBlack.mtlx) — Opaque neutral black powder coating; smooth satin polymer surface.
+- [powderCoatSmoothNavy](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothNavy.mtlx) — Opaque deep navy blue powder coating; smooth satin polymer surface.
+- [powderCoatSmoothPowderBlue](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothPowderBlue.mtlx) — Opaque pale powder blue powder coating; smooth satin polymer surface.
+- [powderCoatSmoothTeal](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothTeal.mtlx) — Opaque blue-green teal powder coating; smooth satin polymer surface.
+- [powderCoatSmoothSage](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothSage.mtlx) — Opaque muted gray-green sage powder coating; smooth satin polymer surface.
+- [powderCoatSmoothOlive](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothOlive.mtlx) — Opaque yellow-green olive powder coating; smooth satin polymer surface.
+- [powderCoatSmoothForestGreen](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothForestGreen.mtlx) — Opaque deep forest green powder coating; smooth satin polymer surface.
+- [powderCoatSmoothMustard](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothMustard.mtlx) — Opaque ochre mustard yellow powder coating; smooth satin polymer surface.
+- [powderCoatSmoothTerracotta](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothTerracotta.mtlx) — Opaque earthy orange-red terracotta powder coating; smooth satin polymer surface.
+- [powderCoatSmoothRed](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothRed.mtlx) — Opaque saturated red powder coating; smooth satin polymer surface.
+- [powderCoatSmoothBurgundy](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothBurgundy.mtlx) — Opaque deep wine red powder coating; smooth satin polymer surface.
+- [powderCoatSmoothBlush](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothBlush.mtlx) — Opaque pale blush pink powder coating; smooth satin polymer surface.
+- [powderCoatSmoothLavender](opaque-paint-lacquer-and-pigmented-finishes/powderCoatSmoothLavender.mtlx) — Opaque pale gray-purple powder coating; smooth satin polymer surface.
+- [powderCoatFineTextureWhite](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureWhite.mtlx) — Opaque neutral white powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureIvory](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureIvory.mtlx) — Opaque warm ivory powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureCream](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureCream.mtlx) — Opaque yellow-tinted cream powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureBeige](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureBeige.mtlx) — Opaque warm beige powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureTaupe](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureTaupe.mtlx) — Opaque gray-brown taupe powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureLightGray](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureLightGray.mtlx) — Opaque light neutral gray powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureMediumGray](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureMediumGray.mtlx) — Opaque medium neutral gray powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureCharcoal](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureCharcoal.mtlx) — Opaque dark charcoal gray powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureBlack](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureBlack.mtlx) — Opaque neutral black powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureNavy](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureNavy.mtlx) — Opaque deep navy blue powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTexturePowderBlue](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTexturePowderBlue.mtlx) — Opaque pale powder blue powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureTeal](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureTeal.mtlx) — Opaque blue-green teal powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureSage](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureSage.mtlx) — Opaque muted gray-green sage powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureOlive](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureOlive.mtlx) — Opaque yellow-green olive powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureForestGreen](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureForestGreen.mtlx) — Opaque deep forest green powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureMustard](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureMustard.mtlx) — Opaque ochre mustard yellow powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureTerracotta](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureTerracotta.mtlx) — Opaque earthy orange-red terracotta powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureRed](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureRed.mtlx) — Opaque saturated red powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureBurgundy](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureBurgundy.mtlx) — Opaque deep wine red powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureBlush](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureBlush.mtlx) — Opaque pale blush pink powder coating; fine uniform stipple and matte finish.
+- [powderCoatFineTextureLavender](opaque-paint-lacquer-and-pigmented-finishes/powderCoatFineTextureLavender.mtlx) — Opaque pale gray-purple powder coating; fine uniform stipple and matte finish.
+- [powderCoatWrinkleWhite](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleWhite.mtlx) — Opaque neutral white powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleIvory](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleIvory.mtlx) — Opaque warm ivory powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleCream](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleCream.mtlx) — Opaque yellow-tinted cream powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleBeige](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleBeige.mtlx) — Opaque warm beige powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleTaupe](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleTaupe.mtlx) — Opaque gray-brown taupe powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleLightGray](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleLightGray.mtlx) — Opaque light neutral gray powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleMediumGray](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleMediumGray.mtlx) — Opaque medium neutral gray powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleCharcoal](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleCharcoal.mtlx) — Opaque dark charcoal gray powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleBlack](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleBlack.mtlx) — Opaque neutral black powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleNavy](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleNavy.mtlx) — Opaque deep navy blue powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinklePowderBlue](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinklePowderBlue.mtlx) — Opaque pale powder blue powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleTeal](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleTeal.mtlx) — Opaque blue-green teal powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleSage](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleSage.mtlx) — Opaque muted gray-green sage powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleOlive](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleOlive.mtlx) — Opaque yellow-green olive powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleForestGreen](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleForestGreen.mtlx) — Opaque deep forest green powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleMustard](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleMustard.mtlx) — Opaque ochre mustard yellow powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleTerracotta](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleTerracotta.mtlx) — Opaque earthy orange-red terracotta powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleRed](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleRed.mtlx) — Opaque saturated red powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleBurgundy](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleBurgundy.mtlx) — Opaque deep wine red powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleBlush](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleBlush.mtlx) — Opaque pale blush pink powder coating; consistent fine wrinkle texture and low sheen.
+- [powderCoatWrinkleLavender](opaque-paint-lacquer-and-pigmented-finishes/powderCoatWrinkleLavender.mtlx) — Opaque pale gray-purple powder coating; consistent fine wrinkle texture and low sheen.
+- [softTouchCoatingWhite](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingWhite.mtlx) — Opaque neutral white soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingIvory](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingIvory.mtlx) — Opaque warm ivory soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingCream](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingCream.mtlx) — Opaque yellow-tinted cream soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingBeige](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingBeige.mtlx) — Opaque warm beige soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingTaupe](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingTaupe.mtlx) — Opaque gray-brown taupe soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingLightGray](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingLightGray.mtlx) — Opaque light neutral gray soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingMediumGray](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingMediumGray.mtlx) — Opaque medium neutral gray soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingCharcoal](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingCharcoal.mtlx) — Opaque dark charcoal gray soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingBlack](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingBlack.mtlx) — Opaque neutral black soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingNavy](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingNavy.mtlx) — Opaque deep navy blue soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingPowderBlue](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingPowderBlue.mtlx) — Opaque pale powder blue soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingTeal](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingTeal.mtlx) — Opaque blue-green teal soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingSage](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingSage.mtlx) — Opaque muted gray-green sage soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingOlive](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingOlive.mtlx) — Opaque yellow-green olive soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingForestGreen](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingForestGreen.mtlx) — Opaque deep forest green soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingMustard](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingMustard.mtlx) — Opaque ochre mustard yellow soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingTerracotta](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingTerracotta.mtlx) — Opaque earthy orange-red terracotta soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingRed](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingRed.mtlx) — Opaque saturated red soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingBurgundy](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingBurgundy.mtlx) — Opaque deep wine red soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingBlush](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingBlush.mtlx) — Opaque pale blush pink soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [softTouchCoatingLavender](opaque-paint-lacquer-and-pigmented-finishes/softTouchCoatingLavender.mtlx) — Opaque pale gray-purple soft-touch polymer coating; velvety matte scattering and fine uniform texture.
+- [lacquerPianoBlack](opaque-paint-lacquer-and-pigmented-finishes/lacquerPianoBlack.mtlx) — Deep neutral black lacquer with a smooth highly polished finish and sharp clear reflections.
+- [lacquerPearlWhite](opaque-paint-lacquer-and-pigmented-finishes/lacquerPearlWhite.mtlx) — White pearlescent lacquer with fine subsurface mica sparkle and a glossy dielectric clearcoat.
+- [lacquerPearlChampagne](opaque-paint-lacquer-and-pigmented-finishes/lacquerPearlChampagne.mtlx) — Pale champagne pearlescent lacquer with fine mica sparkle and a glossy dielectric clearcoat.
+- [lacquerMetallicSilver](opaque-paint-lacquer-and-pigmented-finishes/lacquerMetallicSilver.mtlx) — Silver metallic-flake lacquer with fine reflective particles beneath a glossy dielectric clearcoat.
+- [lacquerMetallicGold](opaque-paint-lacquer-and-pigmented-finishes/lacquerMetallicGold.mtlx) — Warm gold metallic-flake lacquer with fine reflective particles beneath a glossy dielectric clearcoat.
+- [lacquerMetallicBronze](opaque-paint-lacquer-and-pigmented-finishes/lacquerMetallicBronze.mtlx) — Bronze metallic-flake lacquer with fine reflective particles beneath a glossy dielectric clearcoat.
+
+## Laminate, melamine, foil, and coated paper surfaces
+
+- [melamineSmoothWhite](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothWhite.mtlx) — Opaque neutral white melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothIvory](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothIvory.mtlx) — Opaque warm ivory melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothCream](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothCream.mtlx) — Opaque yellow-tinted cream melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothBeige](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothBeige.mtlx) — Opaque warm beige melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothTaupe](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothTaupe.mtlx) — Opaque gray-brown taupe melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothLightGray](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothLightGray.mtlx) — Opaque light neutral gray melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothMediumGray](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothMediumGray.mtlx) — Opaque medium neutral gray melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothCharcoal](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothCharcoal.mtlx) — Opaque dark charcoal gray melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothBlack](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothBlack.mtlx) — Opaque neutral black melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothNavy](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothNavy.mtlx) — Opaque deep navy blue melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothSage](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothSage.mtlx) — Opaque muted gray-green sage melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothForestGreen](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothForestGreen.mtlx) — Opaque deep forest green melamine-resin surface; smooth low-sheen finish.
+- [melamineSmoothBurgundy](laminate-melamine-foil-and-coated-paper-surfaces/melamineSmoothBurgundy.mtlx) — Opaque deep wine red melamine-resin surface; smooth low-sheen finish.
+- [melamineFineTextureWhite](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureWhite.mtlx) — Opaque neutral white melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureIvory](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureIvory.mtlx) — Opaque warm ivory melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureCream](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureCream.mtlx) — Opaque yellow-tinted cream melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureBeige](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureBeige.mtlx) — Opaque warm beige melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureTaupe](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureTaupe.mtlx) — Opaque gray-brown taupe melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureLightGray](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureLightGray.mtlx) — Opaque light neutral gray melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureMediumGray](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureMediumGray.mtlx) — Opaque medium neutral gray melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureCharcoal](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureCharcoal.mtlx) — Opaque dark charcoal gray melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureBlack](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureBlack.mtlx) — Opaque neutral black melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureNavy](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureNavy.mtlx) — Opaque deep navy blue melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureSage](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureSage.mtlx) — Opaque muted gray-green sage melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureForestGreen](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureForestGreen.mtlx) — Opaque deep forest green melamine-resin surface; fine stipple texture and matte finish.
+- [melamineFineTextureBurgundy](laminate-melamine-foil-and-coated-paper-surfaces/melamineFineTextureBurgundy.mtlx) — Opaque deep wine red melamine-resin surface; fine stipple texture and matte finish.
+- [highPressureLaminateMatteWhite](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteWhite.mtlx) — Opaque neutral white high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteIvory](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteIvory.mtlx) — Opaque warm ivory high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteCream](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteCream.mtlx) — Opaque yellow-tinted cream high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteBeige](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteBeige.mtlx) — Opaque warm beige high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteTaupe](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteTaupe.mtlx) — Opaque gray-brown taupe high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteLightGray](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteLightGray.mtlx) — Opaque light neutral gray high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteMediumGray](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteMediumGray.mtlx) — Opaque medium neutral gray high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteCharcoal](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteCharcoal.mtlx) — Opaque dark charcoal gray high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteBlack](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteBlack.mtlx) — Opaque neutral black high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteNavy](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteNavy.mtlx) — Opaque deep navy blue high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteSage](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteSage.mtlx) — Opaque muted gray-green sage high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteForestGreen](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteForestGreen.mtlx) — Opaque deep forest green high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateMatteBurgundy](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateMatteBurgundy.mtlx) — Opaque deep wine red high-pressure laminate surface; fine matte texture.
+- [highPressureLaminateGlossWhite](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossWhite.mtlx) — Opaque neutral white high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossIvory](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossIvory.mtlx) — Opaque warm ivory high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossCream](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossCream.mtlx) — Opaque yellow-tinted cream high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossBeige](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossBeige.mtlx) — Opaque warm beige high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossTaupe](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossTaupe.mtlx) — Opaque gray-brown taupe high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossLightGray](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossLightGray.mtlx) — Opaque light neutral gray high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossMediumGray](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossMediumGray.mtlx) — Opaque medium neutral gray high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossCharcoal](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossCharcoal.mtlx) — Opaque dark charcoal gray high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossBlack](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossBlack.mtlx) — Opaque neutral black high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossNavy](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossNavy.mtlx) — Opaque deep navy blue high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossSage](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossSage.mtlx) — Opaque muted gray-green sage high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossForestGreen](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossForestGreen.mtlx) — Opaque deep forest green high-pressure laminate surface; smooth gloss finish.
+- [highPressureLaminateGlossBurgundy](laminate-melamine-foil-and-coated-paper-surfaces/highPressureLaminateGlossBurgundy.mtlx) — Opaque deep wine red high-pressure laminate surface; smooth gloss finish.
+- [antiFingerprintLaminateWhite](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateWhite.mtlx) — Opaque neutral white laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateIvory](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateIvory.mtlx) — Opaque warm ivory laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateCream](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateCream.mtlx) — Opaque yellow-tinted cream laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateBeige](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateBeige.mtlx) — Opaque warm beige laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateTaupe](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateTaupe.mtlx) — Opaque gray-brown taupe laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateLightGray](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateLightGray.mtlx) — Opaque light neutral gray laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateMediumGray](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateMediumGray.mtlx) — Opaque medium neutral gray laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateCharcoal](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateCharcoal.mtlx) — Opaque dark charcoal gray laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateBlack](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateBlack.mtlx) — Opaque neutral black laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateNavy](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateNavy.mtlx) — Opaque deep navy blue laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateSage](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateSage.mtlx) — Opaque muted gray-green sage laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateForestGreen](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateForestGreen.mtlx) — Opaque deep forest green laminate with fine, uniform, light-scattering texture and very low sheen.
+- [antiFingerprintLaminateBurgundy](laminate-melamine-foil-and-coated-paper-surfaces/antiFingerprintLaminateBurgundy.mtlx) — Opaque deep wine red laminate with fine, uniform, light-scattering texture and very low sheen.
+- [thermofoilSatinWhite](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinWhite.mtlx) — Opaque neutral white polymer foil surface; smooth satin finish.
+- [thermofoilSatinIvory](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinIvory.mtlx) — Opaque warm ivory polymer foil surface; smooth satin finish.
+- [thermofoilSatinCream](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinCream.mtlx) — Opaque yellow-tinted cream polymer foil surface; smooth satin finish.
+- [thermofoilSatinBeige](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinBeige.mtlx) — Opaque warm beige polymer foil surface; smooth satin finish.
+- [thermofoilSatinTaupe](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinTaupe.mtlx) — Opaque gray-brown taupe polymer foil surface; smooth satin finish.
+- [thermofoilSatinLightGray](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinLightGray.mtlx) — Opaque light neutral gray polymer foil surface; smooth satin finish.
+- [thermofoilSatinMediumGray](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinMediumGray.mtlx) — Opaque medium neutral gray polymer foil surface; smooth satin finish.
+- [thermofoilSatinCharcoal](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinCharcoal.mtlx) — Opaque dark charcoal gray polymer foil surface; smooth satin finish.
+- [thermofoilSatinBlack](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinBlack.mtlx) — Opaque neutral black polymer foil surface; smooth satin finish.
+- [thermofoilSatinNavy](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinNavy.mtlx) — Opaque deep navy blue polymer foil surface; smooth satin finish.
+- [thermofoilSatinSage](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinSage.mtlx) — Opaque muted gray-green sage polymer foil surface; smooth satin finish.
+- [thermofoilSatinForestGreen](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinForestGreen.mtlx) — Opaque deep forest green polymer foil surface; smooth satin finish.
+- [thermofoilSatinBurgundy](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilSatinBurgundy.mtlx) — Opaque deep wine red polymer foil surface; smooth satin finish.
+- [thermofoilGlossWhite](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossWhite.mtlx) — Opaque neutral white polymer foil surface; smooth glossy finish.
+- [thermofoilGlossIvory](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossIvory.mtlx) — Opaque warm ivory polymer foil surface; smooth glossy finish.
+- [thermofoilGlossCream](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossCream.mtlx) — Opaque yellow-tinted cream polymer foil surface; smooth glossy finish.
+- [thermofoilGlossBeige](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossBeige.mtlx) — Opaque warm beige polymer foil surface; smooth glossy finish.
+- [thermofoilGlossTaupe](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossTaupe.mtlx) — Opaque gray-brown taupe polymer foil surface; smooth glossy finish.
+- [thermofoilGlossLightGray](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossLightGray.mtlx) — Opaque light neutral gray polymer foil surface; smooth glossy finish.
+- [thermofoilGlossMediumGray](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossMediumGray.mtlx) — Opaque medium neutral gray polymer foil surface; smooth glossy finish.
+- [thermofoilGlossCharcoal](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossCharcoal.mtlx) — Opaque dark charcoal gray polymer foil surface; smooth glossy finish.
+- [thermofoilGlossBlack](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossBlack.mtlx) — Opaque neutral black polymer foil surface; smooth glossy finish.
+- [thermofoilGlossNavy](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossNavy.mtlx) — Opaque deep navy blue polymer foil surface; smooth glossy finish.
+- [thermofoilGlossSage](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossSage.mtlx) — Opaque muted gray-green sage polymer foil surface; smooth glossy finish.
+- [thermofoilGlossForestGreen](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossForestGreen.mtlx) — Opaque deep forest green polymer foil surface; smooth glossy finish.
+- [thermofoilGlossBurgundy](laminate-melamine-foil-and-coated-paper-surfaces/thermofoilGlossBurgundy.mtlx) — Opaque deep wine red polymer foil surface; smooth glossy finish.
+- [woodgrainLaminateOakNatural](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateOakNatural.mtlx) — Light golden oak printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [woodgrainLaminateOakBleached](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateOakBleached.mtlx) — Pale ivory oak printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [woodgrainLaminateOakSmoked](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateOakSmoked.mtlx) — Gray-brown oak printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [woodgrainLaminateWalnut](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateWalnut.mtlx) — Chocolate brown walnut printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [woodgrainLaminateMaple](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateMaple.mtlx) — Pale cream maple printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [woodgrainLaminateCherry](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateCherry.mtlx) — Warm red-brown cherry printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [woodgrainLaminateAsh](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateAsh.mtlx) — Pale tan ash printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [woodgrainLaminateTeak](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateTeak.mtlx) — Golden brown teak printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [woodgrainLaminateWenge](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateWenge.mtlx) — Dark brown wenge printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [woodgrainLaminateBamboo](laminate-melamine-foil-and-coated-paper-surfaces/woodgrainLaminateBamboo.mtlx) — Pale straw bamboo printed woodgrain laminate; matte finish and shallow grain-correlated surface texture.
+- [laminateCrossSectionBrown](laminate-melamine-foil-and-coated-paper-surfaces/laminateCrossSectionBrown.mtlx) — Dark brown phenolic-paper laminate cross-section appearance; fine compressed layers and matte finish.
+- [compactLaminateBlackCore](laminate-melamine-foil-and-coated-paper-surfaces/compactLaminateBlackCore.mtlx) — Dense black phenolic laminate cross-section appearance; uniform fine texture and matte finish.
+- [compactLaminateWhiteCore](laminate-melamine-foil-and-coated-paper-surfaces/compactLaminateWhiteCore.mtlx) — Dense white compact laminate cross-section appearance; uniform fine texture and matte finish.
+- [linenPrintLaminateBeige](laminate-melamine-foil-and-coated-paper-surfaces/linenPrintLaminateBeige.mtlx) — Beige printed linen-effect laminate with subtle woven pattern and matte resin surface.
+- [linenPrintLaminateGray](laminate-melamine-foil-and-coated-paper-surfaces/linenPrintLaminateGray.mtlx) — Gray printed linen-effect laminate with subtle woven pattern and matte resin surface.
+- [stonePrintLaminateWhiteMarble](laminate-melamine-foil-and-coated-paper-surfaces/stonePrintLaminateWhiteMarble.mtlx) — White laminate with soft gray printed marble veining and a smooth satin resin surface.
+- [stonePrintLaminateBlackMarble](laminate-melamine-foil-and-coated-paper-surfaces/stonePrintLaminateBlackMarble.mtlx) — Black laminate with fine white printed marble veining and a smooth satin resin surface.
+- [stonePrintLaminateConcreteGray](laminate-melamine-foil-and-coated-paper-surfaces/stonePrintLaminateConcreteGray.mtlx) — Medium gray laminate with subtle printed concrete mottling and a matte resin surface.
+
+## Woven upholstery and furnishing textiles
+
+- [cottonPlainWeaveIvory](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveIvory.mtlx) — warm ivory cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveCream](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveCream.mtlx) — yellow-tinted cream cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveOatmeal](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveOatmeal.mtlx) — light beige-gray oatmeal cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveBeige](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveBeige.mtlx) — warm beige cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveTaupe](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveTaupe.mtlx) — gray-brown taupe cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveCamel](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveCamel.mtlx) — golden camel tan cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveChocolate](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveChocolate.mtlx) — deep chocolate brown cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveLightGray](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveLightGray.mtlx) — light neutral gray cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveMediumGray](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveMediumGray.mtlx) — medium neutral gray cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveCharcoal](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveCharcoal.mtlx) — dark charcoal gray cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveBlack](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveBlack.mtlx) — neutral black cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveNavy](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveNavy.mtlx) — deep navy blue cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveSlateBlue.mtlx) — muted gray-blue cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveTeal](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveTeal.mtlx) — blue-green teal cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveSage](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveSage.mtlx) — muted gray-green sage cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveOlive](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveOlive.mtlx) — yellow-green olive cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveForestGreen](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveForestGreen.mtlx) — deep forest green cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveMustard](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveMustard.mtlx) — ochre mustard yellow cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveTerracotta](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveTerracotta.mtlx) — earthy orange-red terracotta cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveBurgundy](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveBurgundy.mtlx) — deep wine red cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonPlainWeaveBlush](woven-upholstery-and-furnishing-textiles/cottonPlainWeaveBlush.mtlx) — pale blush pink cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz.
+- [cottonCanvasIvory](woven-upholstery-and-furnishing-textiles/cottonCanvasIvory.mtlx) — warm ivory cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasCream](woven-upholstery-and-furnishing-textiles/cottonCanvasCream.mtlx) — yellow-tinted cream cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasOatmeal](woven-upholstery-and-furnishing-textiles/cottonCanvasOatmeal.mtlx) — light beige-gray oatmeal cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasBeige](woven-upholstery-and-furnishing-textiles/cottonCanvasBeige.mtlx) — warm beige cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasTaupe](woven-upholstery-and-furnishing-textiles/cottonCanvasTaupe.mtlx) — gray-brown taupe cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasCamel](woven-upholstery-and-furnishing-textiles/cottonCanvasCamel.mtlx) — golden camel tan cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasChocolate](woven-upholstery-and-furnishing-textiles/cottonCanvasChocolate.mtlx) — deep chocolate brown cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasLightGray](woven-upholstery-and-furnishing-textiles/cottonCanvasLightGray.mtlx) — light neutral gray cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasMediumGray](woven-upholstery-and-furnishing-textiles/cottonCanvasMediumGray.mtlx) — medium neutral gray cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasCharcoal](woven-upholstery-and-furnishing-textiles/cottonCanvasCharcoal.mtlx) — dark charcoal gray cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasBlack](woven-upholstery-and-furnishing-textiles/cottonCanvasBlack.mtlx) — neutral black cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasNavy](woven-upholstery-and-furnishing-textiles/cottonCanvasNavy.mtlx) — deep navy blue cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasSlateBlue](woven-upholstery-and-furnishing-textiles/cottonCanvasSlateBlue.mtlx) — muted gray-blue cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasTeal](woven-upholstery-and-furnishing-textiles/cottonCanvasTeal.mtlx) — blue-green teal cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasSage](woven-upholstery-and-furnishing-textiles/cottonCanvasSage.mtlx) — muted gray-green sage cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasOlive](woven-upholstery-and-furnishing-textiles/cottonCanvasOlive.mtlx) — yellow-green olive cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasForestGreen](woven-upholstery-and-furnishing-textiles/cottonCanvasForestGreen.mtlx) — deep forest green cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasMustard](woven-upholstery-and-furnishing-textiles/cottonCanvasMustard.mtlx) — ochre mustard yellow cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasTerracotta](woven-upholstery-and-furnishing-textiles/cottonCanvasTerracotta.mtlx) — earthy orange-red terracotta cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasBurgundy](woven-upholstery-and-furnishing-textiles/cottonCanvasBurgundy.mtlx) — deep wine red cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonCanvasBlush](woven-upholstery-and-furnishing-textiles/cottonCanvasBlush.mtlx) — pale blush pink cotton canvas; coarse dense plain weave, dry matte fibers, and slight yarn irregularity.
+- [cottonTwillIvory](woven-upholstery-and-furnishing-textiles/cottonTwillIvory.mtlx) — warm ivory cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillCream](woven-upholstery-and-furnishing-textiles/cottonTwillCream.mtlx) — yellow-tinted cream cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillOatmeal](woven-upholstery-and-furnishing-textiles/cottonTwillOatmeal.mtlx) — light beige-gray oatmeal cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillBeige](woven-upholstery-and-furnishing-textiles/cottonTwillBeige.mtlx) — warm beige cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillTaupe](woven-upholstery-and-furnishing-textiles/cottonTwillTaupe.mtlx) — gray-brown taupe cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillCamel](woven-upholstery-and-furnishing-textiles/cottonTwillCamel.mtlx) — golden camel tan cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillChocolate](woven-upholstery-and-furnishing-textiles/cottonTwillChocolate.mtlx) — deep chocolate brown cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillLightGray](woven-upholstery-and-furnishing-textiles/cottonTwillLightGray.mtlx) — light neutral gray cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillMediumGray](woven-upholstery-and-furnishing-textiles/cottonTwillMediumGray.mtlx) — medium neutral gray cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillCharcoal](woven-upholstery-and-furnishing-textiles/cottonTwillCharcoal.mtlx) — dark charcoal gray cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillBlack](woven-upholstery-and-furnishing-textiles/cottonTwillBlack.mtlx) — neutral black cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillNavy](woven-upholstery-and-furnishing-textiles/cottonTwillNavy.mtlx) — deep navy blue cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillSlateBlue](woven-upholstery-and-furnishing-textiles/cottonTwillSlateBlue.mtlx) — muted gray-blue cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillTeal](woven-upholstery-and-furnishing-textiles/cottonTwillTeal.mtlx) — blue-green teal cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillSage](woven-upholstery-and-furnishing-textiles/cottonTwillSage.mtlx) — muted gray-green sage cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillOlive](woven-upholstery-and-furnishing-textiles/cottonTwillOlive.mtlx) — yellow-green olive cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillForestGreen](woven-upholstery-and-furnishing-textiles/cottonTwillForestGreen.mtlx) — deep forest green cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillMustard](woven-upholstery-and-furnishing-textiles/cottonTwillMustard.mtlx) — ochre mustard yellow cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillTerracotta](woven-upholstery-and-furnishing-textiles/cottonTwillTerracotta.mtlx) — earthy orange-red terracotta cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillBurgundy](woven-upholstery-and-furnishing-textiles/cottonTwillBurgundy.mtlx) — deep wine red cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonTwillBlush](woven-upholstery-and-furnishing-textiles/cottonTwillBlush.mtlx) — pale blush pink cotton twill; fine diagonal weave, matte fibers, and soft directional sheen.
+- [cottonSateenIvory](woven-upholstery-and-furnishing-textiles/cottonSateenIvory.mtlx) — warm ivory cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenCream](woven-upholstery-and-furnishing-textiles/cottonSateenCream.mtlx) — yellow-tinted cream cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenOatmeal](woven-upholstery-and-furnishing-textiles/cottonSateenOatmeal.mtlx) — light beige-gray oatmeal cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenBeige](woven-upholstery-and-furnishing-textiles/cottonSateenBeige.mtlx) — warm beige cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenTaupe](woven-upholstery-and-furnishing-textiles/cottonSateenTaupe.mtlx) — gray-brown taupe cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenCamel](woven-upholstery-and-furnishing-textiles/cottonSateenCamel.mtlx) — golden camel tan cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenChocolate](woven-upholstery-and-furnishing-textiles/cottonSateenChocolate.mtlx) — deep chocolate brown cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenLightGray](woven-upholstery-and-furnishing-textiles/cottonSateenLightGray.mtlx) — light neutral gray cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenMediumGray](woven-upholstery-and-furnishing-textiles/cottonSateenMediumGray.mtlx) — medium neutral gray cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenCharcoal](woven-upholstery-and-furnishing-textiles/cottonSateenCharcoal.mtlx) — dark charcoal gray cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenBlack](woven-upholstery-and-furnishing-textiles/cottonSateenBlack.mtlx) — neutral black cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenNavy](woven-upholstery-and-furnishing-textiles/cottonSateenNavy.mtlx) — deep navy blue cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenSlateBlue](woven-upholstery-and-furnishing-textiles/cottonSateenSlateBlue.mtlx) — muted gray-blue cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenTeal](woven-upholstery-and-furnishing-textiles/cottonSateenTeal.mtlx) — blue-green teal cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenSage](woven-upholstery-and-furnishing-textiles/cottonSateenSage.mtlx) — muted gray-green sage cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenOlive](woven-upholstery-and-furnishing-textiles/cottonSateenOlive.mtlx) — yellow-green olive cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenForestGreen](woven-upholstery-and-furnishing-textiles/cottonSateenForestGreen.mtlx) — deep forest green cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenMustard](woven-upholstery-and-furnishing-textiles/cottonSateenMustard.mtlx) — ochre mustard yellow cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenTerracotta](woven-upholstery-and-furnishing-textiles/cottonSateenTerracotta.mtlx) — earthy orange-red terracotta cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenBurgundy](woven-upholstery-and-furnishing-textiles/cottonSateenBurgundy.mtlx) — deep wine red cotton sateen; fine smooth weave with gentle directional highlights.
+- [cottonSateenBlush](woven-upholstery-and-furnishing-textiles/cottonSateenBlush.mtlx) — pale blush pink cotton sateen; fine smooth weave with gentle directional highlights.
+- [linenPlainWeaveIvory](woven-upholstery-and-furnishing-textiles/linenPlainWeaveIvory.mtlx) — warm ivory linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveCream](woven-upholstery-and-furnishing-textiles/linenPlainWeaveCream.mtlx) — yellow-tinted cream linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveOatmeal](woven-upholstery-and-furnishing-textiles/linenPlainWeaveOatmeal.mtlx) — light beige-gray oatmeal linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveBeige](woven-upholstery-and-furnishing-textiles/linenPlainWeaveBeige.mtlx) — warm beige linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveTaupe](woven-upholstery-and-furnishing-textiles/linenPlainWeaveTaupe.mtlx) — gray-brown taupe linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveCamel](woven-upholstery-and-furnishing-textiles/linenPlainWeaveCamel.mtlx) — golden camel tan linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveChocolate](woven-upholstery-and-furnishing-textiles/linenPlainWeaveChocolate.mtlx) — deep chocolate brown linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveLightGray](woven-upholstery-and-furnishing-textiles/linenPlainWeaveLightGray.mtlx) — light neutral gray linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveMediumGray](woven-upholstery-and-furnishing-textiles/linenPlainWeaveMediumGray.mtlx) — medium neutral gray linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveCharcoal](woven-upholstery-and-furnishing-textiles/linenPlainWeaveCharcoal.mtlx) — dark charcoal gray linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveBlack](woven-upholstery-and-furnishing-textiles/linenPlainWeaveBlack.mtlx) — neutral black linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveNavy](woven-upholstery-and-furnishing-textiles/linenPlainWeaveNavy.mtlx) — deep navy blue linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/linenPlainWeaveSlateBlue.mtlx) — muted gray-blue linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveTeal](woven-upholstery-and-furnishing-textiles/linenPlainWeaveTeal.mtlx) — blue-green teal linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveSage](woven-upholstery-and-furnishing-textiles/linenPlainWeaveSage.mtlx) — muted gray-green sage linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveOlive](woven-upholstery-and-furnishing-textiles/linenPlainWeaveOlive.mtlx) — yellow-green olive linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveForestGreen](woven-upholstery-and-furnishing-textiles/linenPlainWeaveForestGreen.mtlx) — deep forest green linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveMustard](woven-upholstery-and-furnishing-textiles/linenPlainWeaveMustard.mtlx) — ochre mustard yellow linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveTerracotta](woven-upholstery-and-furnishing-textiles/linenPlainWeaveTerracotta.mtlx) — earthy orange-red terracotta linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveBurgundy](woven-upholstery-and-furnishing-textiles/linenPlainWeaveBurgundy.mtlx) — deep wine red linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenPlainWeaveBlush](woven-upholstery-and-furnishing-textiles/linenPlainWeaveBlush.mtlx) — pale blush pink linen plain weave; irregular slub yarns, visible fiber variation, and dry matte finish.
+- [linenCottonBlendIvory](woven-upholstery-and-furnishing-textiles/linenCottonBlendIvory.mtlx) — warm ivory linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendCream](woven-upholstery-and-furnishing-textiles/linenCottonBlendCream.mtlx) — yellow-tinted cream linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendOatmeal](woven-upholstery-and-furnishing-textiles/linenCottonBlendOatmeal.mtlx) — light beige-gray oatmeal linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendBeige](woven-upholstery-and-furnishing-textiles/linenCottonBlendBeige.mtlx) — warm beige linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendTaupe](woven-upholstery-and-furnishing-textiles/linenCottonBlendTaupe.mtlx) — gray-brown taupe linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendCamel](woven-upholstery-and-furnishing-textiles/linenCottonBlendCamel.mtlx) — golden camel tan linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendChocolate](woven-upholstery-and-furnishing-textiles/linenCottonBlendChocolate.mtlx) — deep chocolate brown linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendLightGray](woven-upholstery-and-furnishing-textiles/linenCottonBlendLightGray.mtlx) — light neutral gray linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendMediumGray](woven-upholstery-and-furnishing-textiles/linenCottonBlendMediumGray.mtlx) — medium neutral gray linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendCharcoal](woven-upholstery-and-furnishing-textiles/linenCottonBlendCharcoal.mtlx) — dark charcoal gray linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendBlack](woven-upholstery-and-furnishing-textiles/linenCottonBlendBlack.mtlx) — neutral black linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendNavy](woven-upholstery-and-furnishing-textiles/linenCottonBlendNavy.mtlx) — deep navy blue linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendSlateBlue](woven-upholstery-and-furnishing-textiles/linenCottonBlendSlateBlue.mtlx) — muted gray-blue linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendTeal](woven-upholstery-and-furnishing-textiles/linenCottonBlendTeal.mtlx) — blue-green teal linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendSage](woven-upholstery-and-furnishing-textiles/linenCottonBlendSage.mtlx) — muted gray-green sage linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendOlive](woven-upholstery-and-furnishing-textiles/linenCottonBlendOlive.mtlx) — yellow-green olive linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendForestGreen](woven-upholstery-and-furnishing-textiles/linenCottonBlendForestGreen.mtlx) — deep forest green linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendMustard](woven-upholstery-and-furnishing-textiles/linenCottonBlendMustard.mtlx) — ochre mustard yellow linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendTerracotta](woven-upholstery-and-furnishing-textiles/linenCottonBlendTerracotta.mtlx) — earthy orange-red terracotta linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendBurgundy](woven-upholstery-and-furnishing-textiles/linenCottonBlendBurgundy.mtlx) — deep wine red linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [linenCottonBlendBlush](woven-upholstery-and-furnishing-textiles/linenCottonBlendBlush.mtlx) — pale blush pink linen-cotton blend; moderately slubbed weave, soft fiber fuzz, and low sheen.
+- [woolPlainWeaveIvory](woven-upholstery-and-furnishing-textiles/woolPlainWeaveIvory.mtlx) — warm ivory wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveCream](woven-upholstery-and-furnishing-textiles/woolPlainWeaveCream.mtlx) — yellow-tinted cream wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveOatmeal](woven-upholstery-and-furnishing-textiles/woolPlainWeaveOatmeal.mtlx) — light beige-gray oatmeal wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveBeige](woven-upholstery-and-furnishing-textiles/woolPlainWeaveBeige.mtlx) — warm beige wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveTaupe](woven-upholstery-and-furnishing-textiles/woolPlainWeaveTaupe.mtlx) — gray-brown taupe wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveCamel](woven-upholstery-and-furnishing-textiles/woolPlainWeaveCamel.mtlx) — golden camel tan wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveChocolate](woven-upholstery-and-furnishing-textiles/woolPlainWeaveChocolate.mtlx) — deep chocolate brown wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveLightGray](woven-upholstery-and-furnishing-textiles/woolPlainWeaveLightGray.mtlx) — light neutral gray wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveMediumGray](woven-upholstery-and-furnishing-textiles/woolPlainWeaveMediumGray.mtlx) — medium neutral gray wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveCharcoal](woven-upholstery-and-furnishing-textiles/woolPlainWeaveCharcoal.mtlx) — dark charcoal gray wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveBlack](woven-upholstery-and-furnishing-textiles/woolPlainWeaveBlack.mtlx) — neutral black wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveNavy](woven-upholstery-and-furnishing-textiles/woolPlainWeaveNavy.mtlx) — deep navy blue wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/woolPlainWeaveSlateBlue.mtlx) — muted gray-blue wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveTeal](woven-upholstery-and-furnishing-textiles/woolPlainWeaveTeal.mtlx) — blue-green teal wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveSage](woven-upholstery-and-furnishing-textiles/woolPlainWeaveSage.mtlx) — muted gray-green sage wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveOlive](woven-upholstery-and-furnishing-textiles/woolPlainWeaveOlive.mtlx) — yellow-green olive wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveForestGreen](woven-upholstery-and-furnishing-textiles/woolPlainWeaveForestGreen.mtlx) — deep forest green wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveMustard](woven-upholstery-and-furnishing-textiles/woolPlainWeaveMustard.mtlx) — ochre mustard yellow wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveTerracotta](woven-upholstery-and-furnishing-textiles/woolPlainWeaveTerracotta.mtlx) — earthy orange-red terracotta wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveBurgundy](woven-upholstery-and-furnishing-textiles/woolPlainWeaveBurgundy.mtlx) — deep wine red wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolPlainWeaveBlush](woven-upholstery-and-furnishing-textiles/woolPlainWeaveBlush.mtlx) — pale blush pink wool plain weave; fine dense weave with soft fuzzy fibers and broad diffuse highlights.
+- [woolFlannelIvory](woven-upholstery-and-furnishing-textiles/woolFlannelIvory.mtlx) — warm ivory wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelCream](woven-upholstery-and-furnishing-textiles/woolFlannelCream.mtlx) — yellow-tinted cream wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelOatmeal](woven-upholstery-and-furnishing-textiles/woolFlannelOatmeal.mtlx) — light beige-gray oatmeal wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelBeige](woven-upholstery-and-furnishing-textiles/woolFlannelBeige.mtlx) — warm beige wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelTaupe](woven-upholstery-and-furnishing-textiles/woolFlannelTaupe.mtlx) — gray-brown taupe wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelCamel](woven-upholstery-and-furnishing-textiles/woolFlannelCamel.mtlx) — golden camel tan wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelChocolate](woven-upholstery-and-furnishing-textiles/woolFlannelChocolate.mtlx) — deep chocolate brown wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelLightGray](woven-upholstery-and-furnishing-textiles/woolFlannelLightGray.mtlx) — light neutral gray wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelMediumGray](woven-upholstery-and-furnishing-textiles/woolFlannelMediumGray.mtlx) — medium neutral gray wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelCharcoal](woven-upholstery-and-furnishing-textiles/woolFlannelCharcoal.mtlx) — dark charcoal gray wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelBlack](woven-upholstery-and-furnishing-textiles/woolFlannelBlack.mtlx) — neutral black wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelNavy](woven-upholstery-and-furnishing-textiles/woolFlannelNavy.mtlx) — deep navy blue wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelSlateBlue](woven-upholstery-and-furnishing-textiles/woolFlannelSlateBlue.mtlx) — muted gray-blue wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelTeal](woven-upholstery-and-furnishing-textiles/woolFlannelTeal.mtlx) — blue-green teal wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelSage](woven-upholstery-and-furnishing-textiles/woolFlannelSage.mtlx) — muted gray-green sage wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelOlive](woven-upholstery-and-furnishing-textiles/woolFlannelOlive.mtlx) — yellow-green olive wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelForestGreen](woven-upholstery-and-furnishing-textiles/woolFlannelForestGreen.mtlx) — deep forest green wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelMustard](woven-upholstery-and-furnishing-textiles/woolFlannelMustard.mtlx) — ochre mustard yellow wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelTerracotta](woven-upholstery-and-furnishing-textiles/woolFlannelTerracotta.mtlx) — earthy orange-red terracotta wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelBurgundy](woven-upholstery-and-furnishing-textiles/woolFlannelBurgundy.mtlx) — deep wine red wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolFlannelBlush](woven-upholstery-and-furnishing-textiles/woolFlannelBlush.mtlx) — pale blush pink wool flannel; brushed fiber nap, subdued weave, and soft matte scattering.
+- [woolTweedIvory](woven-upholstery-and-furnishing-textiles/woolTweedIvory.mtlx) — warm ivory wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedCream](woven-upholstery-and-furnishing-textiles/woolTweedCream.mtlx) — yellow-tinted cream wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedOatmeal](woven-upholstery-and-furnishing-textiles/woolTweedOatmeal.mtlx) — light beige-gray oatmeal wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedBeige](woven-upholstery-and-furnishing-textiles/woolTweedBeige.mtlx) — warm beige wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedTaupe](woven-upholstery-and-furnishing-textiles/woolTweedTaupe.mtlx) — gray-brown taupe wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedCamel](woven-upholstery-and-furnishing-textiles/woolTweedCamel.mtlx) — golden camel tan wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedChocolate](woven-upholstery-and-furnishing-textiles/woolTweedChocolate.mtlx) — deep chocolate brown wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedLightGray](woven-upholstery-and-furnishing-textiles/woolTweedLightGray.mtlx) — light neutral gray wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedMediumGray](woven-upholstery-and-furnishing-textiles/woolTweedMediumGray.mtlx) — medium neutral gray wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedCharcoal](woven-upholstery-and-furnishing-textiles/woolTweedCharcoal.mtlx) — dark charcoal gray wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedBlack](woven-upholstery-and-furnishing-textiles/woolTweedBlack.mtlx) — neutral black wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedNavy](woven-upholstery-and-furnishing-textiles/woolTweedNavy.mtlx) — deep navy blue wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedSlateBlue](woven-upholstery-and-furnishing-textiles/woolTweedSlateBlue.mtlx) — muted gray-blue wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedTeal](woven-upholstery-and-furnishing-textiles/woolTweedTeal.mtlx) — blue-green teal wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedSage](woven-upholstery-and-furnishing-textiles/woolTweedSage.mtlx) — muted gray-green sage wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedOlive](woven-upholstery-and-furnishing-textiles/woolTweedOlive.mtlx) — yellow-green olive wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedForestGreen](woven-upholstery-and-furnishing-textiles/woolTweedForestGreen.mtlx) — deep forest green wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedMustard](woven-upholstery-and-furnishing-textiles/woolTweedMustard.mtlx) — ochre mustard yellow wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedTerracotta](woven-upholstery-and-furnishing-textiles/woolTweedTerracotta.mtlx) — earthy orange-red terracotta wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedBurgundy](woven-upholstery-and-furnishing-textiles/woolTweedBurgundy.mtlx) — deep wine red wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [woolTweedBlush](woven-upholstery-and-furnishing-textiles/woolTweedBlush.mtlx) — pale blush pink wool tweed; coarse irregular yarns and subtle same-hue fiber variation; matte.
+- [polyesterPlainWeaveIvory](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveIvory.mtlx) — warm ivory polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveCream](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveCream.mtlx) — yellow-tinted cream polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveOatmeal](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveOatmeal.mtlx) — light beige-gray oatmeal polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveBeige](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveBeige.mtlx) — warm beige polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveTaupe](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveTaupe.mtlx) — gray-brown taupe polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveCamel](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveCamel.mtlx) — golden camel tan polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveChocolate](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveChocolate.mtlx) — deep chocolate brown polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveLightGray](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveLightGray.mtlx) — light neutral gray polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveMediumGray](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveMediumGray.mtlx) — medium neutral gray polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveCharcoal](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveCharcoal.mtlx) — dark charcoal gray polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveBlack](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveBlack.mtlx) — neutral black polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveNavy](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveNavy.mtlx) — deep navy blue polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveSlateBlue.mtlx) — muted gray-blue polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveTeal](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveTeal.mtlx) — blue-green teal polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveSage](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveSage.mtlx) — muted gray-green sage polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveOlive](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveOlive.mtlx) — yellow-green olive polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveForestGreen](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveForestGreen.mtlx) — deep forest green polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveMustard](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveMustard.mtlx) — ochre mustard yellow polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveTerracotta](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveTerracotta.mtlx) — earthy orange-red terracotta polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveBurgundy](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveBurgundy.mtlx) — deep wine red polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterPlainWeaveBlush](woven-upholstery-and-furnishing-textiles/polyesterPlainWeaveBlush.mtlx) — pale blush pink polyester plain weave; regular fine synthetic yarns and restrained satin-like fiber sheen.
+- [polyesterBasketWeaveIvory](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveIvory.mtlx) — warm ivory polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveCream](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveCream.mtlx) — yellow-tinted cream polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveOatmeal](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveOatmeal.mtlx) — light beige-gray oatmeal polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveBeige](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveBeige.mtlx) — warm beige polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveTaupe](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveTaupe.mtlx) — gray-brown taupe polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveCamel](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveCamel.mtlx) — golden camel tan polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveChocolate](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveChocolate.mtlx) — deep chocolate brown polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveLightGray](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveLightGray.mtlx) — light neutral gray polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveMediumGray](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveMediumGray.mtlx) — medium neutral gray polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveCharcoal](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveCharcoal.mtlx) — dark charcoal gray polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveBlack](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveBlack.mtlx) — neutral black polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveNavy](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveNavy.mtlx) — deep navy blue polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveSlateBlue.mtlx) — muted gray-blue polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveTeal](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveTeal.mtlx) — blue-green teal polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveSage](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveSage.mtlx) — muted gray-green sage polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveOlive](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveOlive.mtlx) — yellow-green olive polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveForestGreen](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveForestGreen.mtlx) — deep forest green polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveMustard](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveMustard.mtlx) — ochre mustard yellow polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveTerracotta](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveTerracotta.mtlx) — earthy orange-red terracotta polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveBurgundy](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveBurgundy.mtlx) — deep wine red polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [polyesterBasketWeaveBlush](woven-upholstery-and-furnishing-textiles/polyesterBasketWeaveBlush.mtlx) — pale blush pink polyester basket weave; coarse paired-yarn pattern with low sheen.
+- [acrylicOutdoorWeaveIvory](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveIvory.mtlx) — warm ivory solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveCream](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveCream.mtlx) — yellow-tinted cream solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveOatmeal](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveOatmeal.mtlx) — light beige-gray oatmeal solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveBeige](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveBeige.mtlx) — warm beige solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveTaupe](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveTaupe.mtlx) — gray-brown taupe solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveCamel](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveCamel.mtlx) — golden camel tan solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveChocolate](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveChocolate.mtlx) — deep chocolate brown solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveLightGray](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveLightGray.mtlx) — light neutral gray solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveMediumGray](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveMediumGray.mtlx) — medium neutral gray solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveCharcoal](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveCharcoal.mtlx) — dark charcoal gray solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveBlack](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveBlack.mtlx) — neutral black solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveNavy](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveNavy.mtlx) — deep navy blue solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveSlateBlue.mtlx) — muted gray-blue solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveTeal](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveTeal.mtlx) — blue-green teal solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveSage](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveSage.mtlx) — muted gray-green sage solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveOlive](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveOlive.mtlx) — yellow-green olive solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveForestGreen](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveForestGreen.mtlx) — deep forest green solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveMustard](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveMustard.mtlx) — ochre mustard yellow solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveTerracotta](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveTerracotta.mtlx) — earthy orange-red terracotta solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveBurgundy](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveBurgundy.mtlx) — deep wine red solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [acrylicOutdoorWeaveBlush](woven-upholstery-and-furnishing-textiles/acrylicOutdoorWeaveBlush.mtlx) — pale blush pink solution-colored acrylic textile; tight woven yarn texture with dry low-sheen fiber response.
+- [polypropyleneOutdoorWeaveIvory](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveIvory.mtlx) — warm ivory polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveCream](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveCream.mtlx) — yellow-tinted cream polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveOatmeal](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveOatmeal.mtlx) — light beige-gray oatmeal polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveBeige](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveBeige.mtlx) — warm beige polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveTaupe](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveTaupe.mtlx) — gray-brown taupe polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveCamel](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveCamel.mtlx) — golden camel tan polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveChocolate](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveChocolate.mtlx) — deep chocolate brown polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveLightGray](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveLightGray.mtlx) — light neutral gray polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveMediumGray](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveMediumGray.mtlx) — medium neutral gray polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveCharcoal](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveCharcoal.mtlx) — dark charcoal gray polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveBlack](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveBlack.mtlx) — neutral black polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveNavy](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveNavy.mtlx) — deep navy blue polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveSlateBlue.mtlx) — muted gray-blue polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveTeal](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveTeal.mtlx) — blue-green teal polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveSage](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveSage.mtlx) — muted gray-green sage polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveOlive](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveOlive.mtlx) — yellow-green olive polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveForestGreen](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveForestGreen.mtlx) — deep forest green polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveMustard](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveMustard.mtlx) — ochre mustard yellow polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveTerracotta](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveTerracotta.mtlx) — earthy orange-red terracotta polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveBurgundy](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveBurgundy.mtlx) — deep wine red polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [polypropyleneOutdoorWeaveBlush](woven-upholstery-and-furnishing-textiles/polypropyleneOutdoorWeaveBlush.mtlx) — pale blush pink polypropylene textile; chunky regular yarn texture with subtle synthetic fiber sheen.
+- [olefinFlatWeaveIvory](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveIvory.mtlx) — warm ivory olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveCream](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveCream.mtlx) — yellow-tinted cream olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveOatmeal](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveOatmeal.mtlx) — light beige-gray oatmeal olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveBeige](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveBeige.mtlx) — warm beige olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveTaupe](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveTaupe.mtlx) — gray-brown taupe olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveCamel](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveCamel.mtlx) — golden camel tan olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveChocolate](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveChocolate.mtlx) — deep chocolate brown olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveLightGray](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveLightGray.mtlx) — light neutral gray olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveMediumGray](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveMediumGray.mtlx) — medium neutral gray olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveCharcoal](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveCharcoal.mtlx) — dark charcoal gray olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveBlack](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveBlack.mtlx) — neutral black olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveNavy](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveNavy.mtlx) — deep navy blue olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveSlateBlue.mtlx) — muted gray-blue olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveTeal](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveTeal.mtlx) — blue-green teal olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveSage](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveSage.mtlx) — muted gray-green sage olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveOlive](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveOlive.mtlx) — yellow-green olive olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveForestGreen](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveForestGreen.mtlx) — deep forest green olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveMustard](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveMustard.mtlx) — ochre mustard yellow olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveTerracotta](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveTerracotta.mtlx) — earthy orange-red terracotta olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveBurgundy](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveBurgundy.mtlx) — deep wine red olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [olefinFlatWeaveBlush](woven-upholstery-and-furnishing-textiles/olefinFlatWeaveBlush.mtlx) — pale blush pink olefin flat-weave textile; fine tightly packed yarns with low sheen.
+- [recycledPolyesterWeaveIvory](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveIvory.mtlx) — warm ivory recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveCream](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveCream.mtlx) — yellow-tinted cream recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveOatmeal](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveOatmeal.mtlx) — light beige-gray oatmeal recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveBeige](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveBeige.mtlx) — warm beige recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveTaupe](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveTaupe.mtlx) — gray-brown taupe recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveCamel](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveCamel.mtlx) — golden camel tan recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveChocolate](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveChocolate.mtlx) — deep chocolate brown recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveLightGray](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveLightGray.mtlx) — light neutral gray recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveMediumGray](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveMediumGray.mtlx) — medium neutral gray recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveCharcoal](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveCharcoal.mtlx) — dark charcoal gray recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveBlack](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveBlack.mtlx) — neutral black recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveNavy](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveNavy.mtlx) — deep navy blue recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveSlateBlue.mtlx) — muted gray-blue recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveTeal](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveTeal.mtlx) — blue-green teal recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveSage](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveSage.mtlx) — muted gray-green sage recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveOlive](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveOlive.mtlx) — yellow-green olive recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveForestGreen](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveForestGreen.mtlx) — deep forest green recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveMustard](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveMustard.mtlx) — ochre mustard yellow recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveTerracotta](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveTerracotta.mtlx) — earthy orange-red terracotta recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveBurgundy](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveBurgundy.mtlx) — deep wine red recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [recycledPolyesterWeaveBlush](woven-upholstery-and-furnishing-textiles/recycledPolyesterWeaveBlush.mtlx) — pale blush pink recycled polyester textile; fine uniform weave and restrained fiber sheen.
+- [hempPlainWeaveIvory](woven-upholstery-and-furnishing-textiles/hempPlainWeaveIvory.mtlx) — warm ivory hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveCream](woven-upholstery-and-furnishing-textiles/hempPlainWeaveCream.mtlx) — yellow-tinted cream hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveOatmeal](woven-upholstery-and-furnishing-textiles/hempPlainWeaveOatmeal.mtlx) — light beige-gray oatmeal hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveBeige](woven-upholstery-and-furnishing-textiles/hempPlainWeaveBeige.mtlx) — warm beige hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveTaupe](woven-upholstery-and-furnishing-textiles/hempPlainWeaveTaupe.mtlx) — gray-brown taupe hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveCamel](woven-upholstery-and-furnishing-textiles/hempPlainWeaveCamel.mtlx) — golden camel tan hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveChocolate](woven-upholstery-and-furnishing-textiles/hempPlainWeaveChocolate.mtlx) — deep chocolate brown hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveLightGray](woven-upholstery-and-furnishing-textiles/hempPlainWeaveLightGray.mtlx) — light neutral gray hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveMediumGray](woven-upholstery-and-furnishing-textiles/hempPlainWeaveMediumGray.mtlx) — medium neutral gray hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveCharcoal](woven-upholstery-and-furnishing-textiles/hempPlainWeaveCharcoal.mtlx) — dark charcoal gray hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveBlack](woven-upholstery-and-furnishing-textiles/hempPlainWeaveBlack.mtlx) — neutral black hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveNavy](woven-upholstery-and-furnishing-textiles/hempPlainWeaveNavy.mtlx) — deep navy blue hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/hempPlainWeaveSlateBlue.mtlx) — muted gray-blue hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveTeal](woven-upholstery-and-furnishing-textiles/hempPlainWeaveTeal.mtlx) — blue-green teal hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveSage](woven-upholstery-and-furnishing-textiles/hempPlainWeaveSage.mtlx) — muted gray-green sage hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveOlive](woven-upholstery-and-furnishing-textiles/hempPlainWeaveOlive.mtlx) — yellow-green olive hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveForestGreen](woven-upholstery-and-furnishing-textiles/hempPlainWeaveForestGreen.mtlx) — deep forest green hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveMustard](woven-upholstery-and-furnishing-textiles/hempPlainWeaveMustard.mtlx) — ochre mustard yellow hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveTerracotta](woven-upholstery-and-furnishing-textiles/hempPlainWeaveTerracotta.mtlx) — earthy orange-red terracotta hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveBurgundy](woven-upholstery-and-furnishing-textiles/hempPlainWeaveBurgundy.mtlx) — deep wine red hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [hempPlainWeaveBlush](woven-upholstery-and-furnishing-textiles/hempPlainWeaveBlush.mtlx) — pale blush pink hemp plain weave; coarse slightly irregular fibers with dry matte scattering.
+- [ramiePlainWeaveIvory](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveIvory.mtlx) — warm ivory ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveCream](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveCream.mtlx) — yellow-tinted cream ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveOatmeal](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveOatmeal.mtlx) — light beige-gray oatmeal ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveBeige](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveBeige.mtlx) — warm beige ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveTaupe](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveTaupe.mtlx) — gray-brown taupe ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveCamel](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveCamel.mtlx) — golden camel tan ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveChocolate](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveChocolate.mtlx) — deep chocolate brown ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveLightGray](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveLightGray.mtlx) — light neutral gray ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveMediumGray](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveMediumGray.mtlx) — medium neutral gray ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveCharcoal](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveCharcoal.mtlx) — dark charcoal gray ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveBlack](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveBlack.mtlx) — neutral black ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveNavy](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveNavy.mtlx) — deep navy blue ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveSlateBlue](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveSlateBlue.mtlx) — muted gray-blue ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveTeal](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveTeal.mtlx) — blue-green teal ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveSage](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveSage.mtlx) — muted gray-green sage ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveOlive](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveOlive.mtlx) — yellow-green olive ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveForestGreen](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveForestGreen.mtlx) — deep forest green ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveMustard](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveMustard.mtlx) — ochre mustard yellow ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveTerracotta](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveTerracotta.mtlx) — earthy orange-red terracotta ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveBurgundy](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveBurgundy.mtlx) — deep wine red ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [ramiePlainWeaveBlush](woven-upholstery-and-furnishing-textiles/ramiePlainWeaveBlush.mtlx) — pale blush pink ramie plain weave; crisp slightly slubbed yarns with subtle natural luster.
+- [silkDupioniIvory](woven-upholstery-and-furnishing-textiles/silkDupioniIvory.mtlx) — warm ivory silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniCream](woven-upholstery-and-furnishing-textiles/silkDupioniCream.mtlx) — yellow-tinted cream silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniOatmeal](woven-upholstery-and-furnishing-textiles/silkDupioniOatmeal.mtlx) — light beige-gray oatmeal silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniBeige](woven-upholstery-and-furnishing-textiles/silkDupioniBeige.mtlx) — warm beige silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniTaupe](woven-upholstery-and-furnishing-textiles/silkDupioniTaupe.mtlx) — gray-brown taupe silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniCamel](woven-upholstery-and-furnishing-textiles/silkDupioniCamel.mtlx) — golden camel tan silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniChocolate](woven-upholstery-and-furnishing-textiles/silkDupioniChocolate.mtlx) — deep chocolate brown silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniLightGray](woven-upholstery-and-furnishing-textiles/silkDupioniLightGray.mtlx) — light neutral gray silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniMediumGray](woven-upholstery-and-furnishing-textiles/silkDupioniMediumGray.mtlx) — medium neutral gray silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniCharcoal](woven-upholstery-and-furnishing-textiles/silkDupioniCharcoal.mtlx) — dark charcoal gray silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniBlack](woven-upholstery-and-furnishing-textiles/silkDupioniBlack.mtlx) — neutral black silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniNavy](woven-upholstery-and-furnishing-textiles/silkDupioniNavy.mtlx) — deep navy blue silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniSlateBlue](woven-upholstery-and-furnishing-textiles/silkDupioniSlateBlue.mtlx) — muted gray-blue silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniTeal](woven-upholstery-and-furnishing-textiles/silkDupioniTeal.mtlx) — blue-green teal silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniSage](woven-upholstery-and-furnishing-textiles/silkDupioniSage.mtlx) — muted gray-green sage silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniOlive](woven-upholstery-and-furnishing-textiles/silkDupioniOlive.mtlx) — yellow-green olive silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniForestGreen](woven-upholstery-and-furnishing-textiles/silkDupioniForestGreen.mtlx) — deep forest green silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniMustard](woven-upholstery-and-furnishing-textiles/silkDupioniMustard.mtlx) — ochre mustard yellow silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniTerracotta](woven-upholstery-and-furnishing-textiles/silkDupioniTerracotta.mtlx) — earthy orange-red terracotta silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniBurgundy](woven-upholstery-and-furnishing-textiles/silkDupioniBurgundy.mtlx) — deep wine red silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkDupioniBlush](woven-upholstery-and-furnishing-textiles/silkDupioniBlush.mtlx) — pale blush pink silk dupioni; irregular crosswise slubs and pronounced directional silk sheen.
+- [silkSatinIvory](woven-upholstery-and-furnishing-textiles/silkSatinIvory.mtlx) — warm ivory silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinCream](woven-upholstery-and-furnishing-textiles/silkSatinCream.mtlx) — yellow-tinted cream silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinOatmeal](woven-upholstery-and-furnishing-textiles/silkSatinOatmeal.mtlx) — light beige-gray oatmeal silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinBeige](woven-upholstery-and-furnishing-textiles/silkSatinBeige.mtlx) — warm beige silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinTaupe](woven-upholstery-and-furnishing-textiles/silkSatinTaupe.mtlx) — gray-brown taupe silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinCamel](woven-upholstery-and-furnishing-textiles/silkSatinCamel.mtlx) — golden camel tan silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinChocolate](woven-upholstery-and-furnishing-textiles/silkSatinChocolate.mtlx) — deep chocolate brown silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinLightGray](woven-upholstery-and-furnishing-textiles/silkSatinLightGray.mtlx) — light neutral gray silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinMediumGray](woven-upholstery-and-furnishing-textiles/silkSatinMediumGray.mtlx) — medium neutral gray silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinCharcoal](woven-upholstery-and-furnishing-textiles/silkSatinCharcoal.mtlx) — dark charcoal gray silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinBlack](woven-upholstery-and-furnishing-textiles/silkSatinBlack.mtlx) — neutral black silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinNavy](woven-upholstery-and-furnishing-textiles/silkSatinNavy.mtlx) — deep navy blue silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinSlateBlue](woven-upholstery-and-furnishing-textiles/silkSatinSlateBlue.mtlx) — muted gray-blue silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinTeal](woven-upholstery-and-furnishing-textiles/silkSatinTeal.mtlx) — blue-green teal silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinSage](woven-upholstery-and-furnishing-textiles/silkSatinSage.mtlx) — muted gray-green sage silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinOlive](woven-upholstery-and-furnishing-textiles/silkSatinOlive.mtlx) — yellow-green olive silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinForestGreen](woven-upholstery-and-furnishing-textiles/silkSatinForestGreen.mtlx) — deep forest green silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinMustard](woven-upholstery-and-furnishing-textiles/silkSatinMustard.mtlx) — ochre mustard yellow silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinTerracotta](woven-upholstery-and-furnishing-textiles/silkSatinTerracotta.mtlx) — earthy orange-red terracotta silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinBurgundy](woven-upholstery-and-furnishing-textiles/silkSatinBurgundy.mtlx) — deep wine red silk satin; fine smooth fibers and strong directional highlights.
+- [silkSatinBlush](woven-upholstery-and-furnishing-textiles/silkSatinBlush.mtlx) — pale blush pink silk satin; fine smooth fibers and strong directional highlights.
+- [viscoseLinenBlendIvory](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendIvory.mtlx) — warm ivory viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendCream](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendCream.mtlx) — yellow-tinted cream viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendOatmeal](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendOatmeal.mtlx) — light beige-gray oatmeal viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendBeige](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendBeige.mtlx) — warm beige viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendTaupe](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendTaupe.mtlx) — gray-brown taupe viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendCamel](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendCamel.mtlx) — golden camel tan viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendChocolate](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendChocolate.mtlx) — deep chocolate brown viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendLightGray](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendLightGray.mtlx) — light neutral gray viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendMediumGray](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendMediumGray.mtlx) — medium neutral gray viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendCharcoal](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendCharcoal.mtlx) — dark charcoal gray viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendBlack](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendBlack.mtlx) — neutral black viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendNavy](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendNavy.mtlx) — deep navy blue viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendSlateBlue](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendSlateBlue.mtlx) — muted gray-blue viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendTeal](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendTeal.mtlx) — blue-green teal viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendSage](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendSage.mtlx) — muted gray-green sage viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendOlive](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendOlive.mtlx) — yellow-green olive viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendForestGreen](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendForestGreen.mtlx) — deep forest green viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendMustard](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendMustard.mtlx) — ochre mustard yellow viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendTerracotta](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendTerracotta.mtlx) — earthy orange-red terracotta viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendBurgundy](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendBurgundy.mtlx) — deep wine red viscose-linen blend; lightly slubbed weave with soft directional luster.
+- [viscoseLinenBlendBlush](woven-upholstery-and-furnishing-textiles/viscoseLinenBlendBlush.mtlx) — pale blush pink viscose-linen blend; lightly slubbed weave with soft directional luster.
+
+## Pile, loop, felt, knitted, and nonwoven textiles
+
+- [cottonVelvetIvory](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetIvory.mtlx) — warm ivory cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetCream](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetCream.mtlx) — yellow-tinted cream cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetOatmeal.mtlx) — light beige-gray oatmeal cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetBeige](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetBeige.mtlx) — warm beige cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetTaupe.mtlx) — gray-brown taupe cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetCamel](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetCamel.mtlx) — golden camel tan cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetChocolate.mtlx) — deep chocolate brown cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetLightGray.mtlx) — light neutral gray cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetMediumGray.mtlx) — medium neutral gray cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetCharcoal.mtlx) — dark charcoal gray cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetBlack](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetBlack.mtlx) — neutral black cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetNavy](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetNavy.mtlx) — deep navy blue cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetSlateBlue.mtlx) — muted gray-blue cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetTeal](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetTeal.mtlx) — blue-green teal cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetSage](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetSage.mtlx) — muted gray-green sage cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetOlive](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetOlive.mtlx) — yellow-green olive cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetForestGreen.mtlx) — deep forest green cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetMustard](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetMustard.mtlx) — ochre mustard yellow cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetTerracotta.mtlx) — earthy orange-red terracotta cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetBurgundy.mtlx) — deep wine red cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [cottonVelvetBlush](pile-loop-felt-knitted-and-nonwoven-textiles/cottonVelvetBlush.mtlx) — pale blush pink cotton velvet; dense short pile with directional light-dark shift and soft highlights.
+- [polyesterVelvetIvory](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetIvory.mtlx) — warm ivory polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetCream](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetCream.mtlx) — yellow-tinted cream polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetOatmeal.mtlx) — light beige-gray oatmeal polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetBeige](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetBeige.mtlx) — warm beige polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetTaupe.mtlx) — gray-brown taupe polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetCamel](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetCamel.mtlx) — golden camel tan polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetChocolate.mtlx) — deep chocolate brown polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetLightGray.mtlx) — light neutral gray polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetMediumGray.mtlx) — medium neutral gray polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetCharcoal.mtlx) — dark charcoal gray polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetBlack](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetBlack.mtlx) — neutral black polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetNavy](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetNavy.mtlx) — deep navy blue polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetSlateBlue.mtlx) — muted gray-blue polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetTeal](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetTeal.mtlx) — blue-green teal polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetSage](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetSage.mtlx) — muted gray-green sage polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetOlive](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetOlive.mtlx) — yellow-green olive polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetForestGreen.mtlx) — deep forest green polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetMustard](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetMustard.mtlx) — ochre mustard yellow polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetTerracotta.mtlx) — earthy orange-red terracotta polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetBurgundy.mtlx) — deep wine red polyester velvet; dense even short pile with directional sheen.
+- [polyesterVelvetBlush](pile-loop-felt-knitted-and-nonwoven-textiles/polyesterVelvetBlush.mtlx) — pale blush pink polyester velvet; dense even short pile with directional sheen.
+- [mohairVelvetIvory](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetIvory.mtlx) — warm ivory mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetCream](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetCream.mtlx) — yellow-tinted cream mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetOatmeal.mtlx) — light beige-gray oatmeal mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetBeige](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetBeige.mtlx) — warm beige mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetTaupe.mtlx) — gray-brown taupe mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetCamel](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetCamel.mtlx) — golden camel tan mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetChocolate.mtlx) — deep chocolate brown mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetLightGray.mtlx) — light neutral gray mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetMediumGray.mtlx) — medium neutral gray mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetCharcoal.mtlx) — dark charcoal gray mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetBlack](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetBlack.mtlx) — neutral black mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetNavy](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetNavy.mtlx) — deep navy blue mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetSlateBlue.mtlx) — muted gray-blue mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetTeal](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetTeal.mtlx) — blue-green teal mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetSage](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetSage.mtlx) — muted gray-green sage mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetOlive](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetOlive.mtlx) — yellow-green olive mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetForestGreen.mtlx) — deep forest green mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetMustard](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetMustard.mtlx) — ochre mustard yellow mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetTerracotta.mtlx) — earthy orange-red terracotta mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetBurgundy.mtlx) — deep wine red mohair velvet; resilient fine pile with luminous directional sheen.
+- [mohairVelvetBlush](pile-loop-felt-knitted-and-nonwoven-textiles/mohairVelvetBlush.mtlx) — pale blush pink mohair velvet; resilient fine pile with luminous directional sheen.
+- [chenilleIvory](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleIvory.mtlx) — warm ivory chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleCream](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleCream.mtlx) — yellow-tinted cream chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleOatmeal.mtlx) — light beige-gray oatmeal chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleBeige](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleBeige.mtlx) — warm beige chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleTaupe.mtlx) — gray-brown taupe chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleCamel](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleCamel.mtlx) — golden camel tan chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleChocolate.mtlx) — deep chocolate brown chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleLightGray.mtlx) — light neutral gray chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleMediumGray.mtlx) — medium neutral gray chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleCharcoal.mtlx) — dark charcoal gray chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleBlack](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleBlack.mtlx) — neutral black chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleNavy](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleNavy.mtlx) — deep navy blue chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleSlateBlue.mtlx) — muted gray-blue chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleTeal](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleTeal.mtlx) — blue-green teal chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleSage](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleSage.mtlx) — muted gray-green sage chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleOlive](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleOlive.mtlx) — yellow-green olive chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleForestGreen.mtlx) — deep forest green chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleMustard](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleMustard.mtlx) — ochre mustard yellow chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleTerracotta.mtlx) — earthy orange-red terracotta chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleBurgundy.mtlx) — deep wine red chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [chenilleBlush](pile-loop-felt-knitted-and-nonwoven-textiles/chenilleBlush.mtlx) — pale blush pink chenille textile; fuzzy rounded yarn texture with soft directional highlights.
+- [boucleIvory](pile-loop-felt-knitted-and-nonwoven-textiles/boucleIvory.mtlx) — warm ivory bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleCream](pile-loop-felt-knitted-and-nonwoven-textiles/boucleCream.mtlx) — yellow-tinted cream bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/boucleOatmeal.mtlx) — light beige-gray oatmeal bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleBeige](pile-loop-felt-knitted-and-nonwoven-textiles/boucleBeige.mtlx) — warm beige bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/boucleTaupe.mtlx) — gray-brown taupe bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleCamel](pile-loop-felt-knitted-and-nonwoven-textiles/boucleCamel.mtlx) — golden camel tan bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/boucleChocolate.mtlx) — deep chocolate brown bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/boucleLightGray.mtlx) — light neutral gray bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/boucleMediumGray.mtlx) — medium neutral gray bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/boucleCharcoal.mtlx) — dark charcoal gray bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleBlack](pile-loop-felt-knitted-and-nonwoven-textiles/boucleBlack.mtlx) — neutral black bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleNavy](pile-loop-felt-knitted-and-nonwoven-textiles/boucleNavy.mtlx) — deep navy blue bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/boucleSlateBlue.mtlx) — muted gray-blue bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleTeal](pile-loop-felt-knitted-and-nonwoven-textiles/boucleTeal.mtlx) — blue-green teal bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleSage](pile-loop-felt-knitted-and-nonwoven-textiles/boucleSage.mtlx) — muted gray-green sage bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleOlive](pile-loop-felt-knitted-and-nonwoven-textiles/boucleOlive.mtlx) — yellow-green olive bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/boucleForestGreen.mtlx) — deep forest green bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleMustard](pile-loop-felt-knitted-and-nonwoven-textiles/boucleMustard.mtlx) — ochre mustard yellow bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/boucleTerracotta.mtlx) — earthy orange-red terracotta bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/boucleBurgundy.mtlx) — deep wine red bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [boucleBlush](pile-loop-felt-knitted-and-nonwoven-textiles/boucleBlush.mtlx) — pale blush pink bouclé textile; irregular small looped yarn texture and matte fiber scattering.
+- [teddyFleeceIvory](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceIvory.mtlx) — warm ivory teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceCream](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceCream.mtlx) — yellow-tinted cream teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceOatmeal.mtlx) — light beige-gray oatmeal teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceBeige](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceBeige.mtlx) — warm beige teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceTaupe.mtlx) — gray-brown taupe teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceCamel](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceCamel.mtlx) — golden camel tan teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceChocolate.mtlx) — deep chocolate brown teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceLightGray.mtlx) — light neutral gray teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceMediumGray.mtlx) — medium neutral gray teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceCharcoal.mtlx) — dark charcoal gray teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceBlack](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceBlack.mtlx) — neutral black teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceNavy](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceNavy.mtlx) — deep navy blue teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceSlateBlue.mtlx) — muted gray-blue teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceTeal](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceTeal.mtlx) — blue-green teal teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceSage](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceSage.mtlx) — muted gray-green sage teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceOlive](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceOlive.mtlx) — yellow-green olive teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceForestGreen.mtlx) — deep forest green teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceMustard](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceMustard.mtlx) — ochre mustard yellow teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceTerracotta.mtlx) — earthy orange-red terracotta teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceBurgundy.mtlx) — deep wine red teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [teddyFleeceBlush](pile-loop-felt-knitted-and-nonwoven-textiles/teddyFleeceBlush.mtlx) — pale blush pink teddy fleece; dense irregular curled pile and diffuse soft highlights.
+- [fauxShearlingIvory](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingIvory.mtlx) — warm ivory faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingCream](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingCream.mtlx) — yellow-tinted cream faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingOatmeal.mtlx) — light beige-gray oatmeal faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingBeige](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingBeige.mtlx) — warm beige faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingTaupe.mtlx) — gray-brown taupe faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingCamel](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingCamel.mtlx) — golden camel tan faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingChocolate.mtlx) — deep chocolate brown faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingLightGray.mtlx) — light neutral gray faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingMediumGray.mtlx) — medium neutral gray faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingCharcoal.mtlx) — dark charcoal gray faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingBlack](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingBlack.mtlx) — neutral black faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingNavy](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingNavy.mtlx) — deep navy blue faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingSlateBlue.mtlx) — muted gray-blue faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingTeal](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingTeal.mtlx) — blue-green teal faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingSage](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingSage.mtlx) — muted gray-green sage faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingOlive](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingOlive.mtlx) — yellow-green olive faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingForestGreen.mtlx) — deep forest green faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingMustard](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingMustard.mtlx) — ochre mustard yellow faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingTerracotta.mtlx) — earthy orange-red terracotta faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingBurgundy.mtlx) — deep wine red faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [fauxShearlingBlush](pile-loop-felt-knitted-and-nonwoven-textiles/fauxShearlingBlush.mtlx) — pale blush pink faux shearling; short tightly curled synthetic pile with soft matte scattering.
+- [feltWoolIvory](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolIvory.mtlx) — warm ivory wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolCream](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolCream.mtlx) — yellow-tinted cream wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolOatmeal.mtlx) — light beige-gray oatmeal wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolBeige](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolBeige.mtlx) — warm beige wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolTaupe.mtlx) — gray-brown taupe wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolCamel](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolCamel.mtlx) — golden camel tan wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolChocolate.mtlx) — deep chocolate brown wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolLightGray.mtlx) — light neutral gray wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolMediumGray.mtlx) — medium neutral gray wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolCharcoal.mtlx) — dark charcoal gray wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolBlack](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolBlack.mtlx) — neutral black wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolNavy](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolNavy.mtlx) — deep navy blue wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolSlateBlue.mtlx) — muted gray-blue wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolTeal](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolTeal.mtlx) — blue-green teal wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolSage](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolSage.mtlx) — muted gray-green sage wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolOlive](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolOlive.mtlx) — yellow-green olive wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolForestGreen.mtlx) — deep forest green wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolMustard](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolMustard.mtlx) — ochre mustard yellow wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolTerracotta.mtlx) — earthy orange-red terracotta wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolBurgundy.mtlx) — deep wine red wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltWoolBlush](pile-loop-felt-knitted-and-nonwoven-textiles/feltWoolBlush.mtlx) — pale blush pink wool felt; dense nonwoven fibers, fine random fuzz, and matte finish.
+- [feltPolyesterIvory](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterIvory.mtlx) — warm ivory polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterCream](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterCream.mtlx) — yellow-tinted cream polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterOatmeal.mtlx) — light beige-gray oatmeal polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterBeige](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterBeige.mtlx) — warm beige polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterTaupe.mtlx) — gray-brown taupe polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterCamel](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterCamel.mtlx) — golden camel tan polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterChocolate.mtlx) — deep chocolate brown polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterLightGray.mtlx) — light neutral gray polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterMediumGray.mtlx) — medium neutral gray polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterCharcoal.mtlx) — dark charcoal gray polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterBlack](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterBlack.mtlx) — neutral black polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterNavy](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterNavy.mtlx) — deep navy blue polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterSlateBlue.mtlx) — muted gray-blue polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterTeal](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterTeal.mtlx) — blue-green teal polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterSage](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterSage.mtlx) — muted gray-green sage polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterOlive](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterOlive.mtlx) — yellow-green olive polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterForestGreen.mtlx) — deep forest green polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterMustard](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterMustard.mtlx) — ochre mustard yellow polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterTerracotta.mtlx) — earthy orange-red terracotta polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterBurgundy.mtlx) — deep wine red polyester felt; fine compressed random fibers with low sheen.
+- [feltPolyesterBlush](pile-loop-felt-knitted-and-nonwoven-textiles/feltPolyesterBlush.mtlx) — pale blush pink polyester felt; fine compressed random fibers with low sheen.
+- [jerseyKnitIvory](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitIvory.mtlx) — warm ivory jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitCream](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitCream.mtlx) — yellow-tinted cream jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitOatmeal.mtlx) — light beige-gray oatmeal jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitBeige](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitBeige.mtlx) — warm beige jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitTaupe.mtlx) — gray-brown taupe jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitCamel](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitCamel.mtlx) — golden camel tan jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitChocolate.mtlx) — deep chocolate brown jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitLightGray.mtlx) — light neutral gray jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitMediumGray.mtlx) — medium neutral gray jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitCharcoal.mtlx) — dark charcoal gray jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitBlack](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitBlack.mtlx) — neutral black jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitNavy](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitNavy.mtlx) — deep navy blue jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitSlateBlue.mtlx) — muted gray-blue jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitTeal](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitTeal.mtlx) — blue-green teal jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitSage](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitSage.mtlx) — muted gray-green sage jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitOlive](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitOlive.mtlx) — yellow-green olive jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitForestGreen.mtlx) — deep forest green jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitMustard](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitMustard.mtlx) — ochre mustard yellow jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitTerracotta.mtlx) — earthy orange-red terracotta jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitBurgundy.mtlx) — deep wine red jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [jerseyKnitBlush](pile-loop-felt-knitted-and-nonwoven-textiles/jerseyKnitBlush.mtlx) — pale blush pink jersey knit; fine repeating knit stitches and soft low-sheen fibers.
+- [warpKnitIvory](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitIvory.mtlx) — warm ivory warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitCream](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitCream.mtlx) — yellow-tinted cream warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitOatmeal.mtlx) — light beige-gray oatmeal warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitBeige](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitBeige.mtlx) — warm beige warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitTaupe.mtlx) — gray-brown taupe warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitCamel](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitCamel.mtlx) — golden camel tan warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitChocolate.mtlx) — deep chocolate brown warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitLightGray.mtlx) — light neutral gray warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitMediumGray.mtlx) — medium neutral gray warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitCharcoal.mtlx) — dark charcoal gray warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitBlack](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitBlack.mtlx) — neutral black warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitNavy](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitNavy.mtlx) — deep navy blue warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitSlateBlue.mtlx) — muted gray-blue warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitTeal](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitTeal.mtlx) — blue-green teal warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitSage](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitSage.mtlx) — muted gray-green sage warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitOlive](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitOlive.mtlx) — yellow-green olive warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitForestGreen.mtlx) — deep forest green warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitMustard](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitMustard.mtlx) — ochre mustard yellow warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitTerracotta.mtlx) — earthy orange-red terracotta warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitBurgundy.mtlx) — deep wine red warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [warpKnitBlush](pile-loop-felt-knitted-and-nonwoven-textiles/warpKnitBlush.mtlx) — pale blush pink warp-knit textile; fine regular synthetic knit texture with subtle directional sheen.
+- [suedeMicrofiberIvory](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberIvory.mtlx) — warm ivory suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberCream](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberCream.mtlx) — yellow-tinted cream suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberOatmeal.mtlx) — light beige-gray oatmeal suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberBeige](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberBeige.mtlx) — warm beige suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberTaupe.mtlx) — gray-brown taupe suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberCamel](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberCamel.mtlx) — golden camel tan suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberChocolate.mtlx) — deep chocolate brown suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberLightGray.mtlx) — light neutral gray suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberMediumGray.mtlx) — medium neutral gray suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberCharcoal.mtlx) — dark charcoal gray suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberBlack](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberBlack.mtlx) — neutral black suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberNavy](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberNavy.mtlx) — deep navy blue suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberSlateBlue.mtlx) — muted gray-blue suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberTeal](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberTeal.mtlx) — blue-green teal suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberSage](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberSage.mtlx) — muted gray-green sage suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberOlive](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberOlive.mtlx) — yellow-green olive suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberForestGreen.mtlx) — deep forest green suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberMustard](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberMustard.mtlx) — ochre mustard yellow suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberTerracotta.mtlx) — earthy orange-red terracotta suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberBurgundy.mtlx) — deep wine red suede-like microfiber; fine short nap with restrained directional shading.
+- [suedeMicrofiberBlush](pile-loop-felt-knitted-and-nonwoven-textiles/suedeMicrofiberBlush.mtlx) — pale blush pink suede-like microfiber; fine short nap with restrained directional shading.
+- [corduroyFineIvory](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineIvory.mtlx) — warm ivory fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineCream](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineCream.mtlx) — yellow-tinted cream fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineOatmeal.mtlx) — light beige-gray oatmeal fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineBeige](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineBeige.mtlx) — warm beige fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineTaupe.mtlx) — gray-brown taupe fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineCamel](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineCamel.mtlx) — golden camel tan fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineChocolate.mtlx) — deep chocolate brown fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineLightGray.mtlx) — light neutral gray fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineMediumGray.mtlx) — medium neutral gray fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineCharcoal.mtlx) — dark charcoal gray fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineBlack](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineBlack.mtlx) — neutral black fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineNavy](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineNavy.mtlx) — deep navy blue fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineSlateBlue.mtlx) — muted gray-blue fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineTeal](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineTeal.mtlx) — blue-green teal fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineSage](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineSage.mtlx) — muted gray-green sage fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineOlive](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineOlive.mtlx) — yellow-green olive fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineForestGreen.mtlx) — deep forest green fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineMustard](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineMustard.mtlx) — ochre mustard yellow fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineTerracotta.mtlx) — earthy orange-red terracotta fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineBurgundy.mtlx) — deep wine red fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyFineBlush](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyFineBlush.mtlx) — pale blush pink fine-wale corduroy textile; narrow repeating pile-rib surface texture and directional highlights.
+- [corduroyWideIvory](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideIvory.mtlx) — warm ivory wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideCream](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideCream.mtlx) — yellow-tinted cream wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideOatmeal](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideOatmeal.mtlx) — light beige-gray oatmeal wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideBeige](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideBeige.mtlx) — warm beige wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideTaupe.mtlx) — gray-brown taupe wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideCamel](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideCamel.mtlx) — golden camel tan wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideChocolate.mtlx) — deep chocolate brown wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideLightGray.mtlx) — light neutral gray wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideMediumGray](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideMediumGray.mtlx) — medium neutral gray wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideCharcoal.mtlx) — dark charcoal gray wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideBlack](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideBlack.mtlx) — neutral black wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideNavy](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideNavy.mtlx) — deep navy blue wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideSlateBlue](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideSlateBlue.mtlx) — muted gray-blue wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideTeal](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideTeal.mtlx) — blue-green teal wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideSage](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideSage.mtlx) — muted gray-green sage wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideOlive](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideOlive.mtlx) — yellow-green olive wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideForestGreen](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideForestGreen.mtlx) — deep forest green wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideMustard](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideMustard.mtlx) — ochre mustard yellow wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideTerracotta](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideTerracotta.mtlx) — earthy orange-red terracotta wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideBurgundy](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideBurgundy.mtlx) — deep wine red wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [corduroyWideBlush](pile-loop-felt-knitted-and-nonwoven-textiles/corduroyWideBlush.mtlx) — pale blush pink wide-wale corduroy textile; broad repeating pile-rib surface texture and directional highlights.
+- [fauxFurShortWhite](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurShortWhite.mtlx) — neutral white short faux fur; dense fine synthetic pile and soft directional fiber sheen.
+- [fauxFurShortIvory](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurShortIvory.mtlx) — warm ivory short faux fur; dense fine synthetic pile and soft directional fiber sheen.
+- [fauxFurShortCream](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurShortCream.mtlx) — yellow-tinted cream short faux fur; dense fine synthetic pile and soft directional fiber sheen.
+- [fauxFurShortBeige](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurShortBeige.mtlx) — warm beige short faux fur; dense fine synthetic pile and soft directional fiber sheen.
+- [fauxFurShortTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurShortTaupe.mtlx) — gray-brown taupe short faux fur; dense fine synthetic pile and soft directional fiber sheen.
+- [fauxFurShortChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurShortChocolate.mtlx) — deep chocolate brown short faux fur; dense fine synthetic pile and soft directional fiber sheen.
+- [fauxFurShortLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurShortLightGray.mtlx) — light neutral gray short faux fur; dense fine synthetic pile and soft directional fiber sheen.
+- [fauxFurShortCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurShortCharcoal.mtlx) — dark charcoal gray short faux fur; dense fine synthetic pile and soft directional fiber sheen.
+- [fauxFurShortBlack](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurShortBlack.mtlx) — neutral black short faux fur; dense fine synthetic pile and soft directional fiber sheen.
+- [fauxFurLongWhite](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurLongWhite.mtlx) — neutral white long faux fur; wispy synthetic pile, strand color variation, and directional fiber highlights.
+- [fauxFurLongIvory](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurLongIvory.mtlx) — warm ivory long faux fur; wispy synthetic pile, strand color variation, and directional fiber highlights.
+- [fauxFurLongCream](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurLongCream.mtlx) — yellow-tinted cream long faux fur; wispy synthetic pile, strand color variation, and directional fiber highlights.
+- [fauxFurLongBeige](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurLongBeige.mtlx) — warm beige long faux fur; wispy synthetic pile, strand color variation, and directional fiber highlights.
+- [fauxFurLongTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurLongTaupe.mtlx) — gray-brown taupe long faux fur; wispy synthetic pile, strand color variation, and directional fiber highlights.
+- [fauxFurLongChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurLongChocolate.mtlx) — deep chocolate brown long faux fur; wispy synthetic pile, strand color variation, and directional fiber highlights.
+- [fauxFurLongLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurLongLightGray.mtlx) — light neutral gray long faux fur; wispy synthetic pile, strand color variation, and directional fiber highlights.
+- [fauxFurLongCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurLongCharcoal.mtlx) — dark charcoal gray long faux fur; wispy synthetic pile, strand color variation, and directional fiber highlights.
+- [fauxFurLongBlack](pile-loop-felt-knitted-and-nonwoven-textiles/fauxFurLongBlack.mtlx) — neutral black long faux fur; wispy synthetic pile, strand color variation, and directional fiber highlights.
+- [sheepskinWhite](pile-loop-felt-knitted-and-nonwoven-textiles/sheepskinWhite.mtlx) — neutral white clean sheepskin fleece; dense irregular wool curls with soft diffuse scattering.
+- [sheepskinIvory](pile-loop-felt-knitted-and-nonwoven-textiles/sheepskinIvory.mtlx) — warm ivory clean sheepskin fleece; dense irregular wool curls with soft diffuse scattering.
+- [sheepskinCream](pile-loop-felt-knitted-and-nonwoven-textiles/sheepskinCream.mtlx) — yellow-tinted cream clean sheepskin fleece; dense irregular wool curls with soft diffuse scattering.
+- [sheepskinBeige](pile-loop-felt-knitted-and-nonwoven-textiles/sheepskinBeige.mtlx) — warm beige clean sheepskin fleece; dense irregular wool curls with soft diffuse scattering.
+- [sheepskinTaupe](pile-loop-felt-knitted-and-nonwoven-textiles/sheepskinTaupe.mtlx) — gray-brown taupe clean sheepskin fleece; dense irregular wool curls with soft diffuse scattering.
+- [sheepskinChocolate](pile-loop-felt-knitted-and-nonwoven-textiles/sheepskinChocolate.mtlx) — deep chocolate brown clean sheepskin fleece; dense irregular wool curls with soft diffuse scattering.
+- [sheepskinLightGray](pile-loop-felt-knitted-and-nonwoven-textiles/sheepskinLightGray.mtlx) — light neutral gray clean sheepskin fleece; dense irregular wool curls with soft diffuse scattering.
+- [sheepskinCharcoal](pile-loop-felt-knitted-and-nonwoven-textiles/sheepskinCharcoal.mtlx) — dark charcoal gray clean sheepskin fleece; dense irregular wool curls with soft diffuse scattering.
+- [sheepskinBlack](pile-loop-felt-knitted-and-nonwoven-textiles/sheepskinBlack.mtlx) — neutral black clean sheepskin fleece; dense irregular wool curls with soft diffuse scattering.
+
+## Patterned and multicolor textiles
+
+- [textileStripeNavyIvory](patterned-and-multicolor-textiles/textileStripeNavyIvory.mtlx) — Woven textile with navy and ivory alternating stripes; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileStripeBlackWhite](patterned-and-multicolor-textiles/textileStripeBlackWhite.mtlx) — Woven textile with black and white alternating stripes; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileStripeBeigeIvory](patterned-and-multicolor-textiles/textileStripeBeigeIvory.mtlx) — Woven textile with beige and ivory alternating stripes; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileStripeSageCream](patterned-and-multicolor-textiles/textileStripeSageCream.mtlx) — Woven textile with sage green and cream alternating stripes; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileStripeRedIvory](patterned-and-multicolor-textiles/textileStripeRedIvory.mtlx) — Woven textile with red and ivory alternating stripes; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textilePinstripeCharcoalIvory](patterned-and-multicolor-textiles/textilePinstripeCharcoalIvory.mtlx) — Woven textile with fine ivory pinstripes on charcoal; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textilePinstripeNavyWhite](patterned-and-multicolor-textiles/textilePinstripeNavyWhite.mtlx) — Woven textile with fine white pinstripes on navy; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileGinghamBlueWhite](patterned-and-multicolor-textiles/textileGinghamBlueWhite.mtlx) — Woven textile with blue and white gingham checks; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileGinghamRedWhite](patterned-and-multicolor-textiles/textileGinghamRedWhite.mtlx) — Woven textile with red and white gingham checks; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileGinghamBlackWhite](patterned-and-multicolor-textiles/textileGinghamBlackWhite.mtlx) — Woven textile with black and white gingham checks; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileCheckTaupeCream](patterned-and-multicolor-textiles/textileCheckTaupeCream.mtlx) — Woven textile with taupe and cream windowpane checks; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileCheckGrayIvory](patterned-and-multicolor-textiles/textileCheckGrayIvory.mtlx) — Woven textile with gray and ivory windowpane checks; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileHoundstoothBlackWhite](patterned-and-multicolor-textiles/textileHoundstoothBlackWhite.mtlx) — Woven textile with black and white houndstooth pattern; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileHoundstoothBrownCream](patterned-and-multicolor-textiles/textileHoundstoothBrownCream.mtlx) — Woven textile with brown and cream houndstooth pattern; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileHerringboneGrayIvory](patterned-and-multicolor-textiles/textileHerringboneGrayIvory.mtlx) — Woven textile with gray and ivory herringbone weave; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileHerringboneOatmealCream](patterned-and-multicolor-textiles/textileHerringboneOatmealCream.mtlx) — Woven textile with oatmeal and cream herringbone weave; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileHerringboneNavySlate](patterned-and-multicolor-textiles/textileHerringboneNavySlate.mtlx) — Woven textile with navy and slate-blue herringbone weave; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textilePlaidForestNavyCream](patterned-and-multicolor-textiles/textilePlaidForestNavyCream.mtlx) — Woven textile with forest green, navy, and cream tartan-like checks; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textilePlaidBurgundyCamelCream](patterned-and-multicolor-textiles/textilePlaidBurgundyCamelCream.mtlx) — Woven textile with burgundy, camel, and cream tartan-like checks; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileFloralBlushSageIvory](patterned-and-multicolor-textiles/textileFloralBlushSageIvory.mtlx) — Woven textile with blush floral motifs and sage foliage on ivory; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileFloralBlueIvory](patterned-and-multicolor-textiles/textileFloralBlueIvory.mtlx) — Woven textile with blue floral motifs on ivory; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileBotanicalGreenCream](patterned-and-multicolor-textiles/textileBotanicalGreenCream.mtlx) — Woven textile with green botanical motifs on cream; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileGeometricBlackIvory](patterned-and-multicolor-textiles/textileGeometricBlackIvory.mtlx) — Woven textile with black and ivory repeating geometric print; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileGeometricTerracottaCream](patterned-and-multicolor-textiles/textileGeometricTerracottaCream.mtlx) — Woven textile with terracotta and cream repeating geometric print; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileIkatBlueCream](patterned-and-multicolor-textiles/textileIkatBlueCream.mtlx) — Woven textile with blue and cream ikat-like print with softly feathered motif boundaries; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileIkatRustIvory](patterned-and-multicolor-textiles/textileIkatRustIvory.mtlx) — Woven textile with rust-orange and ivory ikat-like print with softly feathered motif boundaries; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textilePaisleyBurgundyGold](patterned-and-multicolor-textiles/textilePaisleyBurgundyGold.mtlx) — Woven textile with burgundy and muted gold paisley print; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileToileBlueWhite](patterned-and-multicolor-textiles/textileToileBlueWhite.mtlx) — Woven textile with blue scenic toile print on white; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileSpeckleGrayIvory](patterned-and-multicolor-textiles/textileSpeckleGrayIvory.mtlx) — Woven textile with fine gray and ivory flecked yarn coloration; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [textileSpeckleBrownOatmeal](patterned-and-multicolor-textiles/textileSpeckleBrownOatmeal.mtlx) — Woven textile with fine brown and oatmeal flecked yarn coloration; fine visible yarn texture, matte fibers, and color boundaries integrated into the fabric.
+- [jacquardDamaskIvory](patterned-and-multicolor-textiles/jacquardDamaskIvory.mtlx) — Ivory-on-ivory woven damask; alternating matte and satin yarn directions define the pattern.
+- [jacquardDamaskGold](patterned-and-multicolor-textiles/jacquardDamaskGold.mtlx) — Muted gold-on-gold woven damask; alternating matte and satin yarn directions define the pattern.
+- [jacquardDamaskBurgundy](patterned-and-multicolor-textiles/jacquardDamaskBurgundy.mtlx) — Burgundy-on-burgundy woven damask; alternating matte and satin yarn directions define the pattern.
+- [jacquardGeometricGray](patterned-and-multicolor-textiles/jacquardGeometricGray.mtlx) — Light and dark gray geometric jacquard with interwoven motif edges and low sheen.
+- [boucleIvoryBlackFleck](patterned-and-multicolor-textiles/boucleIvoryBlackFleck.mtlx) — Ivory bouclé with sparse black yarn flecks, irregular loop texture, and matte fibers.
+- [boucleOatmealBrownFleck](patterned-and-multicolor-textiles/boucleOatmealBrownFleck.mtlx) — Oatmeal bouclé with brown yarn flecks, irregular loop texture, and matte fibers.
+
+## Leather, suede, hides, and leather alternatives
+
+- [leatherAnilineWhite](leather-suede-hides-and-leather-alternatives/leatherAnilineWhite.mtlx) — neutral white aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineIvory](leather-suede-hides-and-leather-alternatives/leatherAnilineIvory.mtlx) — warm ivory aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineBeige](leather-suede-hides-and-leather-alternatives/leatherAnilineBeige.mtlx) — warm beige aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineTaupe](leather-suede-hides-and-leather-alternatives/leatherAnilineTaupe.mtlx) — gray-brown taupe aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineCamel](leather-suede-hides-and-leather-alternatives/leatherAnilineCamel.mtlx) — golden camel tan aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineCognac](leather-suede-hides-and-leather-alternatives/leatherAnilineCognac.mtlx) — warm reddish cognac brown aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineCaramel](leather-suede-hides-and-leather-alternatives/leatherAnilineCaramel.mtlx) — golden caramel brown aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineChocolate](leather-suede-hides-and-leather-alternatives/leatherAnilineChocolate.mtlx) — deep chocolate brown aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineEspresso](leather-suede-hides-and-leather-alternatives/leatherAnilineEspresso.mtlx) — near-black brown aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineLightGray](leather-suede-hides-and-leather-alternatives/leatherAnilineLightGray.mtlx) — light neutral gray aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineCharcoal](leather-suede-hides-and-leather-alternatives/leatherAnilineCharcoal.mtlx) — dark charcoal gray aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineBlack](leather-suede-hides-and-leather-alternatives/leatherAnilineBlack.mtlx) — neutral black aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineNavy](leather-suede-hides-and-leather-alternatives/leatherAnilineNavy.mtlx) — deep navy blue aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineForestGreen](leather-suede-hides-and-leather-alternatives/leatherAnilineForestGreen.mtlx) — deep forest green aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineBurgundy](leather-suede-hides-and-leather-alternatives/leatherAnilineBurgundy.mtlx) — deep wine red aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherAnilineTerracotta](leather-suede-hides-and-leather-alternatives/leatherAnilineTerracotta.mtlx) — earthy orange-red terracotta aniline leather; translucent dye, natural fine grain and pore variation, and low sheen.
+- [leatherSemiAnilineWhite](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineWhite.mtlx) — neutral white semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineIvory](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineIvory.mtlx) — warm ivory semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineBeige](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineBeige.mtlx) — warm beige semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineTaupe](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineTaupe.mtlx) — gray-brown taupe semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineCamel](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineCamel.mtlx) — golden camel tan semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineCognac](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineCognac.mtlx) — warm reddish cognac brown semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineCaramel](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineCaramel.mtlx) — golden caramel brown semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineChocolate](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineChocolate.mtlx) — deep chocolate brown semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineEspresso](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineEspresso.mtlx) — near-black brown semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineLightGray](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineLightGray.mtlx) — light neutral gray semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineCharcoal](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineCharcoal.mtlx) — dark charcoal gray semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineBlack](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineBlack.mtlx) — neutral black semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineNavy](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineNavy.mtlx) — deep navy blue semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineForestGreen](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineForestGreen.mtlx) — deep forest green semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineBurgundy](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineBurgundy.mtlx) — deep wine red semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherSemiAnilineTerracotta](leather-suede-hides-and-leather-alternatives/leatherSemiAnilineTerracotta.mtlx) — earthy orange-red terracotta semi-aniline leather; lightly pigmented natural grain with a protective satin finish.
+- [leatherPigmentedSmoothWhite](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothWhite.mtlx) — neutral white pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothIvory](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothIvory.mtlx) — warm ivory pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothBeige](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothBeige.mtlx) — warm beige pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothTaupe](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothTaupe.mtlx) — gray-brown taupe pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothCamel](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothCamel.mtlx) — golden camel tan pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothCognac](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothCognac.mtlx) — warm reddish cognac brown pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothCaramel](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothCaramel.mtlx) — golden caramel brown pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothChocolate](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothChocolate.mtlx) — deep chocolate brown pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothEspresso](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothEspresso.mtlx) — near-black brown pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothLightGray](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothLightGray.mtlx) — light neutral gray pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothCharcoal](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothCharcoal.mtlx) — dark charcoal gray pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothBlack](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothBlack.mtlx) — neutral black pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothNavy](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothNavy.mtlx) — deep navy blue pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothForestGreen](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothForestGreen.mtlx) — deep forest green pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothBurgundy](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothBurgundy.mtlx) — deep wine red pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPigmentedSmoothTerracotta](leather-suede-hides-and-leather-alternatives/leatherPigmentedSmoothTerracotta.mtlx) — earthy orange-red terracotta pigmented leather; uniform fine grain, opaque coloration, and satin topcoat.
+- [leatherPebbledWhite](leather-suede-hides-and-leather-alternatives/leatherPebbledWhite.mtlx) — neutral white pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledIvory](leather-suede-hides-and-leather-alternatives/leatherPebbledIvory.mtlx) — warm ivory pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledBeige](leather-suede-hides-and-leather-alternatives/leatherPebbledBeige.mtlx) — warm beige pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledTaupe](leather-suede-hides-and-leather-alternatives/leatherPebbledTaupe.mtlx) — gray-brown taupe pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledCamel](leather-suede-hides-and-leather-alternatives/leatherPebbledCamel.mtlx) — golden camel tan pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledCognac](leather-suede-hides-and-leather-alternatives/leatherPebbledCognac.mtlx) — warm reddish cognac brown pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledCaramel](leather-suede-hides-and-leather-alternatives/leatherPebbledCaramel.mtlx) — golden caramel brown pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledChocolate](leather-suede-hides-and-leather-alternatives/leatherPebbledChocolate.mtlx) — deep chocolate brown pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledEspresso](leather-suede-hides-and-leather-alternatives/leatherPebbledEspresso.mtlx) — near-black brown pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledLightGray](leather-suede-hides-and-leather-alternatives/leatherPebbledLightGray.mtlx) — light neutral gray pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledCharcoal](leather-suede-hides-and-leather-alternatives/leatherPebbledCharcoal.mtlx) — dark charcoal gray pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledBlack](leather-suede-hides-and-leather-alternatives/leatherPebbledBlack.mtlx) — neutral black pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledNavy](leather-suede-hides-and-leather-alternatives/leatherPebbledNavy.mtlx) — deep navy blue pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledForestGreen](leather-suede-hides-and-leather-alternatives/leatherPebbledForestGreen.mtlx) — deep forest green pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledBurgundy](leather-suede-hides-and-leather-alternatives/leatherPebbledBurgundy.mtlx) — deep wine red pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherPebbledTerracotta](leather-suede-hides-and-leather-alternatives/leatherPebbledTerracotta.mtlx) — earthy orange-red terracotta pebbled leather; rounded irregular grain texture and low-sheen protective finish.
+- [leatherSaffianoWhite](leather-suede-hides-and-leather-alternatives/leatherSaffianoWhite.mtlx) — neutral white coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoIvory](leather-suede-hides-and-leather-alternatives/leatherSaffianoIvory.mtlx) — warm ivory coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoBeige](leather-suede-hides-and-leather-alternatives/leatherSaffianoBeige.mtlx) — warm beige coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoTaupe](leather-suede-hides-and-leather-alternatives/leatherSaffianoTaupe.mtlx) — gray-brown taupe coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoCamel](leather-suede-hides-and-leather-alternatives/leatherSaffianoCamel.mtlx) — golden camel tan coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoCognac](leather-suede-hides-and-leather-alternatives/leatherSaffianoCognac.mtlx) — warm reddish cognac brown coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoCaramel](leather-suede-hides-and-leather-alternatives/leatherSaffianoCaramel.mtlx) — golden caramel brown coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoChocolate](leather-suede-hides-and-leather-alternatives/leatherSaffianoChocolate.mtlx) — deep chocolate brown coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoEspresso](leather-suede-hides-and-leather-alternatives/leatherSaffianoEspresso.mtlx) — near-black brown coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoLightGray](leather-suede-hides-and-leather-alternatives/leatherSaffianoLightGray.mtlx) — light neutral gray coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoCharcoal](leather-suede-hides-and-leather-alternatives/leatherSaffianoCharcoal.mtlx) — dark charcoal gray coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoBlack](leather-suede-hides-and-leather-alternatives/leatherSaffianoBlack.mtlx) — neutral black coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoNavy](leather-suede-hides-and-leather-alternatives/leatherSaffianoNavy.mtlx) — deep navy blue coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoForestGreen](leather-suede-hides-and-leather-alternatives/leatherSaffianoForestGreen.mtlx) — deep forest green coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoBurgundy](leather-suede-hides-and-leather-alternatives/leatherSaffianoBurgundy.mtlx) — deep wine red coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherSaffianoTerracotta](leather-suede-hides-and-leather-alternatives/leatherSaffianoTerracotta.mtlx) — earthy orange-red terracotta coated leather; fine diagonal crosshatch embossing and satin finish.
+- [leatherNappaWhite](leather-suede-hides-and-leather-alternatives/leatherNappaWhite.mtlx) — neutral white nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaIvory](leather-suede-hides-and-leather-alternatives/leatherNappaIvory.mtlx) — warm ivory nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaBeige](leather-suede-hides-and-leather-alternatives/leatherNappaBeige.mtlx) — warm beige nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaTaupe](leather-suede-hides-and-leather-alternatives/leatherNappaTaupe.mtlx) — gray-brown taupe nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaCamel](leather-suede-hides-and-leather-alternatives/leatherNappaCamel.mtlx) — golden camel tan nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaCognac](leather-suede-hides-and-leather-alternatives/leatherNappaCognac.mtlx) — warm reddish cognac brown nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaCaramel](leather-suede-hides-and-leather-alternatives/leatherNappaCaramel.mtlx) — golden caramel brown nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaChocolate](leather-suede-hides-and-leather-alternatives/leatherNappaChocolate.mtlx) — deep chocolate brown nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaEspresso](leather-suede-hides-and-leather-alternatives/leatherNappaEspresso.mtlx) — near-black brown nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaLightGray](leather-suede-hides-and-leather-alternatives/leatherNappaLightGray.mtlx) — light neutral gray nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaCharcoal](leather-suede-hides-and-leather-alternatives/leatherNappaCharcoal.mtlx) — dark charcoal gray nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaBlack](leather-suede-hides-and-leather-alternatives/leatherNappaBlack.mtlx) — neutral black nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaNavy](leather-suede-hides-and-leather-alternatives/leatherNappaNavy.mtlx) — deep navy blue nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaForestGreen](leather-suede-hides-and-leather-alternatives/leatherNappaForestGreen.mtlx) — deep forest green nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaBurgundy](leather-suede-hides-and-leather-alternatives/leatherNappaBurgundy.mtlx) — deep wine red nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNappaTerracotta](leather-suede-hides-and-leather-alternatives/leatherNappaTerracotta.mtlx) — earthy orange-red terracotta nappa leather; supple-looking fine natural grain and soft low-sheen finish.
+- [leatherNubuckWhite](leather-suede-hides-and-leather-alternatives/leatherNubuckWhite.mtlx) — neutral white nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckIvory](leather-suede-hides-and-leather-alternatives/leatherNubuckIvory.mtlx) — warm ivory nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckBeige](leather-suede-hides-and-leather-alternatives/leatherNubuckBeige.mtlx) — warm beige nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckTaupe](leather-suede-hides-and-leather-alternatives/leatherNubuckTaupe.mtlx) — gray-brown taupe nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckCamel](leather-suede-hides-and-leather-alternatives/leatherNubuckCamel.mtlx) — golden camel tan nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckCognac](leather-suede-hides-and-leather-alternatives/leatherNubuckCognac.mtlx) — warm reddish cognac brown nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckCaramel](leather-suede-hides-and-leather-alternatives/leatherNubuckCaramel.mtlx) — golden caramel brown nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckChocolate](leather-suede-hides-and-leather-alternatives/leatherNubuckChocolate.mtlx) — deep chocolate brown nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckEspresso](leather-suede-hides-and-leather-alternatives/leatherNubuckEspresso.mtlx) — near-black brown nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckLightGray](leather-suede-hides-and-leather-alternatives/leatherNubuckLightGray.mtlx) — light neutral gray nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckCharcoal](leather-suede-hides-and-leather-alternatives/leatherNubuckCharcoal.mtlx) — dark charcoal gray nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckBlack](leather-suede-hides-and-leather-alternatives/leatherNubuckBlack.mtlx) — neutral black nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckNavy](leather-suede-hides-and-leather-alternatives/leatherNubuckNavy.mtlx) — deep navy blue nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckForestGreen](leather-suede-hides-and-leather-alternatives/leatherNubuckForestGreen.mtlx) — deep forest green nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckBurgundy](leather-suede-hides-and-leather-alternatives/leatherNubuckBurgundy.mtlx) — deep wine red nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherNubuckTerracotta](leather-suede-hides-and-leather-alternatives/leatherNubuckTerracotta.mtlx) — earthy orange-red terracotta nubuck leather; fine buffed grain-side nap and soft directional shading.
+- [leatherSuedeWhite](leather-suede-hides-and-leather-alternatives/leatherSuedeWhite.mtlx) — neutral white suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeIvory](leather-suede-hides-and-leather-alternatives/leatherSuedeIvory.mtlx) — warm ivory suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeBeige](leather-suede-hides-and-leather-alternatives/leatherSuedeBeige.mtlx) — warm beige suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeTaupe](leather-suede-hides-and-leather-alternatives/leatherSuedeTaupe.mtlx) — gray-brown taupe suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeCamel](leather-suede-hides-and-leather-alternatives/leatherSuedeCamel.mtlx) — golden camel tan suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeCognac](leather-suede-hides-and-leather-alternatives/leatherSuedeCognac.mtlx) — warm reddish cognac brown suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeCaramel](leather-suede-hides-and-leather-alternatives/leatherSuedeCaramel.mtlx) — golden caramel brown suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeChocolate](leather-suede-hides-and-leather-alternatives/leatherSuedeChocolate.mtlx) — deep chocolate brown suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeEspresso](leather-suede-hides-and-leather-alternatives/leatherSuedeEspresso.mtlx) — near-black brown suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeLightGray](leather-suede-hides-and-leather-alternatives/leatherSuedeLightGray.mtlx) — light neutral gray suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeCharcoal](leather-suede-hides-and-leather-alternatives/leatherSuedeCharcoal.mtlx) — dark charcoal gray suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeBlack](leather-suede-hides-and-leather-alternatives/leatherSuedeBlack.mtlx) — neutral black suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeNavy](leather-suede-hides-and-leather-alternatives/leatherSuedeNavy.mtlx) — deep navy blue suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeForestGreen](leather-suede-hides-and-leather-alternatives/leatherSuedeForestGreen.mtlx) — deep forest green suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeBurgundy](leather-suede-hides-and-leather-alternatives/leatherSuedeBurgundy.mtlx) — deep wine red suede leather; fine fibrous nap and matte directional shading.
+- [leatherSuedeTerracotta](leather-suede-hides-and-leather-alternatives/leatherSuedeTerracotta.mtlx) — earthy orange-red terracotta suede leather; fine fibrous nap and matte directional shading.
+- [leatherPatentWhite](leather-suede-hides-and-leather-alternatives/leatherPatentWhite.mtlx) — neutral white patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentIvory](leather-suede-hides-and-leather-alternatives/leatherPatentIvory.mtlx) — warm ivory patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentBeige](leather-suede-hides-and-leather-alternatives/leatherPatentBeige.mtlx) — warm beige patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentTaupe](leather-suede-hides-and-leather-alternatives/leatherPatentTaupe.mtlx) — gray-brown taupe patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentCamel](leather-suede-hides-and-leather-alternatives/leatherPatentCamel.mtlx) — golden camel tan patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentCognac](leather-suede-hides-and-leather-alternatives/leatherPatentCognac.mtlx) — warm reddish cognac brown patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentCaramel](leather-suede-hides-and-leather-alternatives/leatherPatentCaramel.mtlx) — golden caramel brown patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentChocolate](leather-suede-hides-and-leather-alternatives/leatherPatentChocolate.mtlx) — deep chocolate brown patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentEspresso](leather-suede-hides-and-leather-alternatives/leatherPatentEspresso.mtlx) — near-black brown patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentLightGray](leather-suede-hides-and-leather-alternatives/leatherPatentLightGray.mtlx) — light neutral gray patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentCharcoal](leather-suede-hides-and-leather-alternatives/leatherPatentCharcoal.mtlx) — dark charcoal gray patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentBlack](leather-suede-hides-and-leather-alternatives/leatherPatentBlack.mtlx) — neutral black patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentNavy](leather-suede-hides-and-leather-alternatives/leatherPatentNavy.mtlx) — deep navy blue patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentForestGreen](leather-suede-hides-and-leather-alternatives/leatherPatentForestGreen.mtlx) — deep forest green patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentBurgundy](leather-suede-hides-and-leather-alternatives/leatherPatentBurgundy.mtlx) — deep wine red patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [leatherPatentTerracotta](leather-suede-hides-and-leather-alternatives/leatherPatentTerracotta.mtlx) — earthy orange-red terracotta patent leather; smooth high-gloss polymer topcoat over opaque color.
+- [bondedLeatherWhite](leather-suede-hides-and-leather-alternatives/bondedLeatherWhite.mtlx) — neutral white bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherIvory](leather-suede-hides-and-leather-alternatives/bondedLeatherIvory.mtlx) — warm ivory bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherBeige](leather-suede-hides-and-leather-alternatives/bondedLeatherBeige.mtlx) — warm beige bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherTaupe](leather-suede-hides-and-leather-alternatives/bondedLeatherTaupe.mtlx) — gray-brown taupe bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherCamel](leather-suede-hides-and-leather-alternatives/bondedLeatherCamel.mtlx) — golden camel tan bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherCognac](leather-suede-hides-and-leather-alternatives/bondedLeatherCognac.mtlx) — warm reddish cognac brown bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherCaramel](leather-suede-hides-and-leather-alternatives/bondedLeatherCaramel.mtlx) — golden caramel brown bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherChocolate](leather-suede-hides-and-leather-alternatives/bondedLeatherChocolate.mtlx) — deep chocolate brown bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherEspresso](leather-suede-hides-and-leather-alternatives/bondedLeatherEspresso.mtlx) — near-black brown bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherLightGray](leather-suede-hides-and-leather-alternatives/bondedLeatherLightGray.mtlx) — light neutral gray bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherCharcoal](leather-suede-hides-and-leather-alternatives/bondedLeatherCharcoal.mtlx) — dark charcoal gray bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherBlack](leather-suede-hides-and-leather-alternatives/bondedLeatherBlack.mtlx) — neutral black bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherNavy](leather-suede-hides-and-leather-alternatives/bondedLeatherNavy.mtlx) — deep navy blue bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherForestGreen](leather-suede-hides-and-leather-alternatives/bondedLeatherForestGreen.mtlx) — deep forest green bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherBurgundy](leather-suede-hides-and-leather-alternatives/bondedLeatherBurgundy.mtlx) — deep wine red bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [bondedLeatherTerracotta](leather-suede-hides-and-leather-alternatives/bondedLeatherTerracotta.mtlx) — earthy orange-red terracotta bonded leather composite; regular fine embossed grain and satin polymer finish.
+- [polyurethaneLeatherWhite](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherWhite.mtlx) — neutral white polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherIvory](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherIvory.mtlx) — warm ivory polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherBeige](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherBeige.mtlx) — warm beige polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherTaupe](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherTaupe.mtlx) — gray-brown taupe polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherCamel](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherCamel.mtlx) — golden camel tan polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherCognac](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherCognac.mtlx) — warm reddish cognac brown polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherCaramel](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherCaramel.mtlx) — golden caramel brown polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherChocolate](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherChocolate.mtlx) — deep chocolate brown polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherEspresso](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherEspresso.mtlx) — near-black brown polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherLightGray](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherLightGray.mtlx) — light neutral gray polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherCharcoal](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherCharcoal.mtlx) — dark charcoal gray polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherBlack](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherBlack.mtlx) — neutral black polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherNavy](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherNavy.mtlx) — deep navy blue polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherForestGreen](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherForestGreen.mtlx) — deep forest green polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherBurgundy](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherBurgundy.mtlx) — deep wine red polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [polyurethaneLeatherTerracotta](leather-suede-hides-and-leather-alternatives/polyurethaneLeatherTerracotta.mtlx) — earthy orange-red terracotta polyurethane leather alternative; fine embossed leather grain and low-sheen polymer surface.
+- [vinylLeatherWhite](leather-suede-hides-and-leather-alternatives/vinylLeatherWhite.mtlx) — neutral white vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherIvory](leather-suede-hides-and-leather-alternatives/vinylLeatherIvory.mtlx) — warm ivory vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherBeige](leather-suede-hides-and-leather-alternatives/vinylLeatherBeige.mtlx) — warm beige vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherTaupe](leather-suede-hides-and-leather-alternatives/vinylLeatherTaupe.mtlx) — gray-brown taupe vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherCamel](leather-suede-hides-and-leather-alternatives/vinylLeatherCamel.mtlx) — golden camel tan vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherCognac](leather-suede-hides-and-leather-alternatives/vinylLeatherCognac.mtlx) — warm reddish cognac brown vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherCaramel](leather-suede-hides-and-leather-alternatives/vinylLeatherCaramel.mtlx) — golden caramel brown vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherChocolate](leather-suede-hides-and-leather-alternatives/vinylLeatherChocolate.mtlx) — deep chocolate brown vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherEspresso](leather-suede-hides-and-leather-alternatives/vinylLeatherEspresso.mtlx) — near-black brown vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherLightGray](leather-suede-hides-and-leather-alternatives/vinylLeatherLightGray.mtlx) — light neutral gray vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherCharcoal](leather-suede-hides-and-leather-alternatives/vinylLeatherCharcoal.mtlx) — dark charcoal gray vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherBlack](leather-suede-hides-and-leather-alternatives/vinylLeatherBlack.mtlx) — neutral black vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherNavy](leather-suede-hides-and-leather-alternatives/vinylLeatherNavy.mtlx) — deep navy blue vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherForestGreen](leather-suede-hides-and-leather-alternatives/vinylLeatherForestGreen.mtlx) — deep forest green vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherBurgundy](leather-suede-hides-and-leather-alternatives/vinylLeatherBurgundy.mtlx) — deep wine red vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [vinylLeatherTerracotta](leather-suede-hides-and-leather-alternatives/vinylLeatherTerracotta.mtlx) — earthy orange-red terracotta vinyl leather alternative; regular pebbled embossing and satin polymer highlights.
+- [siliconeLeatherWhite](leather-suede-hides-and-leather-alternatives/siliconeLeatherWhite.mtlx) — neutral white silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherIvory](leather-suede-hides-and-leather-alternatives/siliconeLeatherIvory.mtlx) — warm ivory silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherBeige](leather-suede-hides-and-leather-alternatives/siliconeLeatherBeige.mtlx) — warm beige silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherTaupe](leather-suede-hides-and-leather-alternatives/siliconeLeatherTaupe.mtlx) — gray-brown taupe silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherCamel](leather-suede-hides-and-leather-alternatives/siliconeLeatherCamel.mtlx) — golden camel tan silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherCognac](leather-suede-hides-and-leather-alternatives/siliconeLeatherCognac.mtlx) — warm reddish cognac brown silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherCaramel](leather-suede-hides-and-leather-alternatives/siliconeLeatherCaramel.mtlx) — golden caramel brown silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherChocolate](leather-suede-hides-and-leather-alternatives/siliconeLeatherChocolate.mtlx) — deep chocolate brown silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherEspresso](leather-suede-hides-and-leather-alternatives/siliconeLeatherEspresso.mtlx) — near-black brown silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherLightGray](leather-suede-hides-and-leather-alternatives/siliconeLeatherLightGray.mtlx) — light neutral gray silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherCharcoal](leather-suede-hides-and-leather-alternatives/siliconeLeatherCharcoal.mtlx) — dark charcoal gray silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherBlack](leather-suede-hides-and-leather-alternatives/siliconeLeatherBlack.mtlx) — neutral black silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherNavy](leather-suede-hides-and-leather-alternatives/siliconeLeatherNavy.mtlx) — deep navy blue silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherForestGreen](leather-suede-hides-and-leather-alternatives/siliconeLeatherForestGreen.mtlx) — deep forest green silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherBurgundy](leather-suede-hides-and-leather-alternatives/siliconeLeatherBurgundy.mtlx) — deep wine red silicone-coated textile; fine leather-like grain and soft matte finish.
+- [siliconeLeatherTerracotta](leather-suede-hides-and-leather-alternatives/siliconeLeatherTerracotta.mtlx) — earthy orange-red terracotta silicone-coated textile; fine leather-like grain and soft matte finish.
+- [microfiberLeatherWhite](leather-suede-hides-and-leather-alternatives/microfiberLeatherWhite.mtlx) — neutral white microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherIvory](leather-suede-hides-and-leather-alternatives/microfiberLeatherIvory.mtlx) — warm ivory microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherBeige](leather-suede-hides-and-leather-alternatives/microfiberLeatherBeige.mtlx) — warm beige microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherTaupe](leather-suede-hides-and-leather-alternatives/microfiberLeatherTaupe.mtlx) — gray-brown taupe microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherCamel](leather-suede-hides-and-leather-alternatives/microfiberLeatherCamel.mtlx) — golden camel tan microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherCognac](leather-suede-hides-and-leather-alternatives/microfiberLeatherCognac.mtlx) — warm reddish cognac brown microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherCaramel](leather-suede-hides-and-leather-alternatives/microfiberLeatherCaramel.mtlx) — golden caramel brown microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherChocolate](leather-suede-hides-and-leather-alternatives/microfiberLeatherChocolate.mtlx) — deep chocolate brown microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherEspresso](leather-suede-hides-and-leather-alternatives/microfiberLeatherEspresso.mtlx) — near-black brown microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherLightGray](leather-suede-hides-and-leather-alternatives/microfiberLeatherLightGray.mtlx) — light neutral gray microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherCharcoal](leather-suede-hides-and-leather-alternatives/microfiberLeatherCharcoal.mtlx) — dark charcoal gray microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherBlack](leather-suede-hides-and-leather-alternatives/microfiberLeatherBlack.mtlx) — neutral black microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherNavy](leather-suede-hides-and-leather-alternatives/microfiberLeatherNavy.mtlx) — deep navy blue microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherForestGreen](leather-suede-hides-and-leather-alternatives/microfiberLeatherForestGreen.mtlx) — deep forest green microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherBurgundy](leather-suede-hides-and-leather-alternatives/microfiberLeatherBurgundy.mtlx) — deep wine red microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [microfiberLeatherTerracotta](leather-suede-hides-and-leather-alternatives/microfiberLeatherTerracotta.mtlx) — earthy orange-red terracotta microfiber leather alternative; fine regular leather-like grain with low sheen.
+- [plantCompositeLeatherWhite](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherWhite.mtlx) — neutral white plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherIvory](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherIvory.mtlx) — warm ivory plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherBeige](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherBeige.mtlx) — warm beige plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherTaupe](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherTaupe.mtlx) — gray-brown taupe plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherCamel](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherCamel.mtlx) — golden camel tan plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherCognac](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherCognac.mtlx) — warm reddish cognac brown plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherCaramel](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherCaramel.mtlx) — golden caramel brown plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherChocolate](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherChocolate.mtlx) — deep chocolate brown plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherEspresso](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherEspresso.mtlx) — near-black brown plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherLightGray](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherLightGray.mtlx) — light neutral gray plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherCharcoal](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherCharcoal.mtlx) — dark charcoal gray plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherBlack](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherBlack.mtlx) — neutral black plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherNavy](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherNavy.mtlx) — deep navy blue plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherForestGreen](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherForestGreen.mtlx) — deep forest green plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherBurgundy](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherBurgundy.mtlx) — deep wine red plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [plantCompositeLeatherTerracotta](leather-suede-hides-and-leather-alternatives/plantCompositeLeatherTerracotta.mtlx) — earthy orange-red terracotta plant-fiber polymer composite; fine leather-like embossed texture and matte finish.
+- [hairOnHideBlackWhite](leather-suede-hides-and-leather-alternatives/hairOnHideBlackWhite.mtlx) — Clean hair-on hide with irregular black and white coloration, short directional hair, and soft fiber highlights.
+- [hairOnHideBrownWhite](leather-suede-hides-and-leather-alternatives/hairOnHideBrownWhite.mtlx) — Clean hair-on hide with irregular brown and white coloration, short directional hair, and soft fiber highlights.
+- [hairOnHideTan](leather-suede-hides-and-leather-alternatives/hairOnHideTan.mtlx) — Clean tan hair-on hide with subtle natural tonal variation and short directional hair.
+- [rawhideNatural](leather-suede-hides-and-leather-alternatives/rawhideNatural.mtlx) — Clean pale amber rawhide with fine fibrous texture, low sheen, and slight light transmission.
+- [leatherVegetableTannedNatural](leather-suede-hides-and-leather-alternatives/leatherVegetableTannedNatural.mtlx) — New unpigmented vegetable-tanned leather; pale peach-tan color, natural fine grain, and low sheen.
+- [leatherVegetableTannedSaddleTan](leather-suede-hides-and-leather-alternatives/leatherVegetableTannedSaddleTan.mtlx) — New saddle-tan vegetable-tanned leather; warm orange-brown color, natural grain, and low sheen.
+
+## Mesh, webbing, rope, and natural woven fibers
+
+- [polyesterMeshIvory](mesh-webbing-rope-and-natural-woven-fibers/polyesterMeshIvory.mtlx) — warm ivory polyester mesh textile; regular visible open-weave pattern with fine synthetic fiber highlights; open areas transmit light.
+- [polyesterMeshBeige](mesh-webbing-rope-and-natural-woven-fibers/polyesterMeshBeige.mtlx) — warm beige polyester mesh textile; regular visible open-weave pattern with fine synthetic fiber highlights; open areas transmit light.
+- [polyesterMeshTaupe](mesh-webbing-rope-and-natural-woven-fibers/polyesterMeshTaupe.mtlx) — gray-brown taupe polyester mesh textile; regular visible open-weave pattern with fine synthetic fiber highlights; open areas transmit light.
+- [polyesterMeshChocolate](mesh-webbing-rope-and-natural-woven-fibers/polyesterMeshChocolate.mtlx) — deep chocolate brown polyester mesh textile; regular visible open-weave pattern with fine synthetic fiber highlights; open areas transmit light.
+- [polyesterMeshLightGray](mesh-webbing-rope-and-natural-woven-fibers/polyesterMeshLightGray.mtlx) — light neutral gray polyester mesh textile; regular visible open-weave pattern with fine synthetic fiber highlights; open areas transmit light.
+- [polyesterMeshCharcoal](mesh-webbing-rope-and-natural-woven-fibers/polyesterMeshCharcoal.mtlx) — dark charcoal gray polyester mesh textile; regular visible open-weave pattern with fine synthetic fiber highlights; open areas transmit light.
+- [polyesterMeshBlack](mesh-webbing-rope-and-natural-woven-fibers/polyesterMeshBlack.mtlx) — neutral black polyester mesh textile; regular visible open-weave pattern with fine synthetic fiber highlights; open areas transmit light.
+- [polyesterMeshNavy](mesh-webbing-rope-and-natural-woven-fibers/polyesterMeshNavy.mtlx) — deep navy blue polyester mesh textile; regular visible open-weave pattern with fine synthetic fiber highlights; open areas transmit light.
+- [polyesterMeshForestGreen](mesh-webbing-rope-and-natural-woven-fibers/polyesterMeshForestGreen.mtlx) — deep forest green polyester mesh textile; regular visible open-weave pattern with fine synthetic fiber highlights; open areas transmit light.
+- [nylonMeshIvory](mesh-webbing-rope-and-natural-woven-fibers/nylonMeshIvory.mtlx) — warm ivory nylon mesh textile; fine regular open-weave pattern with satin fiber highlights; open areas transmit light.
+- [nylonMeshBeige](mesh-webbing-rope-and-natural-woven-fibers/nylonMeshBeige.mtlx) — warm beige nylon mesh textile; fine regular open-weave pattern with satin fiber highlights; open areas transmit light.
+- [nylonMeshTaupe](mesh-webbing-rope-and-natural-woven-fibers/nylonMeshTaupe.mtlx) — gray-brown taupe nylon mesh textile; fine regular open-weave pattern with satin fiber highlights; open areas transmit light.
+- [nylonMeshChocolate](mesh-webbing-rope-and-natural-woven-fibers/nylonMeshChocolate.mtlx) — deep chocolate brown nylon mesh textile; fine regular open-weave pattern with satin fiber highlights; open areas transmit light.
+- [nylonMeshLightGray](mesh-webbing-rope-and-natural-woven-fibers/nylonMeshLightGray.mtlx) — light neutral gray nylon mesh textile; fine regular open-weave pattern with satin fiber highlights; open areas transmit light.
+- [nylonMeshCharcoal](mesh-webbing-rope-and-natural-woven-fibers/nylonMeshCharcoal.mtlx) — dark charcoal gray nylon mesh textile; fine regular open-weave pattern with satin fiber highlights; open areas transmit light.
+- [nylonMeshBlack](mesh-webbing-rope-and-natural-woven-fibers/nylonMeshBlack.mtlx) — neutral black nylon mesh textile; fine regular open-weave pattern with satin fiber highlights; open areas transmit light.
+- [nylonMeshNavy](mesh-webbing-rope-and-natural-woven-fibers/nylonMeshNavy.mtlx) — deep navy blue nylon mesh textile; fine regular open-weave pattern with satin fiber highlights; open areas transmit light.
+- [nylonMeshForestGreen](mesh-webbing-rope-and-natural-woven-fibers/nylonMeshForestGreen.mtlx) — deep forest green nylon mesh textile; fine regular open-weave pattern with satin fiber highlights; open areas transmit light.
+- [vinylCoatedPolyesterMeshIvory](mesh-webbing-rope-and-natural-woven-fibers/vinylCoatedPolyesterMeshIvory.mtlx) — warm ivory vinyl-coated polyester mesh; regular open weave and smooth low-sheen coated yarns; open areas transmit light.
+- [vinylCoatedPolyesterMeshBeige](mesh-webbing-rope-and-natural-woven-fibers/vinylCoatedPolyesterMeshBeige.mtlx) — warm beige vinyl-coated polyester mesh; regular open weave and smooth low-sheen coated yarns; open areas transmit light.
+- [vinylCoatedPolyesterMeshTaupe](mesh-webbing-rope-and-natural-woven-fibers/vinylCoatedPolyesterMeshTaupe.mtlx) — gray-brown taupe vinyl-coated polyester mesh; regular open weave and smooth low-sheen coated yarns; open areas transmit light.
+- [vinylCoatedPolyesterMeshChocolate](mesh-webbing-rope-and-natural-woven-fibers/vinylCoatedPolyesterMeshChocolate.mtlx) — deep chocolate brown vinyl-coated polyester mesh; regular open weave and smooth low-sheen coated yarns; open areas transmit light.
+- [vinylCoatedPolyesterMeshLightGray](mesh-webbing-rope-and-natural-woven-fibers/vinylCoatedPolyesterMeshLightGray.mtlx) — light neutral gray vinyl-coated polyester mesh; regular open weave and smooth low-sheen coated yarns; open areas transmit light.
+- [vinylCoatedPolyesterMeshCharcoal](mesh-webbing-rope-and-natural-woven-fibers/vinylCoatedPolyesterMeshCharcoal.mtlx) — dark charcoal gray vinyl-coated polyester mesh; regular open weave and smooth low-sheen coated yarns; open areas transmit light.
+- [vinylCoatedPolyesterMeshBlack](mesh-webbing-rope-and-natural-woven-fibers/vinylCoatedPolyesterMeshBlack.mtlx) — neutral black vinyl-coated polyester mesh; regular open weave and smooth low-sheen coated yarns; open areas transmit light.
+- [vinylCoatedPolyesterMeshNavy](mesh-webbing-rope-and-natural-woven-fibers/vinylCoatedPolyesterMeshNavy.mtlx) — deep navy blue vinyl-coated polyester mesh; regular open weave and smooth low-sheen coated yarns; open areas transmit light.
+- [vinylCoatedPolyesterMeshForestGreen](mesh-webbing-rope-and-natural-woven-fibers/vinylCoatedPolyesterMeshForestGreen.mtlx) — deep forest green vinyl-coated polyester mesh; regular open weave and smooth low-sheen coated yarns; open areas transmit light.
+- [cottonWebbingIvory](mesh-webbing-rope-and-natural-woven-fibers/cottonWebbingIvory.mtlx) — warm ivory cotton webbing textile; dense coarse woven fibers and a dry matte finish.
+- [cottonWebbingBeige](mesh-webbing-rope-and-natural-woven-fibers/cottonWebbingBeige.mtlx) — warm beige cotton webbing textile; dense coarse woven fibers and a dry matte finish.
+- [cottonWebbingTaupe](mesh-webbing-rope-and-natural-woven-fibers/cottonWebbingTaupe.mtlx) — gray-brown taupe cotton webbing textile; dense coarse woven fibers and a dry matte finish.
+- [cottonWebbingChocolate](mesh-webbing-rope-and-natural-woven-fibers/cottonWebbingChocolate.mtlx) — deep chocolate brown cotton webbing textile; dense coarse woven fibers and a dry matte finish.
+- [cottonWebbingLightGray](mesh-webbing-rope-and-natural-woven-fibers/cottonWebbingLightGray.mtlx) — light neutral gray cotton webbing textile; dense coarse woven fibers and a dry matte finish.
+- [cottonWebbingCharcoal](mesh-webbing-rope-and-natural-woven-fibers/cottonWebbingCharcoal.mtlx) — dark charcoal gray cotton webbing textile; dense coarse woven fibers and a dry matte finish.
+- [cottonWebbingBlack](mesh-webbing-rope-and-natural-woven-fibers/cottonWebbingBlack.mtlx) — neutral black cotton webbing textile; dense coarse woven fibers and a dry matte finish.
+- [cottonWebbingNavy](mesh-webbing-rope-and-natural-woven-fibers/cottonWebbingNavy.mtlx) — deep navy blue cotton webbing textile; dense coarse woven fibers and a dry matte finish.
+- [cottonWebbingForestGreen](mesh-webbing-rope-and-natural-woven-fibers/cottonWebbingForestGreen.mtlx) — deep forest green cotton webbing textile; dense coarse woven fibers and a dry matte finish.
+- [polypropyleneWebbingIvory](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWebbingIvory.mtlx) — warm ivory polypropylene webbing textile; regular dense weave with mild synthetic sheen.
+- [polypropyleneWebbingBeige](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWebbingBeige.mtlx) — warm beige polypropylene webbing textile; regular dense weave with mild synthetic sheen.
+- [polypropyleneWebbingTaupe](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWebbingTaupe.mtlx) — gray-brown taupe polypropylene webbing textile; regular dense weave with mild synthetic sheen.
+- [polypropyleneWebbingChocolate](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWebbingChocolate.mtlx) — deep chocolate brown polypropylene webbing textile; regular dense weave with mild synthetic sheen.
+- [polypropyleneWebbingLightGray](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWebbingLightGray.mtlx) — light neutral gray polypropylene webbing textile; regular dense weave with mild synthetic sheen.
+- [polypropyleneWebbingCharcoal](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWebbingCharcoal.mtlx) — dark charcoal gray polypropylene webbing textile; regular dense weave with mild synthetic sheen.
+- [polypropyleneWebbingBlack](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWebbingBlack.mtlx) — neutral black polypropylene webbing textile; regular dense weave with mild synthetic sheen.
+- [polypropyleneWebbingNavy](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWebbingNavy.mtlx) — deep navy blue polypropylene webbing textile; regular dense weave with mild synthetic sheen.
+- [polypropyleneWebbingForestGreen](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWebbingForestGreen.mtlx) — deep forest green polypropylene webbing textile; regular dense weave with mild synthetic sheen.
+- [polyesterRopeFiberIvory](mesh-webbing-rope-and-natural-woven-fibers/polyesterRopeFiberIvory.mtlx) — warm ivory polyester rope-fiber surface; densely aligned fine fibers and low sheen.
+- [polyesterRopeFiberBeige](mesh-webbing-rope-and-natural-woven-fibers/polyesterRopeFiberBeige.mtlx) — warm beige polyester rope-fiber surface; densely aligned fine fibers and low sheen.
+- [polyesterRopeFiberTaupe](mesh-webbing-rope-and-natural-woven-fibers/polyesterRopeFiberTaupe.mtlx) — gray-brown taupe polyester rope-fiber surface; densely aligned fine fibers and low sheen.
+- [polyesterRopeFiberChocolate](mesh-webbing-rope-and-natural-woven-fibers/polyesterRopeFiberChocolate.mtlx) — deep chocolate brown polyester rope-fiber surface; densely aligned fine fibers and low sheen.
+- [polyesterRopeFiberLightGray](mesh-webbing-rope-and-natural-woven-fibers/polyesterRopeFiberLightGray.mtlx) — light neutral gray polyester rope-fiber surface; densely aligned fine fibers and low sheen.
+- [polyesterRopeFiberCharcoal](mesh-webbing-rope-and-natural-woven-fibers/polyesterRopeFiberCharcoal.mtlx) — dark charcoal gray polyester rope-fiber surface; densely aligned fine fibers and low sheen.
+- [polyesterRopeFiberBlack](mesh-webbing-rope-and-natural-woven-fibers/polyesterRopeFiberBlack.mtlx) — neutral black polyester rope-fiber surface; densely aligned fine fibers and low sheen.
+- [polyesterRopeFiberNavy](mesh-webbing-rope-and-natural-woven-fibers/polyesterRopeFiberNavy.mtlx) — deep navy blue polyester rope-fiber surface; densely aligned fine fibers and low sheen.
+- [polyesterRopeFiberForestGreen](mesh-webbing-rope-and-natural-woven-fibers/polyesterRopeFiberForestGreen.mtlx) — deep forest green polyester rope-fiber surface; densely aligned fine fibers and low sheen.
+- [polypropyleneWickerIvory](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWickerIvory.mtlx) — warm ivory synthetic wicker polymer; fine lengthwise striations and low sheen.
+- [polypropyleneWickerBeige](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWickerBeige.mtlx) — warm beige synthetic wicker polymer; fine lengthwise striations and low sheen.
+- [polypropyleneWickerTaupe](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWickerTaupe.mtlx) — gray-brown taupe synthetic wicker polymer; fine lengthwise striations and low sheen.
+- [polypropyleneWickerChocolate](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWickerChocolate.mtlx) — deep chocolate brown synthetic wicker polymer; fine lengthwise striations and low sheen.
+- [polypropyleneWickerLightGray](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWickerLightGray.mtlx) — light neutral gray synthetic wicker polymer; fine lengthwise striations and low sheen.
+- [polypropyleneWickerCharcoal](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWickerCharcoal.mtlx) — dark charcoal gray synthetic wicker polymer; fine lengthwise striations and low sheen.
+- [polypropyleneWickerBlack](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWickerBlack.mtlx) — neutral black synthetic wicker polymer; fine lengthwise striations and low sheen.
+- [polypropyleneWickerNavy](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWickerNavy.mtlx) — deep navy blue synthetic wicker polymer; fine lengthwise striations and low sheen.
+- [polypropyleneWickerForestGreen](mesh-webbing-rope-and-natural-woven-fibers/polypropyleneWickerForestGreen.mtlx) — deep forest green synthetic wicker polymer; fine lengthwise striations and low sheen.
+- [rattanNatural](mesh-webbing-rope-and-natural-woven-fibers/rattanNatural.mtlx) — Pale honey-tan rattan surface with fine longitudinal fibers, subtle nodes in the texture, and matte clear finish.
+- [rattanHoney](mesh-webbing-rope-and-natural-woven-fibers/rattanHoney.mtlx) — Golden honey-stained rattan surface with visible longitudinal fibers and satin clear finish.
+- [rattanDarkBrown](mesh-webbing-rope-and-natural-woven-fibers/rattanDarkBrown.mtlx) — Deep brown-stained rattan surface with visible longitudinal fibers and low sheen.
+- [rattanBlack](mesh-webbing-rope-and-natural-woven-fibers/rattanBlack.mtlx) — Black-pigmented rattan surface with faint longitudinal fiber texture and low sheen.
+- [caneNatural](mesh-webbing-rope-and-natural-woven-fibers/caneNatural.mtlx) — Pale straw cane surface with fine longitudinal fibers and restrained natural satin sheen.
+- [caneBleached](mesh-webbing-rope-and-natural-woven-fibers/caneBleached.mtlx) — Bleached ivory cane surface with fine longitudinal fibers and low sheen.
+- [caneHoney](mesh-webbing-rope-and-natural-woven-fibers/caneHoney.mtlx) — Honey-tinted cane surface with fine longitudinal fibers and satin finish.
+- [willowNatural](mesh-webbing-rope-and-natural-woven-fibers/willowNatural.mtlx) — Pale tan willow surface with fine lengthwise fibers and a dry matte finish.
+- [seagrassNatural](mesh-webbing-rope-and-natural-woven-fibers/seagrassNatural.mtlx) — Mixed pale greenish tan seagrass fibers with coarse longitudinal texture and low sheen.
+- [waterHyacinthNatural](mesh-webbing-rope-and-natural-woven-fibers/waterHyacinthNatural.mtlx) — Golden tan water-hyacinth fiber surface with coarse irregular fibers and matte finish.
+- [juteNatural](mesh-webbing-rope-and-natural-woven-fibers/juteNatural.mtlx) — Natural golden brown jute with coarse fuzzy fibers and dry matte scattering.
+- [sisalNatural](mesh-webbing-rope-and-natural-woven-fibers/sisalNatural.mtlx) — Pale cream-tan sisal with coarse straight fibers and restrained natural sheen.
+- [abacaNatural](mesh-webbing-rope-and-natural-woven-fibers/abacaNatural.mtlx) — Golden brown abaca fiber with fine longitudinal striations and low sheen.
+- [paperCordNatural](mesh-webbing-rope-and-natural-woven-fibers/paperCordNatural.mtlx) — Natural tan twisted-paper fiber surface with fine paper grain and matte finish.
+- [paperCordBlack](mesh-webbing-rope-and-natural-woven-fibers/paperCordBlack.mtlx) — Black dyed paper-fiber surface with fine paper grain and matte finish.
+- [paperCordWhite](mesh-webbing-rope-and-natural-woven-fibers/paperCordWhite.mtlx) — White dyed paper-fiber surface with fine paper grain and matte finish.
+
+## Bedding, padding, insulation, and lining textiles
+
+- [cottonPercaleWhite](bedding-padding-insulation-and-lining-textiles/cottonPercaleWhite.mtlx) — neutral white cotton percale; fine tightly woven yarns with crisp matte fiber scattering.
+- [cottonPercaleIvory](bedding-padding-insulation-and-lining-textiles/cottonPercaleIvory.mtlx) — warm ivory cotton percale; fine tightly woven yarns with crisp matte fiber scattering.
+- [cottonPercaleCream](bedding-padding-insulation-and-lining-textiles/cottonPercaleCream.mtlx) — yellow-tinted cream cotton percale; fine tightly woven yarns with crisp matte fiber scattering.
+- [cottonPercaleBeige](bedding-padding-insulation-and-lining-textiles/cottonPercaleBeige.mtlx) — warm beige cotton percale; fine tightly woven yarns with crisp matte fiber scattering.
+- [cottonPercaleLightGray](bedding-padding-insulation-and-lining-textiles/cottonPercaleLightGray.mtlx) — light neutral gray cotton percale; fine tightly woven yarns with crisp matte fiber scattering.
+- [cottonPercaleCharcoal](bedding-padding-insulation-and-lining-textiles/cottonPercaleCharcoal.mtlx) — dark charcoal gray cotton percale; fine tightly woven yarns with crisp matte fiber scattering.
+- [cottonPercaleNavy](bedding-padding-insulation-and-lining-textiles/cottonPercaleNavy.mtlx) — deep navy blue cotton percale; fine tightly woven yarns with crisp matte fiber scattering.
+- [cottonPercaleSage](bedding-padding-insulation-and-lining-textiles/cottonPercaleSage.mtlx) — muted gray-green sage cotton percale; fine tightly woven yarns with crisp matte fiber scattering.
+- [cottonPercaleBlush](bedding-padding-insulation-and-lining-textiles/cottonPercaleBlush.mtlx) — pale blush pink cotton percale; fine tightly woven yarns with crisp matte fiber scattering.
+- [cottonSateenBeddingWhite](bedding-padding-insulation-and-lining-textiles/cottonSateenBeddingWhite.mtlx) — neutral white cotton sateen textile; dense smooth yarn texture with soft directional sheen.
+- [cottonSateenBeddingIvory](bedding-padding-insulation-and-lining-textiles/cottonSateenBeddingIvory.mtlx) — warm ivory cotton sateen textile; dense smooth yarn texture with soft directional sheen.
+- [cottonSateenBeddingCream](bedding-padding-insulation-and-lining-textiles/cottonSateenBeddingCream.mtlx) — yellow-tinted cream cotton sateen textile; dense smooth yarn texture with soft directional sheen.
+- [cottonSateenBeddingBeige](bedding-padding-insulation-and-lining-textiles/cottonSateenBeddingBeige.mtlx) — warm beige cotton sateen textile; dense smooth yarn texture with soft directional sheen.
+- [cottonSateenBeddingLightGray](bedding-padding-insulation-and-lining-textiles/cottonSateenBeddingLightGray.mtlx) — light neutral gray cotton sateen textile; dense smooth yarn texture with soft directional sheen.
+- [cottonSateenBeddingCharcoal](bedding-padding-insulation-and-lining-textiles/cottonSateenBeddingCharcoal.mtlx) — dark charcoal gray cotton sateen textile; dense smooth yarn texture with soft directional sheen.
+- [cottonSateenBeddingNavy](bedding-padding-insulation-and-lining-textiles/cottonSateenBeddingNavy.mtlx) — deep navy blue cotton sateen textile; dense smooth yarn texture with soft directional sheen.
+- [cottonSateenBeddingSage](bedding-padding-insulation-and-lining-textiles/cottonSateenBeddingSage.mtlx) — muted gray-green sage cotton sateen textile; dense smooth yarn texture with soft directional sheen.
+- [cottonSateenBeddingBlush](bedding-padding-insulation-and-lining-textiles/cottonSateenBeddingBlush.mtlx) — pale blush pink cotton sateen textile; dense smooth yarn texture with soft directional sheen.
+- [linenBeddingWhite](bedding-padding-insulation-and-lining-textiles/linenBeddingWhite.mtlx) — neutral white linen textile; fine irregular slub yarns and dry matte fiber response.
+- [linenBeddingIvory](bedding-padding-insulation-and-lining-textiles/linenBeddingIvory.mtlx) — warm ivory linen textile; fine irregular slub yarns and dry matte fiber response.
+- [linenBeddingCream](bedding-padding-insulation-and-lining-textiles/linenBeddingCream.mtlx) — yellow-tinted cream linen textile; fine irregular slub yarns and dry matte fiber response.
+- [linenBeddingBeige](bedding-padding-insulation-and-lining-textiles/linenBeddingBeige.mtlx) — warm beige linen textile; fine irregular slub yarns and dry matte fiber response.
+- [linenBeddingLightGray](bedding-padding-insulation-and-lining-textiles/linenBeddingLightGray.mtlx) — light neutral gray linen textile; fine irregular slub yarns and dry matte fiber response.
+- [linenBeddingCharcoal](bedding-padding-insulation-and-lining-textiles/linenBeddingCharcoal.mtlx) — dark charcoal gray linen textile; fine irregular slub yarns and dry matte fiber response.
+- [linenBeddingNavy](bedding-padding-insulation-and-lining-textiles/linenBeddingNavy.mtlx) — deep navy blue linen textile; fine irregular slub yarns and dry matte fiber response.
+- [linenBeddingSage](bedding-padding-insulation-and-lining-textiles/linenBeddingSage.mtlx) — muted gray-green sage linen textile; fine irregular slub yarns and dry matte fiber response.
+- [linenBeddingBlush](bedding-padding-insulation-and-lining-textiles/linenBeddingBlush.mtlx) — pale blush pink linen textile; fine irregular slub yarns and dry matte fiber response.
+- [bambooViscoseBeddingWhite](bedding-padding-insulation-and-lining-textiles/bambooViscoseBeddingWhite.mtlx) — neutral white bamboo-derived viscose textile; fine smooth weave and soft satin sheen.
+- [bambooViscoseBeddingIvory](bedding-padding-insulation-and-lining-textiles/bambooViscoseBeddingIvory.mtlx) — warm ivory bamboo-derived viscose textile; fine smooth weave and soft satin sheen.
+- [bambooViscoseBeddingCream](bedding-padding-insulation-and-lining-textiles/bambooViscoseBeddingCream.mtlx) — yellow-tinted cream bamboo-derived viscose textile; fine smooth weave and soft satin sheen.
+- [bambooViscoseBeddingBeige](bedding-padding-insulation-and-lining-textiles/bambooViscoseBeddingBeige.mtlx) — warm beige bamboo-derived viscose textile; fine smooth weave and soft satin sheen.
+- [bambooViscoseBeddingLightGray](bedding-padding-insulation-and-lining-textiles/bambooViscoseBeddingLightGray.mtlx) — light neutral gray bamboo-derived viscose textile; fine smooth weave and soft satin sheen.
+- [bambooViscoseBeddingCharcoal](bedding-padding-insulation-and-lining-textiles/bambooViscoseBeddingCharcoal.mtlx) — dark charcoal gray bamboo-derived viscose textile; fine smooth weave and soft satin sheen.
+- [bambooViscoseBeddingNavy](bedding-padding-insulation-and-lining-textiles/bambooViscoseBeddingNavy.mtlx) — deep navy blue bamboo-derived viscose textile; fine smooth weave and soft satin sheen.
+- [bambooViscoseBeddingSage](bedding-padding-insulation-and-lining-textiles/bambooViscoseBeddingSage.mtlx) — muted gray-green sage bamboo-derived viscose textile; fine smooth weave and soft satin sheen.
+- [bambooViscoseBeddingBlush](bedding-padding-insulation-and-lining-textiles/bambooViscoseBeddingBlush.mtlx) — pale blush pink bamboo-derived viscose textile; fine smooth weave and soft satin sheen.
+- [polyesterMicrofiberBeddingWhite](bedding-padding-insulation-and-lining-textiles/polyesterMicrofiberBeddingWhite.mtlx) — neutral white polyester microfiber textile; very fine even fiber texture and low sheen.
+- [polyesterMicrofiberBeddingIvory](bedding-padding-insulation-and-lining-textiles/polyesterMicrofiberBeddingIvory.mtlx) — warm ivory polyester microfiber textile; very fine even fiber texture and low sheen.
+- [polyesterMicrofiberBeddingCream](bedding-padding-insulation-and-lining-textiles/polyesterMicrofiberBeddingCream.mtlx) — yellow-tinted cream polyester microfiber textile; very fine even fiber texture and low sheen.
+- [polyesterMicrofiberBeddingBeige](bedding-padding-insulation-and-lining-textiles/polyesterMicrofiberBeddingBeige.mtlx) — warm beige polyester microfiber textile; very fine even fiber texture and low sheen.
+- [polyesterMicrofiberBeddingLightGray](bedding-padding-insulation-and-lining-textiles/polyesterMicrofiberBeddingLightGray.mtlx) — light neutral gray polyester microfiber textile; very fine even fiber texture and low sheen.
+- [polyesterMicrofiberBeddingCharcoal](bedding-padding-insulation-and-lining-textiles/polyesterMicrofiberBeddingCharcoal.mtlx) — dark charcoal gray polyester microfiber textile; very fine even fiber texture and low sheen.
+- [polyesterMicrofiberBeddingNavy](bedding-padding-insulation-and-lining-textiles/polyesterMicrofiberBeddingNavy.mtlx) — deep navy blue polyester microfiber textile; very fine even fiber texture and low sheen.
+- [polyesterMicrofiberBeddingSage](bedding-padding-insulation-and-lining-textiles/polyesterMicrofiberBeddingSage.mtlx) — muted gray-green sage polyester microfiber textile; very fine even fiber texture and low sheen.
+- [polyesterMicrofiberBeddingBlush](bedding-padding-insulation-and-lining-textiles/polyesterMicrofiberBeddingBlush.mtlx) — pale blush pink polyester microfiber textile; very fine even fiber texture and low sheen.
+- [mattressJacquardWhite](bedding-padding-insulation-and-lining-textiles/mattressJacquardWhite.mtlx) — neutral white dense jacquard-knit textile with a small tonal motif and low-sheen yarns.
+- [mattressJacquardIvory](bedding-padding-insulation-and-lining-textiles/mattressJacquardIvory.mtlx) — warm ivory dense jacquard-knit textile with a small tonal motif and low-sheen yarns.
+- [mattressJacquardCream](bedding-padding-insulation-and-lining-textiles/mattressJacquardCream.mtlx) — yellow-tinted cream dense jacquard-knit textile with a small tonal motif and low-sheen yarns.
+- [mattressJacquardBeige](bedding-padding-insulation-and-lining-textiles/mattressJacquardBeige.mtlx) — warm beige dense jacquard-knit textile with a small tonal motif and low-sheen yarns.
+- [mattressJacquardLightGray](bedding-padding-insulation-and-lining-textiles/mattressJacquardLightGray.mtlx) — light neutral gray dense jacquard-knit textile with a small tonal motif and low-sheen yarns.
+- [mattressJacquardCharcoal](bedding-padding-insulation-and-lining-textiles/mattressJacquardCharcoal.mtlx) — dark charcoal gray dense jacquard-knit textile with a small tonal motif and low-sheen yarns.
+- [mattressJacquardNavy](bedding-padding-insulation-and-lining-textiles/mattressJacquardNavy.mtlx) — deep navy blue dense jacquard-knit textile with a small tonal motif and low-sheen yarns.
+- [mattressJacquardSage](bedding-padding-insulation-and-lining-textiles/mattressJacquardSage.mtlx) — muted gray-green sage dense jacquard-knit textile with a small tonal motif and low-sheen yarns.
+- [mattressJacquardBlush](bedding-padding-insulation-and-lining-textiles/mattressJacquardBlush.mtlx) — pale blush pink dense jacquard-knit textile with a small tonal motif and low-sheen yarns.
+- [polypropyleneSpunbondWhite](bedding-padding-insulation-and-lining-textiles/polypropyleneSpunbondWhite.mtlx) — neutral white spunbond polypropylene nonwoven; fine random fiber texture and matte finish.
+- [polypropyleneSpunbondIvory](bedding-padding-insulation-and-lining-textiles/polypropyleneSpunbondIvory.mtlx) — warm ivory spunbond polypropylene nonwoven; fine random fiber texture and matte finish.
+- [polypropyleneSpunbondCream](bedding-padding-insulation-and-lining-textiles/polypropyleneSpunbondCream.mtlx) — yellow-tinted cream spunbond polypropylene nonwoven; fine random fiber texture and matte finish.
+- [polypropyleneSpunbondBeige](bedding-padding-insulation-and-lining-textiles/polypropyleneSpunbondBeige.mtlx) — warm beige spunbond polypropylene nonwoven; fine random fiber texture and matte finish.
+- [polypropyleneSpunbondLightGray](bedding-padding-insulation-and-lining-textiles/polypropyleneSpunbondLightGray.mtlx) — light neutral gray spunbond polypropylene nonwoven; fine random fiber texture and matte finish.
+- [polypropyleneSpunbondCharcoal](bedding-padding-insulation-and-lining-textiles/polypropyleneSpunbondCharcoal.mtlx) — dark charcoal gray spunbond polypropylene nonwoven; fine random fiber texture and matte finish.
+- [polypropyleneSpunbondNavy](bedding-padding-insulation-and-lining-textiles/polypropyleneSpunbondNavy.mtlx) — deep navy blue spunbond polypropylene nonwoven; fine random fiber texture and matte finish.
+- [polypropyleneSpunbondSage](bedding-padding-insulation-and-lining-textiles/polypropyleneSpunbondSage.mtlx) — muted gray-green sage spunbond polypropylene nonwoven; fine random fiber texture and matte finish.
+- [polypropyleneSpunbondBlush](bedding-padding-insulation-and-lining-textiles/polypropyleneSpunbondBlush.mtlx) — pale blush pink spunbond polypropylene nonwoven; fine random fiber texture and matte finish.
+- [polyesterLiningWhite](bedding-padding-insulation-and-lining-textiles/polyesterLiningWhite.mtlx) — neutral white fine polyester lining textile; tight weave with subtle synthetic sheen.
+- [polyesterLiningIvory](bedding-padding-insulation-and-lining-textiles/polyesterLiningIvory.mtlx) — warm ivory fine polyester lining textile; tight weave with subtle synthetic sheen.
+- [polyesterLiningCream](bedding-padding-insulation-and-lining-textiles/polyesterLiningCream.mtlx) — yellow-tinted cream fine polyester lining textile; tight weave with subtle synthetic sheen.
+- [polyesterLiningBeige](bedding-padding-insulation-and-lining-textiles/polyesterLiningBeige.mtlx) — warm beige fine polyester lining textile; tight weave with subtle synthetic sheen.
+- [polyesterLiningLightGray](bedding-padding-insulation-and-lining-textiles/polyesterLiningLightGray.mtlx) — light neutral gray fine polyester lining textile; tight weave with subtle synthetic sheen.
+- [polyesterLiningCharcoal](bedding-padding-insulation-and-lining-textiles/polyesterLiningCharcoal.mtlx) — dark charcoal gray fine polyester lining textile; tight weave with subtle synthetic sheen.
+- [polyesterLiningNavy](bedding-padding-insulation-and-lining-textiles/polyesterLiningNavy.mtlx) — deep navy blue fine polyester lining textile; tight weave with subtle synthetic sheen.
+- [polyesterLiningSage](bedding-padding-insulation-and-lining-textiles/polyesterLiningSage.mtlx) — muted gray-green sage fine polyester lining textile; tight weave with subtle synthetic sheen.
+- [polyesterLiningBlush](bedding-padding-insulation-and-lining-textiles/polyesterLiningBlush.mtlx) — pale blush pink fine polyester lining textile; tight weave with subtle synthetic sheen.
+- [mattressTickingStripeBlueWhite](bedding-padding-insulation-and-lining-textiles/mattressTickingStripeBlueWhite.mtlx) — Dense cotton ticking with narrow blue and white stripes, fine twill texture, and matte finish.
+- [mattressTickingStripeGrayWhite](bedding-padding-insulation-and-lining-textiles/mattressTickingStripeGrayWhite.mtlx) — Dense cotton ticking with narrow gray and white stripes, fine twill texture, and matte finish.
+- [cottonMuslinNatural](bedding-padding-insulation-and-lining-textiles/cottonMuslinNatural.mtlx) — Unbleached cream cotton muslin with loose fine weave and matte fibers.
+- [cottonBattingNatural](bedding-padding-insulation-and-lining-textiles/cottonBattingNatural.mtlx) — Unbleached cream cotton batting; loose random fluffy fibers and diffuse matte scattering.
+- [polyesterBattingWhite](bedding-padding-insulation-and-lining-textiles/polyesterBattingWhite.mtlx) — White polyester batting; fine random fluffy fibers with subtle synthetic highlights.
+- [woolBattingCream](bedding-padding-insulation-and-lining-textiles/woolBattingCream.mtlx) — Cream wool batting; irregular crimped fibers and diffuse matte scattering.
+- [coirFiberBrown](bedding-padding-insulation-and-lining-textiles/coirFiberBrown.mtlx) — Brown coconut coir fiber material with coarse irregular fibers and matte finish.
+- [horsehairNaturalBlack](bedding-padding-insulation-and-lining-textiles/horsehairNaturalBlack.mtlx) — Clean black horsehair fiber material with coarse individual fibers and directional highlights.
+- [polyurethaneFoamCream](bedding-padding-insulation-and-lining-textiles/polyurethaneFoamCream.mtlx) — Cream flexible polyurethane foam with fine open-cell porous texture and diffuse matte scattering.
+- [polyurethaneFoamGray](bedding-padding-insulation-and-lining-textiles/polyurethaneFoamGray.mtlx) — Gray flexible polyurethane foam with fine open-cell porous texture and diffuse matte scattering.
+- [memoryFoamIvory](bedding-padding-insulation-and-lining-textiles/memoryFoamIvory.mtlx) — Ivory viscoelastic polyurethane foam with fine uniform cellular texture and matte finish.
+- [memoryFoamBlue](bedding-padding-insulation-and-lining-textiles/memoryFoamBlue.mtlx) — Pale blue viscoelastic polyurethane foam with fine uniform cellular texture and matte finish.
+- [latexFoamNatural](bedding-padding-insulation-and-lining-textiles/latexFoamNatural.mtlx) — Pale cream latex foam with fine porous texture and soft matte scattering.
+- [polyethyleneFoamWhite](bedding-padding-insulation-and-lining-textiles/polyethyleneFoamWhite.mtlx) — White closed-cell polyethylene foam with fine uniform cells and a low-sheen surface.
+- [polyethyleneFoamBlack](bedding-padding-insulation-and-lining-textiles/polyethyleneFoamBlack.mtlx) — Black closed-cell polyethylene foam with fine uniform cells and a low-sheen surface.
+- [melamineFoamWhite](bedding-padding-insulation-and-lining-textiles/melamineFoamWhite.mtlx) — White melamine foam with extremely fine porous texture and matte diffuse scattering.
+
+## Bare, plated, anodized, and coated metals
+
+- [aluminumPolished](13-bare-plated-anodized-and-coated-metals/aluminumPolished.mtlx) — Clean neutral light silver aluminum with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [aluminumBrushed](13-bare-plated-anodized-and-coated-metals/aluminumBrushed.mtlx) — Clean neutral light silver aluminum with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [aluminumSatin](13-bare-plated-anodized-and-coated-metals/aluminumSatin.mtlx) — Clean neutral light silver aluminum with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [aluminumBeadBlasted](13-bare-plated-anodized-and-coated-metals/aluminumBeadBlasted.mtlx) — Clean neutral light silver aluminum with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [stainlessSteelPolished](13-bare-plated-anodized-and-coated-metals/stainlessSteelPolished.mtlx) — Clean cool silver stainless steel with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [stainlessSteelBrushed](13-bare-plated-anodized-and-coated-metals/stainlessSteelBrushed.mtlx) — Clean cool silver stainless steel with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [stainlessSteelSatin](13-bare-plated-anodized-and-coated-metals/stainlessSteelSatin.mtlx) — Clean cool silver stainless steel with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [stainlessSteelBeadBlasted](13-bare-plated-anodized-and-coated-metals/stainlessSteelBeadBlasted.mtlx) — Clean cool silver stainless steel with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [carbonSteelPolished](13-bare-plated-anodized-and-coated-metals/carbonSteelPolished.mtlx) — Clean medium cool gray steel with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [carbonSteelBrushed](13-bare-plated-anodized-and-coated-metals/carbonSteelBrushed.mtlx) — Clean medium cool gray steel with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [carbonSteelSatin](13-bare-plated-anodized-and-coated-metals/carbonSteelSatin.mtlx) — Clean medium cool gray steel with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [carbonSteelBeadBlasted](13-bare-plated-anodized-and-coated-metals/carbonSteelBeadBlasted.mtlx) — Clean medium cool gray steel with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [brassPolished](13-bare-plated-anodized-and-coated-metals/brassPolished.mtlx) — Clean warm yellow-gold brass with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [brassBrushed](13-bare-plated-anodized-and-coated-metals/brassBrushed.mtlx) — Clean warm yellow-gold brass with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [brassSatin](13-bare-plated-anodized-and-coated-metals/brassSatin.mtlx) — Clean warm yellow-gold brass with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [brassBeadBlasted](13-bare-plated-anodized-and-coated-metals/brassBeadBlasted.mtlx) — Clean warm yellow-gold brass with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [copperPolished](13-bare-plated-anodized-and-coated-metals/copperPolished.mtlx) — Clean reddish orange copper with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [copperBrushed](13-bare-plated-anodized-and-coated-metals/copperBrushed.mtlx) — Clean reddish orange copper with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [copperSatin](13-bare-plated-anodized-and-coated-metals/copperSatin.mtlx) — Clean reddish orange copper with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [copperBeadBlasted](13-bare-plated-anodized-and-coated-metals/copperBeadBlasted.mtlx) — Clean reddish orange copper with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [bronzePolished](13-bare-plated-anodized-and-coated-metals/bronzePolished.mtlx) — Clean warm brown-gold bronze with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [bronzeBrushed](13-bare-plated-anodized-and-coated-metals/bronzeBrushed.mtlx) — Clean warm brown-gold bronze with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [bronzeSatin](13-bare-plated-anodized-and-coated-metals/bronzeSatin.mtlx) — Clean warm brown-gold bronze with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [bronzeBeadBlasted](13-bare-plated-anodized-and-coated-metals/bronzeBeadBlasted.mtlx) — Clean warm brown-gold bronze with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [nickelPolished](13-bare-plated-anodized-and-coated-metals/nickelPolished.mtlx) — Clean warm pale silver nickel with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [nickelBrushed](13-bare-plated-anodized-and-coated-metals/nickelBrushed.mtlx) — Clean warm pale silver nickel with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [nickelSatin](13-bare-plated-anodized-and-coated-metals/nickelSatin.mtlx) — Clean warm pale silver nickel with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [nickelBeadBlasted](13-bare-plated-anodized-and-coated-metals/nickelBeadBlasted.mtlx) — Clean warm pale silver nickel with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [chromePolished](13-bare-plated-anodized-and-coated-metals/chromePolished.mtlx) — Clean cool neutral silver chromium plating with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [chromeBrushed](13-bare-plated-anodized-and-coated-metals/chromeBrushed.mtlx) — Clean cool neutral silver chromium plating with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [chromeSatin](13-bare-plated-anodized-and-coated-metals/chromeSatin.mtlx) — Clean cool neutral silver chromium plating with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [chromeBeadBlasted](13-bare-plated-anodized-and-coated-metals/chromeBeadBlasted.mtlx) — Clean cool neutral silver chromium plating with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [zincPolished](13-bare-plated-anodized-and-coated-metals/zincPolished.mtlx) — Clean pale bluish silver zinc with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [zincBrushed](13-bare-plated-anodized-and-coated-metals/zincBrushed.mtlx) — Clean pale bluish silver zinc with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [zincSatin](13-bare-plated-anodized-and-coated-metals/zincSatin.mtlx) — Clean pale bluish silver zinc with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [zincBeadBlasted](13-bare-plated-anodized-and-coated-metals/zincBeadBlasted.mtlx) — Clean pale bluish silver zinc with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [titaniumPolished](13-bare-plated-anodized-and-coated-metals/titaniumPolished.mtlx) — Clean medium warm silver titanium with smooth mirror-like metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [titaniumBrushed](13-bare-plated-anodized-and-coated-metals/titaniumBrushed.mtlx) — Clean medium warm silver titanium with fine aligned abrasion lines and strongly directional metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [titaniumSatin](13-bare-plated-anodized-and-coated-metals/titaniumSatin.mtlx) — Clean medium warm silver titanium with fine uniform microtexture and broad metallic highlights; intrinsic metal reflection color, without diffuse paint.
+- [titaniumBeadBlasted](13-bare-plated-anodized-and-coated-metals/titaniumBeadBlasted.mtlx) — Clean medium warm silver titanium with fine isotropic granular texture and broad matte metallic reflections; intrinsic metal reflection color, without diffuse paint.
+- [castIronBlack](13-bare-plated-anodized-and-coated-metals/castIronBlack.mtlx) — New black-finished cast iron with fine irregular cast texture and subdued metallic highlights.
+- [castAluminumSilver](13-bare-plated-anodized-and-coated-metals/castAluminumSilver.mtlx) — New silver cast aluminum with fine irregular cast texture and broad metallic highlights.
+- [galvanizedSteelSilver](13-bare-plated-anodized-and-coated-metals/galvanizedSteelSilver.mtlx) — New bright silver zinc-coated steel with crystalline spangle pattern and metallic reflections.
+- [galvanizedSteelFineSilver](13-bare-plated-anodized-and-coated-metals/galvanizedSteelFineSilver.mtlx) — New silver zinc-coated steel with very fine spangle pattern and metallic reflections.
+- [steelBlackOxide](13-bare-plated-anodized-and-coated-metals/steelBlackOxide.mtlx) — Fresh black-oxide steel; deep blue-black coloration with restrained metallic highlights.
+- [steelGunmetal](13-bare-plated-anodized-and-coated-metals/steelGunmetal.mtlx) — Uniform dark gunmetal gray steel with satin metallic highlights.
+- [nickelBlackPolished](13-bare-plated-anodized-and-coated-metals/nickelBlackPolished.mtlx) — Uniform black-nickel plating with dark neutral metallic reflections and polished finish.
+- [nickelBlackBrushed](13-bare-plated-anodized-and-coated-metals/nickelBlackBrushed.mtlx) — Uniform black-nickel plating with dark neutral metallic reflections and aligned brush texture.
+- [brassClearLacquered](13-bare-plated-anodized-and-coated-metals/brassClearLacquered.mtlx) — Fresh bright yellow brass with smooth transparent satin lacquer; metallic reflections beneath dielectric coating.
+- [copperClearLacquered](13-bare-plated-anodized-and-coated-metals/copperClearLacquered.mtlx) — Fresh bright reddish copper with smooth transparent satin lacquer; metallic reflections beneath dielectric coating.
+- [bronzeClearLacquered](13-bare-plated-anodized-and-coated-metals/bronzeClearLacquered.mtlx) — Fresh warm brown bronze with smooth transparent satin lacquer; metallic reflections beneath dielectric coating.
+- [brassAntiqueToneUniform](13-bare-plated-anodized-and-coated-metals/brassAntiqueToneUniform.mtlx) — New uniformly dark brown-gold brass-colored finish with satin metallic highlights; consistent color without wear.
+- [goldPlatingPolished](13-bare-plated-anodized-and-coated-metals/goldPlatingPolished.mtlx) — Rich yellow gold plating with smooth mirror-like metallic reflections.
+- [goldPlatingBrushed](13-bare-plated-anodized-and-coated-metals/goldPlatingBrushed.mtlx) — Rich yellow gold plating with fine aligned brush texture and directional metallic highlights.
+- [roseGoldPlatingPolished](13-bare-plated-anodized-and-coated-metals/roseGoldPlatingPolished.mtlx) — Warm pink-gold plating with smooth mirror-like metallic reflections.
+- [roseGoldPlatingBrushed](13-bare-plated-anodized-and-coated-metals/roseGoldPlatingBrushed.mtlx) — Warm pink-gold plating with fine aligned brush texture and directional metallic highlights.
+- [pvdChampagneGold](13-bare-plated-anodized-and-coated-metals/pvdChampagneGold.mtlx) — Pale champagne-gold physical-vapor-deposited coating with satin metallic reflections.
+- [pvdBlack](13-bare-plated-anodized-and-coated-metals/pvdBlack.mtlx) — Deep neutral black physical-vapor-deposited coating with smooth metallic reflections.
+- [pvdBronze](13-bare-plated-anodized-and-coated-metals/pvdBronze.mtlx) — Uniform warm bronze physical-vapor-deposited coating with satin metallic reflections.
+- [pvdRoseGold](13-bare-plated-anodized-and-coated-metals/pvdRoseGold.mtlx) — Pink-gold physical-vapor-deposited coating with satin metallic reflections.
+- [silverLeafSealed](13-bare-plated-anodized-and-coated-metals/silverLeafSealed.mtlx) — Bright silver leaf with fine foil texture and subtle tonal variation under transparent gloss sealer.
+- [goldLeafSealed](13-bare-plated-anodized-and-coated-metals/goldLeafSealed.mtlx) — Warm yellow gold leaf with fine foil texture and subtle tonal variation under transparent gloss sealer.
+- [copperLeafSealed](13-bare-plated-anodized-and-coated-metals/copperLeafSealed.mtlx) — Reddish copper leaf with fine foil texture and subtle tonal variation under transparent gloss sealer.
+- [anodizedAluminumNaturalSatin](13-bare-plated-anodized-and-coated-metals/anodizedAluminumNaturalSatin.mtlx) — Neutral silver anodized aluminum; fine uniform texture and broad highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumNaturalBrushed](13-bare-plated-anodized-and-coated-metals/anodizedAluminumNaturalBrushed.mtlx) — Neutral silver anodized aluminum; fine aligned grain and directional highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumBlackSatin](13-bare-plated-anodized-and-coated-metals/anodizedAluminumBlackSatin.mtlx) — Deep black anodized aluminum; fine uniform texture and broad highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumBlackBrushed](13-bare-plated-anodized-and-coated-metals/anodizedAluminumBlackBrushed.mtlx) — Deep black anodized aluminum; fine aligned grain and directional highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumChampagneSatin](13-bare-plated-anodized-and-coated-metals/anodizedAluminumChampagneSatin.mtlx) — Pale champagne gold anodized aluminum; fine uniform texture and broad highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumChampagneBrushed](13-bare-plated-anodized-and-coated-metals/anodizedAluminumChampagneBrushed.mtlx) — Pale champagne gold anodized aluminum; fine aligned grain and directional highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumGoldSatin](13-bare-plated-anodized-and-coated-metals/anodizedAluminumGoldSatin.mtlx) — Yellow gold anodized aluminum; fine uniform texture and broad highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumGoldBrushed](13-bare-plated-anodized-and-coated-metals/anodizedAluminumGoldBrushed.mtlx) — Yellow gold anodized aluminum; fine aligned grain and directional highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumBronzeSatin](13-bare-plated-anodized-and-coated-metals/anodizedAluminumBronzeSatin.mtlx) — Warm bronze anodized aluminum; fine uniform texture and broad highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumBronzeBrushed](13-bare-plated-anodized-and-coated-metals/anodizedAluminumBronzeBrushed.mtlx) — Warm bronze anodized aluminum; fine aligned grain and directional highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumDarkBronzeSatin](13-bare-plated-anodized-and-coated-metals/anodizedAluminumDarkBronzeSatin.mtlx) — Deep brown bronze anodized aluminum; fine uniform texture and broad highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumDarkBronzeBrushed](13-bare-plated-anodized-and-coated-metals/anodizedAluminumDarkBronzeBrushed.mtlx) — Deep brown bronze anodized aluminum; fine aligned grain and directional highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumGraySatin](13-bare-plated-anodized-and-coated-metals/anodizedAluminumGraySatin.mtlx) — Medium gray anodized aluminum; fine uniform texture and broad highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumGrayBrushed](13-bare-plated-anodized-and-coated-metals/anodizedAluminumGrayBrushed.mtlx) — Medium gray anodized aluminum; fine aligned grain and directional highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumBlueSatin](13-bare-plated-anodized-and-coated-metals/anodizedAluminumBlueSatin.mtlx) — Saturated blue anodized aluminum; fine uniform texture and broad highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumBlueBrushed](13-bare-plated-anodized-and-coated-metals/anodizedAluminumBlueBrushed.mtlx) — Saturated blue anodized aluminum; fine aligned grain and directional highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumRedSatin](13-bare-plated-anodized-and-coated-metals/anodizedAluminumRedSatin.mtlx) — Saturated red anodized aluminum; fine uniform texture and broad highlights; reflective metal beneath a transparent colored oxide surface.
+- [anodizedAluminumRedBrushed](13-bare-plated-anodized-and-coated-metals/anodizedAluminumRedBrushed.mtlx) — Saturated red anodized aluminum; fine aligned grain and directional highlights; reflective metal beneath a transparent colored oxide surface.
+
+## Opaque plastics, elastomers, and polymer composites
+
+- [absSatinWhite](14-opaque-plastics-elastomers-and-polymer-composites/absSatinWhite.mtlx) — Opaque neutral white ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinIvory](14-opaque-plastics-elastomers-and-polymer-composites/absSatinIvory.mtlx) — Opaque warm ivory ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinCream](14-opaque-plastics-elastomers-and-polymer-composites/absSatinCream.mtlx) — Opaque yellow-tinted cream ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinBeige](14-opaque-plastics-elastomers-and-polymer-composites/absSatinBeige.mtlx) — Opaque warm beige ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinTaupe](14-opaque-plastics-elastomers-and-polymer-composites/absSatinTaupe.mtlx) — Opaque gray-brown taupe ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinLightGray](14-opaque-plastics-elastomers-and-polymer-composites/absSatinLightGray.mtlx) — Opaque light neutral gray ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinMediumGray](14-opaque-plastics-elastomers-and-polymer-composites/absSatinMediumGray.mtlx) — Opaque medium neutral gray ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/absSatinCharcoal.mtlx) — Opaque dark charcoal gray ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinBlack](14-opaque-plastics-elastomers-and-polymer-composites/absSatinBlack.mtlx) — Opaque neutral black ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinNavy](14-opaque-plastics-elastomers-and-polymer-composites/absSatinNavy.mtlx) — Opaque deep navy blue ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absSatinRed](14-opaque-plastics-elastomers-and-polymer-composites/absSatinRed.mtlx) — Opaque saturated red ABS plastic; fine smooth texture with satin dielectric highlights.
+- [absGlossWhite](14-opaque-plastics-elastomers-and-polymer-composites/absGlossWhite.mtlx) — Opaque neutral white ABS plastic; smooth glossy dielectric surface.
+- [absGlossIvory](14-opaque-plastics-elastomers-and-polymer-composites/absGlossIvory.mtlx) — Opaque warm ivory ABS plastic; smooth glossy dielectric surface.
+- [absGlossCream](14-opaque-plastics-elastomers-and-polymer-composites/absGlossCream.mtlx) — Opaque yellow-tinted cream ABS plastic; smooth glossy dielectric surface.
+- [absGlossBeige](14-opaque-plastics-elastomers-and-polymer-composites/absGlossBeige.mtlx) — Opaque warm beige ABS plastic; smooth glossy dielectric surface.
+- [absGlossTaupe](14-opaque-plastics-elastomers-and-polymer-composites/absGlossTaupe.mtlx) — Opaque gray-brown taupe ABS plastic; smooth glossy dielectric surface.
+- [absGlossLightGray](14-opaque-plastics-elastomers-and-polymer-composites/absGlossLightGray.mtlx) — Opaque light neutral gray ABS plastic; smooth glossy dielectric surface.
+- [absGlossMediumGray](14-opaque-plastics-elastomers-and-polymer-composites/absGlossMediumGray.mtlx) — Opaque medium neutral gray ABS plastic; smooth glossy dielectric surface.
+- [absGlossCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/absGlossCharcoal.mtlx) — Opaque dark charcoal gray ABS plastic; smooth glossy dielectric surface.
+- [absGlossBlack](14-opaque-plastics-elastomers-and-polymer-composites/absGlossBlack.mtlx) — Opaque neutral black ABS plastic; smooth glossy dielectric surface.
+- [absGlossRed](14-opaque-plastics-elastomers-and-polymer-composites/absGlossRed.mtlx) — Opaque saturated red ABS plastic; smooth glossy dielectric surface.
+- [polypropyleneMatteWhite](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteWhite.mtlx) — Opaque neutral white polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteIvory](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteIvory.mtlx) — Opaque warm ivory polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteCream](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteCream.mtlx) — Opaque yellow-tinted cream polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteBeige](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteBeige.mtlx) — Opaque warm beige polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteTaupe](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteTaupe.mtlx) — Opaque gray-brown taupe polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteLightGray](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteLightGray.mtlx) — Opaque light neutral gray polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteMediumGray](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteMediumGray.mtlx) — Opaque medium neutral gray polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteCharcoal.mtlx) — Opaque dark charcoal gray polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteBlack](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteBlack.mtlx) — Opaque neutral black polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteSage](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteSage.mtlx) — Opaque muted gray-green sage polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteNavy](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteNavy.mtlx) — Opaque deep navy blue polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteYellow](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteYellow.mtlx) — Opaque saturated yellow polypropylene; fine molded stipple and matte dielectric surface.
+- [polypropyleneMatteRed](14-opaque-plastics-elastomers-and-polymer-composites/polypropyleneMatteRed.mtlx) — Opaque saturated red polypropylene; fine molded stipple and matte dielectric surface.
+- [polyethyleneMatteWhite](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteWhite.mtlx) — Opaque neutral white polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteIvory](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteIvory.mtlx) — Opaque warm ivory polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteCream](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteCream.mtlx) — Opaque yellow-tinted cream polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteBeige](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteBeige.mtlx) — Opaque warm beige polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteTaupe](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteTaupe.mtlx) — Opaque gray-brown taupe polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteLightGray](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteLightGray.mtlx) — Opaque light neutral gray polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteMediumGray](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteMediumGray.mtlx) — Opaque medium neutral gray polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteCharcoal.mtlx) — Opaque dark charcoal gray polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteBlack](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteBlack.mtlx) — Opaque neutral black polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteForestGreen](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteForestGreen.mtlx) — Opaque deep forest green polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteRed](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteRed.mtlx) — Opaque saturated red polyethylene; fine waxy surface texture and low sheen.
+- [polyethyleneMatteYellow](14-opaque-plastics-elastomers-and-polymer-composites/polyethyleneMatteYellow.mtlx) — Opaque saturated yellow polyethylene; fine waxy surface texture and low sheen.
+- [polycarbonateOpaqueGlossWhite](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossWhite.mtlx) — Opaque neutral white polycarbonate; smooth glossy dielectric surface.
+- [polycarbonateOpaqueGlossIvory](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossIvory.mtlx) — Opaque warm ivory polycarbonate; smooth glossy dielectric surface.
+- [polycarbonateOpaqueGlossCream](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossCream.mtlx) — Opaque yellow-tinted cream polycarbonate; smooth glossy dielectric surface.
+- [polycarbonateOpaqueGlossBeige](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossBeige.mtlx) — Opaque warm beige polycarbonate; smooth glossy dielectric surface.
+- [polycarbonateOpaqueGlossTaupe](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossTaupe.mtlx) — Opaque gray-brown taupe polycarbonate; smooth glossy dielectric surface.
+- [polycarbonateOpaqueGlossLightGray](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossLightGray.mtlx) — Opaque light neutral gray polycarbonate; smooth glossy dielectric surface.
+- [polycarbonateOpaqueGlossMediumGray](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossMediumGray.mtlx) — Opaque medium neutral gray polycarbonate; smooth glossy dielectric surface.
+- [polycarbonateOpaqueGlossCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossCharcoal.mtlx) — Opaque dark charcoal gray polycarbonate; smooth glossy dielectric surface.
+- [polycarbonateOpaqueGlossBlack](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossBlack.mtlx) — Opaque neutral black polycarbonate; smooth glossy dielectric surface.
+- [polycarbonateOpaqueGlossRed](14-opaque-plastics-elastomers-and-polymer-composites/polycarbonateOpaqueGlossRed.mtlx) — Opaque saturated red polycarbonate; smooth glossy dielectric surface.
+- [acrylicOpaqueGlossWhite](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossWhite.mtlx) — Opaque neutral white acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossIvory](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossIvory.mtlx) — Opaque warm ivory acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossCream](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossCream.mtlx) — Opaque yellow-tinted cream acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossBeige](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossBeige.mtlx) — Opaque warm beige acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossTaupe](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossTaupe.mtlx) — Opaque gray-brown taupe acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossLightGray](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossLightGray.mtlx) — Opaque light neutral gray acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossMediumGray](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossMediumGray.mtlx) — Opaque medium neutral gray acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossCharcoal.mtlx) — Opaque dark charcoal gray acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossBlack](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossBlack.mtlx) — Opaque neutral black acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossNavy](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossNavy.mtlx) — Opaque deep navy blue acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossRed](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossRed.mtlx) — Opaque saturated red acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossOrange](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossOrange.mtlx) — Opaque saturated orange acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossYellow](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossYellow.mtlx) — Opaque saturated yellow acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossForestGreen](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossForestGreen.mtlx) — Opaque deep forest green acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueGlossBlush](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueGlossBlush.mtlx) — Opaque pale blush pink acrylic; smooth highly glossy dielectric surface.
+- [acrylicOpaqueMatteWhite](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteWhite.mtlx) — Opaque neutral white acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteIvory](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteIvory.mtlx) — Opaque warm ivory acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteCream](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteCream.mtlx) — Opaque yellow-tinted cream acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteBeige](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteBeige.mtlx) — Opaque warm beige acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteTaupe](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteTaupe.mtlx) — Opaque gray-brown taupe acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteLightGray](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteLightGray.mtlx) — Opaque light neutral gray acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteMediumGray](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteMediumGray.mtlx) — Opaque medium neutral gray acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteCharcoal.mtlx) — Opaque dark charcoal gray acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteBlack](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteBlack.mtlx) — Opaque neutral black acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteNavy](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteNavy.mtlx) — Opaque deep navy blue acrylic; fine smooth matte dielectric surface.
+- [acrylicOpaqueMatteSage](14-opaque-plastics-elastomers-and-polymer-composites/acrylicOpaqueMatteSage.mtlx) — Opaque muted gray-green sage acrylic; fine smooth matte dielectric surface.
+- [nylonMatteWhite](14-opaque-plastics-elastomers-and-polymer-composites/nylonMatteWhite.mtlx) — Opaque neutral white nylon; fine molded grain with low sheen.
+- [nylonMatteCream](14-opaque-plastics-elastomers-and-polymer-composites/nylonMatteCream.mtlx) — Opaque yellow-tinted cream nylon; fine molded grain with low sheen.
+- [nylonMatteLightGray](14-opaque-plastics-elastomers-and-polymer-composites/nylonMatteLightGray.mtlx) — Opaque light neutral gray nylon; fine molded grain with low sheen.
+- [nylonMatteCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/nylonMatteCharcoal.mtlx) — Opaque dark charcoal gray nylon; fine molded grain with low sheen.
+- [nylonMatteBlack](14-opaque-plastics-elastomers-and-polymer-composites/nylonMatteBlack.mtlx) — Opaque neutral black nylon; fine molded grain with low sheen.
+- [acetalSatinWhite](14-opaque-plastics-elastomers-and-polymer-composites/acetalSatinWhite.mtlx) — Opaque neutral white acetal resin; dense smooth surface with a restrained waxy sheen.
+- [acetalSatinIvory](14-opaque-plastics-elastomers-and-polymer-composites/acetalSatinIvory.mtlx) — Opaque warm ivory acetal resin; dense smooth surface with a restrained waxy sheen.
+- [acetalSatinLightGray](14-opaque-plastics-elastomers-and-polymer-composites/acetalSatinLightGray.mtlx) — Opaque light neutral gray acetal resin; dense smooth surface with a restrained waxy sheen.
+- [acetalSatinBlack](14-opaque-plastics-elastomers-and-polymer-composites/acetalSatinBlack.mtlx) — Opaque neutral black acetal resin; dense smooth surface with a restrained waxy sheen.
+- [pvcOpaqueSatinWhite](14-opaque-plastics-elastomers-and-polymer-composites/pvcOpaqueSatinWhite.mtlx) — Opaque neutral white PVC; fine smooth texture with satin dielectric highlights.
+- [pvcOpaqueSatinIvory](14-opaque-plastics-elastomers-and-polymer-composites/pvcOpaqueSatinIvory.mtlx) — Opaque warm ivory PVC; fine smooth texture with satin dielectric highlights.
+- [pvcOpaqueSatinCream](14-opaque-plastics-elastomers-and-polymer-composites/pvcOpaqueSatinCream.mtlx) — Opaque yellow-tinted cream PVC; fine smooth texture with satin dielectric highlights.
+- [pvcOpaqueSatinBeige](14-opaque-plastics-elastomers-and-polymer-composites/pvcOpaqueSatinBeige.mtlx) — Opaque warm beige PVC; fine smooth texture with satin dielectric highlights.
+- [pvcOpaqueSatinTaupe](14-opaque-plastics-elastomers-and-polymer-composites/pvcOpaqueSatinTaupe.mtlx) — Opaque gray-brown taupe PVC; fine smooth texture with satin dielectric highlights.
+- [pvcOpaqueSatinLightGray](14-opaque-plastics-elastomers-and-polymer-composites/pvcOpaqueSatinLightGray.mtlx) — Opaque light neutral gray PVC; fine smooth texture with satin dielectric highlights.
+- [pvcOpaqueSatinMediumGray](14-opaque-plastics-elastomers-and-polymer-composites/pvcOpaqueSatinMediumGray.mtlx) — Opaque medium neutral gray PVC; fine smooth texture with satin dielectric highlights.
+- [pvcOpaqueSatinCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/pvcOpaqueSatinCharcoal.mtlx) — Opaque dark charcoal gray PVC; fine smooth texture with satin dielectric highlights.
+- [pvcOpaqueSatinBlack](14-opaque-plastics-elastomers-and-polymer-composites/pvcOpaqueSatinBlack.mtlx) — Opaque neutral black PVC; fine smooth texture with satin dielectric highlights.
+- [siliconeMatteWhite](14-opaque-plastics-elastomers-and-polymer-composites/siliconeMatteWhite.mtlx) — Opaque neutral white silicone rubber; fine dry-looking matte surface and soft diffuse scattering.
+- [siliconeMatteIvory](14-opaque-plastics-elastomers-and-polymer-composites/siliconeMatteIvory.mtlx) — Opaque warm ivory silicone rubber; fine dry-looking matte surface and soft diffuse scattering.
+- [siliconeMatteLightGray](14-opaque-plastics-elastomers-and-polymer-composites/siliconeMatteLightGray.mtlx) — Opaque light neutral gray silicone rubber; fine dry-looking matte surface and soft diffuse scattering.
+- [siliconeMatteCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/siliconeMatteCharcoal.mtlx) — Opaque dark charcoal gray silicone rubber; fine dry-looking matte surface and soft diffuse scattering.
+- [siliconeMatteBlack](14-opaque-plastics-elastomers-and-polymer-composites/siliconeMatteBlack.mtlx) — Opaque neutral black silicone rubber; fine dry-looking matte surface and soft diffuse scattering.
+- [siliconeMatteRed](14-opaque-plastics-elastomers-and-polymer-composites/siliconeMatteRed.mtlx) — Opaque saturated red silicone rubber; fine dry-looking matte surface and soft diffuse scattering.
+- [siliconeMatteNavy](14-opaque-plastics-elastomers-and-polymer-composites/siliconeMatteNavy.mtlx) — Opaque deep navy blue silicone rubber; fine dry-looking matte surface and soft diffuse scattering.
+- [tpeMatteWhite](14-opaque-plastics-elastomers-and-polymer-composites/tpeMatteWhite.mtlx) — Opaque neutral white thermoplastic elastomer; fine molded texture and low sheen.
+- [tpeMatteLightGray](14-opaque-plastics-elastomers-and-polymer-composites/tpeMatteLightGray.mtlx) — Opaque light neutral gray thermoplastic elastomer; fine molded texture and low sheen.
+- [tpeMatteCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/tpeMatteCharcoal.mtlx) — Opaque dark charcoal gray thermoplastic elastomer; fine molded texture and low sheen.
+- [tpeMatteBlack](14-opaque-plastics-elastomers-and-polymer-composites/tpeMatteBlack.mtlx) — Opaque neutral black thermoplastic elastomer; fine molded texture and low sheen.
+- [epdmMatteLightGray](14-opaque-plastics-elastomers-and-polymer-composites/epdmMatteLightGray.mtlx) — Opaque light neutral gray EPDM rubber; fine granular texture and matte finish.
+- [epdmMatteCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/epdmMatteCharcoal.mtlx) — Opaque dark charcoal gray EPDM rubber; fine granular texture and matte finish.
+- [epdmMatteBlack](14-opaque-plastics-elastomers-and-polymer-composites/epdmMatteBlack.mtlx) — Opaque neutral black EPDM rubber; fine granular texture and matte finish.
+- [neopreneMatteLightGray](14-opaque-plastics-elastomers-and-polymer-composites/neopreneMatteLightGray.mtlx) — Opaque light neutral gray neoprene rubber; fine closed-cell skin texture and matte finish.
+- [neopreneMatteCharcoal](14-opaque-plastics-elastomers-and-polymer-composites/neopreneMatteCharcoal.mtlx) — Opaque dark charcoal gray neoprene rubber; fine closed-cell skin texture and matte finish.
+- [neopreneMatteBlack](14-opaque-plastics-elastomers-and-polymer-composites/neopreneMatteBlack.mtlx) — Opaque neutral black neoprene rubber; fine closed-cell skin texture and matte finish.
+- [polyurethaneElastomerWhite](14-opaque-plastics-elastomers-and-polymer-composites/polyurethaneElastomerWhite.mtlx) — Opaque neutral white polyurethane elastomer; smooth satin dielectric surface.
+- [polyurethaneElastomerLightGray](14-opaque-plastics-elastomers-and-polymer-composites/polyurethaneElastomerLightGray.mtlx) — Opaque light neutral gray polyurethane elastomer; smooth satin dielectric surface.
+- [polyurethaneElastomerBlack](14-opaque-plastics-elastomers-and-polymer-composites/polyurethaneElastomerBlack.mtlx) — Opaque neutral black polyurethane elastomer; smooth satin dielectric surface.
+- [polyurethaneElastomerRed](14-opaque-plastics-elastomers-and-polymer-composites/polyurethaneElastomerRed.mtlx) — Opaque saturated red polyurethane elastomer; smooth satin dielectric surface.
+- [polyurethaneElastomerRoyalBlue](14-opaque-plastics-elastomers-and-polymer-composites/polyurethaneElastomerRoyalBlue.mtlx) — Opaque saturated royal blue polyurethane elastomer; smooth satin dielectric surface.
+- [naturalRubberAmber](14-opaque-plastics-elastomers-and-polymer-composites/naturalRubberAmber.mtlx) — Amber natural rubber with subtle warm translucency, fine surface grain, and low sheen.
+- [naturalRubberBlack](14-opaque-plastics-elastomers-and-polymer-composites/naturalRubberBlack.mtlx) — Carbon-black natural rubber with fine molded texture and low sheen.
+- [siliconeTranslucentClear](14-opaque-plastics-elastomers-and-polymer-composites/siliconeTranslucentClear.mtlx) — Colorless translucent silicone; broad transmitted light, soft subsurface scattering, and low surface sheen.
+- [siliconeTranslucentWhite](14-opaque-plastics-elastomers-and-polymer-composites/siliconeTranslucentWhite.mtlx) — Milky white translucent silicone; strong diffuse transmission and a matte surface.
+- [polyurethaneTransparentAmber](14-opaque-plastics-elastomers-and-polymer-composites/polyurethaneTransparentAmber.mtlx) — Transparent amber polyurethane elastomer; warm absorption and smooth glossy dielectric reflections.
+- [glassFilledNylonBlack](14-opaque-plastics-elastomers-and-polymer-composites/glassFilledNylonBlack.mtlx) — Black glass-filled nylon with fine dispersed fiber texture and matte polymer surface.
+- [glassFilledNylonGray](14-opaque-plastics-elastomers-and-polymer-composites/glassFilledNylonGray.mtlx) — Gray glass-filled nylon with fine dispersed fiber texture and matte polymer surface.
+- [fiberglassResinWhite](14-opaque-plastics-elastomers-and-polymer-composites/fiberglassResinWhite.mtlx) — Opaque white glass-fiber resin composite with fine mottled fiber texture and a smooth satin surface.
+- [fiberglassResinCream](14-opaque-plastics-elastomers-and-polymer-composites/fiberglassResinCream.mtlx) — Opaque cream glass-fiber resin composite with fine mottled fiber texture and a smooth satin surface.
+- [fiberglassResinAmber](14-opaque-plastics-elastomers-and-polymer-composites/fiberglassResinAmber.mtlx) — Translucent amber glass-fiber resin composite with visible fine random fibers and satin surface.
+- [carbonFiberTwillGloss](14-opaque-plastics-elastomers-and-polymer-composites/carbonFiberTwillGloss.mtlx) — Black carbon-fiber composite with dark gray twill weave, directional fiber reflections, and a glossy clear resin surface.
+- [carbonFiberTwillMatte](14-opaque-plastics-elastomers-and-polymer-composites/carbonFiberTwillMatte.mtlx) — Black carbon-fiber composite with dark gray twill weave, directional fiber reflections, and a matte clear resin surface.
+- [carbonFiberForgedGloss](14-opaque-plastics-elastomers-and-polymer-composites/carbonFiberForgedGloss.mtlx) — Black chopped-carbon composite with irregular dark gray fiber flecks beneath glossy clear resin.
+- [woodPlasticCompositeNatural](14-opaque-plastics-elastomers-and-polymer-composites/woodPlasticCompositeNatural.mtlx) — Tan wood-polymer composite with fine dispersed wood fibers and matte surface.
+- [woodPlasticCompositeBrown](14-opaque-plastics-elastomers-and-polymer-composites/woodPlasticCompositeBrown.mtlx) — Brown wood-polymer composite with fine dispersed wood fibers and matte surface.
+- [woodPlasticCompositeGray](14-opaque-plastics-elastomers-and-polymer-composites/woodPlasticCompositeGray.mtlx) — Gray wood-polymer composite with fine dispersed wood fibers and matte surface.
+- [recycledPlasticTerrazzoWhite](14-opaque-plastics-elastomers-and-polymer-composites/recycledPlasticTerrazzoWhite.mtlx) — White recycled-polymer composite with multicolored plastic flecks and a smooth satin finish.
+- [recycledPlasticTerrazzoBlack](14-opaque-plastics-elastomers-and-polymer-composites/recycledPlasticTerrazzoBlack.mtlx) — Black recycled-polymer composite with multicolored plastic flecks and a smooth satin finish.
+- [recycledPlasticTerrazzoPastel](14-opaque-plastics-elastomers-and-polymer-composites/recycledPlasticTerrazzoPastel.mtlx) — Pale cream recycled-polymer composite with pink, mint, and blue plastic flecks and a smooth satin finish.
+- [expandedPolypropyleneBlack](14-opaque-plastics-elastomers-and-polymer-composites/expandedPolypropyleneBlack.mtlx) — Black expanded polypropylene with visible fused-bead texture and matte finish.
+- [expandedPolypropyleneGray](14-opaque-plastics-elastomers-and-polymer-composites/expandedPolypropyleneGray.mtlx) — Gray expanded polypropylene with visible fused-bead texture and matte finish.
+- [ptfeWhite](14-opaque-plastics-elastomers-and-polymer-composites/ptfeWhite.mtlx) — Opaque white PTFE with a fine smooth texture and low waxy sheen.
+- [uhmwPolyethyleneWhite](14-opaque-plastics-elastomers-and-polymer-composites/uhmwPolyethyleneWhite.mtlx) — Opaque white ultra-high-molecular-weight polyethylene with smooth fine texture and low waxy sheen.
+
+## Transparent, translucent, and decorative resin materials
+
+- [acrylicTransparentClear](15-transparent-translucent-and-decorative-resin-materials/acrylicTransparentClear.mtlx) — Transparent colorless acrylic; smooth glossy dielectric surface with refraction and minimal visible absorption.
+- [resinTransparentClear](15-transparent-translucent-and-decorative-resin-materials/resinTransparentClear.mtlx) — Transparent colorless cast resin; smooth glossy dielectric surface with refraction and minimal visible absorption.
+- [acrylicTransparentSmokeGray](15-transparent-translucent-and-decorative-resin-materials/acrylicTransparentSmokeGray.mtlx) — Transparent neutral smoke gray acrylic; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [resinTransparentSmokeGray](15-transparent-translucent-and-decorative-resin-materials/resinTransparentSmokeGray.mtlx) — Transparent neutral smoke gray cast resin; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [acrylicTransparentBronze](15-transparent-translucent-and-decorative-resin-materials/acrylicTransparentBronze.mtlx) — Transparent warm bronze-brown acrylic; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [resinTransparentBronze](15-transparent-translucent-and-decorative-resin-materials/resinTransparentBronze.mtlx) — Transparent warm bronze-brown cast resin; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [acrylicTransparentAmber](15-transparent-translucent-and-decorative-resin-materials/acrylicTransparentAmber.mtlx) — Transparent warm amber acrylic; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [resinTransparentAmber](15-transparent-translucent-and-decorative-resin-materials/resinTransparentAmber.mtlx) — Transparent warm amber cast resin; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [acrylicTransparentBlue](15-transparent-translucent-and-decorative-resin-materials/acrylicTransparentBlue.mtlx) — Transparent blue acrylic; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [resinTransparentBlue](15-transparent-translucent-and-decorative-resin-materials/resinTransparentBlue.mtlx) — Transparent blue cast resin; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [acrylicTransparentGreen](15-transparent-translucent-and-decorative-resin-materials/acrylicTransparentGreen.mtlx) — Transparent green acrylic; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [resinTransparentGreen](15-transparent-translucent-and-decorative-resin-materials/resinTransparentGreen.mtlx) — Transparent green cast resin; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [acrylicTransparentPink](15-transparent-translucent-and-decorative-resin-materials/acrylicTransparentPink.mtlx) — Transparent pink acrylic; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [resinTransparentPink](15-transparent-translucent-and-decorative-resin-materials/resinTransparentPink.mtlx) — Transparent pink cast resin; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [acrylicTransparentRed](15-transparent-translucent-and-decorative-resin-materials/acrylicTransparentRed.mtlx) — Transparent red acrylic; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [resinTransparentRed](15-transparent-translucent-and-decorative-resin-materials/resinTransparentRed.mtlx) — Transparent red cast resin; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [acrylicTransparentPurple](15-transparent-translucent-and-decorative-resin-materials/acrylicTransparentPurple.mtlx) — Transparent purple acrylic; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [resinTransparentPurple](15-transparent-translucent-and-decorative-resin-materials/resinTransparentPurple.mtlx) — Transparent purple cast resin; smooth glossy dielectric surface with refraction and colored absorption that deepens with optical path length.
+- [acrylicFrostedClear](15-transparent-translucent-and-decorative-resin-materials/acrylicFrostedClear.mtlx) — Colorless frosted acrylic; rough translucent surface with diffuse transmission and soft reflections.
+- [acrylicFrostedWhite](15-transparent-translucent-and-decorative-resin-materials/acrylicFrostedWhite.mtlx) — Milky white acrylic; diffuse bulk transmission with soft scattering and a matte surface.
+- [acrylicFrostedSmoke](15-transparent-translucent-and-decorative-resin-materials/acrylicFrostedSmoke.mtlx) — Smoke-gray acrylic; diffuse transmission, neutral absorption, and a matte surface.
+- [acrylicOpalWhite](15-transparent-translucent-and-decorative-resin-materials/acrylicOpalWhite.mtlx) — White opal acrylic; strong bulk scattering, partial light transmission, and a smooth satin surface.
+- [polycarbonateTransparentClear](15-transparent-translucent-and-decorative-resin-materials/polycarbonateTransparentClear.mtlx) — Colorless transparent polycarbonate with smooth glossy dielectric reflections and refraction.
+- [polycarbonateTransparentSmoke](15-transparent-translucent-and-decorative-resin-materials/polycarbonateTransparentSmoke.mtlx) — Smoke-gray transparent polycarbonate with neutral absorption, glossy reflections, and refraction.
+- [polycarbonateTranslucentWhite](15-transparent-translucent-and-decorative-resin-materials/polycarbonateTranslucentWhite.mtlx) — Milky white polycarbonate with diffuse bulk transmission and satin surface.
+- [petgTransparentClear](15-transparent-translucent-and-decorative-resin-materials/petgTransparentClear.mtlx) — Colorless transparent PETG with smooth glossy dielectric reflections and refraction.
+- [resinFrostedClear](15-transparent-translucent-and-decorative-resin-materials/resinFrostedClear.mtlx) — Colorless frosted resin; diffuse transmitted light and soft rough-surface reflections.
+- [resinTranslucentAmber](15-transparent-translucent-and-decorative-resin-materials/resinTranslucentAmber.mtlx) — Amber resin with warm volume absorption, moderate bulk scattering, and smooth satin surface.
+- [resinTranslucentJade](15-transparent-translucent-and-decorative-resin-materials/resinTranslucentJade.mtlx) — Pale jade-green resin with soft bulk scattering, partial transmission, and a smooth polished surface.
+- [resinMotherOfPearlWhite](15-transparent-translucent-and-decorative-resin-materials/resinMotherOfPearlWhite.mtlx) — White pearlescent resin with fine iridescent flakes beneath smooth clear resin.
+- [resinMotherOfPearlChampagne](15-transparent-translucent-and-decorative-resin-materials/resinMotherOfPearlChampagne.mtlx) — Champagne pearlescent resin with fine iridescent flakes beneath smooth clear resin.
+- [resinGlitterSilver](15-transparent-translucent-and-decorative-resin-materials/resinGlitterSilver.mtlx) — Clear resin containing fine silver reflective particles with a smooth glossy surface.
+- [resinGlitterGold](15-transparent-translucent-and-decorative-resin-materials/resinGlitterGold.mtlx) — Clear resin containing fine gold reflective particles with a smooth glossy surface.
+
+## Glass and mirror materials
+
+- [glassClearPolished](16-glass-and-mirror-materials/glassClearPolished.mtlx) — Transparent glass, near-colorless with a subtle natural green absorption; optically smooth glossy dielectric reflections and refraction; tint strengthens with optical path length.
+- [glassClearFrosted](16-glass-and-mirror-materials/glassClearFrosted.mtlx) — Translucent glass, near-colorless with a subtle natural green absorption; finely frosted surface with diffuse transmission and broad reflections.
+- [glassLowIronPolished](16-glass-and-mirror-materials/glassLowIronPolished.mtlx) — Transparent glass, nearly colorless with minimal visible green absorption; optically smooth glossy dielectric reflections and refraction; tint strengthens with optical path length.
+- [glassLowIronFrosted](16-glass-and-mirror-materials/glassLowIronFrosted.mtlx) — Translucent glass, nearly colorless with minimal visible green absorption; finely frosted surface with diffuse transmission and broad reflections.
+- [glassBronzePolished](16-glass-and-mirror-materials/glassBronzePolished.mtlx) — Transparent glass, warm bronze-brown; optically smooth glossy dielectric reflections and refraction; tint strengthens with optical path length.
+- [glassBronzeFrosted](16-glass-and-mirror-materials/glassBronzeFrosted.mtlx) — Translucent glass, warm bronze-brown; finely frosted surface with diffuse transmission and broad reflections.
+- [glassSmokeGrayPolished](16-glass-and-mirror-materials/glassSmokeGrayPolished.mtlx) — Transparent glass, neutral smoke gray; optically smooth glossy dielectric reflections and refraction; tint strengthens with optical path length.
+- [glassSmokeGrayFrosted](16-glass-and-mirror-materials/glassSmokeGrayFrosted.mtlx) — Translucent glass, neutral smoke gray; finely frosted surface with diffuse transmission and broad reflections.
+- [glassBlackTintPolished](16-glass-and-mirror-materials/glassBlackTintPolished.mtlx) — Transparent glass, deep neutral gray; optically smooth glossy dielectric reflections and refraction; tint strengthens with optical path length.
+- [glassBlackTintFrosted](16-glass-and-mirror-materials/glassBlackTintFrosted.mtlx) — Translucent glass, deep neutral gray; finely frosted surface with diffuse transmission and broad reflections.
+- [glassBluePolished](16-glass-and-mirror-materials/glassBluePolished.mtlx) — Transparent glass, cool blue; optically smooth glossy dielectric reflections and refraction; tint strengthens with optical path length.
+- [glassBlueFrosted](16-glass-and-mirror-materials/glassBlueFrosted.mtlx) — Translucent glass, cool blue; finely frosted surface with diffuse transmission and broad reflections.
+- [glassGreenPolished](16-glass-and-mirror-materials/glassGreenPolished.mtlx) — Transparent glass, green; optically smooth glossy dielectric reflections and refraction; tint strengthens with optical path length.
+- [glassGreenFrosted](16-glass-and-mirror-materials/glassGreenFrosted.mtlx) — Translucent glass, green; finely frosted surface with diffuse transmission and broad reflections.
+- [glassAmberPolished](16-glass-and-mirror-materials/glassAmberPolished.mtlx) — Transparent glass, warm amber; optically smooth glossy dielectric reflections and refraction; tint strengthens with optical path length.
+- [glassAmberFrosted](16-glass-and-mirror-materials/glassAmberFrosted.mtlx) — Translucent glass, warm amber; finely frosted surface with diffuse transmission and broad reflections.
+- [glassRosePolished](16-glass-and-mirror-materials/glassRosePolished.mtlx) — Transparent glass, pale rose; optically smooth glossy dielectric reflections and refraction; tint strengthens with optical path length.
+- [glassRoseFrosted](16-glass-and-mirror-materials/glassRoseFrosted.mtlx) — Translucent glass, pale rose; finely frosted surface with diffuse transmission and broad reflections.
+- [glassAcidEtchedWhite](16-glass-and-mirror-materials/glassAcidEtchedWhite.mtlx) — Near-colorless glass with a uniform fine acid-etched surface; diffuse transmission and soft matte highlights.
+- [glassSandblastedWhite](16-glass-and-mirror-materials/glassSandblastedWhite.mtlx) — Near-colorless glass with granular sandblasted texture; diffuse transmission and broad highlights.
+- [glassOpalWhite](16-glass-and-mirror-materials/glassOpalWhite.mtlx) — Milky white glass with strong bulk scattering, partial light transmission, and a polished surface.
+- [glassOpalCream](16-glass-and-mirror-materials/glassOpalCream.mtlx) — Cream opal glass with warm bulk scattering, partial light transmission, and a polished surface.
+- [glassCrackleClear](16-glass-and-mirror-materials/glassCrackleClear.mtlx) — Clear decorative glass with an internal crackle appearance beneath a smooth glossy surface; clean manufactured finish.
+- [glassSeededClear](16-glass-and-mirror-materials/glassSeededClear.mtlx) — Clear decorative glass with sparse small internal air inclusions and a polished refractive surface.
+- [glassIridescentClear](16-glass-and-mirror-materials/glassIridescentClear.mtlx) — Near-colorless glass with a thin-film iridescent surface and angle-dependent rainbow reflections.
+- [mirrorSilver](16-glass-and-mirror-materials/mirrorSilver.mtlx) — Neutral silver-backed mirror material with sharp reflected images through a clear glass surface.
+- [mirrorLowIronSilver](16-glass-and-mirror-materials/mirrorLowIronSilver.mtlx) — Neutral silver-backed mirror material beneath low-iron glass with minimal color cast and sharp reflections.
+- [mirrorBronze](16-glass-and-mirror-materials/mirrorBronze.mtlx) — Bronze-tinted mirror material with warm reflected images beneath polished glass.
+- [mirrorSmokeGray](16-glass-and-mirror-materials/mirrorSmokeGray.mtlx) — Smoke-gray mirror material with neutral darkened reflections beneath polished glass.
+- [mirrorBlack](16-glass-and-mirror-materials/mirrorBlack.mtlx) — Deep gray-black mirror material with strongly attenuated reflections beneath polished glass.
+- [mirrorRoseGold](16-glass-and-mirror-materials/mirrorRoseGold.mtlx) — Rose-gold mirror material with pink-gold reflected images beneath polished glass.
+- [mirrorGold](16-glass-and-mirror-materials/mirrorGold.mtlx) — Gold mirror material with yellow-gold reflected images beneath polished glass.
+- [mirrorSatinSilver](16-glass-and-mirror-materials/mirrorSatinSilver.mtlx) — Silver mirror material with a finely roughened surface and softly blurred neutral reflections.
+- [glassBackPaintedWhite](16-glass-and-mirror-materials/glassBackPaintedWhite.mtlx) — Opaque neutral white backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedIvory](16-glass-and-mirror-materials/glassBackPaintedIvory.mtlx) — Opaque warm ivory backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedCream](16-glass-and-mirror-materials/glassBackPaintedCream.mtlx) — Opaque yellow-tinted cream backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedBeige](16-glass-and-mirror-materials/glassBackPaintedBeige.mtlx) — Opaque warm beige backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedTaupe](16-glass-and-mirror-materials/glassBackPaintedTaupe.mtlx) — Opaque gray-brown taupe backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedLightGray](16-glass-and-mirror-materials/glassBackPaintedLightGray.mtlx) — Opaque light neutral gray backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedMediumGray](16-glass-and-mirror-materials/glassBackPaintedMediumGray.mtlx) — Opaque medium neutral gray backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedCharcoal](16-glass-and-mirror-materials/glassBackPaintedCharcoal.mtlx) — Opaque dark charcoal gray backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedBlack](16-glass-and-mirror-materials/glassBackPaintedBlack.mtlx) — Opaque neutral black backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedNavy](16-glass-and-mirror-materials/glassBackPaintedNavy.mtlx) — Opaque deep navy blue backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedSage](16-glass-and-mirror-materials/glassBackPaintedSage.mtlx) — Opaque muted gray-green sage backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedForestGreen](16-glass-and-mirror-materials/glassBackPaintedForestGreen.mtlx) — Opaque deep forest green backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedRed](16-glass-and-mirror-materials/glassBackPaintedRed.mtlx) — Opaque saturated red backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedBurgundy](16-glass-and-mirror-materials/glassBackPaintedBurgundy.mtlx) — Opaque deep wine red backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+- [glassBackPaintedBlush](16-glass-and-mirror-materials/glassBackPaintedBlush.mtlx) — Opaque pale blush pink backing viewed through clear glass; smooth glossy dielectric reflections above solid color.
+
+## Natural stone
+
+- [marbleCarraraHoned](17-natural-stone/marbleCarraraHoned.mtlx) — Cool white to pale gray marble with soft gray branching veins; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleCarraraPolished](17-natural-stone/marbleCarraraPolished.mtlx) — Cool white to pale gray marble with soft gray branching veins; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleCalacattaHoned](17-natural-stone/marbleCalacattaHoned.mtlx) — Warm white marble with bold gray veins and restrained gold accents; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleCalacattaPolished](17-natural-stone/marbleCalacattaPolished.mtlx) — Warm white marble with bold gray veins and restrained gold accents; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleStatuarioHoned](17-natural-stone/marbleStatuarioHoned.mtlx) — Bright white marble with distinct medium-gray branching veins; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleStatuarioPolished](17-natural-stone/marbleStatuarioPolished.mtlx) — Bright white marble with distinct medium-gray branching veins; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleNeroMarquinaHoned](17-natural-stone/marbleNeroMarquinaHoned.mtlx) — Deep black marble with irregular fine white veins; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleNeroMarquinaPolished](17-natural-stone/marbleNeroMarquinaPolished.mtlx) — Deep black marble with irregular fine white veins; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleEmperadorDarkHoned](17-natural-stone/marbleEmperadorDarkHoned.mtlx) — Dark chocolate brown marble with fine cream and light brown veins; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleEmperadorDarkPolished](17-natural-stone/marbleEmperadorDarkPolished.mtlx) — Dark chocolate brown marble with fine cream and light brown veins; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleEmperadorLightHoned](17-natural-stone/marbleEmperadorLightHoned.mtlx) — Light warm brown marble with cream veins and mottled tonal variation; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleEmperadorLightPolished](17-natural-stone/marbleEmperadorLightPolished.mtlx) — Light warm brown marble with cream veins and mottled tonal variation; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleCremaMarfilHoned](17-natural-stone/marbleCremaMarfilHoned.mtlx) — Warm creamy beige marble with subtle pale veins; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleCremaMarfilPolished](17-natural-stone/marbleCremaMarfilPolished.mtlx) — Warm creamy beige marble with subtle pale veins; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleVerdeAlpiHoned](17-natural-stone/marbleVerdeAlpiHoned.mtlx) — Deep forest green marble with irregular pale green and white veins; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleVerdeAlpiPolished](17-natural-stone/marbleVerdeAlpiPolished.mtlx) — Deep forest green marble with irregular pale green and white veins; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleRossoLevantoHoned](17-natural-stone/marbleRossoLevantoHoned.mtlx) — Deep wine-red marble with white and pale gray veins; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleRossoLevantoPolished](17-natural-stone/marbleRossoLevantoPolished.mtlx) — Deep wine-red marble with white and pale gray veins; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleRosaPortugalHoned](17-natural-stone/marbleRosaPortugalHoned.mtlx) — Pale pink marble with soft cream and rose veining; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleRosaPortugalPolished](17-natural-stone/marbleRosaPortugalPolished.mtlx) — Pale pink marble with soft cream and rose veining; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marblePandaWhiteHoned](17-natural-stone/marblePandaWhiteHoned.mtlx) — White marble with broad high-contrast black veins; smooth honed surface with broad low-sheen dielectric highlights.
+- [marblePandaWhitePolished](17-natural-stone/marblePandaWhitePolished.mtlx) — White marble with broad high-contrast black veins; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marbleArabescatoHoned](17-natural-stone/marbleArabescatoHoned.mtlx) — White marble with looping gray veins and cloudy gray patches; smooth honed surface with broad low-sheen dielectric highlights.
+- [marbleArabescatoPolished](17-natural-stone/marbleArabescatoPolished.mtlx) — White marble with looping gray veins and cloudy gray patches; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [marblePortoroHoned](17-natural-stone/marblePortoroHoned.mtlx) — Deep black marble with irregular warm gold and white veins; smooth honed surface with broad low-sheen dielectric highlights.
+- [marblePortoroPolished](17-natural-stone/marblePortoroPolished.mtlx) — Deep black marble with irregular warm gold and white veins; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [graniteAbsoluteBlackHoned](17-natural-stone/graniteAbsoluteBlackHoned.mtlx) — Nearly uniform black granite with very fine dark mineral grain; smooth honed surface with broad low-sheen dielectric highlights.
+- [graniteAbsoluteBlackPolished](17-natural-stone/graniteAbsoluteBlackPolished.mtlx) — Nearly uniform black granite with very fine dark mineral grain; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [graniteBlackGalaxyHoned](17-natural-stone/graniteBlackGalaxyHoned.mtlx) — Black granite with small reflective bronze-gold mineral flecks; smooth honed surface with broad low-sheen dielectric highlights.
+- [graniteBlackGalaxyPolished](17-natural-stone/graniteBlackGalaxyPolished.mtlx) — Black granite with small reflective bronze-gold mineral flecks; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [graniteSaltPepperHoned](17-natural-stone/graniteSaltPepperHoned.mtlx) — White, gray, and black speckled granite with visible interlocking mineral grains; smooth honed surface with broad low-sheen dielectric highlights.
+- [graniteSaltPepperPolished](17-natural-stone/graniteSaltPepperPolished.mtlx) — White, gray, and black speckled granite with visible interlocking mineral grains; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [graniteWhiteGrayHoned](17-natural-stone/graniteWhiteGrayHoned.mtlx) — Predominantly white granite with gray and black mineral flecks; smooth honed surface with broad low-sheen dielectric highlights.
+- [graniteWhiteGrayPolished](17-natural-stone/graniteWhiteGrayPolished.mtlx) — Predominantly white granite with gray and black mineral flecks; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [graniteBeigeHoned](17-natural-stone/graniteBeigeHoned.mtlx) — Warm beige granite with cream, brown, and black mineral speckles; smooth honed surface with broad low-sheen dielectric highlights.
+- [graniteBeigePolished](17-natural-stone/graniteBeigePolished.mtlx) — Warm beige granite with cream, brown, and black mineral speckles; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [graniteBrownHoned](17-natural-stone/graniteBrownHoned.mtlx) — Deep brown granite with black and warm gold mineral grains; smooth honed surface with broad low-sheen dielectric highlights.
+- [graniteBrownPolished](17-natural-stone/graniteBrownPolished.mtlx) — Deep brown granite with black and warm gold mineral grains; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [graniteBluePearlHoned](17-natural-stone/graniteBluePearlHoned.mtlx) — Dark gray-blue granite with reflective blue-silver mineral crystals; smooth honed surface with broad low-sheen dielectric highlights.
+- [graniteBluePearlPolished](17-natural-stone/graniteBluePearlPolished.mtlx) — Dark gray-blue granite with reflective blue-silver mineral crystals; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [graniteRedHoned](17-natural-stone/graniteRedHoned.mtlx) — Warm red granite with black, gray, and pink mineral grains; smooth honed surface with broad low-sheen dielectric highlights.
+- [graniteRedPolished](17-natural-stone/graniteRedPolished.mtlx) — Warm red granite with black, gray, and pink mineral grains; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [quartziteTajMahalHoned](17-natural-stone/quartziteTajMahalHoned.mtlx) — Warm ivory quartzite with subtle beige-gold veining and crystalline depth; smooth honed surface with broad low-sheen dielectric highlights.
+- [quartziteTajMahalPolished](17-natural-stone/quartziteTajMahalPolished.mtlx) — Warm ivory quartzite with subtle beige-gold veining and crystalline depth; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [quartziteWhiteMacaubasHoned](17-natural-stone/quartziteWhiteMacaubasHoned.mtlx) — White quartzite with fine linear gray veins and crystalline depth; smooth honed surface with broad low-sheen dielectric highlights.
+- [quartziteWhiteMacaubasPolished](17-natural-stone/quartziteWhiteMacaubasPolished.mtlx) — White quartzite with fine linear gray veins and crystalline depth; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [quartziteFusionHoned](17-natural-stone/quartziteFusionHoned.mtlx) — Multicolored quartzite with flowing blue-gray, rust, cream, and brown veining; smooth honed surface with broad low-sheen dielectric highlights.
+- [quartziteFusionPolished](17-natural-stone/quartziteFusionPolished.mtlx) — Multicolored quartzite with flowing blue-gray, rust, cream, and brown veining; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [quartziteGreenHoned](17-natural-stone/quartziteGreenHoned.mtlx) — Pale green quartzite with white veins and fine crystalline depth; smooth honed surface with broad low-sheen dielectric highlights.
+- [quartziteGreenPolished](17-natural-stone/quartziteGreenPolished.mtlx) — Pale green quartzite with white veins and fine crystalline depth; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [soapstoneCharcoalHoned](17-natural-stone/soapstoneCharcoalHoned.mtlx) — Charcoal gray soapstone with subtle pale veins and fine dense texture; smooth honed surface with broad low-sheen dielectric highlights.
+- [soapstoneCharcoalPolished](17-natural-stone/soapstoneCharcoalPolished.mtlx) — Charcoal gray soapstone with subtle pale veins and fine dense texture; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [soapstoneGreenHoned](17-natural-stone/soapstoneGreenHoned.mtlx) — Deep gray-green soapstone with restrained pale veins and fine dense texture; smooth honed surface with broad low-sheen dielectric highlights.
+- [soapstoneGreenPolished](17-natural-stone/soapstoneGreenPolished.mtlx) — Deep gray-green soapstone with restrained pale veins and fine dense texture; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [limestoneIvoryHoned](17-natural-stone/limestoneIvoryHoned.mtlx) — Ivory limestone with subtle fine pores and occasional fossil-like mineral marks; smooth honed surface with broad low-sheen dielectric highlights.
+- [limestoneIvoryPolished](17-natural-stone/limestoneIvoryPolished.mtlx) — Ivory limestone with subtle fine pores and occasional fossil-like mineral marks; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [limestoneBeigeHoned](17-natural-stone/limestoneBeigeHoned.mtlx) — Warm beige limestone with fine mineral variation and small natural pores; smooth honed surface with broad low-sheen dielectric highlights.
+- [limestoneBeigePolished](17-natural-stone/limestoneBeigePolished.mtlx) — Warm beige limestone with fine mineral variation and small natural pores; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [limestoneGrayHoned](17-natural-stone/limestoneGrayHoned.mtlx) — Light gray limestone with fine pores and subtle mineral mottling; smooth honed surface with broad low-sheen dielectric highlights.
+- [limestoneGrayPolished](17-natural-stone/limestoneGrayPolished.mtlx) — Light gray limestone with fine pores and subtle mineral mottling; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [travertineIvoryHoned](17-natural-stone/travertineIvoryHoned.mtlx) — Ivory travertine with soft cream bands and characteristic pore pattern; smooth honed surface with broad low-sheen dielectric highlights.
+- [travertineIvoryPolished](17-natural-stone/travertineIvoryPolished.mtlx) — Ivory travertine with soft cream bands and characteristic pore pattern; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [travertineBeigeHoned](17-natural-stone/travertineBeigeHoned.mtlx) — Warm beige travertine with tan bands and characteristic pore pattern; smooth honed surface with broad low-sheen dielectric highlights.
+- [travertineBeigePolished](17-natural-stone/travertineBeigePolished.mtlx) — Warm beige travertine with tan bands and characteristic pore pattern; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [travertineSilverHoned](17-natural-stone/travertineSilverHoned.mtlx) — Silver-gray travertine with gray-beige bands and characteristic pore pattern; smooth honed surface with broad low-sheen dielectric highlights.
+- [travertineSilverPolished](17-natural-stone/travertineSilverPolished.mtlx) — Silver-gray travertine with gray-beige bands and characteristic pore pattern; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [travertineWalnutHoned](17-natural-stone/travertineWalnutHoned.mtlx) — Brown travertine with cream and dark brown bands and characteristic pore pattern; smooth honed surface with broad low-sheen dielectric highlights.
+- [travertineWalnutPolished](17-natural-stone/travertineWalnutPolished.mtlx) — Brown travertine with cream and dark brown bands and characteristic pore pattern; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [slateCharcoalHoned](17-natural-stone/slateCharcoalHoned.mtlx) — Charcoal slate with fine mineral texture and subtle directional tonal bands; smooth honed surface with broad low-sheen dielectric highlights.
+- [slateCharcoalPolished](17-natural-stone/slateCharcoalPolished.mtlx) — Charcoal slate with fine mineral texture and subtle directional tonal bands; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [slateGreenHoned](17-natural-stone/slateGreenHoned.mtlx) — Gray-green slate with fine mineral texture and subtle directional tonal bands; smooth honed surface with broad low-sheen dielectric highlights.
+- [slateGreenPolished](17-natural-stone/slateGreenPolished.mtlx) — Gray-green slate with fine mineral texture and subtle directional tonal bands; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [slatePurpleHoned](17-natural-stone/slatePurpleHoned.mtlx) — Muted purple slate with fine mineral texture and subtle directional tonal bands; smooth honed surface with broad low-sheen dielectric highlights.
+- [slatePurplePolished](17-natural-stone/slatePurplePolished.mtlx) — Muted purple slate with fine mineral texture and subtle directional tonal bands; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [basaltDarkGrayHoned](17-natural-stone/basaltDarkGrayHoned.mtlx) — Dark gray basalt with fine dense mineral grain and sparse tiny pores; smooth honed surface with broad low-sheen dielectric highlights.
+- [basaltDarkGrayPolished](17-natural-stone/basaltDarkGrayPolished.mtlx) — Dark gray basalt with fine dense mineral grain and sparse tiny pores; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [sandstoneBeigeHoned](17-natural-stone/sandstoneBeigeHoned.mtlx) — Beige sandstone with fine granular texture and subtle sediment bands; smooth honed surface with broad low-sheen dielectric highlights.
+- [sandstoneBeigePolished](17-natural-stone/sandstoneBeigePolished.mtlx) — Beige sandstone with fine granular texture and subtle sediment bands; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [sandstoneRedHoned](17-natural-stone/sandstoneRedHoned.mtlx) — Warm red sandstone with fine granular texture and subtle sediment bands; smooth honed surface with broad low-sheen dielectric highlights.
+- [sandstoneRedPolished](17-natural-stone/sandstoneRedPolished.mtlx) — Warm red sandstone with fine granular texture and subtle sediment bands; polished surface with sharp glossy dielectric reflections and enhanced color depth.
+- [travertineIvoryUnfilledMatte](17-natural-stone/travertineIvoryUnfilledMatte.mtlx) — Ivory travertine with soft cream bands and characteristic pore pattern; natural visible pores left unfilled and low-sheen mineral surface.
+- [travertineIvoryFilledHoned](17-natural-stone/travertineIvoryFilledHoned.mtlx) — Ivory travertine with soft cream bands and characteristic pore pattern; pores filled with closely color-matched filler and smooth low-sheen honed surface.
+- [travertineIvoryCrossCutHoned](17-natural-stone/travertineIvoryCrossCutHoned.mtlx) — Ivory travertine with soft cream bands and characteristic pore pattern; cloud-like cross-cut mineral pattern rather than linear banding; smooth low-sheen honed surface.
+- [travertineBeigeUnfilledMatte](17-natural-stone/travertineBeigeUnfilledMatte.mtlx) — Warm beige travertine with tan bands and characteristic pore pattern; natural visible pores left unfilled and low-sheen mineral surface.
+- [travertineBeigeFilledHoned](17-natural-stone/travertineBeigeFilledHoned.mtlx) — Warm beige travertine with tan bands and characteristic pore pattern; pores filled with closely color-matched filler and smooth low-sheen honed surface.
+- [travertineBeigeCrossCutHoned](17-natural-stone/travertineBeigeCrossCutHoned.mtlx) — Warm beige travertine with tan bands and characteristic pore pattern; cloud-like cross-cut mineral pattern rather than linear banding; smooth low-sheen honed surface.
+- [travertineSilverUnfilledMatte](17-natural-stone/travertineSilverUnfilledMatte.mtlx) — Silver-gray travertine with gray-beige bands and characteristic pore pattern; natural visible pores left unfilled and low-sheen mineral surface.
+- [travertineSilverFilledHoned](17-natural-stone/travertineSilverFilledHoned.mtlx) — Silver-gray travertine with gray-beige bands and characteristic pore pattern; pores filled with closely color-matched filler and smooth low-sheen honed surface.
+- [travertineSilverCrossCutHoned](17-natural-stone/travertineSilverCrossCutHoned.mtlx) — Silver-gray travertine with gray-beige bands and characteristic pore pattern; cloud-like cross-cut mineral pattern rather than linear banding; smooth low-sheen honed surface.
+- [travertineWalnutUnfilledMatte](17-natural-stone/travertineWalnutUnfilledMatte.mtlx) — Brown travertine with cream and dark brown bands and characteristic pore pattern; natural visible pores left unfilled and low-sheen mineral surface.
+- [travertineWalnutFilledHoned](17-natural-stone/travertineWalnutFilledHoned.mtlx) — Brown travertine with cream and dark brown bands and characteristic pore pattern; pores filled with closely color-matched filler and smooth low-sheen honed surface.
+- [travertineWalnutCrossCutHoned](17-natural-stone/travertineWalnutCrossCutHoned.mtlx) — Brown travertine with cream and dark brown bands and characteristic pore pattern; cloud-like cross-cut mineral pattern rather than linear banding; smooth low-sheen honed surface.
+- [slateCharcoalNaturalCleft](17-natural-stone/slateCharcoalNaturalCleft.mtlx) — Charcoal slate with fine mineral texture and subtle directional tonal bands; natural fine cleft surface texture and matte dielectric scattering.
+- [slateGreenNaturalCleft](17-natural-stone/slateGreenNaturalCleft.mtlx) — Gray-green slate with fine mineral texture and subtle directional tonal bands; natural fine cleft surface texture and matte dielectric scattering.
+- [slatePurpleNaturalCleft](17-natural-stone/slatePurpleNaturalCleft.mtlx) — Muted purple slate with fine mineral texture and subtle directional tonal bands; natural fine cleft surface texture and matte dielectric scattering.
+- [onyxHoneyPolished](17-natural-stone/onyxHoneyPolished.mtlx) — Honey-amber onyx with cream bands, pronounced subsurface transmission, and a smooth polished surface.
+- [onyxWhitePolished](17-natural-stone/onyxWhitePolished.mtlx) — Milky white onyx with soft beige veins, subsurface transmission, and a smooth polished surface.
+- [onyxGreenPolished](17-natural-stone/onyxGreenPolished.mtlx) — Pale green onyx with cream and amber veins, subsurface transmission, and a polished surface.
+- [alabasterWhitePolished](17-natural-stone/alabasterWhitePolished.mtlx) — Cloudy white alabaster with fine warm veining, diffuse subsurface transmission, and a polished surface.
+- [alabasterIvoryHoned](17-natural-stone/alabasterIvoryHoned.mtlx) — Ivory alabaster with subtle cloudy mineral variation, diffuse subsurface transmission, and a honed low-sheen surface.
+- [lavaStoneBlackMatte](17-natural-stone/lavaStoneBlackMatte.mtlx) — Black volcanic stone with fine irregular open pores and matte mineral scattering.
+
+## Engineered quartz, sintered mineral surfaces, and solid-surface composites
+
+- [engineeredQuartzPureWhiteMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzPureWhiteMatte.mtlx) — Engineered quartz-resin composite, uniform neutral white with very fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzPureWhitePolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzPureWhitePolished.mtlx) — Engineered quartz-resin composite, uniform neutral white with very fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzWarmWhiteMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzWarmWhiteMatte.mtlx) — Engineered quartz-resin composite, uniform warm white with very fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzWarmWhitePolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzWarmWhitePolished.mtlx) — Engineered quartz-resin composite, uniform warm white with very fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzIvoryMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzIvoryMatte.mtlx) — Engineered quartz-resin composite, uniform ivory with very fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzIvoryPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzIvoryPolished.mtlx) — Engineered quartz-resin composite, uniform ivory with very fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzLightGrayMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzLightGrayMatte.mtlx) — Engineered quartz-resin composite, uniform light gray with very fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzLightGrayPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzLightGrayPolished.mtlx) — Engineered quartz-resin composite, uniform light gray with very fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzCharcoalMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzCharcoalMatte.mtlx) — Engineered quartz-resin composite, uniform charcoal gray with very fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzCharcoalPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzCharcoalPolished.mtlx) — Engineered quartz-resin composite, uniform charcoal gray with very fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzBlackMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzBlackMatte.mtlx) — Engineered quartz-resin composite, uniform near-black with very fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzBlackPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzBlackPolished.mtlx) — Engineered quartz-resin composite, uniform near-black with very fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzWhiteGrayVeinMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzWhiteGrayVeinMatte.mtlx) — Engineered quartz-resin composite, white with soft gray marble-like veins and fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzWhiteGrayVeinPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzWhiteGrayVeinPolished.mtlx) — Engineered quartz-resin composite, white with soft gray marble-like veins and fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzWhiteGoldVeinMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzWhiteGoldVeinMatte.mtlx) — Engineered quartz-resin composite, warm white with soft gold marble-like veins and fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzWhiteGoldVeinPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzWhiteGoldVeinPolished.mtlx) — Engineered quartz-resin composite, warm white with soft gold marble-like veins and fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzBlackWhiteVeinMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzBlackWhiteVeinMatte.mtlx) — Engineered quartz-resin composite, black with fine white marble-like veins and fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzBlackWhiteVeinPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzBlackWhiteVeinPolished.mtlx) — Engineered quartz-resin composite, black with fine white marble-like veins and fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzBeigeSpeckleMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzBeigeSpeckleMatte.mtlx) — Engineered quartz-resin composite, warm beige with cream and brown quartz speckles; smooth low-sheen surface.
+- [engineeredQuartzBeigeSpecklePolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzBeigeSpecklePolished.mtlx) — Engineered quartz-resin composite, warm beige with cream and brown quartz speckles; smooth glossy dielectric surface.
+- [engineeredQuartzGraySpeckleMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzGraySpeckleMatte.mtlx) — Engineered quartz-resin composite, medium gray with white and charcoal quartz speckles; smooth low-sheen surface.
+- [engineeredQuartzGraySpecklePolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzGraySpecklePolished.mtlx) — Engineered quartz-resin composite, medium gray with white and charcoal quartz speckles; smooth glossy dielectric surface.
+- [engineeredQuartzWhiteMirrorFleckMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzWhiteMirrorFleckMatte.mtlx) — Engineered quartz-resin composite, white with sparse small reflective mirror-like flecks and fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzWhiteMirrorFleckPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzWhiteMirrorFleckPolished.mtlx) — Engineered quartz-resin composite, white with sparse small reflective mirror-like flecks and fine quartz particles; smooth glossy dielectric surface.
+- [engineeredQuartzBlackMirrorFleckMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzBlackMirrorFleckMatte.mtlx) — Engineered quartz-resin composite, black with sparse small reflective mirror-like flecks and fine quartz particles; smooth low-sheen surface.
+- [engineeredQuartzBlackMirrorFleckPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/engineeredQuartzBlackMirrorFleckPolished.mtlx) — Engineered quartz-resin composite, black with sparse small reflective mirror-like flecks and fine quartz particles; smooth glossy dielectric surface.
+- [sinteredStoneWhiteMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneWhiteMatte.mtlx) — Dense sintered mineral surface, uniform white; fine matte mineral texture.
+- [sinteredStoneWhitePolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneWhitePolished.mtlx) — Dense sintered mineral surface, uniform white; smooth glossy dielectric finish.
+- [sinteredStoneIvoryMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneIvoryMatte.mtlx) — Dense sintered mineral surface, uniform ivory; fine matte mineral texture.
+- [sinteredStoneIvoryPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneIvoryPolished.mtlx) — Dense sintered mineral surface, uniform ivory; smooth glossy dielectric finish.
+- [sinteredStoneBeigeMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneBeigeMatte.mtlx) — Dense sintered mineral surface, uniform beige; fine matte mineral texture.
+- [sinteredStoneBeigePolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneBeigePolished.mtlx) — Dense sintered mineral surface, uniform beige; smooth glossy dielectric finish.
+- [sinteredStoneLightGrayMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneLightGrayMatte.mtlx) — Dense sintered mineral surface, uniform light gray; fine matte mineral texture.
+- [sinteredStoneLightGrayPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneLightGrayPolished.mtlx) — Dense sintered mineral surface, uniform light gray; smooth glossy dielectric finish.
+- [sinteredStoneCharcoalMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneCharcoalMatte.mtlx) — Dense sintered mineral surface, uniform charcoal; fine matte mineral texture.
+- [sinteredStoneCharcoalPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneCharcoalPolished.mtlx) — Dense sintered mineral surface, uniform charcoal; smooth glossy dielectric finish.
+- [sinteredStoneBlackMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneBlackMatte.mtlx) — Dense sintered mineral surface, uniform black; fine matte mineral texture.
+- [sinteredStoneBlackPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneBlackPolished.mtlx) — Dense sintered mineral surface, uniform black; smooth glossy dielectric finish.
+- [sinteredStoneWhiteGrayVeinMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneWhiteGrayVeinMatte.mtlx) — Dense sintered mineral surface, white with gray marble-like veins; fine matte mineral texture.
+- [sinteredStoneWhiteGrayVeinPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneWhiteGrayVeinPolished.mtlx) — Dense sintered mineral surface, white with gray marble-like veins; smooth glossy dielectric finish.
+- [sinteredStoneWhiteGoldVeinMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneWhiteGoldVeinMatte.mtlx) — Dense sintered mineral surface, white with gold marble-like veins; fine matte mineral texture.
+- [sinteredStoneWhiteGoldVeinPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneWhiteGoldVeinPolished.mtlx) — Dense sintered mineral surface, white with gold marble-like veins; smooth glossy dielectric finish.
+- [sinteredStoneBlackWhiteVeinMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneBlackWhiteVeinMatte.mtlx) — Dense sintered mineral surface, black with white marble-like veins; fine matte mineral texture.
+- [sinteredStoneBlackWhiteVeinPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneBlackWhiteVeinPolished.mtlx) — Dense sintered mineral surface, black with white marble-like veins; smooth glossy dielectric finish.
+- [sinteredStoneConcreteGrayMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneConcreteGrayMatte.mtlx) — Dense sintered mineral surface, gray with fine concrete-like mottling; fine matte mineral texture.
+- [sinteredStoneConcreteGrayPolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneConcreteGrayPolished.mtlx) — Dense sintered mineral surface, gray with fine concrete-like mottling; smooth glossy dielectric finish.
+- [sinteredStoneTravertineBeigeMatte](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneTravertineBeigeMatte.mtlx) — Dense sintered mineral surface, beige with subtle travertine-like mineral banding; fine matte mineral texture.
+- [sinteredStoneTravertineBeigePolished](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/sinteredStoneTravertineBeigePolished.mtlx) — Dense sintered mineral surface, beige with subtle travertine-like mineral banding; smooth glossy dielectric finish.
+- [solidSurfaceMatteWhite](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteWhite.mtlx) — Opaque neutral white mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteIvory](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteIvory.mtlx) — Opaque warm ivory mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteCream](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteCream.mtlx) — Opaque yellow-tinted cream mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteBeige](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteBeige.mtlx) — Opaque warm beige mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteTaupe](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteTaupe.mtlx) — Opaque gray-brown taupe mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteLightGray](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteLightGray.mtlx) — Opaque light neutral gray mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteMediumGray](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteMediumGray.mtlx) — Opaque medium neutral gray mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteCharcoal](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteCharcoal.mtlx) — Opaque dark charcoal gray mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteBlack](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteBlack.mtlx) — Opaque neutral black mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteSage](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteSage.mtlx) — Opaque muted gray-green sage mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceMatteBlush](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceMatteBlush.mtlx) — Opaque pale blush pink mineral-filled acrylic composite; fine uniform texture, matte finish, and subtle subsurface scattering.
+- [solidSurfaceSatinWhite](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinWhite.mtlx) — Opaque neutral white mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinIvory](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinIvory.mtlx) — Opaque warm ivory mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinCream](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinCream.mtlx) — Opaque yellow-tinted cream mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinBeige](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinBeige.mtlx) — Opaque warm beige mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinTaupe](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinTaupe.mtlx) — Opaque gray-brown taupe mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinLightGray](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinLightGray.mtlx) — Opaque light neutral gray mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinMediumGray](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinMediumGray.mtlx) — Opaque medium neutral gray mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinCharcoal](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinCharcoal.mtlx) — Opaque dark charcoal gray mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinBlack](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinBlack.mtlx) — Opaque neutral black mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinSage](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinSage.mtlx) — Opaque muted gray-green sage mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceSatinBlush](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceSatinBlush.mtlx) — Opaque pale blush pink mineral-filled acrylic composite; smooth satin finish and subtle subsurface scattering.
+- [solidSurfaceWhiteFineSpeckle](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceWhiteFineSpeckle.mtlx) — White mineral-filled acrylic composite with fine gray speckles, subtle subsurface scattering, and matte finish.
+- [solidSurfaceBeigeFineSpeckle](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceBeigeFineSpeckle.mtlx) — Beige mineral-filled acrylic composite with fine cream and brown speckles and matte finish.
+- [solidSurfaceGrayFineSpeckle](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceGrayFineSpeckle.mtlx) — Gray mineral-filled acrylic composite with fine white and charcoal speckles and matte finish.
+- [solidSurfaceBlackFineSpeckle](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceBlackFineSpeckle.mtlx) — Black mineral-filled acrylic composite with fine pale gray speckles and matte finish.
+- [solidSurfaceTranslucentWhite](18-engineered-quartz-sintered-mineral-surfaces-and-solid-surface-composites/solidSurfaceTranslucentWhite.mtlx) — Milky white mineral-filled acrylic composite with diffuse bulk transmission and a smooth satin surface.
+
+## Concrete, terrazzo, plaster, and mineral coatings
+
+- [concreteSmoothWhite](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteSmoothWhite.mtlx) — neutral white concrete; subtle cement mottling, sparse fine pores, and smooth matte sealed finish.
+- [concreteSmoothIvory](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteSmoothIvory.mtlx) — warm ivory concrete; subtle cement mottling, sparse fine pores, and smooth matte sealed finish.
+- [concreteSmoothBeige](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteSmoothBeige.mtlx) — warm beige concrete; subtle cement mottling, sparse fine pores, and smooth matte sealed finish.
+- [concreteSmoothTaupe](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteSmoothTaupe.mtlx) — gray-brown taupe concrete; subtle cement mottling, sparse fine pores, and smooth matte sealed finish.
+- [concreteSmoothLightGray](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteSmoothLightGray.mtlx) — light neutral gray concrete; subtle cement mottling, sparse fine pores, and smooth matte sealed finish.
+- [concreteSmoothMediumGray](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteSmoothMediumGray.mtlx) — medium neutral gray concrete; subtle cement mottling, sparse fine pores, and smooth matte sealed finish.
+- [concreteSmoothCharcoal](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteSmoothCharcoal.mtlx) — dark charcoal gray concrete; subtle cement mottling, sparse fine pores, and smooth matte sealed finish.
+- [concreteSmoothTerracotta](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteSmoothTerracotta.mtlx) — earthy orange-red terracotta concrete; subtle cement mottling, sparse fine pores, and smooth matte sealed finish.
+- [concreteFineAggregateWhite](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteFineAggregateWhite.mtlx) — neutral white concrete; fine visible aggregate, subtle cement mottling, and matte sealed finish.
+- [concreteFineAggregateIvory](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteFineAggregateIvory.mtlx) — warm ivory concrete; fine visible aggregate, subtle cement mottling, and matte sealed finish.
+- [concreteFineAggregateBeige](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteFineAggregateBeige.mtlx) — warm beige concrete; fine visible aggregate, subtle cement mottling, and matte sealed finish.
+- [concreteFineAggregateTaupe](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteFineAggregateTaupe.mtlx) — gray-brown taupe concrete; fine visible aggregate, subtle cement mottling, and matte sealed finish.
+- [concreteFineAggregateLightGray](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteFineAggregateLightGray.mtlx) — light neutral gray concrete; fine visible aggregate, subtle cement mottling, and matte sealed finish.
+- [concreteFineAggregateMediumGray](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteFineAggregateMediumGray.mtlx) — medium neutral gray concrete; fine visible aggregate, subtle cement mottling, and matte sealed finish.
+- [concreteFineAggregateCharcoal](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteFineAggregateCharcoal.mtlx) — dark charcoal gray concrete; fine visible aggregate, subtle cement mottling, and matte sealed finish.
+- [concreteFineAggregateTerracotta](19-concrete-terrazzo-plaster-and-mineral-coatings/concreteFineAggregateTerracotta.mtlx) — earthy orange-red terracotta concrete; fine visible aggregate, subtle cement mottling, and matte sealed finish.
+- [microcementWhite](19-concrete-terrazzo-plaster-and-mineral-coatings/microcementWhite.mtlx) — neutral white microcement coating; subtle fine troweled tonal variation and smooth matte sealed finish.
+- [microcementIvory](19-concrete-terrazzo-plaster-and-mineral-coatings/microcementIvory.mtlx) — warm ivory microcement coating; subtle fine troweled tonal variation and smooth matte sealed finish.
+- [microcementBeige](19-concrete-terrazzo-plaster-and-mineral-coatings/microcementBeige.mtlx) — warm beige microcement coating; subtle fine troweled tonal variation and smooth matte sealed finish.
+- [microcementTaupe](19-concrete-terrazzo-plaster-and-mineral-coatings/microcementTaupe.mtlx) — gray-brown taupe microcement coating; subtle fine troweled tonal variation and smooth matte sealed finish.
+- [microcementLightGray](19-concrete-terrazzo-plaster-and-mineral-coatings/microcementLightGray.mtlx) — light neutral gray microcement coating; subtle fine troweled tonal variation and smooth matte sealed finish.
+- [microcementMediumGray](19-concrete-terrazzo-plaster-and-mineral-coatings/microcementMediumGray.mtlx) — medium neutral gray microcement coating; subtle fine troweled tonal variation and smooth matte sealed finish.
+- [microcementCharcoal](19-concrete-terrazzo-plaster-and-mineral-coatings/microcementCharcoal.mtlx) — dark charcoal gray microcement coating; subtle fine troweled tonal variation and smooth matte sealed finish.
+- [microcementTerracotta](19-concrete-terrazzo-plaster-and-mineral-coatings/microcementTerracotta.mtlx) — earthy orange-red terracotta microcement coating; subtle fine troweled tonal variation and smooth matte sealed finish.
+- [plasterSmoothWhite](19-concrete-terrazzo-plaster-and-mineral-coatings/plasterSmoothWhite.mtlx) — neutral white mineral plaster; subtle powdery microtexture and diffuse matte scattering.
+- [plasterSmoothIvory](19-concrete-terrazzo-plaster-and-mineral-coatings/plasterSmoothIvory.mtlx) — warm ivory mineral plaster; subtle powdery microtexture and diffuse matte scattering.
+- [plasterSmoothBeige](19-concrete-terrazzo-plaster-and-mineral-coatings/plasterSmoothBeige.mtlx) — warm beige mineral plaster; subtle powdery microtexture and diffuse matte scattering.
+- [plasterSmoothTaupe](19-concrete-terrazzo-plaster-and-mineral-coatings/plasterSmoothTaupe.mtlx) — gray-brown taupe mineral plaster; subtle powdery microtexture and diffuse matte scattering.
+- [plasterSmoothLightGray](19-concrete-terrazzo-plaster-and-mineral-coatings/plasterSmoothLightGray.mtlx) — light neutral gray mineral plaster; subtle powdery microtexture and diffuse matte scattering.
+- [plasterSmoothMediumGray](19-concrete-terrazzo-plaster-and-mineral-coatings/plasterSmoothMediumGray.mtlx) — medium neutral gray mineral plaster; subtle powdery microtexture and diffuse matte scattering.
+- [plasterSmoothCharcoal](19-concrete-terrazzo-plaster-and-mineral-coatings/plasterSmoothCharcoal.mtlx) — dark charcoal gray mineral plaster; subtle powdery microtexture and diffuse matte scattering.
+- [plasterSmoothTerracotta](19-concrete-terrazzo-plaster-and-mineral-coatings/plasterSmoothTerracotta.mtlx) — earthy orange-red terracotta mineral plaster; subtle powdery microtexture and diffuse matte scattering.
+- [terrazzoWhiteGrayHoned](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoWhiteGrayHoned.mtlx) — Terrazzo with white binder with gray and white stone chips; irregular embedded mineral chips and smooth low-sheen honed surface.
+- [terrazzoWhiteGrayPolished](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoWhiteGrayPolished.mtlx) — Terrazzo with white binder with gray and white stone chips; irregular embedded mineral chips and smooth glossy polished surface.
+- [terrazzoWhiteMulticolorHoned](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoWhiteMulticolorHoned.mtlx) — Terrazzo with white binder with muted green, pink, beige, and gray stone chips; irregular embedded mineral chips and smooth low-sheen honed surface.
+- [terrazzoWhiteMulticolorPolished](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoWhiteMulticolorPolished.mtlx) — Terrazzo with white binder with muted green, pink, beige, and gray stone chips; irregular embedded mineral chips and smooth glossy polished surface.
+- [terrazzoCreamBeigeHoned](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoCreamBeigeHoned.mtlx) — Terrazzo with cream binder with beige, tan, and white stone chips; irregular embedded mineral chips and smooth low-sheen honed surface.
+- [terrazzoCreamBeigePolished](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoCreamBeigePolished.mtlx) — Terrazzo with cream binder with beige, tan, and white stone chips; irregular embedded mineral chips and smooth glossy polished surface.
+- [terrazzoGrayWhiteHoned](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoGrayWhiteHoned.mtlx) — Terrazzo with gray binder with white and charcoal stone chips; irregular embedded mineral chips and smooth low-sheen honed surface.
+- [terrazzoGrayWhitePolished](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoGrayWhitePolished.mtlx) — Terrazzo with gray binder with white and charcoal stone chips; irregular embedded mineral chips and smooth glossy polished surface.
+- [terrazzoBlackWhiteHoned](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoBlackWhiteHoned.mtlx) — Terrazzo with black binder with contrasting white stone chips; irregular embedded mineral chips and smooth low-sheen honed surface.
+- [terrazzoBlackWhitePolished](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoBlackWhitePolished.mtlx) — Terrazzo with black binder with contrasting white stone chips; irregular embedded mineral chips and smooth glossy polished surface.
+- [terrazzoBlackMulticolorHoned](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoBlackMulticolorHoned.mtlx) — Terrazzo with black binder with cream, gray, terracotta, and green stone chips; irregular embedded mineral chips and smooth low-sheen honed surface.
+- [terrazzoBlackMulticolorPolished](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoBlackMulticolorPolished.mtlx) — Terrazzo with black binder with cream, gray, terracotta, and green stone chips; irregular embedded mineral chips and smooth glossy polished surface.
+- [terrazzoPinkWhiteHoned](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoPinkWhiteHoned.mtlx) — Terrazzo with pale pink binder with white and burgundy stone chips; irregular embedded mineral chips and smooth low-sheen honed surface.
+- [terrazzoPinkWhitePolished](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoPinkWhitePolished.mtlx) — Terrazzo with pale pink binder with white and burgundy stone chips; irregular embedded mineral chips and smooth glossy polished surface.
+- [terrazzoGreenCreamHoned](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoGreenCreamHoned.mtlx) — Terrazzo with sage-green binder with cream and dark green stone chips; irregular embedded mineral chips and smooth low-sheen honed surface.
+- [terrazzoGreenCreamPolished](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoGreenCreamPolished.mtlx) — Terrazzo with sage-green binder with cream and dark green stone chips; irregular embedded mineral chips and smooth glossy polished surface.
+- [terrazzoTerracottaCreamHoned](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoTerracottaCreamHoned.mtlx) — Terrazzo with terracotta binder with cream and brown stone chips; irregular embedded mineral chips and smooth low-sheen honed surface.
+- [terrazzoTerracottaCreamPolished](19-concrete-terrazzo-plaster-and-mineral-coatings/terrazzoTerracottaCreamPolished.mtlx) — Terrazzo with terracotta binder with cream and brown stone chips; irregular embedded mineral chips and smooth glossy polished surface.
+- [gypsumWhiteRaw](19-concrete-terrazzo-plaster-and-mineral-coatings/gypsumWhiteRaw.mtlx) — White gypsum with fine powdery mineral texture and diffuse matte scattering.
+- [gessoWhiteMatte](19-concrete-terrazzo-plaster-and-mineral-coatings/gessoWhiteMatte.mtlx) — Opaque white gesso with fine chalk-like texture and matte dielectric scattering.
+- [jesmoniteWhite](19-concrete-terrazzo-plaster-and-mineral-coatings/jesmoniteWhite.mtlx) — White mineral-filled water-based acrylic composite with fine mineral texture and matte finish.
+- [jesmoniteBeige](19-concrete-terrazzo-plaster-and-mineral-coatings/jesmoniteBeige.mtlx) — Beige mineral-filled water-based acrylic composite with fine mineral texture and matte finish.
+- [jesmoniteGray](19-concrete-terrazzo-plaster-and-mineral-coatings/jesmoniteGray.mtlx) — Gray mineral-filled water-based acrylic composite with fine mineral texture and matte finish.
+- [magnesiumOxideBoardIvory](19-concrete-terrazzo-plaster-and-mineral-coatings/magnesiumOxideBoardIvory.mtlx) — Ivory magnesium-oxide mineral composite with fine granular texture and matte finish.
+
+## Ceramic, porcelain, enamel, and fired clay
+
+- [ceramicGlazeGlossWhite](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossWhite.mtlx) — Opaque neutral white ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossIvory](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossIvory.mtlx) — Opaque warm ivory ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossCream](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossCream.mtlx) — Opaque yellow-tinted cream ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossBeige](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossBeige.mtlx) — Opaque warm beige ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossLightGray](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossLightGray.mtlx) — Opaque light neutral gray ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossCharcoal](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossCharcoal.mtlx) — Opaque dark charcoal gray ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossBlack](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossBlack.mtlx) — Opaque neutral black ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossNavy](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossNavy.mtlx) — Opaque deep navy blue ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossSage](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossSage.mtlx) — Opaque muted gray-green sage ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossForestGreen](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossForestGreen.mtlx) — Opaque deep forest green ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossTerracotta](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossTerracotta.mtlx) — Opaque earthy orange-red terracotta ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeGlossBurgundy](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeGlossBurgundy.mtlx) — Opaque deep wine red ceramic glaze; smooth glossy dielectric surface with subtle glaze depth.
+- [ceramicGlazeMatteWhite](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteWhite.mtlx) — Opaque neutral white ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteIvory](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteIvory.mtlx) — Opaque warm ivory ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteCream](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteCream.mtlx) — Opaque yellow-tinted cream ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteBeige](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteBeige.mtlx) — Opaque warm beige ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteLightGray](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteLightGray.mtlx) — Opaque light neutral gray ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteCharcoal](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteCharcoal.mtlx) — Opaque dark charcoal gray ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteBlack](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteBlack.mtlx) — Opaque neutral black ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteNavy](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteNavy.mtlx) — Opaque deep navy blue ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteSage](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteSage.mtlx) — Opaque muted gray-green sage ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteForestGreen](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteForestGreen.mtlx) — Opaque deep forest green ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteTerracotta](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteTerracotta.mtlx) — Opaque earthy orange-red terracotta ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [ceramicGlazeMatteBurgundy](20-ceramic-porcelain-enamel-and-fired-clay/ceramicGlazeMatteBurgundy.mtlx) — Opaque deep wine red ceramic glaze; smooth matte dielectric surface with soft highlights.
+- [porcelainPolishedWhite](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedWhite.mtlx) — Dense opaque neutral white porcelain; smooth polished dielectric surface.
+- [porcelainPolishedIvory](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedIvory.mtlx) — Dense opaque warm ivory porcelain; smooth polished dielectric surface.
+- [porcelainPolishedCream](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedCream.mtlx) — Dense opaque yellow-tinted cream porcelain; smooth polished dielectric surface.
+- [porcelainPolishedBeige](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedBeige.mtlx) — Dense opaque warm beige porcelain; smooth polished dielectric surface.
+- [porcelainPolishedLightGray](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedLightGray.mtlx) — Dense opaque light neutral gray porcelain; smooth polished dielectric surface.
+- [porcelainPolishedCharcoal](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedCharcoal.mtlx) — Dense opaque dark charcoal gray porcelain; smooth polished dielectric surface.
+- [porcelainPolishedBlack](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedBlack.mtlx) — Dense opaque neutral black porcelain; smooth polished dielectric surface.
+- [porcelainPolishedNavy](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedNavy.mtlx) — Dense opaque deep navy blue porcelain; smooth polished dielectric surface.
+- [porcelainPolishedSage](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedSage.mtlx) — Dense opaque muted gray-green sage porcelain; smooth polished dielectric surface.
+- [porcelainPolishedForestGreen](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedForestGreen.mtlx) — Dense opaque deep forest green porcelain; smooth polished dielectric surface.
+- [porcelainPolishedTerracotta](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedTerracotta.mtlx) — Dense opaque earthy orange-red terracotta porcelain; smooth polished dielectric surface.
+- [porcelainPolishedBurgundy](20-ceramic-porcelain-enamel-and-fired-clay/porcelainPolishedBurgundy.mtlx) — Dense opaque deep wine red porcelain; smooth polished dielectric surface.
+- [porcelainMatteWhite](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteWhite.mtlx) — Dense opaque neutral white porcelain; fine matte mineral surface.
+- [porcelainMatteIvory](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteIvory.mtlx) — Dense opaque warm ivory porcelain; fine matte mineral surface.
+- [porcelainMatteCream](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteCream.mtlx) — Dense opaque yellow-tinted cream porcelain; fine matte mineral surface.
+- [porcelainMatteBeige](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteBeige.mtlx) — Dense opaque warm beige porcelain; fine matte mineral surface.
+- [porcelainMatteLightGray](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteLightGray.mtlx) — Dense opaque light neutral gray porcelain; fine matte mineral surface.
+- [porcelainMatteCharcoal](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteCharcoal.mtlx) — Dense opaque dark charcoal gray porcelain; fine matte mineral surface.
+- [porcelainMatteBlack](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteBlack.mtlx) — Dense opaque neutral black porcelain; fine matte mineral surface.
+- [porcelainMatteNavy](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteNavy.mtlx) — Dense opaque deep navy blue porcelain; fine matte mineral surface.
+- [porcelainMatteSage](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteSage.mtlx) — Dense opaque muted gray-green sage porcelain; fine matte mineral surface.
+- [porcelainMatteForestGreen](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteForestGreen.mtlx) — Dense opaque deep forest green porcelain; fine matte mineral surface.
+- [porcelainMatteTerracotta](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteTerracotta.mtlx) — Dense opaque earthy orange-red terracotta porcelain; fine matte mineral surface.
+- [porcelainMatteBurgundy](20-ceramic-porcelain-enamel-and-fired-clay/porcelainMatteBurgundy.mtlx) — Dense opaque deep wine red porcelain; fine matte mineral surface.
+- [vitreousEnamelGlossWhite](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossWhite.mtlx) — Opaque neutral white vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossIvory](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossIvory.mtlx) — Opaque warm ivory vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossCream](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossCream.mtlx) — Opaque yellow-tinted cream vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossBeige](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossBeige.mtlx) — Opaque warm beige vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossLightGray](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossLightGray.mtlx) — Opaque light neutral gray vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossCharcoal](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossCharcoal.mtlx) — Opaque dark charcoal gray vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossBlack](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossBlack.mtlx) — Opaque neutral black vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossNavy](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossNavy.mtlx) — Opaque deep navy blue vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossSage](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossSage.mtlx) — Opaque muted gray-green sage vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossForestGreen](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossForestGreen.mtlx) — Opaque deep forest green vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossTerracotta](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossTerracotta.mtlx) — Opaque earthy orange-red terracotta vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [vitreousEnamelGlossBurgundy](20-ceramic-porcelain-enamel-and-fired-clay/vitreousEnamelGlossBurgundy.mtlx) — Opaque deep wine red vitreous enamel; smooth glassy dielectric reflections and rich solid coloration.
+- [terracottaUnglazedOrange](20-ceramic-porcelain-enamel-and-fired-clay/terracottaUnglazedOrange.mtlx) — Orange-red fired clay with fine porous texture and dry matte mineral scattering.
+- [terracottaUnglazedPink](20-ceramic-porcelain-enamel-and-fired-clay/terracottaUnglazedPink.mtlx) — Muted pink fired clay with fine porous texture and dry matte mineral scattering.
+- [terracottaUnglazedBrown](20-ceramic-porcelain-enamel-and-fired-clay/terracottaUnglazedBrown.mtlx) — Warm brown fired clay with fine porous texture and dry matte mineral scattering.
+- [stonewareUnglazedCream](20-ceramic-porcelain-enamel-and-fired-clay/stonewareUnglazedCream.mtlx) — Cream unglazed stoneware with fine granular texture and matte finish.
+- [stonewareUnglazedGray](20-ceramic-porcelain-enamel-and-fired-clay/stonewareUnglazedGray.mtlx) — Gray unglazed stoneware with fine granular texture and matte finish.
+- [stonewareSpeckledCream](20-ceramic-porcelain-enamel-and-fired-clay/stonewareSpeckledCream.mtlx) — Cream stoneware glaze with small brown mineral speckles and satin finish.
+- [stonewareSpeckledGray](20-ceramic-porcelain-enamel-and-fired-clay/stonewareSpeckledGray.mtlx) — Gray stoneware glaze with small charcoal mineral speckles and satin finish.
+- [ceramicCeladonGreen](20-ceramic-porcelain-enamel-and-fired-clay/ceramicCeladonGreen.mtlx) — Pale celadon-green glaze with subtle translucent depth and glossy dielectric highlights.
+- [ceramicReactiveBlue](20-ceramic-porcelain-enamel-and-fired-clay/ceramicReactiveBlue.mtlx) — Blue reactive glaze with controlled lighter and darker blue mottling and glossy highlights.
+- [ceramicReactiveGreen](20-ceramic-porcelain-enamel-and-fired-clay/ceramicReactiveGreen.mtlx) — Green reactive glaze with controlled lighter and darker green mottling and glossy highlights.
+- [ceramicCrackleIvory](20-ceramic-porcelain-enamel-and-fired-clay/ceramicCrackleIvory.mtlx) — Ivory crackle glaze with a fine decorative hairline pattern beneath smooth glossy highlights; clean new finish.
+- [porcelainWhiteGrayVein](20-ceramic-porcelain-enamel-and-fired-clay/porcelainWhiteGrayVein.mtlx) — White porcelain with gray marble-like mineral print and a polished dielectric surface.
+- [porcelainBlackWhiteVein](20-ceramic-porcelain-enamel-and-fired-clay/porcelainBlackWhiteVein.mtlx) — Black porcelain with white marble-like mineral print and a polished dielectric surface.
+
+## Decorative biological and mineral composites
+
+- [motherOfPearlWhite](21-decorative-biological-and-mineral-composites/motherOfPearlWhite.mtlx) — White mother-of-pearl with fine organic lamellar texture, angle-dependent iridescence, and polished finish.
+- [motherOfPearlBlack](21-decorative-biological-and-mineral-composites/motherOfPearlBlack.mtlx) — Dark gray mother-of-pearl with green-purple iridescence and polished finish.
+- [motherOfPearlGold](21-decorative-biological-and-mineral-composites/motherOfPearlGold.mtlx) — Cream-gold mother-of-pearl with warm iridescence and polished finish.
+- [capizShellNatural](21-decorative-biological-and-mineral-composites/capizShellNatural.mtlx) — Pale cream capiz shell with fine organic growth texture, pearly sheen, and partial diffuse transmission.
+- [capizShellWhite](21-decorative-biological-and-mineral-composites/capizShellWhite.mtlx) — White-tinted capiz shell with subtle organic growth texture, pearly sheen, and partial diffuse transmission.
+- [boneIvoryPolished](21-decorative-biological-and-mineral-composites/boneIvoryPolished.mtlx) — Ivory bone material with subtle fine pores and creamy mottling; smooth polished dielectric finish.
+- [hornAmberPolished](21-decorative-biological-and-mineral-composites/hornAmberPolished.mtlx) — Amber horn material with dark brown organic streaks, slight translucency, and polished surface.
+- [hornBlackPolished](21-decorative-biological-and-mineral-composites/hornBlackPolished.mtlx) — Dark brown-black horn material with subtle organic streaks and polished surface.
+- [eggshellCompositeIvory](21-decorative-biological-and-mineral-composites/eggshellCompositeIvory.mtlx) — Ivory eggshell-resin composite with fine pale shell fragments and a smooth satin surface.
+- [coconutShellBrown](21-decorative-biological-and-mineral-composites/coconutShellBrown.mtlx) — Brown coconut-shell composite with dark organic fiber mottling and satin sealed finish.
+- [coconutShellBlack](21-decorative-biological-and-mineral-composites/coconutShellBlack.mtlx) — Black-tinted coconut-shell composite with subtle organic fiber mottling and satin sealed finish.
+- [strawMarquetryNatural](21-decorative-biological-and-mineral-composites/strawMarquetryNatural.mtlx) — Golden straw surface with fine longitudinal fibers and strong directional natural sheen.
+- [strawMarquetryBlack](21-decorative-biological-and-mineral-composites/strawMarquetryBlack.mtlx) — Black-dyed straw surface with fine longitudinal fibers and directional sheen.
+- [strawMarquetryGreen](21-decorative-biological-and-mineral-composites/strawMarquetryGreen.mtlx) — Green-dyed straw surface with fine longitudinal fibers and directional sheen.
+
+## Adhesives, sealants, clear finishes, and functional surface materials
+
+- [pvaAdhesiveDryClear](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/pvaAdhesiveDryClear.mtlx) — Dried clear PVA adhesive material with slight haze and a satin dielectric surface.
+- [pvaAdhesiveDryIvory](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/pvaAdhesiveDryIvory.mtlx) — Dried ivory PVA adhesive material with opaque coloration and a matte dielectric surface.
+- [epoxyAdhesiveClear](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/epoxyAdhesiveClear.mtlx) — Cured colorless epoxy adhesive material with clear transmission and glossy dielectric reflections.
+- [epoxyAdhesiveAmber](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/epoxyAdhesiveAmber.mtlx) — Cured amber epoxy adhesive material with warm absorption and glossy dielectric reflections.
+- [hotMeltAdhesiveAmber](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/hotMeltAdhesiveAmber.mtlx) — Cooled pale amber hot-melt adhesive material with mild translucency and a satin surface.
+- [siliconeSealantClear](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/siliconeSealantClear.mtlx) — Cured clear silicone sealant material with slight bulk haze and a smooth low-sheen surface.
+- [siliconeSealantWhite](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/siliconeSealantWhite.mtlx) — Cured white silicone sealant material with opaque coloration and a smooth low-sheen surface.
+- [siliconeSealantBlack](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/siliconeSealantBlack.mtlx) — Cured black silicone sealant material with opaque coloration and a smooth low-sheen surface.
+- [acrylicSealantWhite](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/acrylicSealantWhite.mtlx) — Cured white acrylic sealant material with fine matte surface texture.
+- [woodFillerNatural](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/woodFillerNatural.mtlx) — Natural tan wood filler material with fine particles and a matte finish.
+- [woodFillerOak](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/woodFillerOak.mtlx) — Light honey-tan wood filler material with fine particles and a matte finish.
+- [woodFillerWalnut](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/woodFillerWalnut.mtlx) — Dark brown wood filler material with fine particles and a matte finish.
+- [woodFillerWhite](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/woodFillerWhite.mtlx) — White wood filler material with fine particles and a matte finish.
+- [woodFillerBlack](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/woodFillerBlack.mtlx) — Black wood filler material with fine particles and a matte finish.
+- [clearcoatMatte](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/clearcoatMatte.mtlx) — Colorless transparent clearcoat material with broad rough-surface dielectric highlights; substrate color remains visible.
+- [clearcoatSatin](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/clearcoatSatin.mtlx) — Colorless transparent clearcoat material with moderately broad dielectric highlights; substrate color remains visible.
+- [clearcoatGloss](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/clearcoatGloss.mtlx) — Colorless transparent clearcoat material with sharp glossy dielectric reflections; substrate color remains visible.
+- [shellacBlonde](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/shellacBlonde.mtlx) — Transparent pale golden shellac finish material with warm absorption and glossy dielectric highlights.
+- [shellacAmber](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/shellacAmber.mtlx) — Transparent amber shellac finish material with warm absorption and glossy dielectric highlights.
+- [waxNatural](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/waxNatural.mtlx) — Pale translucent wax finish material with soft broad highlights and subtle bulk scattering.
+- [waxWhite](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/waxWhite.mtlx) — White-pigmented wax finish material with soft matte scattering and partial coverage of underlying coloration.
+- [rubberizedCoatingBlack](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/rubberizedCoatingBlack.mtlx) — Black rubberized coating material with fine granular texture and a dry matte finish.
+- [antiSlipCoatingClear](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/antiSlipCoatingClear.mtlx) — Transparent polymer coating containing fine clear granular particles; rough low-sheen dielectric surface.
+- [antiSlipCoatingBlack](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/antiSlipCoatingBlack.mtlx) — Opaque black polymer coating containing fine granular particles; rough matte dielectric surface.
+- [flockNylonBlack](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/flockNylonBlack.mtlx) — Black nylon flock surface material with dense very short fibers and soft matte scattering.
+- [flockNylonGray](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/flockNylonGray.mtlx) — Gray nylon flock surface material with dense very short fibers and soft matte scattering.
+- [flockNylonBurgundy](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/flockNylonBurgundy.mtlx) — Burgundy nylon flock surface material with dense very short fibers and soft matte scattering.
+- [flockViscoseBeige](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/flockViscoseBeige.mtlx) — Beige viscose flock surface material with dense very short fibers and subtle directional sheen.
+- [baizeGreen](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/baizeGreen.mtlx) — Green wool-blend baize textile with dense felt-like nap and matte fiber scattering.
+- [baizeBurgundy](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/baizeBurgundy.mtlx) — Burgundy wool-blend baize textile with dense felt-like nap and matte fiber scattering.
+- [baizeBlack](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/baizeBlack.mtlx) — Black wool-blend baize textile with dense felt-like nap and matte fiber scattering.
+- [foilAluminumBright](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/foilAluminumBright.mtlx) — Bright silver aluminum foil material with fine foil microtexture and strong metallic reflections.
+- [foilAluminumMatte](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/foilAluminumMatte.mtlx) — Silver aluminum foil material with fine uniform roughness and broad metallic reflections.
+- [magneticFerriteDarkGray](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/magneticFerriteDarkGray.mtlx) — Dark gray ferrite material with fine granular texture and matte finish.
+- [neodymiumNickelPlated](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/neodymiumNickelPlated.mtlx) — Pale silver nickel-plated magnet material with a smooth satin metallic surface.
+- [corkRubberCompositeBrown](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/corkRubberCompositeBrown.mtlx) — Brown cork-rubber composite with visible tan cork granules in dark rubber binder; matte finish.
+- [corkRubberCompositeBlack](22-adhesives-sealants-clear-finishes-and-functional-surface-materials/corkRubberCompositeBlack.mtlx) — Black cork-rubber composite with subtle fine cork granules and matte finish.
+
+## Linoleum, resilient sheet materials, and additional surface finishes
+
+- [furnitureLinoleumWhite](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumWhite.mtlx) — neutral white natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumIvory](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumIvory.mtlx) — warm ivory natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumCream](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumCream.mtlx) — yellow-tinted cream natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumBeige](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumBeige.mtlx) — warm beige natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumTaupe](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumTaupe.mtlx) — gray-brown taupe natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumLightGray](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumLightGray.mtlx) — light neutral gray natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumMediumGray](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumMediumGray.mtlx) — medium neutral gray natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumCharcoal](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumCharcoal.mtlx) — dark charcoal gray natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumBlack](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumBlack.mtlx) — neutral black natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumNavy](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumNavy.mtlx) — deep navy blue natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumPowderBlue](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumPowderBlue.mtlx) — pale powder blue natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumTeal](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumTeal.mtlx) — blue-green teal natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumSage](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumSage.mtlx) — muted gray-green sage natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumOlive](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumOlive.mtlx) — yellow-green olive natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumForestGreen](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumForestGreen.mtlx) — deep forest green natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumMustard](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumMustard.mtlx) — ochre mustard yellow natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumTerracotta](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumTerracotta.mtlx) — earthy orange-red terracotta natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumRed](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumRed.mtlx) — saturated red natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumBurgundy](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumBurgundy.mtlx) — deep wine red natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumBlush](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumBlush.mtlx) — pale blush pink natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumLavender](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumLavender.mtlx) — pale gray-purple natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumOrange](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumOrange.mtlx) — saturated orange natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [furnitureLinoleumEmerald](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/furnitureLinoleumEmerald.mtlx) — saturated emerald green natural linoleum; fine homogeneous mineral-and-linseed-oil texture, opaque color, and warm low-sheen matte appearance.
+- [vinylSmoothUpholsteryWhite](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryWhite.mtlx) — neutral white flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryIvory](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryIvory.mtlx) — warm ivory flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryBeige](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryBeige.mtlx) — warm beige flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryTaupe](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryTaupe.mtlx) — gray-brown taupe flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryCamel](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryCamel.mtlx) — golden camel tan flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryCognac](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryCognac.mtlx) — warm reddish cognac brown flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryCaramel](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryCaramel.mtlx) — golden caramel brown flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryChocolate](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryChocolate.mtlx) — deep chocolate brown flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryEspresso](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryEspresso.mtlx) — near-black brown flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryLightGray](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryLightGray.mtlx) — light neutral gray flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryCharcoal](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryCharcoal.mtlx) — dark charcoal gray flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryBlack](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryBlack.mtlx) — neutral black flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryNavy](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryNavy.mtlx) — deep navy blue flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryForestGreen](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryForestGreen.mtlx) — deep forest green flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryBurgundy](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryBurgundy.mtlx) — deep wine red flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [vinylSmoothUpholsteryTerracotta](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/vinylSmoothUpholsteryTerracotta.mtlx) — earthy orange-red terracotta flexible upholstery vinyl; smooth fine-textured polymer surface with low satin sheen.
+- [polyurethaneCoatedTextileWhite](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyurethaneCoatedTextileWhite.mtlx) — neutral white polyurethane-coated textile; subtle underlying fabric texture with a continuous matte polymer surface.
+- [polyurethaneCoatedTextileIvory](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyurethaneCoatedTextileIvory.mtlx) — warm ivory polyurethane-coated textile; subtle underlying fabric texture with a continuous matte polymer surface.
+- [polyurethaneCoatedTextileLightGray](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyurethaneCoatedTextileLightGray.mtlx) — light neutral gray polyurethane-coated textile; subtle underlying fabric texture with a continuous matte polymer surface.
+- [polyurethaneCoatedTextileCharcoal](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyurethaneCoatedTextileCharcoal.mtlx) — dark charcoal gray polyurethane-coated textile; subtle underlying fabric texture with a continuous matte polymer surface.
+- [polyurethaneCoatedTextileBlack](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyurethaneCoatedTextileBlack.mtlx) — neutral black polyurethane-coated textile; subtle underlying fabric texture with a continuous matte polymer surface.
+- [polyurethaneCoatedTextileNavy](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyurethaneCoatedTextileNavy.mtlx) — deep navy blue polyurethane-coated textile; subtle underlying fabric texture with a continuous matte polymer surface.
+- [polyurethaneCoatedTextileForestGreen](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyurethaneCoatedTextileForestGreen.mtlx) — deep forest green polyurethane-coated textile; subtle underlying fabric texture with a continuous matte polymer surface.
+- [strandWovenBambooNatural](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/strandWovenBambooNatural.mtlx) — Pale golden bamboo-fiber composite with dense interlocked longitudinal fiber texture and clear satin finish.
+- [strandWovenBambooCaramel](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/strandWovenBambooCaramel.mtlx) — Caramel brown bamboo-fiber composite with dense interlocked longitudinal fiber texture and clear satin finish.
+- [strandWovenBambooDarkBrown](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/strandWovenBambooDarkBrown.mtlx) — Dark brown bamboo-fiber composite with dense interlocked longitudinal fiber texture and clear matte finish.
+- [laminatedDensifiedWoodNatural](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/laminatedDensifiedWoodNatural.mtlx) — Golden brown resin-densified wood composite with fine compressed grain and a smooth satin finish.
+- [phenolicResinBrown](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/phenolicResinBrown.mtlx) — Opaque dark brown phenolic resin with a dense smooth surface and satin dielectric highlights.
+- [phenolicResinBlack](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/phenolicResinBlack.mtlx) — Opaque black phenolic resin with a dense smooth surface and satin dielectric highlights.
+- [polyesterResinLacquerWhite](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyesterResinLacquerWhite.mtlx) — Opaque white polyester-resin lacquer with deep high-gloss dielectric reflections.
+- [polyesterResinLacquerBlack](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyesterResinLacquerBlack.mtlx) — Opaque black polyester-resin lacquer with deep high-gloss dielectric reflections.
+- [woodFinishLimedOak](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/woodFinishLimedOak.mtlx) — New pale honey oak with white pigment concentrated in open pores; visible grain and clear matte finish.
+- [woodFinishCerusedOakBlackWhite](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/woodFinishCerusedOakBlackWhite.mtlx) — New black-pigmented oak with contrasting white pigment in open pores; clear satin finish.
+- [woodFinishCerusedOakGrayWhite](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/woodFinishCerusedOakGrayWhite.mtlx) — New gray-pigmented oak with contrasting white pigment in open pores; clear matte finish.
+- [woodFinishEbonizedOak](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/woodFinishEbonizedOak.mtlx) — New chemically darkened black oak with visible open grain and clear satin finish.
+- [woodFinishEbonizedWalnut](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/woodFinishEbonizedWalnut.mtlx) — New chemically darkened black-brown walnut with visible fine grain and clear satin finish.
+- [stainlessSteelHairline](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/stainlessSteelHairline.mtlx) — Clean silver stainless steel with extremely fine continuous aligned grain and narrow directional metallic highlights.
+- [stainlessSteelVibration](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/stainlessSteelVibration.mtlx) — Clean silver stainless steel with fine multidirectional circular abrasion texture and broad metallic highlights.
+- [stainlessSteelHammered](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/stainlessSteelHammered.mtlx) — Clean silver stainless steel with shallow irregular hammered surface texture and glossy metallic highlights.
+- [brassHammered](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/brassHammered.mtlx) — New warm yellow-gold brass with shallow irregular hammered surface texture and glossy metallic highlights.
+- [copperHammered](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/copperHammered.mtlx) — New reddish copper with shallow irregular hammered surface texture and glossy metallic highlights.
+- [bronzeDarkUniform](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/bronzeDarkUniform.mtlx) — New uniformly dark brown bronze finish with satin metallic highlights and no corrosion or wear.
+- [powderCoatMetallicSilver](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/powderCoatMetallicSilver.mtlx) — Silver metallic-flake powder coating with fine reflective particles in a satin dielectric binder.
+- [powderCoatMetallicChampagne](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/powderCoatMetallicChampagne.mtlx) — Champagne metallic-flake powder coating with fine reflective particles in a satin dielectric binder.
+- [powderCoatMetallicBronze](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/powderCoatMetallicBronze.mtlx) — Bronze metallic-flake powder coating with fine reflective particles in a satin dielectric binder.
+- [powderCoatMetallicGunmetal](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/powderCoatMetallicGunmetal.mtlx) — Gunmetal metallic-flake powder coating with fine reflective particles in a satin dielectric binder.
+- [enamelCrackleCream](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/enamelCrackleCream.mtlx) — New cream decorative enamel with a fine intentional crackle color pattern and smooth glossy surface.
+- [polyethyleneTranslucentNatural](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyethyleneTranslucentNatural.mtlx) — Natural milky white polyethylene with diffuse bulk transmission and a smooth waxy low-sheen surface.
+- [polypropyleneTranslucentNatural](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polypropyleneTranslucentNatural.mtlx) — Natural milky translucent polypropylene with diffuse bulk transmission and a smooth low-sheen surface.
+- [polyurethaneGelClear](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyurethaneGelClear.mtlx) — Colorless polyurethane gel with slight bulk haze and smooth glossy dielectric reflections.
+- [polyurethaneGelBlue](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/polyurethaneGelBlue.mtlx) — Blue polyurethane gel with blue volume absorption, slight bulk haze, and smooth glossy dielectric reflections.
+- [corkResinCompositeNatural](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/corkResinCompositeNatural.mtlx) — Pale tan cork-resin composite with small cork granules in a clear binder and smooth satin surface.
+- [leatherCompositeFiberNatural](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/leatherCompositeFiberNatural.mtlx) — Tan compressed leather-fiber composite with fine random leather fibers and dry matte texture.
+- [flaxFiberResinNatural](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/flaxFiberResinNatural.mtlx) — Golden tan flax-fiber resin composite with visible woven fiber texture beneath smooth satin transparent resin.
+- [myceliumCompositeCream](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/myceliumCompositeCream.mtlx) — Cream mycelium-fiber composite with fine irregular cellular texture and matte scattering.
+- [myceliumCompositeBrown](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/myceliumCompositeBrown.mtlx) — Light brown mycelium-fiber composite with fine irregular cellular texture and matte scattering.
+- [coffeeGroundCompositeBrown](23-linoleum-resilient-sheet-materials-and-additional-surface-finishes/coffeeGroundCompositeBrown.mtlx) — Dark brown coffee-ground polymer composite with fine organic speckles and matte surface.

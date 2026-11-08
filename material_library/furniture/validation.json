@@ -1,0 +1,7 @@
+{
+  "checked": 2667,
+  "passed": 2667,
+  "rules": ["basic", "structure", "types", "unused"],
+  "strict": true,
+  "failures": []
+}

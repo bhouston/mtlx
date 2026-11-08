@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Warm red granite with black, gray, and pink mineral grains; polished surface with sharp glossy dielectric reflections and enhanced color depth. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: mineralGranules. -->
+  <nodegraph name="NG_graniteRedPolished">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="260" /></multiply>
+    <worleynoise2d name="worleynoise2d_8" type="float"><input name="texcoord" type="vector2" nodename="multiply_7" /><input name="style" type="integer" value="1" /></worleynoise2d>
+    <worleynoise2d name="worleynoise2d_9" type="vector2"><input name="texcoord" type="vector2" nodename="multiply_7" /></worleynoise2d>
+    <dotproduct name="dotproduct_10" type="float"><input name="in1" type="vector2" nodename="worleynoise2d_9" /><input name="in2" type="vector2" value="-1, 1" /></dotproduct>
+    <smoothstep name="smoothstep_11" type="float"><input name="in" type="float" nodename="dotproduct_10" /><input name="low" type="float" value="0.055" /><input name="high" type="float" value="0.12" /></smoothstep>
+    <mix name="mix_12" type="color3"><input name="bg" type="color3" value="0.192, 0.010000000000000002, 0.006" /><input name="fg" type="color3" value="0.696, 0.03625, 0.02175" /><input name="mix" type="float" nodename="worleynoise2d_8" /></mix>
+    <mix name="mix_13" type="color3"><input name="bg" type="color3" value="0.48, 0.025, 0.015" /><input name="fg" type="color3" nodename="mix_12" /><input name="mix" type="float" nodename="smoothstep_11" /></mix>
+    <multiply name="multiply_14" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="260" /></multiply>
+    <add name="add_15" type="vector2"><input name="in1" type="vector2" nodename="multiply_14" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_16" type="float"><input name="texcoord" type="vector2" nodename="add_15" /><input name="amplitude" type="float" value="0.000001" /><input name="pivot" type="float" value="0" /></noise2d>
+    <subtract name="subtract_17" type="float"><input name="in1" type="float" nodename="smoothstep_11" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_18" type="float"><input name="in1" type="float" nodename="subtract_17" /><input name="in2" type="float" value="0.0135" /></multiply>
+    <add name="add_19" type="float"><input name="in1" type="float" value="0.09" /><input name="in2" type="float" nodename="multiply_18" /></add>
+    <clamp name="clamp_20" type="float"><input name="in" type="float" nodename="add_19" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_21" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_22" type="float"><input name="in1" type="float" nodename="noise2d_16" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_23" type="vector3"><input name="in" type="float" nodename="multiply_22" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_21" /></heighttonormal>
+    <normalmap name="normalmap_24" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_23" /></normalmap>
+    <constant name="constant_25" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_13" />
+    <output name="specular_roughness" type="float" nodename="clamp_20" />
+    <output name="metalness" type="float" nodename="constant_25" />
+    <output name="normal" type="vector3" nodename="normalmap_24" />
+    <output name="height" type="float" nodename="noise2d_16" />
+  </nodegraph>
+  <standard_surface name="SR_graniteRedPolished" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_graniteRedPolished" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_graniteRedPolished" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_graniteRedPolished" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_graniteRedPolished" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_graniteRedPolished" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_graniteRedPolished" /></surfacematerial>
+</materialx>

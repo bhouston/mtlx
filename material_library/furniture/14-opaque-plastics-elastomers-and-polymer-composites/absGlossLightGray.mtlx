@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Opaque light neutral gray ABS plastic; smooth glossy dielectric surface. -->
+  <!-- Clean newly manufactured surface. UV 0..1 = 1 metre; height in metres. Recipe: microtexture. -->
+  <nodegraph name="NG_absGlossLightGray">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="240" /></multiply>
+    <add name="add_2" type="vector2"><input name="in1" type="vector2" nodename="multiply_1" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_3" type="float"><input name="texcoord" type="vector2" nodename="add_2" /><input name="amplitude" type="float" value="0.6" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_4" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="240" /></multiply>
+    <add name="add_5" type="vector2"><input name="in1" type="vector2" nodename="multiply_4" /><input name="in2" type="vector2" value="13.37, 7.91" /></add>
+    <noise2d name="noise2d_6" type="float"><input name="texcoord" type="vector2" nodename="add_5" /><input name="amplitude" type="float" value="0.000012" /><input name="pivot" type="float" value="0" /></noise2d>
+    <mix name="mix_7" type="color3"><input name="bg" type="color3" value="0.45354999999999995, 0.45354999999999995, 0.4439" /><input name="fg" type="color3" value="0.48644999999999994, 0.48644999999999994, 0.47609999999999997" /><input name="mix" type="float" nodename="noise2d_3" /></mix>
+    <subtract name="subtract_8" type="float"><input name="in1" type="float" nodename="noise2d_3" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_9" type="float"><input name="in1" type="float" nodename="subtract_8" /><input name="in2" type="float" value="0.0135" /></multiply>
+    <add name="add_10" type="float"><input name="in1" type="float" value="0.09" /><input name="in2" type="float" nodename="multiply_9" /></add>
+    <clamp name="clamp_11" type="float"><input name="in" type="float" nodename="add_10" /><input name="low" type="float" value="0.025" /><input name="high" type="float" value="0.98" /></clamp>
+    <multiply name="multiply_12" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="float" value="1000" /></multiply>
+    <multiply name="multiply_13" type="float"><input name="in1" type="float" nodename="noise2d_6" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="heighttonormal_14" type="vector3"><input name="in" type="float" nodename="multiply_13" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_12" /></heighttonormal>
+    <normalmap name="normalmap_15" type="vector3"><input name="in" type="vector3" nodename="heighttonormal_14" /></normalmap>
+    <constant name="constant_16" type="float"><input name="value" type="float" value="0" /></constant>
+    <output name="base_color" type="color3" nodename="mix_7" />
+    <output name="specular_roughness" type="float" nodename="clamp_11" />
+    <output name="metalness" type="float" nodename="constant_16" />
+    <output name="normal" type="vector3" nodename="normalmap_15" />
+    <output name="height" type="float" nodename="noise2d_6" />
+  </nodegraph>
+  <standard_surface name="SR_absGlossLightGray" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular" type="float" value="0.5" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="specular_anisotropy" type="float" value="0" />
+    <input name="base_color" type="color3" nodegraph="NG_absGlossLightGray" output="base_color" />
+    <input name="specular_roughness" type="float" nodegraph="NG_absGlossLightGray" output="specular_roughness" />
+    <input name="metalness" type="float" nodegraph="NG_absGlossLightGray" output="metalness" />
+    <input name="normal" type="vector3" nodegraph="NG_absGlossLightGray" output="normal" />
+  </standard_surface>
+  <surfacematerial name="M_absGlossLightGray" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_absGlossLightGray" /></surfacematerial>
+</materialx>

@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <!-- Clean new furniture sample. UV 0..1 = 1 metre; heights in metres. -->
+  <!-- earthy orange-red terracotta cotton plain weave; visible fine yarn intersections, matte fiber scattering, and subtle fuzz. -->
+  <!-- weave: pitch 0.00055 m, relief 0.000004 m. Microfiber detail is statistical roughness below resolved yarn scale. -->
+  <nodegraph name="NG_cottonPlainWeaveTerracotta">
+    <texcoord name="uv" type="vector2"></texcoord>
+    <multiply name="multiply_1" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="900, 900" /></multiply>
+    <add name="add_2" type="vector2"><input name="in1" type="vector2" nodename="multiply_1" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_3" type="float"><input name="texcoord" type="vector2" nodename="add_2" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_4" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="4, 4" /></multiply>
+    <add name="add_5" type="vector2"><input name="in1" type="vector2" nodename="multiply_4" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_6" type="float"><input name="texcoord" type="vector2" nodename="add_5" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_7" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="563.6363636363636, 490.9090909090909" /></multiply>
+    <add name="add_8" type="vector2"><input name="in1" type="vector2" nodename="multiply_7" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_9" type="float"><input name="texcoord" type="vector2" nodename="add_8" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <subtract name="subtract_10" type="float"><input name="in1" type="float" nodename="noise2d_9" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_11" type="float"><input name="in1" type="float" nodename="subtract_10" /><input name="in2" type="float" value="0.65" /></multiply>
+    <separate2 name="uv_sep" type="multioutput"><input name="in" type="vector2" nodename="uv" /></separate2>
+    <multiply name="multiply_12" type="float"><input name="in1" type="float" nodename="uv_sep" output="outx" /><input name="in2" type="float" value="1818.181818181818" /></multiply>
+    <add name="add_13" type="float"><input name="in1" type="float" nodename="multiply_12" /><input name="in2" type="float" nodename="multiply_11" /></add>
+    <multiply name="multiply_14" type="float"><input name="in1" type="float" nodename="add_13" /><input name="in2" type="float" value="6.283185307179586" /></multiply>
+    <sin name="sin_15" type="float"><input name="in" type="float" nodename="multiply_14" /></sin>
+    <multiply name="multiply_16" type="float"><input name="in1" type="float" nodename="sin_15" /><input name="in2" type="float" value="0.5" /></multiply>
+    <add name="add_17" type="float"><input name="in1" type="float" nodename="multiply_16" /><input name="in2" type="float" value="0.5" /></add>
+    <multiply name="multiply_18" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="563.6363636363636, 490.9090909090909" /></multiply>
+    <add name="add_19" type="vector2"><input name="in1" type="vector2" nodename="multiply_18" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_20" type="float"><input name="texcoord" type="vector2" nodename="add_19" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <subtract name="subtract_21" type="float"><input name="in1" type="float" nodename="noise2d_20" /><input name="in2" type="float" value="0.5" /></subtract>
+    <multiply name="multiply_22" type="float"><input name="in1" type="float" nodename="subtract_21" /><input name="in2" type="float" value="0.65" /></multiply>
+    <multiply name="multiply_23" type="float"><input name="in1" type="float" nodename="uv_sep" output="outy" /><input name="in2" type="float" value="1818.181818181818" /></multiply>
+    <add name="add_24" type="float"><input name="in1" type="float" nodename="multiply_23" /><input name="in2" type="float" nodename="multiply_22" /></add>
+    <multiply name="multiply_25" type="float"><input name="in1" type="float" nodename="add_24" /><input name="in2" type="float" value="6.283185307179586" /></multiply>
+    <sin name="sin_26" type="float"><input name="in" type="float" nodename="multiply_25" /></sin>
+    <multiply name="multiply_27" type="float"><input name="in1" type="float" nodename="sin_26" /><input name="in2" type="float" value="0.5" /></multiply>
+    <add name="add_28" type="float"><input name="in1" type="float" nodename="multiply_27" /><input name="in2" type="float" value="0.5" /></add>
+    <multiply name="multiply_29" type="float"><input name="in1" type="float" nodename="add_17" /><input name="in2" type="float" nodename="add_28" /></multiply>
+    <multiply name="multiply_30" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1272.7272727272725, 127.27272727272727" /></multiply>
+    <add name="add_31" type="vector2"><input name="in1" type="vector2" nodename="multiply_30" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_32" type="float"><input name="texcoord" type="vector2" nodename="add_31" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <multiply name="multiply_33" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="127.27272727272727, 1272.7272727272725" /></multiply>
+    <add name="add_34" type="vector2"><input name="in1" type="vector2" nodename="multiply_33" /><input name="in2" type="vector2" value="0.137, 0.731" /></add>
+    <noise2d name="noise2d_35" type="float"><input name="texcoord" type="vector2" nodename="add_34" /><input name="amplitude" type="float" value="0.8" /><input name="pivot" type="float" value="0.5" /></noise2d>
+    <add name="add_36" type="float"><input name="in1" type="float" nodename="noise2d_32" /><input name="in2" type="float" nodename="noise2d_35" /></add>
+    <multiply name="multiply_37" type="float"><input name="in1" type="float" nodename="add_36" /><input name="in2" type="float" value="0.5" /></multiply>
+    <mix name="mix_38" type="float"><input name="bg" type="float" nodename="multiply_37" /><input name="fg" type="float" nodename="multiply_29" /><input name="mix" type="float" value="0.1" /></mix>
+    <mix name="mix_39" type="float"><input name="bg" type="float" value="0.96" /><input name="fg" type="float" value="1.01" /><input name="mix" type="float" nodename="mix_38" /></mix>
+    <multiply name="multiply_40" type="color3"><input name="in1" type="color3" value="0.44, 0.13, 0.065" /><input name="in2" type="color3" value="1, 1, 1" /></multiply>
+    <mix name="mix_41" type="float"><input name="bg" type="float" value="0.97" /><input name="fg" type="float" value="1.03" /><input name="mix" type="float" nodename="noise2d_6" /></mix>
+    <multiply name="multiply_42" type="float"><input name="in1" type="float" nodename="mix_39" /><input name="in2" type="float" nodename="mix_41" /></multiply>
+    <multiply name="base_color" type="color3"><input name="in1" type="color3" nodename="multiply_40" /><input name="in2" type="float" nodename="multiply_42" /></multiply>
+    <mix name="roughness" type="float"><input name="bg" type="float" value="0.745" /><input name="fg" type="float" value="0.8150000000000001" /><input name="mix" type="float" nodename="mix_38" /></mix>
+    <multiply name="multiply_43" type="float"><input name="in1" type="float" nodename="mix_38" /><input name="in2" type="float" value="0.000004" /></multiply>
+    <multiply name="multiply_44" type="float"><input name="in1" type="float" nodename="noise2d_3" /><input name="in2" type="float" value="3.2e-7" /></multiply>
+    <add name="height" type="float"><input name="in1" type="float" nodename="multiply_43" /><input name="in2" type="float" nodename="multiply_44" /></add>
+    <multiply name="multiply_45" type="vector2"><input name="in1" type="vector2" nodename="uv" /><input name="in2" type="vector2" value="1000, 1000" /></multiply>
+    <multiply name="multiply_46" type="float"><input name="in1" type="float" nodename="height" /><input name="in2" type="float" value="1000" /></multiply>
+    <heighttonormal name="n_tangent" type="vector3"><input name="in" type="float" nodename="multiply_46" /><input name="scale" type="float" value="16" /><input name="texcoord" type="vector2" nodename="multiply_45" /></heighttonormal>
+    <normalmap name="n_world" type="vector3"><input name="in" type="vector3" nodename="n_tangent" /></normalmap>
+    <constant name="metalness" type="float"><input name="value" type="float" value="0" /></constant>
+    <constant name="specular" type="float"><input name="value" type="float" value="0.2" /></constant>
+    <output name="base_color_out" type="color3" nodename="base_color" />
+    <output name="specular_roughness_out" type="float" nodename="roughness" />
+    <output name="metalness_out" type="float" nodename="metalness" />
+    <output name="normal_out" type="vector3" nodename="n_world" />
+    <output name="specular_out" type="float" nodename="specular" />
+  </nodegraph>
+  <standard_surface name="SR_cottonPlainWeaveTerracotta" type="surfaceshader">
+    <input name="base" type="float" value="1" />
+    <input name="specular_IOR" type="float" value="1.5" />
+    <input name="base_color" type="color3" nodegraph="NG_cottonPlainWeaveTerracotta" output="base_color_out" />
+    <input name="specular_roughness" type="float" nodegraph="NG_cottonPlainWeaveTerracotta" output="specular_roughness_out" />
+    <input name="metalness" type="float" nodegraph="NG_cottonPlainWeaveTerracotta" output="metalness_out" />
+    <input name="normal" type="vector3" nodegraph="NG_cottonPlainWeaveTerracotta" output="normal_out" />
+    <input name="specular" type="float" nodegraph="NG_cottonPlainWeaveTerracotta" output="specular_out" />
+    <input name="sheen" type="float" value="0.23" />
+    <input name="sheen_color" type="color3" value="0.531, 0.1745, 0.09975" />
+    <input name="sheen_roughness" type="float" value="0.7" />
+    <input name="specular_anisotropy" type="float" value="0.1" />
+    <input name="diffuse_roughness" type="float" value="0.25" />
+  </standard_surface>
+  <surfacematerial name="M_cottonPlainWeaveTerracotta" type="material"><input name="surfaceshader" type="surfaceshader" nodename="SR_cottonPlainWeaveTerracotta" /></surfacematerial>
+</materialx>
